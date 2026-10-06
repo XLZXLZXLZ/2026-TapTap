@@ -22,6 +22,12 @@ namespace TapTap
     [Serializable]
     public sealed class CheckpointPlacementSettings : LevelPlacementSettings
     {
-        public Vector2 SpawnOffset = new Vector2(0f, 0.4f);
+        public Vector2 SpawnOffset = new Vector2(0f, 0.45f);
+    }
+
+    [Serializable]
+    public sealed class PhaseBlockPlacementSettings : LevelPlacementSettings
+    {
+        public bool SolidWhenActive = true;
     }
 }

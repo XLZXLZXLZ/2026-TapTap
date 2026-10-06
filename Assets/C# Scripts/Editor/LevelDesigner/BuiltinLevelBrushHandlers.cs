@@ -3,6 +3,28 @@ using UnityEngine;
 
 namespace TapTap.Editor
 {
+    public sealed class PhaseBlockLevelBrushHandler : LevelBrushHandler
+    {
+        public override string Id => "phase-block";
+        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new PhaseBlockPlacementSettings
+        {
+            SolidWhenActive = brush.Prefab != null && brush.Prefab.GetComponent<PhaseBlock>() != null
+                ? brush.Prefab.GetComponent<PhaseBlock>().SolidWhenActive : true
+        };
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            if (!(placement.Settings is PhaseBlockPlacementSettings settings))
+            { EditorGUILayout.HelpBox("虚实方块配置不兼容，请重新绘制。", MessageType.Error); return; }
+            settings.SolidWhenActive = EditorGUILayout.Toggle("开关亮起时为实", settings.SolidWhenActive);
+            EditorGUILayout.HelpBox("所有按钮翻转同一个场景状态。关闭状态下，勾选的方块为虚；未勾选的方块为实。", MessageType.None);
+        }
+        public override string ValidatePlacement(LevelPlacement placement) =>
+            !(placement.Settings is PhaseBlockPlacementSettings) || placement.Brush.Prefab.GetComponent<PhaseBlock>() == null
+                ? "虚实方块缺少 PhaseBlock 或配置。" : null;
+        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context) =>
+            instance.GetComponent<PhaseBlock>().SolidWhenActive = ((PhaseBlockPlacementSettings)placement.Settings).SolidWhenActive;
+    }
+
     public sealed class DefaultLevelBrushHandler : LevelBrushHandler
     {
         public override string Id => "default";

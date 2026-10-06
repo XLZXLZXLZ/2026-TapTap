@@ -7,103 +7,139 @@ namespace TapTap
 {
     public sealed class RespawnService : MonoBehaviour
     {
-        private sealed class ReturnTrip
+        public sealed class Journey
         {
-            public MovableEntity Entity;
-            public Vector2 From;
-            public Vector2 Destination;
-            public float Elapsed;
-            public bool Grouped;
-            public MovableEntity GroupBody;
-            public MovableEntity GroupHead;
-            public float GroupOffset;
+            public MovableEntity Primary { get; internal set; }
+            public MovableEntity Companion { get; internal set; }
+            public Vector2 Origin { get; internal set; }
+            public Vector2 PrimaryOrigin { get; internal set; }
+            public Vector2 Destination { get; internal set; }
+            public float GroupOffset { get; internal set; }
+            public float Elapsed { get; internal set; }
+            public float ShakeDuration { get; internal set; }
+            public float CollapseDuration { get; internal set; }
+            public float DotDuration { get; internal set; }
+            public float FlightDuration { get; internal set; }
+            public float RebuildDuration { get; internal set; }
+            public float FlightStart => ShakeDuration + CollapseDuration + DotDuration;
+            public float ArrivalTime => FlightStart + FlightDuration;
+            public float TotalDuration => ArrivalTime + DotDuration + RebuildDuration;
+            internal bool Arrived;
         }
 
         [SerializeField] private PlayerConfig config;
         [SerializeField] private Vector2 checkpoint;
         [SerializeField] private bool hasCheckpoint;
-        private readonly List<ReturnTrip> trips = new List<ReturnTrip>();
-        private readonly List<ReturnTrip> completed = new List<ReturnTrip>();
+        private readonly List<Journey> journeys = new List<Journey>();
+        public IReadOnlyList<Journey> Journeys => journeys;
         public Vector2 Checkpoint => checkpoint;
         public bool HasCheckpoint => hasCheckpoint;
         public event Action<MovableEntity> Returned;
+        public event Action<Journey> ReturnStarted;
+        public event Action<Journey> ReturnEnded;
 
         public void Configure(PlayerConfig settings) => config = settings;
-        public void SetCheckpoint(Vector2 position)
-        {
-            checkpoint = position;
-            hasCheckpoint = true;
-        }
+        public void SetCheckpoint(Vector2 position) { checkpoint = position; hasCheckpoint = true; }
+        public void BeginGroupReturn(MovableEntity body, MovableEntity head, float offset) => Begin(body, head, offset);
+        public void BeginSingleReturn(MovableEntity entity) => Begin(entity, null, 0f);
 
-        public void BeginGroupReturn(MovableEntity body, MovableEntity head, float offset)
+        private void Begin(MovableEntity entity, MovableEntity companion, float offset)
         {
-            Begin(body, checkpoint, true);
-            Begin(head, checkpoint + Vector2.up * offset, true);
-            foreach (ReturnTrip trip in trips)
+            if (entity == null || entity.IsReturning || (companion != null && companion.IsReturning)) return;
+            var journey = new Journey
             {
-                if (trip.Entity != body && trip.Entity != head) continue;
-                trip.GroupBody = body;
-                trip.GroupHead = head;
-                trip.GroupOffset = offset;
-            }
+                Primary = entity, Companion = companion, GroupOffset = offset,
+                Origin = companion != null ? (entity.Motor.Position + companion.Motor.Position) * 0.5f : entity.Motor.Position,
+                PrimaryOrigin = entity.Motor.Position,
+                Destination = checkpoint,
+                ShakeDuration = config != null ? Mathf.Max(0.01f, config.DeathShakeDuration) : 0.08f,
+                CollapseDuration = config != null ? Mathf.Max(0.01f, config.RespawnCollapseDuration) : 0.18f,
+                DotDuration = config != null ? Mathf.Max(0.01f, config.RespawnDotDuration) : 0.1f,
+                FlightDuration = config != null ? Mathf.Max(0.02f, config.RespawnDuration) : 0.45f,
+                RebuildDuration = config != null ? Mathf.Max(0.01f, config.RespawnRebuildDuration) : 0.2f
+            };
+            Suspend(entity);
+            if (companion != null) Suspend(companion);
+            journeys.Add(journey);
+            ReturnStarted?.Invoke(journey);
         }
 
-        public void BeginSingleReturn(MovableEntity entity) => Begin(entity, checkpoint, false);
-
-        private void Begin(MovableEntity entity, Vector2 destination, bool grouped)
+        private static void Suspend(MovableEntity entity)
         {
-            if (entity == null || entity.IsReturning) return;
             entity.IsReturning = true;
             entity.Velocity = Vector2.zero;
             entity.Motor.SetCollisionsEnabled(false);
-            trips.Add(new ReturnTrip
+        }
+
+        public Vector2 FlightPoint(Journey journey, float easedProgress)
+        {
+            Vector2 destination = journey.Destination;
+            if (journey.Companion != null) destination.y += journey.GroupOffset * 0.5f;
+            Vector2 position = Vector2.Lerp(journey.Origin, destination, easedProgress);
+            position.y += Mathf.Sin(easedProgress * Mathf.PI) * (config != null ? config.ToWorld(0.7f) : 0.7f);
+            return position;
+        }
+
+        public static float RenderTime(Journey journey) => Mathf.Min(journey.TotalDuration,
+            journey.Elapsed + Mathf.Clamp(Time.time - Time.fixedTime, 0f, Time.fixedDeltaTime));
+
+        public Vector2 FollowPosition(MovableEntity entity)
+        {
+            foreach (Journey journey in journeys)
             {
-                Entity = entity, From = entity.Motor.Position,
-                Destination = destination, Grouped = grouped
-            });
+                if (journey.Primary != entity) continue;
+                float t = RenderTime(journey);
+                if (t < journey.FlightStart)
+                    return Vector2.Lerp(journey.PrimaryOrigin, journey.Origin, t / journey.FlightStart);
+                if (t >= journey.ArrivalTime)
+                    return Vector2.Lerp(FlightPoint(journey, 1f), journey.Destination,
+                        (t - journey.ArrivalTime) / Mathf.Max(0.01f, journey.DotDuration + journey.RebuildDuration));
+                float flight = (t - journey.FlightStart) / journey.FlightDuration;
+                return FlightPoint(journey, DOVirtual.EasedValue(0f, 1f, flight, Ease.InOutSine));
+            }
+            return entity.transform.position;
         }
 
         public void Simulate(float dt)
         {
-            completed.Clear();
-            for (int i = trips.Count - 1; i >= 0; i--)
+            for (int i = journeys.Count - 1; i >= 0; i--)
             {
-                ReturnTrip trip = trips[i];
-                if (trip.Entity == null) { trips.RemoveAt(i); continue; }
-                trip.Elapsed += dt;
-                float t = Mathf.Clamp01(trip.Elapsed / (config != null ? config.RespawnDuration : 0.45f));
-                Vector2 position = Vector2.Lerp(trip.From, trip.Destination,
-                    DOVirtual.EasedValue(0f, 1f, t, Ease.InOutSine));
-                position.y += Mathf.Sin(t * Mathf.PI) * 0.7f;
-                trip.Entity.Motor.Teleport(position);
-                if (t < 1f) continue;
-
-                completed.Add(trip);
-            }
-            foreach (ReturnTrip trip in completed)
-            {
-                if (!trips.Contains(trip)) continue;
-                if (trip.Grouped)
+                Journey journey = journeys[i];
+                if (journey.Primary == null || (journey.Companion == null && journey.GroupOffset > 0f))
                 {
-                    Vector2 bodyDestination = FindLandingPosition(trip.GroupBody, checkpoint, trip.GroupHead);
-                    Complete(trip.GroupBody, bodyDestination);
-                    Complete(trip.GroupHead, bodyDestination + Vector2.up * trip.GroupOffset);
-                    trips.RemoveAll(t => t.GroupBody == trip.GroupBody);
+                    Release(journey.Primary); Release(journey.Companion);
+                    ReturnEnded?.Invoke(journey);
+                    journeys.RemoveAt(i);
+                    continue;
                 }
-                else
+                journey.Elapsed += Mathf.Max(0f, dt);
+                if (!journey.Arrived && journey.Elapsed >= journey.ArrivalTime)
                 {
-                    Complete(trip.Entity, FindLandingPosition(trip.Entity, trip.Destination));
-                    trips.Remove(trip);
+                    journey.Destination = FindLandingPosition(journey.Primary, journey.Destination, journey.Companion);
+                    journey.Primary.Motor.Teleport(journey.Destination);
+                    if (journey.Companion != null)
+                        journey.Companion.Motor.Teleport(journey.Destination + Vector2.up * journey.GroupOffset);
+                    journey.Arrived = true;
                 }
+                if (journey.Elapsed < journey.TotalDuration) continue;
+                ReturnEnded?.Invoke(journey);
+                Complete(journey.Primary);
+                if (journey.Companion != null) Complete(journey.Companion);
+                journeys.RemoveAt(i);
             }
         }
 
-        private void Complete(MovableEntity entity, Vector2 destination)
+        private static void Release(MovableEntity entity)
         {
-            entity.Motor.Teleport(destination);
+            if (entity == null) return;
             entity.Velocity = Vector2.zero;
             entity.IsReturning = false;
             entity.Motor.SetCollisionsEnabled(true);
+        }
+
+        private void Complete(MovableEntity entity)
+        {
+            Release(entity);
             Returned?.Invoke(entity);
         }
 
@@ -112,29 +148,46 @@ namespace TapTap
             float skin = config != null ? config.Skin : 0.01f;
             foreach (MovableEntity other in MovableEntity.ActiveEntities)
             {
-                if (other == null || other == entity || other == ignored || other.IsReturning) continue;
+                if (other == null || other == entity || other == ignored) continue;
+                if (other.IsReturning && !journeys.Exists(journey => journey.Arrived &&
+                    (journey.Primary == other || journey.Companion == other))) continue;
                 Vector2 halfSize = (entity.Motor.Size + other.Motor.Size) * 0.5f;
                 Vector2 distance = desired - other.Motor.Position;
                 if (Mathf.Abs(distance.x) >= halfSize.x || Mathf.Abs(distance.y) >= halfSize.y) continue;
                 if ((entity.Part == EntityPart.Body && other.Part == EntityPart.Head)
                     || (entity.Part == EntityPart.Head && other.Part == EntityPart.Body))
-                {
                     desired.y = Mathf.Max(desired.y, other.Motor.Position.y
                         + (entity.Motor.Size.y + other.Motor.Size.y) * 0.5f + skin * 2f);
+            }
+            for (int pass = 0; pass < 8; pass++)
+            {
+                Bounds occupied = new Bounds(desired + entity.Motor.CenterOffset, entity.Motor.Size);
+                if (ignored != null)
+                    occupied.Encapsulate(new Bounds(desired + Vector2.up * config.ToWorld(config.JoinedOffset) + ignored.Motor.CenterOffset, ignored.Motor.Size));
+                float rise = 0f;
+                foreach (Collider2D collider in Physics2D.OverlapBoxAll(occupied.center, (Vector2)occupied.size * 0.99f, 0f))
+                {
+                    if (collider.isTrigger || collider.GetComponentInParent<MovableEntity>() != null) continue;
+                    var surface = collider.GetComponentInParent<WorldSurface>();
+                    if (surface != null && surface.Kind == SurfaceKind.OneWay) continue;
+                    rise = Mathf.Max(rise, collider.bounds.max.y - occupied.min.y + skin * 2f);
                 }
+                if (rise <= 0f) break;
+                desired.y += rise;
             }
             return desired;
         }
 
         public void CancelAll()
         {
-            foreach (ReturnTrip trip in trips)
+            foreach (Journey journey in journeys)
             {
-                if (trip.Entity == null) continue;
-                trip.Entity.IsReturning = false;
-                trip.Entity.Motor.SetCollisionsEnabled(true);
+                ReturnEnded?.Invoke(journey);
+                Release(journey.Primary); Release(journey.Companion);
             }
-            trips.Clear();
+            journeys.Clear();
         }
+
+        private void OnDisable() => CancelAll();
     }
 }

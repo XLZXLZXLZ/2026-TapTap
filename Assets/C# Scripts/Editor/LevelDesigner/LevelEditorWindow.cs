@@ -12,12 +12,13 @@ namespace TapTap.Editor
         private const float SidebarWidth = 285f;
         private const float GridMargin = 27f;
         private const float ToolbarHeight = 46f;
-        private enum GridTool { Brush, Eraser, Rectangle, RectangleOutline, Bucket, Select }
+        private enum GridTool { Brush, Eraser, Rectangle, RectangleOutline, Bucket, Select, Stamp }
         private static readonly GUIContent[] ToolLabels =
         {
             new GUIContent("笔刷", "按住左键连续绘制"), new GUIContent("橡皮擦", "擦除当前图层，Shift 擦除整格"),
             new GUIContent("矩形填充", "拖出矩形；右键拖动可批量擦除"), new GUIContent("矩形边框", "只绘制矩形边缘"),
-            new GUIContent("油漆桶", "填充当前图层中四方向连通的同类格子；右键擦除"), new GUIContent("选择", "选中并配置单个物体")
+            new GUIContent("油漆桶 [F]", "填充当前图层中四方向连通的同类格子；右键擦除"), new GUIContent("选择 [V]", "点击配置物体，拖动选择区域，Ctrl+C 复制"),
+            new GUIContent("粘贴图章", "Ctrl+V 后点击目标格子放置；Esc 退出")
         };
         [SerializeField] private LevelDefinition layout;
         [SerializeField] private LevelPalette palette;
@@ -46,6 +47,18 @@ namespace TapTap.Editor
         private Vector2Int? selectedCell;
         private Vector2 sidebarScroll;
         private string saveError;
+        [SerializeField] private string brushSearch = "";
+        [SerializeField] private bool isolateLayer;
+        [SerializeField] private RectInt selectionArea;
+        [SerializeField] private bool hasAreaSelection;
+        private Vector2Int selectionAnchor;
+        private bool selecting;
+        private bool spacePan;
+        [SerializeField] private bool prefabNeedsUpdate;
+        [SerializeField] private bool previewPhaseActive;
+        private readonly List<LevelPlacement> clipboard = new List<LevelPlacement>();
+        private int clipboardEntryIndex = -1;
+        private bool clipboardIsCut;
 
         private static string PreferenceKey => "TapTap.LevelDesigner.LastLayout." + Application.dataPath;
         private bool SelectionMode => tool == GridTool.Select;
@@ -78,6 +91,7 @@ namespace TapTap.Editor
 
         private void OnEnable()
         {
+            if (tool == GridTool.Stamp && clipboard.Count == 0) tool = GridTool.Select;
             minSize = new Vector2(720f, 450f);
             Undo.undoRedoPerformed += OnUndoRedo;
             EditorApplication.projectChanged += OnProjectChanged;
@@ -110,6 +124,8 @@ namespace TapTap.Editor
         {
             EndStroke();
             panning = false;
+            selecting = false;
+            spacePan = false;
             GUIUtility.hotControl = 0;
         }
 
@@ -124,6 +140,7 @@ namespace TapTap.Editor
             if (painting || panning) GUIUtility.hotControl = 0;
             painting = false;
             panning = false;
+            selecting = false;
             undoGroup = -1;
             previousPaintCell = null;
             rectangleStart = null;
@@ -133,7 +150,13 @@ namespace TapTap.Editor
             settingsBrush = null;
             if (palette == null || palette.Brushes == null || brushIndex >= palette.Brushes.Count) brushIndex = 0;
             LevelPlacement selected = SelectedPlacement();
-            if (selected != null) selectedCell = selected.Cell;
+            if (selected != null)
+            {
+                selectedCell = selected.Cell;
+                selectionArea = new RectInt(selected.Cell, Vector2Int.one);
+                hasAreaSelection = true;
+            }
+            else hasAreaSelection = false;
             cacheDirty = true;
             saveError = null;
             Repaint();
@@ -154,9 +177,11 @@ namespace TapTap.Editor
             settingsBrush = null;
             selectedPlacementId = null;
             selectedCell = null;
+            hasAreaSelection = false;
             cacheDirty = true;
             fitPending = true;
             saveError = null;
+            prefabNeedsUpdate = false;
             RememberLayout();
             Repaint();
         }
@@ -191,15 +216,18 @@ namespace TapTap.Editor
             {
                 EndStroke();
                 panning = false;
+                selecting = false;
+                if (tool == GridTool.Stamp) tool = GridTool.Select;
                 GUIUtility.hotControl = 0;
                 Event.current.Use();
                 Repaint();
             }
+            HandleShortcuts();
             GUILayout.BeginArea(new Rect(0f, 0f, position.width, ToolbarHeight));
             DrawToolbar();
             GUILayout.EndArea();
             // Reserve the sidebar from the actual window size, independently of toolbar layout widths.
-            Rect work = new Rect(0f, ToolbarHeight, position.width, Mathf.Max(1f, position.height - ToolbarHeight));
+            Rect work = new Rect(0f, ToolbarHeight, position.width, Mathf.Max(1f, position.height - ToolbarHeight - 22f));
             float sidebarWidth = Mathf.Min(SidebarWidth, work.width * 0.45f);
             Rect canvas = new Rect(work.x, work.y, Mathf.Max(1f, work.width - sidebarWidth - 6f), work.height);
             Rect sidebar = new Rect(work.xMax - sidebarWidth, work.y, sidebarWidth, work.height);
@@ -215,6 +243,7 @@ namespace TapTap.Editor
             EditorGUILayout.EndScrollView();
             GUILayout.EndArea();
             HandleCanvas(canvas);
+            DrawStatus(canvas);
         }
 
         private void DrawToolbar()
@@ -324,6 +353,7 @@ namespace TapTap.Editor
                 EditorUtility.SetDirty(layout);
                 AssetDatabase.SaveAssets();
                 saveError = null;
+                prefabNeedsUpdate = false;
                 EditorGUIUtility.PingObject(layout.OutputPrefab);
                 ShowNotification(new GUIContent("区域 Prefab 已保存"));
             }
@@ -346,7 +376,7 @@ namespace TapTap.Editor
             }
             EditorGUILayout.Space(6f);
             EditorGUILayout.LabelField("工具", EditorStyles.boldLabel);
-            int nextTool = GUILayout.SelectionGrid((int)tool, ToolLabels, 2, GUILayout.Height(78f));
+            int nextTool = GUILayout.SelectionGrid((int)tool, ToolLabels, 2, GUILayout.Height(104f));
             if (nextTool != (int)tool)
             {
                 EndStroke();
@@ -354,6 +384,10 @@ namespace TapTap.Editor
             }
             EditorGUILayout.Space(6f);
             EditorGUILayout.LabelField("物体", EditorStyles.boldLabel);
+            brushSearch = EditorGUILayout.TextField(brushSearch, EditorStyles.toolbarSearchField);
+            isolateLayer = EditorGUILayout.ToggleLeft("仅显示当前图层（" + (Brush != null ? Brush.LayerId : "geometry") + "）", isolateLayer);
+            if (palette != null && palette.Brushes != null && palette.Brushes.Exists(item => item != null && item.HandlerId == "phase-block"))
+                previewPhaseActive = EditorGUILayout.ToggleLeft("预览：全局开关亮起", previewPhaseActive);
             if (palette == null || palette.Brushes == null || !palette.Brushes.Exists(brush => brush != null))
             {
                 EditorGUILayout.HelpBox("请选择物体配置，添加可使用的画笔。", MessageType.Info);
@@ -370,6 +404,8 @@ namespace TapTap.Editor
                 {
                     LevelBrush brush = palette.Brushes[i];
                     if (brush == null) continue;
+                    if (!string.IsNullOrEmpty(brushSearch) && BrushName(brush).IndexOf(brushSearch, StringComparison.OrdinalIgnoreCase) < 0
+                        && brush.LayerId.IndexOf(brushSearch, StringComparison.OrdinalIgnoreCase) < 0) continue;
                     bool selected = brush == Brush;
                     if (DrawBrushItem(brush, selected))
                     {
@@ -389,7 +425,16 @@ namespace TapTap.Editor
             if (sampledBrush != null)
                 DrawBrushItem(sampledBrush, true);
             EditorGUILayout.Space(8f);
-            if (SelectionMode) DrawSelection();
+            if (SelectionMode)
+            {
+                if (hasAreaSelection)
+                {
+                    EditorGUILayout.LabelField($"已选 {selectionArea.width} × {selectionArea.height} 格", EditorStyles.boldLabel);
+                    if (GUILayout.Button("复制区域 [Ctrl+C]")) CopyArea();
+                }
+                DrawSelection();
+            }
+            else if (tool == GridTool.Stamp) EditorGUILayout.HelpBox($"点击粘贴 {clipboard.Count} 个物体；可连续放置。", MessageType.Info);
             else DrawBrushSettings();
             if (layout != null)
             {
@@ -407,7 +452,7 @@ namespace TapTap.Editor
             if (!string.IsNullOrEmpty(saveError)) EditorGUILayout.HelpBox(saveError, MessageType.Error);
             EditorGUILayout.Space(10f);
             EditorGUILayout.LabelField(ToolHelp(), EditorStyles.wordWrappedMiniLabel);
-            EditorGUILayout.LabelField("右键擦当前层 · Shift + 右键擦整格\n中键拾取笔刷和参数 · Alt + 左键拖动平移\n滚轮缩放 · Esc 结束绘制", EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField("B 笔刷 · E 橡皮 · R 矩形 · F 油漆桶 · V 选择\nCtrl+C/V 区域复制/粘贴 · Delete 删除选择\n方向键移动选择 · Ctrl+S 保存 · Home 适应窗口\n右键擦当前层 · Shift + 右键擦整格\n中键拾取 · Alt/空格 + 左键平移 · 滚轮缩放", EditorStyles.wordWrappedMiniLabel);
         }
 
         private void GenerateTestScene()
@@ -416,7 +461,9 @@ namespace TapTap.Editor
             try
             {
                 string path = LevelTestSceneBuilder.Generate(layout);
+                if (string.IsNullOrEmpty(path)) return;
                 saveError = null;
+                prefabNeedsUpdate = false;
                 ShowNotification(new GUIContent("已生成：" + System.IO.Path.GetFileName(path)));
             }
             catch (Exception exception)
@@ -462,6 +509,7 @@ namespace TapTap.Editor
                 case GridTool.RectangleOutline: return "拖动绘制矩形边框 · 右键擦除边框";
                 case GridTool.Bucket: return "左键填充相连的同类格子 · 右键擦除该区域";
                 case GridTool.Select: return "左键选中格子";
+                case GridTool.Stamp: return "点击目标位置粘贴区域；Esc 退出图章";
                 default: return "左键绘制 · 拖动连续绘制";
             }
         }
@@ -519,6 +567,8 @@ namespace TapTap.Editor
                     Undo.RecordObject(layout, "移动关卡物体");
                     placement.Cell = destination;
                     selectedCell = destination;
+                    selectionArea = new RectInt(destination, Vector2Int.one);
+                    hasAreaSelection = true;
                     Changed();
                 }
                 else ShowNotification(new GUIContent("目标格子越界或同层已有物体"));
@@ -583,19 +633,31 @@ namespace TapTap.Editor
                 if (!layout.Contains(pair.Key)) continue;
                 Rect cell = CellRect(pair.Key);
                 if (cell.xMax < 0 || cell.yMax < 0 || cell.x > canvas.width || cell.y > canvas.height) continue;
-                foreach (LevelPlacement item in pair.Value) DrawPlacement(item, cell, false);
+                foreach (LevelPlacement item in pair.Value) if (Visible(item)) DrawPlacement(item, cell, false);
             }
             DrawGrid(canvas, bounds);
             if (hoveringCanvas && layout.Contains(hover))
             {
                 Rect cell = CellRect(hover);
-                if (!SelectionMode && tool != GridTool.Eraser && !RectangleStroke && Brush != null)
+                if (tool == GridTool.Stamp)
+                {
+                    foreach (LevelPlacement item in clipboard)
+                        if (layout.Contains(hover + item.Cell)) DrawPlacement(item, CellRect(hover + item.Cell), true);
+                }
+                else if (!SelectionMode && tool != GridTool.Eraser && !RectangleStroke && Brush != null)
                     DrawPlacement(new LevelPlacement { Cell = hover, Brush = Brush, Settings = paintSettings }, cell, true);
                 Outline(cell, new Color(1f, 1f, 1f, 0.8f), 1f);
             }
             LevelPlacement selected = SelectedPlacement();
             if (selected != null && layout.Contains(selected.Cell))
                 Outline(CellRect(selected.Cell), new Color(1f, 0.82f, 0.24f), 2f);
+            if (hasAreaSelection && SelectionMode)
+            {
+                Rect first = CellRect(new Vector2Int(selectionArea.xMin, selectionArea.yMax - 1));
+                Rect area = new Rect(first.x, first.y, selectionArea.width * cellPixels, selectionArea.height * cellPixels);
+                EditorGUI.DrawRect(area, new Color(1f, 0.82f, 0.24f, 0.08f));
+                Outline(area, new Color(1f, 0.82f, 0.24f, 0.9f), 2f);
+            }
             if (RectangleStroke)
             {
                 Color fill = paintButton == 1 ? new Color(1f, 0.4f, 0.3f, 0.35f) : new Color(0.35f, 0.85f, 1f, 0.35f);
@@ -660,6 +722,15 @@ namespace TapTap.Editor
                 EditorGUI.DrawRect(new Rect(poleX, shape.y, shape.width * 0.65f, shape.height * 0.4f), color);
                 EditorGUI.DrawRect(new Rect(shape.x, shape.yMax - 2f, shape.width, 2f), color);
             }
+            else if (placement.Settings is PhaseBlockPlacementSettings phaseBlock)
+            {
+                Color fill = color;
+                bool solid = phaseBlock.SolidWhenActive == previewPhaseActive;
+                if (!solid) fill.a *= 0.22f;
+                EditorGUI.DrawRect(shape, fill);
+                Outline(shape, color, Mathf.Max(1f, cell.width * 0.07f));
+                if (cell.width >= 14f) GUI.Label(shape, solid ? "实" : "虚", CenterStyle());
+            }
             else
             {
                 EditorGUI.DrawRect(shape, color);
@@ -686,7 +757,7 @@ namespace TapTap.Editor
                 e.Use();
                 Repaint();
             }
-            else if (e.type == EventType.MouseDown && inside && e.button == 0 && e.alt)
+            else if (e.type == EventType.MouseDown && inside && e.button == 0 && (e.alt || spacePan))
             {
                 EndStroke();
                 panning = true;
@@ -709,7 +780,17 @@ namespace TapTap.Editor
             else if (e.type == EventType.MouseDown && inside && layout != null && layout.Contains(cell) &&
                 (e.button == 0 || e.button == 1))
             {
-                if (SelectionMode && e.button == 0) SelectCell(cell);
+                GUIUtility.keyboardControl = 0;
+                if (tool == GridTool.Stamp && e.button == 0) PasteArea(cell);
+                else if (SelectionMode && e.button == 0)
+                {
+                    SelectCell(cell);
+                    selecting = true;
+                    selectionAnchor = cell;
+                    selectionArea = new RectInt(cell, Vector2Int.one);
+                    hasAreaSelection = true;
+                    GUIUtility.hotControl = control;
+                }
                 else if (e.button == 1 || tool == GridTool.Eraser || CanPaint())
                 {
                     BeginStroke(tool == GridTool.Eraser ? 1 : e.button);
@@ -736,6 +817,13 @@ namespace TapTap.Editor
                 e.Use();
                 Repaint();
             }
+            else if (e.type == EventType.MouseDrag && selecting)
+            {
+                Vector2Int end = ClampCell(cell);
+                Vector2Int min = Vector2Int.Min(selectionAnchor, end);
+                selectionArea = new RectInt(min, Vector2Int.Max(selectionAnchor, end) - min + Vector2Int.one);
+                e.Use(); Repaint();
+            }
             else if (e.type == EventType.MouseDrag && painting)
             {
                 if (RectangleStroke) rectangleEnd = ClampCell(cell);
@@ -748,7 +836,7 @@ namespace TapTap.Editor
                 e.Use();
                 Repaint();
             }
-            else if (e.type == EventType.MouseUp && (painting || panning))
+            else if (e.type == EventType.MouseUp && (painting || panning || selecting))
             {
                 if (RectangleStroke)
                 {
@@ -758,6 +846,7 @@ namespace TapTap.Editor
                 }
                 EndStroke();
                 panning = false;
+                selecting = false;
                 GUIUtility.hotControl = 0;
                 e.Use();
                 Repaint();
@@ -868,7 +957,7 @@ namespace TapTap.Editor
             for (int i = contents.Count - 1; i >= 0; i--)
             {
                 LevelPlacement item = contents[i];
-                if (item.Brush != null && item.Brush.PreviewRect.Contains(pointInCell))
+                    if (Visible(item) && item.Brush != null && item.Brush.PreviewRect.Contains(pointInCell))
                 {
                     picked = item;
                     break;
@@ -877,7 +966,7 @@ namespace TapTap.Editor
             if (picked == null)
             {
                 picked = Brush != null ? layout.Find(cell, Brush.LayerId) : null;
-                if (picked == null) picked = contents.FindLast(item => item.Brush != null);
+                if (picked == null) picked = contents.FindLast(item => item.Brush != null && Visible(item));
             }
             if (picked == null || picked.Brush == null) return;
             LevelBrushHandler handler = LevelBrushHandlers.Get(picked.Brush.HandlerId);
@@ -906,7 +995,8 @@ namespace TapTap.Editor
             selectedPlacementId = null;
             if (!cells.TryGetValue(cell, out var contents)) return;
             LevelPlacement preferred = Brush != null ? layout.Find(cell, Brush.LayerId) : null;
-            selectedPlacementId = (preferred ?? contents[contents.Count - 1]).Id;
+            var visible = preferred != null && Visible(preferred) ? preferred : contents.FindLast(Visible);
+            if (visible != null) selectedPlacementId = visible.Id;
         }
 
         private LevelPlacement SelectedPlacement()
@@ -952,9 +1042,141 @@ namespace TapTap.Editor
         private void Changed()
         {
             EditorUtility.SetDirty(layout);
+            prefabNeedsUpdate = true;
             cacheDirty = true;
             saveError = null;
             Repaint();
+        }
+
+        private bool Visible(LevelPlacement item) => item != null && (!isolateLayer ||
+            item.Brush != null && item.Brush.LayerId == (Brush != null ? Brush.LayerId : "geometry"));
+
+        private void HandleShortcuts()
+        {
+            Event e = Event.current;
+            if (e.type == EventType.KeyUp && e.keyCode == KeyCode.Space) { spacePan = false; e.Use(); return; }
+            if (e.type != EventType.KeyDown || EditorGUIUtility.editingTextField) return;
+            if (e.keyCode == KeyCode.Space) { spacePan = true; e.Use(); return; }
+            if (painting || panning || selecting) return;
+            if (e.control || e.command)
+            {
+                switch (e.keyCode)
+                {
+                    case KeyCode.S: if (e.shift) ExportPrefab(); else SaveLayout(); break;
+                    case KeyCode.C: CopyArea(); break;
+                    case KeyCode.X: if (CopyArea()) { DeleteArea(); clipboardIsCut = true; } break;
+                    case KeyCode.V:
+                        if (clipboard.Count == 0) ShowNotification(new GUIContent("先选择区域并复制"));
+                        else { tool = GridTool.Stamp; GUIUtility.keyboardControl = 0; }
+                        break;
+                    default: return;
+                }
+            }
+            else
+            {
+                switch (e.keyCode)
+                {
+                    case KeyCode.B: tool = GridTool.Brush; break;
+                    case KeyCode.E: tool = GridTool.Eraser; break;
+                    case KeyCode.R: tool = e.shift ? GridTool.RectangleOutline : GridTool.Rectangle; break;
+                    case KeyCode.F: tool = GridTool.Bucket; break;
+                    case KeyCode.V: tool = GridTool.Select; break;
+                    case KeyCode.Home: fitPending = true; break;
+                    case KeyCode.Delete: case KeyCode.Backspace: if (SelectionMode) DeleteArea(); else return; break;
+                    case KeyCode.LeftArrow: if (SelectionMode) MoveArea(Vector2Int.left); else return; break;
+                    case KeyCode.RightArrow: if (SelectionMode) MoveArea(Vector2Int.right); else return; break;
+                    case KeyCode.UpArrow: if (SelectionMode) MoveArea(Vector2Int.up); else return; break;
+                    case KeyCode.DownArrow: if (SelectionMode) MoveArea(Vector2Int.down); else return; break;
+                    default: return;
+                }
+            }
+            e.Use(); Repaint();
+        }
+
+        private List<LevelPlacement> AreaContents()
+        {
+            if (layout == null || !hasAreaSelection) return new List<LevelPlacement>();
+            return layout.Placements.FindAll(item => Visible(item) && selectionArea.Contains(item.Cell));
+        }
+
+        private bool CopyArea()
+        {
+            List<LevelPlacement> items = AreaContents();
+            items.RemoveAll(item => item.Brush == null);
+            if (items.Count == 0) { ShowNotification(new GUIContent("选择区域中没有物体")); return false; }
+            clipboard.Clear();
+            clipboardEntryIndex = -1;
+            clipboardIsCut = false;
+            foreach (LevelPlacement item in items)
+            {
+                if (item.Id == layout.EntryPlacementId) clipboardEntryIndex = clipboard.Count;
+                clipboard.Add(new LevelPlacement { Cell = item.Cell - selectionArea.min, Brush = item.Brush, Settings = CloneSettings(item.Settings) });
+            }
+            ShowNotification(new GUIContent($"已复制 {items.Count} 个物体；Ctrl+V 放置"));
+            return true;
+        }
+
+        private void PasteArea(Vector2Int origin)
+        {
+            if (layout == null || clipboard.Count == 0) return;
+            foreach (LevelPlacement item in clipboard)
+                if (item.Brush == null || !layout.Contains(origin + item.Cell)) { ShowNotification(new GUIContent("粘贴区域越界或笔刷已删除")); return; }
+            Undo.RecordObject(layout, "粘贴关卡区域");
+            foreach (LevelPlacement item in clipboard)
+                LevelGridEditing.Apply(layout, new[] { origin + item.Cell }, item.Brush, item.Settings, item.Brush.LayerId, false, false);
+            if (clipboardIsCut && clipboardEntryIndex >= 0 && layout.EntryPlacement == null)
+            {
+                LevelPlacement entry = clipboard[clipboardEntryIndex];
+                layout.EntryPlacementId = layout.Find(origin + entry.Cell, entry.Brush.LayerId)?.Id;
+            }
+            clipboardIsCut = false;
+            Changed();
+        }
+
+        private void DeleteArea()
+        {
+            List<LevelPlacement> items = AreaContents();
+            if (items.Count == 0) return;
+            Undo.RecordObject(layout, "删除选择区域");
+            foreach (LevelPlacement item in items)
+            {
+                layout.Placements.Remove(item);
+                if (item.Id == layout.EntryPlacementId) layout.EntryPlacementId = null;
+            }
+            selectedPlacementId = null;
+            Changed();
+        }
+
+        private void MoveArea(Vector2Int delta)
+        {
+            List<LevelPlacement> items = AreaContents();
+            if (items.Count == 0) return;
+            foreach (LevelPlacement item in items)
+            {
+                if (item.Brush == null) return;
+                Vector2Int destination = item.Cell + delta;
+                var occupied = layout.Find(destination, item.Brush.LayerId);
+                if (!layout.Contains(destination) || occupied != null && !items.Contains(occupied))
+                { ShowNotification(new GUIContent("移动目标越界或同层已有物体")); return; }
+            }
+            Undo.RecordObject(layout, "移动选择区域");
+            foreach (LevelPlacement item in items) item.Cell += delta;
+            selectionArea.position += delta;
+            if (selectedCell.HasValue) selectedCell += delta;
+            Changed();
+        }
+
+        private void DrawStatus(Rect canvas)
+        {
+            Rect bar = new Rect(0f, position.height - 22f, position.width, 22f);
+            EditorGUI.DrawRect(bar, new Color(0.18f, 0.2f, 0.23f));
+            Vector2Int cell = MouseToCell(Event.current.mousePosition - canvas.position);
+            string coordinate = canvas.Contains(Event.current.mousePosition) && layout != null && layout.Contains(cell) ? $"格子 {cell.x}, {cell.y}   " : "";
+            string saveState = layout == null ? "" : EditorUtility.IsDirty(layout) ? "布局未保存" : "布局已保存";
+            string prefabState = layout != null && layout.OutputPrefab == null ? " · Prefab 未生成" : prefabNeedsUpdate ? " · Prefab 待更新" : "";
+            GUI.Label(new Rect(8f, bar.y + 2f, bar.width - 16f, 18f),
+                coordinate + $"{cellPixels:0} px/格   ·   {(layout != null ? layout.Placements.Count : 0)} 个物体   ·   " + saveState + prefabState,
+                new GUIStyle(EditorStyles.miniLabel) { normal = { textColor = new Color(0.85f, 0.9f, 0.95f) } });
         }
 
         private Vector2Int MouseToCell(Vector2 local)

@@ -16,7 +16,7 @@ MonoBehaviour:
   Gravity: 24
   MoveSpeed: 5
   LandingShakeSpeed: 5
-  JoinedOffset: 0.9
+  JoinedOffset: 0.75
   MaxExtension: 4.4
   ExtensionDuration: 0.45
   RetractionDuration: 0.35
@@ -31,6 +31,10 @@ MonoBehaviour:
   PullAccelerationTime: 0.45
   RecallCooldown: 0.22
   RespawnDuration: 0.45
+  DeathShakeDuration: 0.08
+  RespawnCollapseDuration: 0.18
+  RespawnDotDuration: 0.1
+  RespawnRebuildDuration: 0.2
   JoinTolerance: 0.015
   Skin: 0.01
   DeathBoundary: -15

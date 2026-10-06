@@ -98,10 +98,11 @@ namespace TapTap.Editor
                 GameObject playerObject = Instance(playerPrefab, "Player", new Vector2(-5f, 0f), Vector2.one);
                 PlayerController player = playerObject.GetComponent<PlayerController>();
                 playerObject.GetComponent<RespawnService>().SetCheckpoint(new Vector2(-5f, 0.4f));
-                BuildCamera(player);
-
-                GameObject hud = new GameObject("Prototype HUD");
-                hud.AddComponent<PrototypeHUD>().Configure(player, config);
+                var runtimeObject = (GameObject)PrefabUtility.InstantiatePrefab(LevelTestSceneBuilder.EnsureRuntimePrefab(), demo);
+                LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
+                runtime.Configure(player, null, config, player.Body.transform.position);
+                runtime.CameraRig?.SnapToPlayer();
+                LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
 
                 EditorSceneManager.SaveScene(demo, DemoScenePath);
                 var otherScenes = EditorBuildSettings.scenes
@@ -173,12 +174,13 @@ namespace TapTap.Editor
             input.UseKeyboard = true;
             RespawnService respawn = root.AddComponent<RespawnService>();
             respawn.Configure(config);
-            MovableEntity body = CreateEntity("Body", root.transform, new Vector2(0f, 0.4f), EntityPart.Body, true, config);
-            MovableEntity head = CreateEntity("Head", root.transform, new Vector2(0f, 1.3f), EntityPart.Head, true, config);
+            MovableEntity body = CreateEntity("Body", root.transform, new Vector2(0f, 0.45f), EntityPart.Body, true, config);
+            MovableEntity head = CreateEntity("Head", root.transform, new Vector2(0f, 0.45f + config.JoinedOffset), EntityPart.Head, true, config);
             PlayerController controller = root.AddComponent<PlayerController>();
             PlayerView view = root.AddComponent<PlayerView>();
             controller.Configure(input, config, body, head, respawn, view);
             view.Configure(controller, body, head, config);
+            GameplayVisualAssets.ConfigurePlayerVisuals(root);
             return SavePrefab(root, "Player");
         }
 
@@ -195,7 +197,8 @@ namespace TapTap.Editor
             rigidbody.interpolation = RigidbodyInterpolation2D.Interpolate;
             rigidbody.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             rigidbody.useFullKinematicContacts = true;
-            root.AddComponent<BoxCollider2D>().size = new Vector2(0.7f, 0.8f);
+            float height = part == EntityPart.Head ? 0.6f : 0.9f;
+            root.AddComponent<BoxCollider2D>().size = new Vector2(0.7f, height);
             root.AddComponent<KinematicMotor2D>();
             MovableEntity entity = root.AddComponent<MovableEntity>();
             entity.Configure(part, controlled, config.Gravity);
@@ -209,7 +212,7 @@ namespace TapTap.Editor
             silhouette.sprite = rounded;
             silhouette.color = part == EntityPart.Head ? Cream : Teal;
             silhouette.sortingOrder = 10;
-            visual.transform.localScale = new Vector3(0.7f, 0.8f, 1f);
+            visual.transform.localScale = new Vector3(0.7f, height, 1f);
 
             if (part == EntityPart.Head)
             {
@@ -268,7 +271,7 @@ namespace TapTap.Editor
             collider.size = new Vector2(0.8f, 1.8f);
             collider.offset = new Vector2(0f, 0.8f);
             collider.isTrigger = true;
-            root.AddComponent<CheckpointFlag>().SpawnOffset = new Vector2(0f, 0.4f);
+            root.AddComponent<CheckpointFlag>().SpawnOffset = new Vector2(0f, 0.45f);
             Visual(root.transform, "Pole", new Vector2(0f, 0.8f), new Vector2(0.07f, 1.6f), Cream, square, 3);
             Visual(root.transform, "Flag", new Vector2(0.29f, 1.35f), new Vector2(0.58f, 0.37f), Teal, square, 3);
             Visual(root.transform, "Base", new Vector2(0f, 0.05f), new Vector2(0.4f, 0.1f), Teal, rounded, 3);
@@ -370,26 +373,6 @@ namespace TapTap.Editor
             trigger.size = new Vector2(100f, 2f);
             trigger.isTrigger = true;
             killPlane.AddComponent<LethalZone>();
-        }
-
-        private static void BuildCamera(PlayerController player)
-        {
-            var follow = new GameObject("Camera follow");
-            follow.transform.position = new Vector3(-1.5f, 3.5f, -10f);
-            var shake = new GameObject("Camera shake");
-            shake.transform.SetParent(follow.transform, false);
-            var cameraObject = new GameObject("Main Camera");
-            cameraObject.tag = "MainCamera";
-            cameraObject.transform.SetParent(shake.transform, false);
-            Camera camera = cameraObject.AddComponent<Camera>();
-            camera.orthographic = true;
-            camera.orthographicSize = 5.6f;
-            camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = Ink;
-            camera.nearClipPlane = 0.1f;
-            camera.farClipPlane = 100f;
-            cameraObject.AddComponent<AudioListener>();
-            follow.AddComponent<DemoCamera>().Configure(player, camera, shake.transform);
         }
 
         private static GameObject Visual(Transform parent, string name, Vector2 position,

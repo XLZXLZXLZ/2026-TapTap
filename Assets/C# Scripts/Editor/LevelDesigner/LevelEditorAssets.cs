@@ -17,6 +17,7 @@ namespace TapTap.Editor
 
         public static LevelPalette EnsureDefaults()
         {
+            GameplayVisualAssets.EnsureMechanismPrefabs();
             LevelPrefabBuilder.EnsureFolder(BrushFolder);
             LevelPrefabBuilder.EnsureFolder(TerrainFolder);
             LevelPrefabBuilder.EnsureFolder(MarkerFolder);
@@ -39,7 +40,16 @@ namespace TapTap.Editor
                 EnsureBrush("Spikes", "尖刺", "default", "geometry", spikes,
                     new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(1f, 0.43f, 0.36f)),
                 EnsureBrush("Checkpoint", "复活点", "checkpoint", "markers", checkpoint,
-                    new Vector2(0.5f, 0f), new Rect(0.25f, 0f, 0.5f, 1f), new Color(1f, 0.94f, 0.79f))
+                    new Vector2(0.5f, 0f), new Rect(0.25f, 0f, 0.5f, 1f), new Color(1f, 0.94f, 0.79f)),
+                EnsureBrush("PhaseBlock", "虚实方块（亮时实）", "phase-block", "geometry",
+                    AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.PhasePrefabPath),
+                    new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.4f, 0.76f, 0.94f)),
+                EnsureBrush("InversePhaseBlock", "虚实方块（亮时虚）", "phase-block", "geometry",
+                    AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.InversePhasePrefabPath),
+                    new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.4f, 0.76f, 0.94f)),
+                EnsureBrush("MechanismSwitch", "机关按钮", "default", "markers",
+                    AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.SwitchPrefabPath),
+                    new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f))
             };
             LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
             if (palette == null)
@@ -55,6 +65,12 @@ namespace TapTap.Editor
                 Undo.RecordObject(palette, "恢复默认笔刷");
                 palette.Brushes = new System.Collections.Generic.List<LevelBrush>(brushes);
                 EditorUtility.SetDirty(palette);
+                AssetDatabase.SaveAssetIfDirty(palette);
+            }
+            else
+            {
+                for (int i = 5; i < brushes.Length; i++)
+                    if (!palette.Brushes.Contains(brushes[i])) { palette.Brushes.Add(brushes[i]); EditorUtility.SetDirty(palette); }
                 AssetDatabase.SaveAssetIfDirty(palette);
             }
             return palette;

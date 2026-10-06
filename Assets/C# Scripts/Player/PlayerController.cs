@@ -8,6 +8,15 @@ namespace TapTap
     public enum PlayerPhase { Joined, Extending, Holding, Retracting, Pulling, Detached }
     public enum PlayerEffect { HeadLanded, PullBlocked, Joined, DownwardJoined, Bounce, Death, RecallFailed, HeadReturned, Landed }
 
+    public struct PlayerContactFeedback
+    {
+        public MovableEntity Entity;
+        public Vector2 Point;
+        public Vector2 Normal;
+        public float Speed;
+        public bool Assembly;
+    }
+
     public sealed class PlayerController : MonoBehaviour
     {
         private enum Outcome { None, Pull, Join, Detach, DownwardJoin }
@@ -41,11 +50,14 @@ namespace TapTap
         private bool bodyGroundContact;
         private bool headGroundContact;
         private readonly List<PlayerEffect> effects = new List<PlayerEffect>(4);
+        private readonly List<PlayerContactFeedback> contacts = new List<PlayerContactFeedback>(3);
 
         public PlayerPhase Phase => phase;
         public MovableEntity Body => body;
         public MovableEntity Head => head;
         public PlayerConfig Config => config;
+        public Vector2 PresentationPosition => respawn != null && body != null
+            ? respawn.FollowPosition(body) : body != null ? (Vector2)body.transform.position : (Vector2)transform.position;
         public bool HasMagneticConnection => phase != PlayerPhase.Detached;
         public bool GuideVisible => guideActive || clock < failedGuideUntil;
         public bool CanRecall => !body.IsReturning && !head.IsReturning
@@ -53,6 +65,7 @@ namespace TapTap
             && head.Motor.Position.y - body.Motor.Position.y > config.ToWorld(config.JoinedOffset) + config.JoinTolerance;
         public event Action<PlayerEffect> Effect;
         public event Action<PlayerPhase> PhaseChanged;
+        public event Action<PlayerContactFeedback> ContactFeedback;
 
         public void Configure(PlayerInput controls, PlayerConfig settings, MovableEntity lower,
             MovableEntity upper, RespawnService returns, PlayerView presentation)
@@ -95,6 +108,7 @@ namespace TapTap
             body.Motor.BeginStep(dt);
             head.Motor.BeginStep(dt);
             effects.Clear();
+            contacts.Clear();
             outcome = Outcome.None;
             bodyDied = headDied = false;
             headFallSpeed = head.Velocity.y;
@@ -124,6 +138,7 @@ namespace TapTap
             body.Motor.Commit();
             head.Motor.Commit();
             foreach (PlayerEffect effect in effects) Effect?.Invoke(effect);
+            foreach (PlayerContactFeedback contact in contacts) ContactFeedback?.Invoke(contact);
         }
 
         private void ConsumeInput()
@@ -185,7 +200,7 @@ namespace TapTap
                 else velocity.y = 0f;
             }
             bool groundContact = delta.y < 0f && pairContactNormal.y > 0.5f;
-            QueueLanding(groundContact, bodyGroundContact, impactSpeed);
+            QueueLanding(body, groundContact, bodyGroundContact, impactSpeed, pairContactNormal);
             bodyGroundContact = groundContact && velocity.y <= 0f;
             body.Velocity = head.Velocity = velocity;
         }
@@ -239,6 +254,8 @@ namespace TapTap
             {
                 outcome = Outcome.Pull;
                 effects.Add(PlayerEffect.HeadLanded);
+                QueueLanding(head, true, headGroundContact, 1f, moved.Normal);
+                headGroundContact = true;
             }
             else if (head.Motor.Position.y - body.Motor.Position.y
                 <= config.ToWorld(config.JoinedOffset) + config.JoinTolerance)
@@ -295,7 +312,7 @@ namespace TapTap
                 float impactSpeed = Mathf.Max(0f, config.WorldGravity * dt - body.Velocity.y);
                 body.SimulateFree(dt, input.Horizontal * config.ToWorld(config.MoveSpeed));
                 bool contact = body.Motor.LastMoveResult.Blocked && body.Motor.LastMoveResult.Normal.y > 0.5f;
-                QueueLanding(contact, bodyGroundContact, impactSpeed);
+                QueueLanding(body, contact, bodyGroundContact, impactSpeed, body.Motor.LastMoveResult.Normal);
                 bodyGroundContact = contact && body.Velocity.y <= 0f;
             }
             if (!head.IsReturning)
@@ -303,7 +320,7 @@ namespace TapTap
                 float impactSpeed = Mathf.Max(0f, config.WorldGravity * dt - head.Velocity.y);
                 head.SimulateFree(dt, 0f);
                 bool contact = head.Motor.LastMoveResult.Blocked && head.Motor.LastMoveResult.Normal.y > 0.5f;
-                QueueLanding(contact, headGroundContact, impactSpeed);
+                QueueLanding(head, contact, headGroundContact, impactSpeed, head.Motor.LastMoveResult.Normal);
                 headGroundContact = contact && head.Velocity.y <= 0f;
             }
 
@@ -323,9 +340,17 @@ namespace TapTap
             }
         }
 
-        private void QueueLanding(bool groundContact, bool previousContact, float impactSpeed)
+        private void QueueLanding(MovableEntity entity, bool groundContact, bool previousContact, float impactSpeed, Vector2 normal)
         {
-            if (groundContact && !previousContact && impactSpeed >= config.ToWorld(config.LandingShakeSpeed)
+            if (!groundContact || previousContact) return;
+            if (normal.sqrMagnitude < 0.1f) normal = Vector2.up;
+            contacts.Add(new PlayerContactFeedback
+            {
+                Entity = entity, Normal = normal, Speed = impactSpeed,
+                Point = entity.Motor.Position + entity.Motor.CenterOffset
+                    - Vector2.Scale(normal, entity.Motor.Size * 0.5f)
+            });
+            if (impactSpeed >= config.ToWorld(config.LandingShakeSpeed)
                 && !effects.Contains(PlayerEffect.Landed))
                 effects.Add(PlayerEffect.Landed);
         }
@@ -392,6 +417,7 @@ namespace TapTap
                 bool grouped = HasMagneticConnection;
                 CancelAction();
                 effects.Clear();
+                contacts.Clear();
                 effects.Add(PlayerEffect.Death);
                 if (grouped)
                 {
@@ -441,6 +467,14 @@ namespace TapTap
             head.SpringEnabled = false;
             CancelAction();
             SetPhase(PlayerPhase.Joined);
+            contacts.RemoveAll(contact => contact.Entity == head);
+            contacts.Add(new PlayerContactFeedback
+            {
+                Entity = body, Assembly = true, Speed = Mathf.Abs(headFallSpeed),
+                Point = (body.Motor.Position + Vector2.up * body.Motor.Size.y * 0.5f
+                    + head.Motor.Position - Vector2.up * head.Motor.Size.y * 0.5f) * 0.5f,
+                Normal = downward || height <= 0f ? Vector2.up : Vector2.down
+            });
             if (downward || height > 0f) effects.Add(downward ? PlayerEffect.DownwardJoined : PlayerEffect.Joined);
             else effects.Add(PlayerEffect.HeadReturned);
         }

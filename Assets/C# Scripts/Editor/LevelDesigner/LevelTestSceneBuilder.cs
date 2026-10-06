@@ -13,6 +13,8 @@ namespace TapTap.Editor
         public const string TestSceneFolder = "Assets/Scenes/Test";
         private const string DefaultPlayerPath = "Assets/Prefabs/Characters/Player.prefab";
         private const string DefaultConfigPath = "Assets/Runtime/Config/PrototypePlayer.asset";
+        private static float ReferenceAspect => (float)Mathf.Max(1, PlayerSettings.defaultScreenWidth)
+            / Mathf.Max(1, PlayerSettings.defaultScreenHeight);
 
         public static GameObject EnsureRuntimePrefab()
         {
@@ -21,6 +23,21 @@ namespace TapTap.Editor
             {
                 if (existing.GetComponent<LevelSceneRuntime>() == null)
                     throw new InvalidOperationException("Runtime Prefab 缺少 LevelSceneRuntime 配置。");
+                var existingOutline = existing.GetComponentInChildren<PhaseBlockOutline>(true);
+                if (existing.GetComponentInChildren<WorldPhaseState>(true) == null || existingOutline == null || existingOutline.GetComponent<MeshFilter>() == null)
+                {
+                    GameObject root = PrefabUtility.LoadPrefabContents(RuntimePrefabPath);
+                    try
+                    {
+                        Transform managers = root.transform.Find("Managers");
+                        if (managers == null) { managers = new GameObject("Managers").transform; managers.SetParent(root.transform, false); }
+                        if (managers.GetComponent<WorldPhaseState>() == null) managers.gameObject.AddComponent<WorldPhaseState>();
+                        PlayerEffectsPrefabs.BindRuntime(root, GameplayVisualAssets.EnsureVisualSettings());
+                        PrefabUtility.SaveAsPrefabAsset(root, RuntimePrefabPath);
+                    }
+                    finally { PrefabUtility.UnloadPrefabContents(root); }
+                    existing = AssetDatabase.LoadAssetAtPath<GameObject>(RuntimePrefabPath);
+                }
                 return existing;
             }
             GameObject character = AssetDatabase.LoadAssetAtPath<GameObject>(DefaultPlayerPath);
@@ -36,6 +53,7 @@ namespace TapTap.Editor
                 var effects = new GameObject("Managers");
                 effects.transform.SetParent(root.transform, false);
                 effects.AddComponent<EffectManager>();
+                effects.AddComponent<WorldPhaseState>();
                 var follow = new GameObject("Camera Rig");
                 follow.transform.SetParent(root.transform, false);
                 follow.transform.localPosition = new Vector3(3f, 3.5f, -10f);
@@ -59,6 +77,7 @@ namespace TapTap.Editor
                 PrototypeHUD hud = overlay.AddComponent<PrototypeHUD>();
                 hud.Configure(null, config);
                 root.AddComponent<LevelSceneRuntime>().ConfigureResources(character, config, rig, hud);
+                PlayerEffectsPrefabs.BindRuntime(root, GameplayVisualAssets.EnsureVisualSettings());
                 GameObject result = PrefabUtility.SaveAsPrefabAsset(root, RuntimePrefabPath, out bool success);
                 if (!success || result == null) throw new IOException("无法保存 Runtime Prefab。");
                 return result;
@@ -69,6 +88,7 @@ namespace TapTap.Editor
         public static string Generate(LevelDefinition layout, bool openScene = true)
         {
             if (layout == null) throw new ArgumentNullException(nameof(layout));
+            LevelPrefabBuilder.EnsureFolder("Assets/Prefabs/Levels");
             string path = layout.OutputPrefab != null ? AssetDatabase.GetAssetPath(layout.OutputPrefab) :
                 AssetDatabase.GenerateUniqueAssetPath("Assets/Prefabs/Levels/" + FileName(layout.name) + ".prefab");
             GameObject level = LevelPrefabBuilder.Save(layout, path);
@@ -87,8 +107,9 @@ namespace TapTap.Editor
             if (shared.PlayerPrefab == null || shared.PlayerPrefab.GetComponent<PlayerController>() == null)
                 throw new InvalidOperationException("Runtime 配置需要一个带有 PlayerController 的玩家 Prefab。");
             PlayerController character = shared.PlayerPrefab.GetComponent<PlayerController>();
-            if (character.Body == null || character.Head == null || character.GetComponent<RespawnService>() == null)
-                throw new InvalidOperationException("玩家 Prefab 缺少身体、头部或复活配置。");
+            if (character.Body == null || character.Head == null || character.GetComponent<RespawnService>() == null
+                || character.GetComponent<PlayerInput>() == null || shared.CameraRig == null)
+                throw new InvalidOperationException("Runtime 或玩家 Prefab 缺少相机、输入、身体、头部或复活配置。");
             config = config != null ? config : levelPrefab.GetComponent<LevelRegion>().Source?.Palette?.Config;
             config = config != null ? config : shared.PlayerConfig;
             if (config == null || config.UnitSize <= 0f || float.IsNaN(config.UnitSize) || float.IsInfinity(config.UnitSize))
@@ -96,7 +117,13 @@ namespace TapTap.Editor
             LevelPrefabBuilder.EnsureFolder(TestSceneFolder);
             string scenePath = AssetDatabase.GenerateUniqueAssetPath(TestSceneFolder + "/" + FileName(levelPrefab.name) + "_Test.unity");
             Scene previous = SceneManager.GetActiveScene();
-            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+            bool untitledScene = false;
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+                untitledScene |= string.IsNullOrEmpty(SceneManager.GetSceneAt(i).path);
+            if (!Application.isBatchMode && untitledScene && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                return null;
+            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,
+                Application.isBatchMode || untitledScene ? NewSceneMode.Single : NewSceneMode.Additive);
             try
             {
                 SceneManager.SetActiveScene(scene);
@@ -118,7 +145,7 @@ namespace TapTap.Editor
                 var runtimeObject = (GameObject)PrefabUtility.InstantiatePrefab(runtimePrefab, scene);
                 LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
                 runtime.Configure(player, region, config, spawn);
-                runtime.CameraRig?.SnapToPlayer();
+                runtime.CameraRig?.FrameRegionHorizontally(region, ReferenceAspect);
                 LevelPrefabBuilder.RecordInstanceOverrides(regionObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(playerObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
@@ -128,7 +155,7 @@ namespace TapTap.Editor
             finally
             {
                 if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
-                if (scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true);
+                if (scene.IsValid() && scene.isLoaded && SceneManager.sceneCount > 1) EditorSceneManager.CloseScene(scene, true);
             }
             if (!Application.isBatchMode && openScene)
             {
@@ -143,6 +170,43 @@ namespace TapTap.Editor
             }
             Debug.Log("Level test scene saved: " + scenePath);
             return scenePath;
+        }
+
+        [MenuItem("TapTap/Level Designer/Update Test Scene Cameras")]
+        public static void UpdateTestSceneCameras()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            Scene previous = SceneManager.GetActiveScene();
+            int updated = 0;
+            foreach (string guid in AssetDatabase.FindAssets("t:Scene", new[] { TestSceneFolder }))
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                Scene scene = SceneManager.GetSceneByPath(path);
+                bool loaded = scene.IsValid() && scene.isLoaded;
+                if (loaded && scene.isDirty) continue;
+                if (!loaded) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                try
+                {
+                    LevelRegion region = null;
+                    LevelSceneRuntime runtime = null;
+                    foreach (GameObject root in scene.GetRootGameObjects())
+                    {
+                        if (region == null) region = root.GetComponentInChildren<LevelRegion>(true);
+                        if (runtime == null) runtime = root.GetComponentInChildren<LevelSceneRuntime>(true);
+                    }
+                    if (region == null || runtime == null || runtime.CameraRig == null) continue;
+                    runtime.CameraRig.FrameRegionHorizontally(region, ReferenceAspect);
+                    LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
+                    if (!EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存测试场景：" + path);
+                    updated++;
+                }
+                finally
+                {
+                    if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
+                    if (!loaded && scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true);
+                }
+            }
+            Debug.Log("Fixed test scene cameras updated: " + updated);
         }
 
         private static Vector2 FindSpawn(LevelRegion region, PlayerController player, PlayerConfig config)
@@ -218,7 +282,10 @@ namespace TapTap.Editor
         {
             if (!File.Exists(PrototypeBuilder.DemoScenePath)) return;
             Scene previous = SceneManager.GetActiveScene();
-            Scene demo = EditorSceneManager.OpenScene(PrototypeBuilder.DemoScenePath, OpenSceneMode.Additive);
+            Scene demo = SceneManager.GetSceneByPath(PrototypeBuilder.DemoScenePath);
+            bool alreadyLoaded = demo.IsValid() && demo.isLoaded;
+            if (alreadyLoaded && demo.isDirty) return;
+            if (!alreadyLoaded) demo = EditorSceneManager.OpenScene(PrototypeBuilder.DemoScenePath, OpenSceneMode.Additive);
             try
             {
                 GameObject[] roots = demo.GetRootGameObjects();
@@ -249,7 +316,7 @@ namespace TapTap.Editor
                 runtime.Configure(player, null, player.Config, player.Body.transform.position);
                 if (oldCamera != null) UnityEngine.Object.DestroyImmediate(oldCamera.gameObject);
                 if (oldHud != null) UnityEngine.Object.DestroyImmediate(oldHud.gameObject);
-                if (oldEffects != null) UnityEngine.Object.DestroyImmediate(oldEffects.gameObject);
+                if (oldEffects != null) UnityEngine.Object.DestroyImmediate(oldEffects);
                 LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
                 if (!EditorSceneManager.SaveScene(demo, PrototypeBuilder.DemoScenePath))
                     throw new IOException("无法保存 Demo 的 Runtime Prefab 引用。");
@@ -258,7 +325,7 @@ namespace TapTap.Editor
             finally
             {
                 if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
-                if (demo.IsValid() && demo.isLoaded) EditorSceneManager.CloseScene(demo, true);
+                if (!alreadyLoaded && demo.IsValid() && demo.isLoaded) EditorSceneManager.CloseScene(demo, true);
             }
         }
     }

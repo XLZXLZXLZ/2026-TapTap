@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01c747f8cdd4a4a91ef009e638eb84e, type: 3}
+  m_Name: PrototypeVisuals
+  m_EditorClassIdentifier: 
+  DotSprite: {fileID: 21300000, guid: 17b946766098594488ead60fbb1de682, type: 3}
+  EffectsMaterial: {fileID: 2100000, guid: 152a9963ca8f32840b3c3662455f63a6, type: 2}
+  ParticleMaterial: {fileID: 2100000, guid: 07830898ad2a041438aa1aabc73bfce3, type: 2}
+  MagneticColor: {r: 0.52, g: 0.85, b: 1, a: 0.65}
+  MagneticWidth: 0.025
+  MagneticAmplitude: 0.075
+  MagneticSpeed: 2.1
+  MagneticSegments: 18
+  MagneticDotCount: 5
+  MagneticDotSize: 0.065
+  LandingParticles: 7
+  AssemblyParticles: 10
+  ParticleLifetime: 0.28
+  ParticleSize: 0.055
+  ParticleSpeed: 2.1
+  ParticleConeAngle: 38
+  LandingSquash: 0.12
+  AssemblySquash: 0.16
+  MotionStretch: 0.05
+  InteractionDuration: 0.22
+  BreathingAmplitude: 0.008
+  BreathingFrequency: 0.6
+  MagneticLagDistance: 0.075
+  MagneticLagSmoothTime: 0.1
+  MagneticLeanAngle: 5
+  MagneticHeadLeanMultiplier: 0.75
+  RespawnDotSize: 0.13
+  RespawnTrailTime: 0.18

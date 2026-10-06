@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 
 namespace TapTap
@@ -8,14 +9,26 @@ namespace TapTap
         [SerializeField] private MovableEntity body;
         [SerializeField] private MovableEntity head;
         [SerializeField] private PlayerConfig config;
+        [SerializeField] private PlayerVisualConfig visualSettings;
         private PlayerController subscribedController;
-        private LineRenderer magnet;
-        private LineRenderer guide;
-        private Material lineMaterial;
-        private float magnetAlpha;
+        [SerializeField] private MagneticConnectionView magnet;
+        [SerializeField] private ContactParticles particles;
+        [SerializeField] private LineRenderer guide;
+        [SerializeField] private Color recallReadyColor = new Color(0.25f, 0.65f, 1f, 1f);
+        [SerializeField] private Color recallBlockedColor = new Color(1f, 0.32f, 0.32f, 1f);
+        private float guideWidth;
         private float guideAlpha;
-        private TrailRenderer bodyTrail;
-        private TrailRenderer headTrail;
+        private Vector3 bodyScale, headScale, bodyPosition, headPosition;
+        private Quaternion bodyRotation, headRotation;
+        private bool captured;
+        private float bodySquash, headSquash;
+        private float motionLean;
+        private float headLean, bodyLag, headLag, breathingPhase;
+        private Tween bodyTween, headTween;
+
+        public void ConfigureVisuals(PlayerVisualConfig settings) => visualSettings = settings;
+        public void ConfigureEffects(MagneticConnectionView connection, ContactParticles contact, LineRenderer recall)
+        { magnet = connection; particles = contact; guide = recall; }
 
         public void Configure(PlayerController player, MovableEntity lower, MovableEntity upper, PlayerConfig settings)
         {
@@ -23,87 +36,163 @@ namespace TapTap
             if (!Application.isPlaying) return;
             if (subscribedController != controller)
             {
-                if (subscribedController != null) subscribedController.Effect -= OnEffect;
+                Unsubscribe();
                 subscribedController = controller;
-                if (controller != null) controller.Effect += OnEffect;
+                if (controller != null)
+                {
+                    controller.Effect += OnEffect;
+                    controller.PhaseChanged += OnPhase;
+                    controller.ContactFeedback += OnContact;
+                }
             }
             EnsureVisuals();
         }
 
         private void Start() => Configure(controller, body, head, config);
+        private void OnEnable()
+        {
+            if (Application.isPlaying && captured) Configure(controller, body, head, config);
+        }
 
         private void EnsureVisuals()
         {
-            if (magnet != null) return;
-            lineMaterial = new Material(Shader.Find("Sprites/Default"));
-            magnet = MakeLine("Magnetic connection", 0.035f);
-            guide = MakeLine("Recall guide", 0.025f);
-            bodyTrail = MakeTrail(body, new Color(0.22f, 0.89f, 0.78f));
-            headTrail = MakeTrail(head, new Color(1f, 0.94f, 0.79f));
-        }
-
-        private LineRenderer MakeLine(string name, float width)
-        {
-            GameObject child = new GameObject(name);
-            child.transform.SetParent(transform, false);
-            LineRenderer line = child.AddComponent<LineRenderer>();
-            line.sharedMaterial = lineMaterial;
-            line.positionCount = 2;
-            line.useWorldSpace = true;
-            line.startWidth = line.endWidth = width;
-            line.sortingOrder = 7;
-            return line;
-        }
-
-        private TrailRenderer MakeTrail(MovableEntity entity, Color color)
-        {
-            TrailRenderer trail = entity.gameObject.AddComponent<TrailRenderer>();
-            trail.sharedMaterial = lineMaterial;
-            trail.time = 0.18f;
-            trail.startWidth = 0.35f;
-            trail.endWidth = 0f;
-            trail.startColor = color;
-            trail.endColor = new Color(color.r, color.g, color.b, 0f);
-            trail.sortingOrder = 8;
-            trail.emitting = false;
-            return trail;
-        }
-
-        private void LateUpdate()
-        {
-            if (controller == null || body == null || head == null || config == null) return;
-            EnsureVisuals();
-            float dt = Time.deltaTime;
-            bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined
-                && !body.IsReturning && !head.IsReturning;
-            magnetAlpha = Mathf.MoveTowards(magnetAlpha, connected ? 0.9f : 0f, dt * 8f);
-            guideAlpha = Mathf.MoveTowards(guideAlpha, controller.GuideVisible ? 0.75f : 0f, dt * 6f);
-            Color magneticColor = new Color(0.65f, 0.92f, 1f, magnetAlpha);
-            magnet.startColor = magnet.endColor = magneticColor;
-            magnet.SetPosition(0, body.transform.position);
-            magnet.SetPosition(1, head.transform.position);
-            Color guideColor = controller.CanRecall ? new Color(0.25f, 0.65f, 1f, guideAlpha)
-                : new Color(1f, 0.32f, 0.32f, guideAlpha);
-            guide.startColor = guide.endColor = guideColor;
-            guide.SetPosition(0, head.transform.position);
-            guide.SetPosition(1, head.transform.position + Vector3.down * 1000f);
-            bodyTrail.emitting = body.IsReturning;
-            headTrail.emitting = head.IsReturning;
-
-            if (head.Visual != null)
+            if (!captured && body != null && head != null && body.Visual != null && head.Visual != null)
             {
-                Vector3 target = controller.HasMagneticConnection && !head.IsReturning
-                    ? new Vector3(-body.Velocity.x * 0.007f, 0f, 0f) : Vector3.zero;
-                head.Visual.localPosition = Vector3.Lerp(head.Visual.localPosition, target, 1f - Mathf.Exp(-14f * dt));
+                bodyScale = body.Visual.localScale; headScale = head.Visual.localScale;
+                bodyPosition = body.Visual.localPosition; headPosition = head.Visual.localPosition;
+                bodyRotation = body.Visual.localRotation; headRotation = head.Visual.localRotation;
+                captured = true;
+            }
+            if (guide != null && guideWidth <= 0f) guideWidth = guide.widthMultiplier;
+        }
+
+        private void LateUpdate() => Simulate(Time.deltaTime);
+
+        public void Simulate(float dt)
+        {
+            if (dt <= 0f || controller == null || body == null || head == null || config == null) return;
+            EnsureVisuals();
+            float unit = body.Motor.Size.x / Mathf.Max(0.01f, body.Motor.Collider.size.x);
+            bool returning = body.IsReturning || head.IsReturning;
+            bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined && !returning;
+            guideAlpha = Mathf.MoveTowards(guideAlpha, controller.GuideVisible && !returning ? 0.75f : 0f, dt * 6f);
+            Color color = controller.CanRecall ? recallReadyColor : recallBlockedColor;
+            color.a *= guideAlpha;
+            if (guide != null)
+            {
+                guide.startColor = guide.endColor = color;
+                guide.widthMultiplier = guideWidth * unit;
+                guide.enabled = guideAlpha > 0.001f;
+                guide.SetPosition(0, head.transform.position);
+                guide.SetPosition(1, head.transform.position + Vector3.down * 1000f);
+            }
+            if (!captured || visualSettings == null)
+            {
+                if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit);
+                return;
+            }
+            float smoothing = 1f - Mathf.Exp(-14f * dt);
+            float lagSmoothing = 1f - Mathf.Exp(-dt / Mathf.Max(0.01f, visualSettings.MagneticLagSmoothTime));
+            float speed = body.Velocity.x / Mathf.Max(unit, 0.01f);
+            float movement = Mathf.Clamp(speed / Mathf.Max(0.01f, config.MoveSpeed), -1f, 1f);
+            float leanTarget = connected ? -movement * visualSettings.MagneticLeanAngle : -speed * 0.65f;
+            motionLean = Mathf.Lerp(motionLean, body.IsReturning ? 0f : leanTarget, smoothing);
+            headLean = Mathf.Lerp(headLean, returning ? 0f : connected
+                ? leanTarget * visualSettings.MagneticHeadLeanMultiplier
+                : controller.HasMagneticConnection ? motionLean * 0.35f : 0f, lagSmoothing);
+            bodyLag = Mathf.Lerp(bodyLag, connected ? -movement * visualSettings.MagneticLagDistance * 0.2f : 0f, lagSmoothing);
+            float headLagTarget = connected ? -movement * visualSettings.MagneticLagDistance
+                : controller.HasMagneticConnection && !returning ? -speed * 0.007f : 0f;
+            headLag = Mathf.Lerp(headLag, headLagTarget, lagSmoothing);
+            breathingPhase = Mathf.Repeat(breathingPhase + dt * visualSettings.BreathingFrequency * 2f * Mathf.PI, 2f * Mathf.PI);
+            float breathAmount = visualSettings.BreathingAmplitude * Mathf.Lerp(1f, 0.4f, Mathf.Abs(movement));
+            float bodyBreath = Mathf.Sin(breathingPhase) * breathAmount;
+            float headBreath = Mathf.Sin(breathingPhase + 0.45f) * breathAmount * 0.6f;
+            if (!body.IsReturning)
+            {
+                float stretch = Mathf.Clamp(Mathf.Abs(body.Velocity.y) / (12f * unit), 0f, 1f) * visualSettings.MotionStretch;
+                Vector3 factor = new Vector3(1f + bodySquash - stretch * 0.5f, 1f - bodySquash + stretch, 1f);
+                factor = Vector3.Scale(factor, new Vector3(1f - bodyBreath * 0.5f, 1f + bodyBreath, 1f));
+                body.Visual.localScale = Vector3.Scale(bodyScale, factor);
+                body.Visual.localPosition = bodyPosition + Vector3.right * bodyLag
+                    + Vector3.up * ((factor.y - 1f) * body.Motor.Collider.size.y * 0.5f);
+                body.Visual.localRotation = bodyRotation * Quaternion.Euler(0f, 0f, motionLean);
+            }
+            if (!head.IsReturning)
+            {
+                float stretch = controller.Phase == PlayerPhase.Extending || controller.Phase == PlayerPhase.Pulling ? visualSettings.MotionStretch : 0f;
+                Vector3 factor = new Vector3(1f + headSquash - stretch * 0.5f, 1f - headSquash + stretch, 1f);
+                factor = Vector3.Scale(factor, new Vector3(1f - headBreath * 0.5f, 1f + headBreath, 1f));
+                head.Visual.localScale = Vector3.Scale(headScale, factor);
+                head.Visual.localPosition = headPosition + Vector3.right * headLag;
+                head.Visual.localRotation = headRotation * Quaternion.Euler(0f, 0f, headLean);
+            }
+            if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit);
+        }
+
+        private void OnContact(PlayerContactFeedback contact)
+        {
+            if (visualSettings == null || contact.Entity == null || contact.Entity.IsReturning) return;
+            float unit = contact.Entity.Motor.Size.x / Mathf.Max(0.01f, contact.Entity.Motor.Collider.size.x);
+            if (particles != null) particles.Burst(contact.Point, contact.Normal, contact.Assembly, unit);
+            float amount = contact.Assembly ? visualSettings.AssemblySquash : visualSettings.LandingSquash;
+            if (!contact.Assembly) amount *= Mathf.Lerp(0.4f, 1f, Mathf.Clamp01(contact.Speed / (8f * unit)));
+            Pulse(contact.Entity, amount);
+            if (contact.Assembly) Pulse(head, amount * 0.55f);
+        }
+
+        private void OnPhase(PlayerPhase phase)
+        {
+            if (visualSettings == null) return;
+            if (phase == PlayerPhase.Extending) { Pulse(body, visualSettings.AssemblySquash * 0.45f); Pulse(head, -visualSettings.MotionStretch); }
+            if (phase == PlayerPhase.Pulling) Pulse(body, -visualSettings.MotionStretch);
+            if (phase == PlayerPhase.Detached) Pulse(head, visualSettings.LandingSquash * 0.45f);
+        }
+
+        private void OnEffect(PlayerEffect effect)
+        {
+            EffectManager.Instance.Play(effect, body.Visual);
+            if (effect == PlayerEffect.Bounce && visualSettings != null) Pulse(body, -visualSettings.AssemblySquash * 0.7f);
+            if (effect == PlayerEffect.RecallFailed && visualSettings != null) Pulse(body, visualSettings.LandingSquash * 0.4f);
+        }
+
+        private void Pulse(MovableEntity entity, float amount)
+        {
+            if (entity == null || entity.IsReturning) return;
+            float duration = Mathf.Max(0.02f, visualSettings.InteractionDuration);
+            if (entity == body)
+            {
+                bodyTween?.Kill(); bodySquash = amount;
+                bodyTween = DOVirtual.Float(amount, 0f, duration, value => bodySquash = value).SetEase(Ease.OutSine);
+            }
+            else if (entity == head)
+            {
+                headTween?.Kill(); headSquash = amount;
+                headTween = DOVirtual.Float(amount, 0f, duration, value => headSquash = value).SetEase(Ease.OutSine);
             }
         }
 
-        private void OnEffect(PlayerEffect effect) => EffectManager.Instance.Play(effect, body.Visual);
-
-        private void OnDestroy()
+        public void ResetVisual(MovableEntity entity)
         {
-            if (subscribedController != null) subscribedController.Effect -= OnEffect;
-            if (lineMaterial != null) Destroy(lineMaterial);
+            if (!captured || entity == null || entity.Visual == null) return;
+            bool lower = entity == body;
+            if (lower) { bodyTween?.Kill(); bodySquash = bodyLag = motionLean = 0f; }
+            else { headTween?.Kill(); headSquash = headLag = headLean = 0f; }
+            entity.Visual.localScale = lower ? bodyScale : headScale;
+            entity.Visual.localPosition = lower ? bodyPosition : headPosition;
+            entity.Visual.localRotation = lower ? bodyRotation : headRotation;
         }
+
+        private void Unsubscribe()
+        {
+            if (subscribedController == null) return;
+            subscribedController.Effect -= OnEffect;
+            subscribedController.PhaseChanged -= OnPhase;
+            subscribedController.ContactFeedback -= OnContact;
+            subscribedController = null;
+        }
+
+        private void OnDisable() { Unsubscribe(); ResetVisual(body); ResetVisual(head); }
+        private void OnDestroy() => Unsubscribe();
     }
 }

@@ -9,7 +9,7 @@ namespace TapTap
         [Min(0.1f)] public float Gravity = 24f;
         [Min(0f)] public float MoveSpeed = 5f;
         [Min(0.1f)] public float LandingShakeSpeed = 5f;
-        [Min(0.1f)] public float JoinedOffset = 0.9f;
+        [Min(0.1f)] public float JoinedOffset = 0.75f;
         [Min(0.1f)] public float MaxExtension = 4.4f;
         [Min(0.02f)] public float ExtensionDuration = 0.45f;
         [Min(0.02f)] public float RetractionDuration = 0.35f;
@@ -24,6 +24,10 @@ namespace TapTap
         [Min(0.02f)] public float PullAccelerationTime = 0.45f;
         [Min(0f)] public float RecallCooldown = 0.22f;
         [Min(0.02f)] public float RespawnDuration = 0.45f;
+        [Min(0.01f)] public float DeathShakeDuration = 0.08f;
+        [Min(0.01f)] public float RespawnCollapseDuration = 0.18f;
+        [Min(0.01f)] public float RespawnDotDuration = 0.1f;
+        [Min(0.01f)] public float RespawnRebuildDuration = 0.2f;
         [Min(0.001f)] public float JoinTolerance = 0.015f;
         [Min(0.001f)] public float Skin = 0.01f;
         public float DeathBoundary = -15f;
