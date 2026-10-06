@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae31d74f23864fb79479fdfc18255fea, type: 3}
+  m_Name: LevelPalette
+  m_EditorClassIdentifier: 
+  Config: {fileID: 11400000, guid: 6c4a764b31e913d40ae6183f79a504da, type: 2}
+  Brushes:
+  - {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+  - {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+  - {fileID: 11400000, guid: 5108c8fa28a67e94aa046d6f2ad95014, type: 2}
+  - {fileID: 11400000, guid: b98a9f3e4675ff540a782fda9d5f7c11, type: 2}
+  - {fileID: 11400000, guid: 6f73250888787e648860cdc75ee6831d, type: 2}
