@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdebce7675155c6439a733a6d59a29f4, type: 3}
+  m_Name: PrototypePlayer
+  m_EditorClassIdentifier: 
+  UnitSize: 1
+  Gravity: 24
+  MoveSpeed: 5
+  LandingShakeSpeed: 5
+  JoinedOffset: 0.9
+  MaxExtension: 4.4
+  ExtensionDuration: 0.45
+  RetractionDuration: 0.35
+  NormalLaunchHeight: 1
+  DistantLaunchHeight: 2
+  DistantThreshold: 5
+  SpringHeight: 3
+  AlignmentTolerance: 0.35
+  AlignmentDuration: 0.18
+  PullStartSpeed: 1
+  PullMaxSpeed: 12
+  PullAccelerationTime: 0.45
+  RecallCooldown: 0.22
+  RespawnDuration: 0.45
+  JoinTolerance: 0.015
+  Skin: 0.01
+  DeathBoundary: -15
