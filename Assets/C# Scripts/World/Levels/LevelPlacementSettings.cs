@@ -30,4 +30,11 @@ namespace TapTap
     {
         public bool SolidWhenActive = true;
     }
+
+    [Serializable]
+    public sealed class EndpointPlacementSettings : LevelPlacementSettings
+    {
+        public string EndpointId = "finish";
+        public string Label = "终点";
+    }
 }

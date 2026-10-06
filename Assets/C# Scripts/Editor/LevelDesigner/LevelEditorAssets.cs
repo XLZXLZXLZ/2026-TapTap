@@ -15,6 +15,33 @@ namespace TapTap.Editor
         private const string TerrainFolder = "Assets/Prefabs/Terrain/Grid";
         private const string MarkerFolder = "Assets/Prefabs/Interactables/Grid";
 
+        public static LevelBrush EnsureEndpointBrush()
+        {
+            LevelPrefabBuilder.EnsureFolder(BrushFolder);
+            return EnsureBrush("Endpoint", "终点占位", "endpoint", "markers", GameplayVisualAssets.EnsureEndpointPrefab(),
+                new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.92f), new Color(0.45f, 0.95f, 0.65f));
+        }
+
+        [MenuItem("TapTap/Level Designer/Create Endpoint Brush")]
+        public static void CreateEndpointAssets()
+        {
+            LevelBrush brush = EnsureEndpointBrush();
+            LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
+            if (palette != null)
+            {
+                if (palette.Brushes == null || !palette.Brushes.Contains(brush))
+                {
+                    Undo.RecordObject(palette, "添加终点笔刷");
+                    if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
+                    palette.Brushes.Add(brush);
+                    EditorUtility.SetDirty(palette);
+                    AssetDatabase.SaveAssetIfDirty(palette);
+                }
+            }
+            AssetDatabase.SaveAssets();
+            if (!Application.isBatchMode) { Selection.activeObject = brush; EditorGUIUtility.PingObject(brush); }
+        }
+
         public static LevelPalette EnsureDefaults()
         {
             GameplayVisualAssets.EnsureMechanismPrefabs();
@@ -49,7 +76,8 @@ namespace TapTap.Editor
                     new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.4f, 0.76f, 0.94f)),
                 EnsureBrush("MechanismSwitch", "机关按钮", "default", "markers",
                     AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.SwitchPrefabPath),
-                    new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f))
+                    new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f)),
+                EnsureEndpointBrush()
             };
             LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
             if (palette == null)

@@ -12,6 +12,7 @@ namespace TapTap.Editor
         public const string PhasePrefabPath = "Assets/Prefabs/Terrain/Grid/GridPhaseBlock.prefab";
         public const string InversePhasePrefabPath = "Assets/Prefabs/Terrain/Grid/GridInversePhaseBlock.prefab";
         public const string SwitchPrefabPath = "Assets/Prefabs/Interactables/Grid/GridMechanismSwitch.prefab";
+        public const string EndpointPrefabPath = "Assets/Prefabs/Interactables/Grid/GridEndpoint.prefab";
         public const string ShowcaseLayoutPath = "Assets/Runtime/Levels/Level_Mechanisms.asset";
 
         public static PlayerVisualConfig EnsureVisualSettings()
@@ -69,6 +70,33 @@ namespace TapTap.Editor
             PlayerVisualConfig settings = EnsureVisualSettings();
             root.GetComponent<PlayerView>()?.ConfigureVisuals(settings);
             PlayerEffectsPrefabs.BindPlayer(root, settings);
+        }
+
+        public static GameObject EnsureEndpointPrefab()
+        {
+            GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(EndpointPrefabPath);
+            if (existing != null) return existing;
+            LevelPrefabBuilder.EnsureFolder("Assets/Prefabs/Interactables/Grid");
+            Sprite square = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprite/Prototype/Square.png");
+            if (square == null) throw new System.InvalidOperationException("终点占位符缺少 Square 精灵资源。");
+            Scene preview = EditorSceneManager.NewPreviewScene();
+            try
+            {
+                var root = new GameObject("GridEndpoint");
+                SceneManager.MoveGameObjectToScene(root, preview);
+                root.AddComponent<LevelEndpoint>();
+                Color mint = new Color(0.45f, 0.95f, 0.65f);
+                Sprite(root.transform, "Base", square, new Vector2(0f, 0.04f), new Vector2(0.85f, 0.08f), mint);
+                Sprite(root.transform, "Left post", square, new Vector2(-0.32f, 0.43f), new Vector2(0.07f, 0.78f), mint);
+                Sprite(root.transform, "Right post", square, new Vector2(0.32f, 0.43f), new Vector2(0.07f, 0.78f), mint);
+                for (int i = 0; i < 4; i++)
+                    Sprite(root.transform, "Finish checker " + i, square, new Vector2(-0.24f + i * 0.16f, 0.86f),
+                        new Vector2(0.16f, 0.12f), i % 2 == 0 ? mint : new Color(0.12f, 0.3f, 0.22f));
+                GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, EndpointPrefabPath, out bool success);
+                if (!success || prefab == null) throw new System.InvalidOperationException("无法保存终点占位 Prefab。");
+                return prefab;
+            }
+            finally { EditorSceneManager.ClosePreviewScene(preview); }
         }
 
         public static void EnsureMechanismPrefabs()

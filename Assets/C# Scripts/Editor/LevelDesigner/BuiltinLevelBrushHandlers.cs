@@ -3,6 +3,37 @@ using UnityEngine;
 
 namespace TapTap.Editor
 {
+    public sealed class EndpointLevelBrushHandler : LevelBrushHandler
+    {
+        public override string Id => "endpoint";
+        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new EndpointPlacementSettings();
+
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            if (!(placement.Settings is EndpointPlacementSettings settings))
+            { EditorGUILayout.HelpBox("终点配置不兼容，请重新绘制此格。", MessageType.Error); return; }
+            settings.EndpointId = EditorGUILayout.TextField("终点标识", settings.EndpointId);
+            settings.Label = EditorGUILayout.TextField("备注名称", settings.Label);
+            EditorGUILayout.HelpBox("终点占位符：保存位置和标识，暂不触发通关或场景切换。", MessageType.None);
+        }
+
+        public override string ValidatePlacement(LevelPlacement placement)
+        {
+            if (!(placement.Settings is EndpointPlacementSettings settings)) return "终点缺少配置。";
+            if (string.IsNullOrWhiteSpace(settings.EndpointId)) return "终点标识不能为空。";
+            return placement.Brush.Prefab.GetComponentInChildren<LevelEndpoint>() == null
+                ? "终点 Prefab 缺少 LevelEndpoint。" : null;
+        }
+
+        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context)
+        {
+            var settings = (EndpointPlacementSettings)placement.Settings;
+            LevelEndpoint endpoint = instance.GetComponentInChildren<LevelEndpoint>();
+            endpoint.EndpointId = settings.EndpointId;
+            endpoint.Label = settings.Label;
+        }
+    }
+
     public sealed class PhaseBlockLevelBrushHandler : LevelBrushHandler
     {
         public override string Id => "phase-block";

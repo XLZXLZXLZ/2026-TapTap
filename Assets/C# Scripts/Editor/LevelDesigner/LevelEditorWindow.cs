@@ -722,6 +722,11 @@ namespace TapTap.Editor
                 EditorGUI.DrawRect(new Rect(poleX, shape.y, shape.width * 0.65f, shape.height * 0.4f), color);
                 EditorGUI.DrawRect(new Rect(shape.x, shape.yMax - 2f, shape.width, 2f), color);
             }
+            else if (brush.HandlerId == "endpoint")
+            {
+                Outline(shape, color, Mathf.Max(1f, cell.width * 0.08f));
+                if (cell.width >= 14f) GUI.Label(shape, "终", CenterStyle());
+            }
             else if (placement.Settings is PhaseBlockPlacementSettings phaseBlock)
             {
                 Color fill = color;

@@ -1345,6 +1345,11 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188208457482646
+  - Id: c7c36fa4b7ee43608337c8801c3ef2d7
+    Cell: {x: 29, y: 11}
+    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
+    Settings:
+      rid: 5387188208457482784
   EntryPlacementId: 
   OutputPrefab: {fileID: 1655930691034754573, guid: 386a089196abf5a4aa92f6a784061352, type: 3}
   references:
@@ -1881,3 +1886,8 @@ MonoBehaviour:
     - rid: 5387188208457482646
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
+    - rid: 5387188208457482784
+      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        EndpointId: finish
+        Label: "\u7EC8\u70B9"

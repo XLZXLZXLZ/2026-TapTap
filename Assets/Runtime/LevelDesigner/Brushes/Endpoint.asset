@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 741a76cd1a45498ba631919241e9f288, type: 3}
+  m_Name: Endpoint
+  m_EditorClassIdentifier: 
+  DisplayName: "\u7EC8\u70B9\u5360\u4F4D"
+  HandlerId: endpoint
+  LayerId: markers
+  Prefab: {fileID: 4269860809106255897, guid: 94d8da63f2fd82744b487bf85ae3c30f, type: 3}
+  Thumbnail: {fileID: 0}
+  Anchor: {x: 0.5, y: 0}
+  PreviewRect:
+    serializedVersion: 2
+    x: 0.1
+    y: 0
+    width: 0.8
+    height: 0.92
+  Color: {r: 0.45, g: 0.95, b: 0.65, a: 1}
