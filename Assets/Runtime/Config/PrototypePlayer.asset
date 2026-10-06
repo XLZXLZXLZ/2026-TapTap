@@ -15,26 +15,26 @@ MonoBehaviour:
   UnitSize: 1
   Gravity: 24
   MoveSpeed: 5
-  LandingShakeSpeed: 5
   JoinedOffset: 0.75
-  MaxExtension: 4.4
+  MaxExtension: 3.4
   ExtensionDuration: 0.45
-  RetractionDuration: 0.35
-  NormalLaunchHeight: 1
-  DistantLaunchHeight: 2
-  DistantThreshold: 5
-  SpringHeight: 3
+  RetractionDuration: 0.25
   AlignmentTolerance: 0.35
   AlignmentDuration: 0.18
   PullStartSpeed: 1
-  PullMaxSpeed: 12
+  PullMaxSpeed: 15
   PullAccelerationTime: 0.45
+  DistantThreshold: 5
+  NormalLaunchHeight: 1.1
+  DistantLaunchHeight: 2.5
   RecallCooldown: 0.22
-  RespawnDuration: 0.45
-  DeathShakeDuration: 0.08
-  RespawnCollapseDuration: 0.18
-  RespawnDotDuration: 0.1
-  RespawnRebuildDuration: 0.2
+  SpringHeight: 3
+  LandingShakeSpeed: 5
   JoinTolerance: 0.015
   Skin: 0.01
   DeathBoundary: -15
+  DeathShakeDuration: 0.08
+  RespawnCollapseDuration: 0.18
+  RespawnDotDuration: 0.1
+  RespawnDuration: 0.45
+  RespawnRebuildDuration: 0.2

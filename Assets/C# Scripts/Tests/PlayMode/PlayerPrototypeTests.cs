@@ -231,10 +231,70 @@ namespace TapTap.Tests
             Assert.That(probe.Motor.Position.y, Is.EqualTo(origin.y + 1.4f).Within(0.003f));
         }
 
+        [TestCase(SurfaceKind.Solid)]
+        [TestCase(SurfaceKind.OneWay)]
+        public void RetractionOntoTerrainLeavesHeadDetachedUntilAnotherSpaceInput(SurfaceKind kind)
+        {
+            CreateSurface("Retraction ledge", new Vector2(4f, 3f), new Vector2(2f, 0.5f), kind);
+            ExtendAndMoveOverLedge();
+            float bodyHeight = body.Motor.Position.y;
+            int headLandings = 0;
+            int blockedPulls = 0;
+            int pulls = 0;
+            player.Effect += effect =>
+            {
+                if (effect == PlayerEffect.HeadLanded) headLandings++;
+                if (effect == PlayerEffect.PullBlocked) blockedPulls++;
+            };
+            player.PhaseChanged += phase => { if (phase == PlayerPhase.Pulling) pulls++; };
+
+            input.SetExternalInput(0f, false);
+            StepUntil(PlayerPhase.Detached, 100);
+
+            Assert.That(head.Motor.Position.y, Is.EqualTo(origin.y + 3.65f + config.Skin).Within(0.02f));
+            Assert.That(head.Velocity, Is.EqualTo(Vector2.zero));
+            Assert.That(head.SpringEnabled, Is.True);
+            Assert.That(player.HasMagneticConnection, Is.False);
+            Assert.That(player.GuideVisible, Is.False);
+            Assert.That(headLandings, Is.EqualTo(1));
+            Assert.That(blockedPulls, Is.EqualTo(0));
+            Assert.That(pulls, Is.EqualTo(0));
+            Vector2 landedHeadPosition = head.Motor.Position;
+
+            Step(30);
+
+            Assert.That(player.Phase, Is.EqualTo(PlayerPhase.Detached));
+            Assert.That(body.Motor.Position.y, Is.EqualTo(bodyHeight).Within(0.003f));
+            Assert.That(Vector2.Distance(head.Motor.Position, landedHeadPosition), Is.LessThan(0.003f));
+            Assert.That(headLandings, Is.EqualTo(1));
+            Assert.That(blockedPulls, Is.EqualTo(0));
+            Assert.That(pulls, Is.EqualTo(0));
+
+            input.SetExternalInput(0f, true);
+            Step();
+            Assert.That(player.Phase, Is.EqualTo(PlayerPhase.Detached));
+            Assert.That(player.GuideVisible, Is.True);
+            Assert.That(player.CanRecall, Is.True);
+            input.SetExternalInput(0f, false);
+            Step();
+            Assert.That(player.Phase, Is.EqualTo(PlayerPhase.Pulling));
+            Assert.That(player.GuideVisible, Is.False);
+            Assert.That(pulls, Is.EqualTo(1));
+        }
+
         [Test]
         public void SolidPlatformBlocksPullAndLeavesHeadAsAnIndependentEntity()
         {
             ReachDetached();
+
+            int blockedPulls = 0;
+            player.Effect += effect => { if (effect == PlayerEffect.PullBlocked) blockedPulls++; };
+            input.SetExternalInput(0f, true);
+            Step();
+            input.SetExternalInput(0f, false);
+            StepUntil(PlayerPhase.Detached, 100);
+
+            Assert.That(blockedPulls, Is.EqualTo(1));
 
             Assert.That(head.Motor.Position.y, Is.GreaterThan(body.Motor.Position.y + config.JoinedOffset));
             float headX = head.Motor.Position.x;
@@ -250,6 +310,10 @@ namespace TapTap.Tests
         {
             CreateSurface("One-way ledge", new Vector2(4f, 3f), new Vector2(2f, 0.5f), SurfaceKind.OneWay);
             ExtendAndMoveOverLedge();
+            input.SetExternalInput(0f, false);
+            StepUntil(PlayerPhase.Detached, 100);
+            input.SetExternalInput(0f, true);
+            Step();
             input.SetExternalInput(0f, false);
             StepUntil(PlayerPhase.Joined, 100);
 
@@ -602,6 +666,11 @@ namespace TapTap.Tests
             CreateSurface("One-way ledge", new Vector2(4f, 3f), new Vector2(2f, 0.5f), SurfaceKind.OneWay);
             CreateSurface("Join gap obstacle", new Vector2(4f, 3.2f), new Vector2(0.5f, 0.04f), SurfaceKind.Solid);
             ExtendAndMoveOverLedge();
+            input.SetExternalInput(0f, false);
+            StepUntil(PlayerPhase.Detached, 100);
+
+            input.SetExternalInput(0f, true);
+            Step();
             input.SetExternalInput(0f, false);
             StepUntil(PlayerPhase.Detached, 100);
 

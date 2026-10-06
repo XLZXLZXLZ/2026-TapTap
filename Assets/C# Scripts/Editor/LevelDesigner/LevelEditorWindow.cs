@@ -43,6 +43,7 @@ namespace TapTap.Editor
         private Vector2Int rectangleEnd;
         private string strokeLayerId;
         private int undoGroup = -1;
+        private bool strokeUndoRecorded;
         private Vector2Int? previousPaintCell;
         private Vector2Int? selectedCell;
         private Vector2 sidebarScroll;
@@ -142,6 +143,7 @@ namespace TapTap.Editor
             panning = false;
             selecting = false;
             undoGroup = -1;
+            strokeUndoRecorded = false;
             previousPaintCell = null;
             rectangleStart = null;
             visited.Clear();
@@ -158,6 +160,7 @@ namespace TapTap.Editor
             }
             else hasAreaSelection = false;
             cacheDirty = true;
+            if (layout != null) prefabNeedsUpdate = true;
             saveError = null;
             Repaint();
         }
@@ -195,7 +198,7 @@ namespace TapTap.Editor
             settingsBrush = null;
             if (layout != null && layout.Palette != palette)
             {
-                Undo.RecordObject(layout, "载入默认笔刷");
+                RecordLayoutUndo("载入默认笔刷");
                 layout.Palette = palette;
                 EditorUtility.SetDirty(layout);
             }
@@ -281,7 +284,7 @@ namespace TapTap.Editor
                 if (EditorGUI.EndChangeCheck() && layout != null)
                 {
                     EndStroke();
-                    Undo.RecordObject(layout, "修改区域尺寸");
+                    RecordLayoutUndo("修改区域尺寸");
                     layout.Size = new Vector2Int(Mathf.Max(1, width), Mathf.Max(1, height));
                     Changed();
                 }
@@ -297,7 +300,7 @@ namespace TapTap.Editor
                 settingsBrush = null;
                 if (layout != null)
                 {
-                    Undo.RecordObject(layout, "修改物体配置");
+                    RecordLayoutUndo("修改物体配置");
                     layout.Palette = palette;
                     Changed();
                 }
@@ -564,7 +567,7 @@ namespace TapTap.Editor
                 var occupied = layout.Find(destination, placement.Brush != null ? placement.Brush.LayerId : "geometry");
                 if (layout.Contains(destination) && (occupied == null || occupied == placement))
                 {
-                    Undo.RecordObject(layout, "移动关卡物体");
+                    RecordLayoutUndo("移动关卡物体");
                     placement.Cell = destination;
                     selectedCell = destination;
                     selectionArea = new RectInt(destination, Vector2Int.one);
@@ -580,16 +583,26 @@ namespace TapTap.Editor
             }
             else
             {
-                Undo.RecordObject(layout, "配置关卡物体");
+                // Draw into a draft so repainting cannot create empty full-object undo records.
+                var draft = new LevelPlacement
+                {
+                    Id = placement.Id, Cell = placement.Cell, Brush = placement.Brush,
+                    Settings = CloneSettings(placement.Settings)
+                };
                 EditorGUI.BeginChangeCheck();
-                handler.DrawSettings(placement);
-                if (EditorGUI.EndChangeCheck()) Changed();
+                handler.DrawSettings(draft);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    RecordLayoutUndo("配置关卡物体");
+                    placement.Settings = draft.Settings;
+                    Changed();
+                }
                 if (handler.IsCheckpoint)
                 {
                     bool isEntry = placement.Id == layout.EntryPlacementId;
                     if (GUILayout.Button(isEntry ? "取消入口复活点" : "设为入口复活点"))
                     {
-                        Undo.RecordObject(layout, "设置区域入口");
+                        RecordLayoutUndo("设置区域入口");
                         layout.EntryPlacementId = isEntry ? null : placement.Id;
                         Changed();
                     }
@@ -597,7 +610,7 @@ namespace TapTap.Editor
             }
             if (GUILayout.Button("删除此物体"))
             {
-                Undo.RecordObject(layout, "删除关卡物体");
+                RecordLayoutUndo("删除关卡物体");
                 layout.Placements.Remove(placement);
                 if (placement.Id == layout.EntryPlacementId) layout.EntryPlacementId = null;
                 selectedPlacementId = null;
@@ -869,26 +882,25 @@ namespace TapTap.Editor
         {
             EndStroke();
             painting = true;
+            strokeUndoRecorded = false;
             paintButton = button;
             strokeTool = tool;
             LevelPlacement selected = SelectionMode ? SelectedPlacement() : null;
             strokeLayerId = selected != null && selected.Brush != null ? selected.Brush.LayerId :
                 Brush != null ? Brush.LayerId : "geometry";
             visited.Clear();
-            Undo.IncrementCurrentGroup();
-            undoGroup = Undo.GetCurrentGroup();
-            Undo.SetCurrentGroupName(button == 1 ? "擦除区域" : tool == GridTool.Bucket ? "油漆桶填充" :
-                tool == GridTool.Rectangle || tool == GridTool.RectangleOutline ? "矩形绘制" : "绘制区域");
         }
 
         private void EndStroke()
         {
-            if (undoGroup >= 0)
+            if (undoGroup >= 0 && strokeUndoRecorded)
             {
                 Undo.FlushUndoRecordObjects();
                 Undo.CollapseUndoOperations(undoGroup);
+                Undo.IncrementCurrentGroup();
             }
             undoGroup = -1;
+            strokeUndoRecorded = false;
             painting = false;
             previousPaintCell = null;
             rectangleStart = null;
@@ -918,7 +930,6 @@ namespace TapTap.Editor
             LevelBrush brush = Brush;
             if (paintButton == 0 && !CanPaint()) return;
             string layerId = strokeLayerId ?? (brush != null ? brush.LayerId : "geometry");
-            Undo.RecordObject(layout, paintButton == 0 ? "绘制区域" : "擦除区域");
             if (paintButton == 0)
             {
                 LevelBrushHandler handler = LevelBrushHandlers.Get(brush.HandlerId);
@@ -928,7 +939,26 @@ namespace TapTap.Editor
                     paintSettings = handler.CreateSettings(brush);
                 }
             }
-            if (LevelGridEditing.Apply(layout, targets, brush, paintSettings, layerId, paintButton == 1, allLayers)) Changed();
+            if (LevelGridEditing.Apply(layout, targets, brush, paintSettings, layerId, paintButton == 1, allLayers,
+                () => RecordLayoutUndo(paintButton == 0 ? "绘制区域" : "擦除区域"))) Changed();
+        }
+
+        private void RecordLayoutUndo(string action)
+        {
+            if (painting && strokeUndoRecorded) return;
+            if (painting)
+                action = paintButton == 1 ? "擦除区域" : strokeTool == GridTool.Bucket ? "油漆桶填充" :
+                    strokeTool == GridTool.Rectangle || strokeTool == GridTool.RectangleOutline ? "矩形绘制" : "绘制区域";
+            if (!painting || undoGroup < 0)
+            {
+                Undo.IncrementCurrentGroup();
+                if (painting) undoGroup = Undo.GetCurrentGroup();
+                Undo.SetCurrentGroupName(action);
+            }
+            // Differential undo can lose SerializeReference entries when placements are removed or replaced.
+            // Keep the placement list and its managed settings graph in one complete snapshot.
+            Undo.RegisterCompleteObjectUndo(layout, action);
+            if (painting) strokeUndoRecorded = true;
         }
 
         private static LevelPlacementSettings CloneSettings(LevelPlacementSettings source)
@@ -1038,7 +1068,7 @@ namespace TapTap.Editor
 
         private void RemoveOutside()
         {
-            Undo.RecordObject(layout, "删除越界物体");
+            RecordLayoutUndo("删除越界物体");
             layout.Placements.RemoveAll(item => item != null && !layout.Contains(item.Cell));
             if (layout.EntryPlacement == null) layout.EntryPlacementId = null;
             Changed();
@@ -1126,23 +1156,33 @@ namespace TapTap.Editor
             if (layout == null || clipboard.Count == 0) return;
             foreach (LevelPlacement item in clipboard)
                 if (item.Brush == null || !layout.Contains(origin + item.Cell)) { ShowNotification(new GUIContent("粘贴区域越界或笔刷已删除")); return; }
-            Undo.RecordObject(layout, "粘贴关卡区域");
+            bool recorded = false;
+            bool changed = false;
+            void RecordPasteUndo()
+            {
+                if (recorded) return;
+                RecordLayoutUndo("粘贴关卡区域");
+                recorded = true;
+            }
             foreach (LevelPlacement item in clipboard)
-                LevelGridEditing.Apply(layout, new[] { origin + item.Cell }, item.Brush, item.Settings, item.Brush.LayerId, false, false);
+                changed |= LevelGridEditing.Apply(layout, new[] { origin + item.Cell }, item.Brush, item.Settings,
+                    item.Brush.LayerId, false, false, RecordPasteUndo);
             if (clipboardIsCut && clipboardEntryIndex >= 0 && layout.EntryPlacement == null)
             {
                 LevelPlacement entry = clipboard[clipboardEntryIndex];
+                RecordPasteUndo();
                 layout.EntryPlacementId = layout.Find(origin + entry.Cell, entry.Brush.LayerId)?.Id;
+                changed = true;
             }
             clipboardIsCut = false;
-            Changed();
+            if (changed) Changed();
         }
 
         private void DeleteArea()
         {
             List<LevelPlacement> items = AreaContents();
             if (items.Count == 0) return;
-            Undo.RecordObject(layout, "删除选择区域");
+            RecordLayoutUndo("删除选择区域");
             foreach (LevelPlacement item in items)
             {
                 layout.Placements.Remove(item);
@@ -1164,7 +1204,7 @@ namespace TapTap.Editor
                 if (!layout.Contains(destination) || occupied != null && !items.Contains(occupied))
                 { ShowNotification(new GUIContent("移动目标越界或同层已有物体")); return; }
             }
-            Undo.RecordObject(layout, "移动选择区域");
+            RecordLayoutUndo("移动选择区域");
             foreach (LevelPlacement item in items) item.Cell += delta;
             selectionArea.position += delta;
             if (selectedCell.HasValue) selectedCell += delta;

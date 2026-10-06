@@ -76,7 +76,8 @@ namespace TapTap
             bool returning = body.IsReturning || head.IsReturning;
             bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined && !returning;
             guideAlpha = Mathf.MoveTowards(guideAlpha, controller.GuideVisible && !returning ? 0.75f : 0f, dt * 6f);
-            Color color = controller.CanRecall ? recallReadyColor : recallBlockedColor;
+            bool canRecall = controller.CanRecall;
+            Color color = canRecall ? recallReadyColor : recallBlockedColor;
             color.a *= guideAlpha;
             if (guide != null)
             {
@@ -84,7 +85,9 @@ namespace TapTap
                 guide.widthMultiplier = guideWidth * unit;
                 guide.enabled = guideAlpha > 0.001f;
                 guide.SetPosition(0, head.transform.position);
-                guide.SetPosition(1, head.transform.position + Vector3.down * 1000f);
+                Vector3 guideEnd = head.transform.position + Vector3.down * 1000f;
+                if (canRecall) guideEnd.y = body.transform.position.y;
+                guide.SetPosition(1, guideEnd);
             }
             if (!captured || visualSettings == null)
             {

@@ -47,7 +47,7 @@ namespace TapTap.Editor
         }
 
         public static bool Apply(LevelDefinition layout, IEnumerable<Vector2Int> cells, LevelBrush brush,
-            LevelPlacementSettings settings, string layerId, bool erase, bool allLayers)
+            LevelPlacementSettings settings, string layerId, bool erase, bool allLayers, Action beforeChange = null)
         {
             var targets = new HashSet<Vector2Int>();
             foreach (Vector2Int cell in cells)
@@ -56,8 +56,11 @@ namespace TapTap.Editor
             if (layout.Placements == null) layout.Placements = new List<LevelPlacement>();
             if (erase)
             {
-                int removed = layout.Placements.RemoveAll(item => item != null && targets.Contains(item.Cell) &&
-                    (allLayers || item.Brush != null && string.Equals(item.Brush.LayerId, layerId, StringComparison.Ordinal)));
+                Predicate<LevelPlacement> matches = item => item != null && targets.Contains(item.Cell) &&
+                    (allLayers || item.Brush != null && string.Equals(item.Brush.LayerId, layerId, StringComparison.Ordinal));
+                if (!layout.Placements.Exists(matches)) return false;
+                beforeChange?.Invoke();
+                int removed = layout.Placements.RemoveAll(matches);
                 if (removed > 0 && layout.EntryPlacement == null) layout.EntryPlacementId = null;
                 return removed > 0;
             }
@@ -74,12 +77,14 @@ namespace TapTap.Editor
                     if (placement.Brush == brush && placement.Settings != null &&
                         placement.Settings.GetType() == settingsType && JsonUtility.ToJson(placement.Settings) == settingsJson)
                         continue;
+                    if (!changed) beforeChange?.Invoke();
                     if (placement.Id == layout.EntryPlacementId && !checkpoint) layout.EntryPlacementId = null;
                     placement.Brush = brush;
                     placement.Settings = CloneSettings(settings);
                 }
                 else
                 {
+                    if (!changed) beforeChange?.Invoke();
                     layout.Placements.Add(new LevelPlacement { Cell = cell, Brush = brush, Settings = CloneSettings(settings) });
                 }
                 changed = true;

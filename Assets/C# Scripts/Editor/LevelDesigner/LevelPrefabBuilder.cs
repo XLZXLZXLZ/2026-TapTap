@@ -169,8 +169,11 @@ namespace TapTap.Editor
                 else if (preview.IsValid())
                     EditorSceneManager.ClosePreviewScene(preview);
             }
-            Undo.RecordObject(layout, "Save Level Prefab");
-            layout.OutputPrefab = result;
+            if (layout.OutputPrefab != result)
+            {
+                Undo.RegisterCompleteObjectUndo(layout, "Save Level Prefab");
+                layout.OutputPrefab = result;
+            }
             EditorUtility.SetDirty(layout);
             AssetDatabase.SaveAssetIfDirty(layout);
             return result;

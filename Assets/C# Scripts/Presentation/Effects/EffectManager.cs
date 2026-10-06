@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace TapTap
@@ -21,6 +22,11 @@ namespace TapTap
         [SerializeField, Min(0f)] private float zoomAmount = 0.3f;
         [SerializeField, Min(0.001f)] private float zoomInDuration = 0.07f;
         [SerializeField, Min(0.001f)] private float zoomOutDuration = 0.18f;
+        [Header("黑屏与画面淡入淡出")]
+        [Tooltip("画面变为全黑所需的时间（秒）。不受游戏慢动作或暂停影响。")]
+        [SerializeField, Min(0f)] private float fadeOutDuration = 0.2f;
+        [Tooltip("从黑屏恢复画面所需的时间（秒）。场景加载完成后才开始恢复。")]
+        [SerializeField, Min(0f)] private float fadeInDuration = 0.25f;
         private float shakeRemaining;
         private float shakeStrength;
         private float activeShakeDuration;
@@ -34,6 +40,10 @@ namespace TapTap
         public float ZoomPulse => zoomPulse;
         public float ZoomAmount => Mathf.Max(0f, zoomAmount);
         public float ZoomProgress => zoomAmount > 0f ? Mathf.Clamp01(zoomPulse / zoomAmount) : 0f;
+        public void BlackScreen() => ScreenFadeOverlay.Instance.SetOpacity(1f);
+        public void ClearBlackScreen() => ScreenFadeOverlay.Instance.SetOpacity(0f);
+        public IEnumerator FadeToBlack() => ScreenFadeOverlay.Instance.FadeTo(1f, fadeOutDuration);
+        public IEnumerator FadeFromBlack() => ScreenFadeOverlay.Instance.FadeTo(0f, fadeInDuration);
         public Vector2 ShakeOffset => shakeRemaining > 0f
             ? Vector2.Scale(new Vector2(
                 Mathf.Sin(shakeClock * shakeFrequency.x * 2f * Mathf.PI + 0.7f),

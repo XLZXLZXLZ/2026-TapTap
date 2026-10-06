@@ -19,7 +19,7 @@ namespace TapTap
                 textStyle = new GUIStyle(GUI.skin.label) { fontSize = 13 };
             }
             GUI.color = new Color(0.04f, 0.07f, 0.12f, 0.9f);
-            GUI.DrawTexture(new Rect(16f, 16f, 370f, 114f), Texture2D.whiteTexture);
+            GUI.DrawTexture(new Rect(16f, 16f, 370f, 137f), Texture2D.whiteTexture);
             GUI.color = new Color(0.22f, 0.89f, 0.78f);
             GUI.Label(new Rect(30f, 25f, 350f, 28f), "TAP / TAP   |   " + player.Phase, titleStyle);
             GUI.color = Color.white;
@@ -29,6 +29,7 @@ namespace TapTap
                 : "Hold to extend. Early release waits for Holding.";
             GUI.Label(new Rect(30f, 81f, 350f, 23f), instruction, textStyle);
             GUI.Label(new Rect(30f, 103f, 350f, 23f), "Mint: one-way    Purple: belt    Red: lethal", textStyle);
+            GUI.Label(new Rect(30f, 125f, 350f, 23f), "R: restart current scene", textStyle);
             GUI.color = Color.white;
         }
     }

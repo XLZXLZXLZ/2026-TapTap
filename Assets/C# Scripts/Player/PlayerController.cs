@@ -19,7 +19,7 @@ namespace TapTap
 
     public sealed class PlayerController : MonoBehaviour
     {
-        private enum Outcome { None, Pull, Join, Detach, DownwardJoin }
+        private enum Outcome { None, HeadLanded, Join, Detach, DownwardJoin }
         [SerializeField] private PlayerInput input;
         [SerializeField] private PlayerConfig config;
         [SerializeField] private MovableEntity body;
@@ -252,7 +252,7 @@ namespace TapTap
             MoveResult moved = head.Motor.Move(Vector2.down * Mathf.Max(0f, currentOffset - wantedOffset), body);
             if (moved.Blocked && moved.Normal.y > 0.5f)
             {
-                outcome = Outcome.Pull;
+                outcome = Outcome.HeadLanded;
                 effects.Add(PlayerEffect.HeadLanded);
                 QueueLanding(head, true, headGroundContact, 1f, moved.Normal);
                 headGroundContact = true;
@@ -433,7 +433,13 @@ namespace TapTap
             }
             switch (outcome)
             {
-                case Outcome.Pull: BeginPull(false); break;
+                case Outcome.HeadLanded:
+                    CancelAction();
+                    head.Velocity = Vector2.zero;
+                    head.SpringEnabled = true;
+                    SetPhase(PlayerPhase.Detached);
+                    headGroundContact = true;
+                    break;
                 case Outcome.Join: ApplyJoin(pendingLaunchHeight, false); break;
                 case Outcome.DownwardJoin: ApplyJoin(0f, true); break;
                 case Outcome.Detach:
