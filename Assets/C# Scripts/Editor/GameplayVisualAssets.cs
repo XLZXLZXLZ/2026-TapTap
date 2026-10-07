@@ -13,6 +13,7 @@ namespace TapTap.Editor
         public const string InversePhasePrefabPath = "Assets/Prefabs/Terrain/Grid/GridInversePhaseBlock.prefab";
         public const string SwitchPrefabPath = "Assets/Prefabs/Interactables/Grid/GridMechanismSwitch.prefab";
         public const string EndpointPrefabPath = "Assets/Prefabs/Interactables/Grid/GridEndpoint.prefab";
+        public const string SpringPrefabPath = "Assets/Prefabs/Terrain/Grid/GridSpring.prefab";
         public const string ShowcaseLayoutPath = "Assets/Runtime/Levels/Level_Mechanisms.asset";
 
         public static PlayerVisualConfig EnsureVisualSettings()
@@ -99,8 +100,56 @@ namespace TapTap.Editor
             finally { EditorSceneManager.ClosePreviewScene(preview); }
         }
 
+        public static GameObject EnsureSpringPrefab()
+        {
+            GameObject existing = AssetDatabase.LoadAssetAtPath<GameObject>(SpringPrefabPath);
+            if (existing != null) return existing;
+            LevelPrefabBuilder.EnsureFolder("Assets/Prefabs/Terrain/Grid");
+            Sprite square = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprite/Prototype/Square.png");
+            Sprite rounded = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprite/Prototype/Rounded.png");
+            if (square == null || rounded == null) throw new System.InvalidOperationException("弹簧缺少基础精灵资源。");
+            Material lines = EnsureVisualSettings().EffectsMaterial;
+            Scene preview = EditorSceneManager.NewPreviewScene();
+            try
+            {
+                var root = new GameObject("GridSpring");
+                SceneManager.MoveGameObjectToScene(root, preview);
+                SpringPad spring = root.AddComponent<SpringPad>();
+                BoxCollider2D collider = root.GetComponent<BoxCollider2D>();
+                collider.size = new Vector2(0.92f, 0.7f);
+                collider.offset = new Vector2(0f, -0.15f);
+                root.GetComponent<WorldSurface>().Configure(SurfaceKind.Solid);
+                var visual = new GameObject("Spring Visual");
+                visual.transform.SetParent(root.transform, false);
+                visual.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+                Sprite(visual.transform, "Base", square, new Vector2(0f, 0.05f), new Vector2(0.92f, 0.1f), new Color(0.2f, 0.3f, 0.4f));
+                Sprite(visual.transform, "Top plate", rounded, new Vector2(0f, 0.66f), new Vector2(0.88f, 0.08f), new Color(1f, 0.75f, 0.18f));
+                var coil = new GameObject("Coil");
+                coil.transform.SetParent(visual.transform, false);
+                LineRenderer line = coil.AddComponent<LineRenderer>();
+                line.sharedMaterial = lines;
+                line.useWorldSpace = false;
+                line.startWidth = line.endWidth = 0.045f;
+                line.startColor = line.endColor = new Color(1f, 0.85f, 0.4f);
+                line.numCornerVertices = 3;
+                line.numCapVertices = 3;
+                line.sortingOrder = 12;
+                var points = new Vector3[7];
+                for (int i = 0; i < points.Length; i++)
+                    points[i] = new Vector3(i == 0 || i == 6 ? 0f : i % 2 == 0 ? -0.23f : 0.23f, 0.12f + i * 0.08f, 0f);
+                line.positionCount = points.Length;
+                line.SetPositions(points);
+                spring.ConfigureVisual(visual.transform);
+                GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, SpringPrefabPath, out bool success);
+                if (!success || prefab == null) throw new System.InvalidOperationException("无法保存弹簧 Prefab。");
+                return prefab;
+            }
+            finally { EditorSceneManager.ClosePreviewScene(preview); }
+        }
+
         public static void EnsureMechanismPrefabs()
         {
+            EnsureSpringPrefab();
             LevelPrefabBuilder.EnsureFolder("Assets/Prefabs/Terrain/Grid");
             LevelPrefabBuilder.EnsureFolder("Assets/Prefabs/Interactables/Grid");
             Sprite square = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprite/Prototype/Square.png");

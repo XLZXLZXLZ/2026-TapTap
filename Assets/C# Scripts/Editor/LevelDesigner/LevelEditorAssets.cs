@@ -15,6 +15,91 @@ namespace TapTap.Editor
         private const string TerrainFolder = "Assets/Prefabs/Terrain/Grid";
         private const string MarkerFolder = "Assets/Prefabs/Interactables/Grid";
 
+        public static LevelBrush EnsureSpringBrush()
+        {
+            LevelPrefabBuilder.EnsureFolder(BrushFolder);
+            return EnsureBrush("Spring", "弹簧", "spring", "geometry", GameplayVisualAssets.EnsureSpringPrefab(),
+                new Vector2(0.5f, 0.5f), new Rect(0.04f, 0f, 0.92f, 0.7f), new Color(1f, 0.75f, 0.18f));
+        }
+
+        public static void EnsureSpringInPalette(LevelPalette palette)
+        {
+            if (palette == null || palette.Brushes != null && palette.Brushes.Exists(item => item != null && item.HandlerId == "spring")) return;
+            LevelBrush brush = EnsureSpringBrush();
+            if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
+            palette.Brushes.Add(brush);
+            EditorUtility.SetDirty(palette);
+            AssetDatabase.SaveAssetIfDirty(palette);
+        }
+
+        public static LevelBrush EnsureAnnotationBrush()
+        {
+            LevelPrefabBuilder.EnsureFolder(BrushFolder);
+            LevelPrefabBuilder.EnsureFolder(MarkerFolder);
+            string path = MarkerFolder + "/GridAnnotation.prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+            {
+                string materialPath = MarkerFolder + "/AnnotationRed.mat";
+                Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
+                if (material == null)
+                {
+                    material = new Material(Shader.Find("Sprites/Default"));
+                    AssetDatabase.CreateAsset(material, materialPath);
+                }
+                Scene preview = EditorSceneManager.NewPreviewScene();
+                try
+                {
+                    var root = new GameObject("GridAnnotation");
+                    SceneManager.MoveGameObjectToScene(root, preview);
+                    LevelAnnotation annotation = root.AddComponent<LevelAnnotation>();
+                    annotation.TextFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/ResourceHanRoundedCN-Bold.ttf");
+                    BoxCollider2D collider = root.GetComponent<BoxCollider2D>();
+                    collider.isTrigger = true;
+                    collider.size = Vector2.one * 0.8f;
+                    var circle = new Vector3[49];
+                    for (int i = 0; i < circle.Length; i++)
+                    {
+                        float angle = i * Mathf.PI * 2f / (circle.Length - 1);
+                        circle[i] = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * 0.32f;
+                    }
+                    AnnotationLine(root.transform, "Red circle", circle, 0.055f, material);
+                    AnnotationLine(root.transform, "Exclamation stem", new[] { new Vector3(0f, 0.19f), new Vector3(0f, -0.05f) }, 0.07f, material);
+                    AnnotationLine(root.transform, "Exclamation dot", new[] { new Vector3(0f, -0.17f), new Vector3(0f, -0.18f) }, 0.08f, material);
+                    prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+                }
+                finally { EditorSceneManager.ClosePreviewScene(preview); }
+            }
+            return EnsureBrush("Annotation", "测试批注 [N]", "annotation", "annotations", prefab,
+                new Vector2(0.5f, 0.5f), new Rect(0.1f, 0.1f, 0.8f, 0.8f), Color.red);
+        }
+
+        private static void AnnotationLine(Transform parent, string name, Vector3[] points, float width, Material material)
+        {
+            var child = new GameObject(name);
+            child.transform.SetParent(parent, false);
+            LineRenderer line = child.AddComponent<LineRenderer>();
+            line.useWorldSpace = false;
+            line.sharedMaterial = material;
+            line.startColor = line.endColor = new Color(1f, 0.12f, 0.12f);
+            line.startWidth = line.endWidth = width;
+            line.numCapVertices = 4;
+            line.sortingOrder = 100;
+            line.positionCount = points.Length;
+            line.SetPositions(points);
+        }
+
+        public static void EnsureAnnotationInPalette(LevelPalette palette)
+        {
+            if (palette == null) return;
+            if (palette.Brushes != null && palette.Brushes.Exists(item => item != null && item.HandlerId == "annotation")) return;
+            LevelBrush brush = EnsureAnnotationBrush();
+            if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
+            palette.Brushes.Add(brush);
+            EditorUtility.SetDirty(palette);
+            AssetDatabase.SaveAssetIfDirty(palette);
+        }
+
         public static LevelBrush EnsureEndpointBrush()
         {
             LevelPrefabBuilder.EnsureFolder(BrushFolder);
@@ -77,7 +162,9 @@ namespace TapTap.Editor
                 EnsureBrush("MechanismSwitch", "机关按钮", "default", "markers",
                     AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.SwitchPrefabPath),
                     new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f)),
-                EnsureEndpointBrush()
+                EnsureEndpointBrush(),
+                EnsureAnnotationBrush(),
+                EnsureSpringBrush()
             };
             LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
             if (palette == null)
@@ -101,6 +188,8 @@ namespace TapTap.Editor
                     if (!palette.Brushes.Contains(brushes[i])) { palette.Brushes.Add(brushes[i]); EditorUtility.SetDirty(palette); }
                 AssetDatabase.SaveAssetIfDirty(palette);
             }
+            EnsureAnnotationInPalette(palette);
+            EnsureSpringInPalette(palette);
             return palette;
         }
 

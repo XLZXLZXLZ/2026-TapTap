@@ -16,7 +16,7 @@ namespace TapTap
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
+            if (!LevelAnnotation.IsFeedbackOpen && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
         }
 
         public bool ResetCurrentScene()

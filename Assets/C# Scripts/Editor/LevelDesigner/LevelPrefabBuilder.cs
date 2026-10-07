@@ -140,6 +140,7 @@ namespace TapTap.Editor
                 var context = new LevelBuildContext(layout, region);
                 foreach (LevelPlacement placement in layout.Placements)
                 {
+                    if (LevelBrushHandlers.Get(placement.Brush.HandlerId).TestOnly) continue;
                     string layerId = placement.Brush.LayerId;
                     if (!layers.TryGetValue(layerId, out Transform layer))
                     {

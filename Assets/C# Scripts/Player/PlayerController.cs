@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace TapTap
 {
-    public enum PlayerPhase { Joined, Extending, Holding, Retracting, Pulling, Detached }
+    public enum PlayerPhase { Joined, Extending, Holding, Retracting, Pulling, Detached, PickingUp }
     public enum PlayerEffect { HeadLanded, PullBlocked, Joined, DownwardJoined, Bounce, Death, RecallFailed, HeadReturned, Landed }
 
     public struct PlayerContactFeedback
@@ -19,7 +19,7 @@ namespace TapTap
 
     public sealed class PlayerController : MonoBehaviour
     {
-        private enum Outcome { None, HeadLanded, Join, Detach, DownwardJoin }
+        private enum Outcome { None, HeadLanded, Join, Detach, DownwardJoin, Pickup }
         [SerializeField] private PlayerInput input;
         [SerializeField] private PlayerConfig config;
         [SerializeField] private MovableEntity body;
@@ -42,10 +42,12 @@ namespace TapTap
         private Vector2 pullBodyTarget;
         private float pendingLaunchHeight;
         private float headFallSpeed;
+        private Vector2 pickupStartOffset;
         private Outcome outcome;
         private bool bodyDied;
         private bool headDied;
         private MovableEntity pairSupport;
+        private WorldSurface pairSurface;
         private Vector2 pairContactNormal;
         private bool bodyGroundContact;
         private bool headGroundContact;
@@ -130,6 +132,7 @@ namespace TapTap
                         break;
                     case PlayerPhase.Retracting: TickMagneticMovement(dt); TickRetraction(dt); break;
                     case PlayerPhase.Pulling: TickPull(dt); break;
+                    case PlayerPhase.PickingUp: TickPickup(dt); break;
                 }
             }
 
@@ -188,13 +191,21 @@ namespace TapTap
             Vector2 delta = new Vector2((velocity.x + conveyor) * dt, velocity.y * dt);
             if (MovePairAxis(new Vector2(delta.x, 0f)) < 1f) velocity.x = 0f;
             pairSupport = null;
+            pairSurface = null;
             pairContactNormal = Vector2.zero;
             if (MovePairAxis(new Vector2(0f, delta.y)) < 1f)
             {
-                if (delta.y < 0f && pairSupport != null && pairSupport.Part == EntityPart.Head
+                if (delta.y < 0f && pairContactNormal.y > 0.5f &&
+                    SpringPad.TryBounce(pairSurface, config.WorldGravity, out float springSpeed))
+                {
+                    velocity.y = springSpeed;
+                    effects.Add(PlayerEffect.Bounce);
+                }
+                else if (delta.y < 0f && pairSupport != null && pairSupport.Part == EntityPart.Head
                     && pairSupport.SpringEnabled && !pairSupport.IsReturning)
                 {
                     velocity.y = Mathf.Sqrt(2f * config.WorldGravity * pairSupport.SpringHeight);
+                    pairSupport.NotifySpringBounce(body);
                     effects.Add(PlayerEffect.Bounce);
                 }
                 else velocity.y = 0f;
@@ -215,6 +226,7 @@ namespace TapTap
             {
                 SweepResult contact = a.Fraction <= b.Fraction ? a : b;
                 pairSupport = contact.Entity;
+                pairSurface = contact.Surface;
                 pairContactNormal = contact.Normal;
             }
             Vector2 allowed = delta * fraction;
@@ -334,10 +346,44 @@ namespace TapTap
                 }
                 foreach (MoveResult contact in body.Motor.Contacts)
                 {
-                    if (contact.Entity == head && contact.Normal.y > 0.5f)
+                    if (contact.Entity != head) continue;
+                    HeadContactAction action = HeadContactRules.Evaluate(
+                        EntityPart.Body, EntityPart.Head, contact.Normal);
+                    if (action == HeadContactAction.BounceEntity)
                         effects.Add(PlayerEffect.Bounce);
+                    else if (action == HeadContactAction.PickupHead && outcome == Outcome.None)
+                        outcome = Outcome.Pickup;
                 }
             }
+        }
+
+        private void BeginPickup()
+        {
+            CancelAction();
+            pickupStartOffset = head.Motor.Position - body.Motor.Position;
+            head.Velocity = Vector2.zero;
+            head.SpringEnabled = false;
+            pendingLaunchHeight = 0f;
+            SetPhase(PlayerPhase.PickingUp);
+        }
+
+        private void TickPickup(float dt)
+        {
+            float impactSpeed = Mathf.Max(0f, config.WorldGravity * dt - body.Velocity.y);
+            body.SimulateFree(dt, input.Horizontal * config.ToWorld(config.MoveSpeed), head);
+            bool contact = body.Motor.LastMoveResult.Blocked && body.Motor.LastMoveResult.Normal.y > 0.5f;
+            QueueLanding(body, contact, bodyGroundContact, impactSpeed, body.Motor.LastMoveResult.Normal);
+            bodyGroundContact = contact && body.Velocity.y <= 0f;
+
+            actionTime += dt;
+            float t = Mathf.Clamp01(actionTime / Mathf.Max(0.02f, config.PickupDuration));
+            float eased = DOVirtual.EasedValue(0f, 1f, t, Ease.InOutSine);
+            Vector2 offset = Vector2.Lerp(pickupStartOffset,
+                Vector2.up * config.ToWorld(config.JoinedOffset), eased);
+            Vector2 target = body.Motor.Position + offset;
+            MoveResult moved = head.Motor.Move(target - head.Motor.Position, body);
+            if (moved.Blocked) outcome = Outcome.Detach;
+            else if (t >= 1f) outcome = Outcome.Join;
         }
 
         private void QueueLanding(MovableEntity entity, bool groundContact, bool previousContact, float impactSpeed, Vector2 normal)
@@ -442,6 +488,7 @@ namespace TapTap
                     break;
                 case Outcome.Join: ApplyJoin(pendingLaunchHeight, false); break;
                 case Outcome.DownwardJoin: ApplyJoin(0f, true); break;
+                case Outcome.Pickup: BeginPickup(); break;
                 case Outcome.Detach:
                     body.Velocity = head.Velocity = Vector2.zero;
                     head.SpringEnabled = true;

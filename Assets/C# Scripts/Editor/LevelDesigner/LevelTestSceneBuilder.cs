@@ -145,6 +145,7 @@ namespace TapTap.Editor
                 var runtimeObject = (GameObject)PrefabUtility.InstantiatePrefab(runtimePrefab, scene);
                 LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
                 runtime.Configure(player, region, config, spawn);
+                GenerateAnnotations(region, player);
                 runtime.CameraRig?.FrameRegionHorizontally(region, ReferenceAspect);
                 LevelPrefabBuilder.RecordInstanceOverrides(regionObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(playerObject);
@@ -170,6 +171,35 @@ namespace TapTap.Editor
             }
             Debug.Log("Level test scene saved: " + scenePath);
             return scenePath;
+        }
+
+        public static void GenerateAnnotations(LevelRegion region, PlayerController player)
+        {
+            LevelDefinition layout = region.Source;
+            if (layout == null || layout.Placements == null) return;
+            Transform root = null;
+            var context = new LevelBuildContext(layout, region);
+            foreach (LevelPlacement placement in layout.Placements)
+            {
+                if (placement?.Brush == null || placement.Brush.HandlerId != "annotation") continue;
+                if (root == null)
+                {
+                    root = new GameObject("Test Annotations").transform;
+                    root.SetParent(region.transform, false);
+                }
+                GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(placement.Brush.Prefab, region.gameObject.scene);
+                instance.transform.SetParent(root, false);
+                instance.name = "Annotation [" + placement.Cell.x + "," + placement.Cell.y + "]";
+                Vector2 position = ((Vector2)placement.Cell + placement.Brush.Anchor) * region.UnitSize;
+                instance.transform.localPosition = new Vector3(position.x, position.y, 0f);
+                instance.transform.localScale = new Vector3(region.UnitSize, region.UnitSize, 1f);
+                LevelBrushHandlers.Get(placement.Brush.HandlerId).ConfigureInstance(instance, placement, context);
+                LevelAnnotation annotation = instance.GetComponent<LevelAnnotation>();
+                annotation.Player = player;
+                annotation.Source = layout;
+                annotation.PlacementId = placement.Id;
+                LevelPrefabBuilder.RecordInstanceOverrides(instance);
+            }
         }
 
         [MenuItem("TapTap/Level Designer/Update Test Scene Cameras")]

@@ -11,6 +11,7 @@ namespace TapTap
         [SerializeField] private PlayerConfig config;
         [SerializeField] private PlayerVisualConfig visualSettings;
         private PlayerController subscribedController;
+        private MovableEntity subscribedHead;
         [SerializeField] private MagneticConnectionView magnet;
         [SerializeField] private ContactParticles particles;
         [SerializeField] private LineRenderer guide;
@@ -25,6 +26,7 @@ namespace TapTap
         private float motionLean;
         private float headLean, bodyLag, headLag, breathingPhase;
         private Tween bodyTween, headTween;
+        private bool headSpringActive;
 
         public void ConfigureVisuals(PlayerVisualConfig settings) => visualSettings = settings;
         public void ConfigureEffects(MagneticConnectionView connection, ContactParticles contact, LineRenderer recall)
@@ -44,6 +46,12 @@ namespace TapTap
                     controller.PhaseChanged += OnPhase;
                     controller.ContactFeedback += OnContact;
                 }
+            }
+            if (subscribedHead != head)
+            {
+                if (subscribedHead != null) subscribedHead.SpringBounced -= OnHeadSpringBounce;
+                subscribedHead = head;
+                if (subscribedHead != null) subscribedHead.SpringBounced += OnHeadSpringBounce;
             }
             EnsureVisuals();
         }
@@ -127,7 +135,8 @@ namespace TapTap
                 Vector3 factor = new Vector3(1f + headSquash - stretch * 0.5f, 1f - headSquash + stretch, 1f);
                 factor = Vector3.Scale(factor, new Vector3(1f - headBreath * 0.5f, 1f + headBreath, 1f));
                 head.Visual.localScale = Vector3.Scale(headScale, factor);
-                head.Visual.localPosition = headPosition + Vector3.right * headLag;
+                head.Visual.localPosition = headPosition + Vector3.right * headLag
+                    + Vector3.up * (headSpringActive ? (factor.y - 1f) * head.Motor.Collider.size.y * 0.5f : 0f);
                 head.Visual.localRotation = headRotation * Quaternion.Euler(0f, 0f, headLean);
             }
             if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit);
@@ -140,7 +149,7 @@ namespace TapTap
             if (particles != null) particles.Burst(contact.Point, contact.Normal, contact.Assembly, unit);
             float amount = contact.Assembly ? visualSettings.AssemblySquash : visualSettings.LandingSquash;
             if (!contact.Assembly) amount *= Mathf.Lerp(0.4f, 1f, Mathf.Clamp01(contact.Speed / (8f * unit)));
-            Pulse(contact.Entity, amount);
+            if (contact.Entity != head || !headSpringActive) Pulse(contact.Entity, amount);
             if (contact.Assembly) Pulse(head, amount * 0.55f);
         }
 
@@ -170,9 +179,24 @@ namespace TapTap
             }
             else if (entity == head)
             {
+                headSpringActive = false;
                 headTween?.Kill(); headSquash = amount;
                 headTween = DOVirtual.Float(amount, 0f, duration, value => headSquash = value).SetEase(Ease.OutSine);
             }
+        }
+
+        private void OnHeadSpringBounce(MovableEntity bouncingEntity)
+        {
+            if (visualSettings == null || head == null || head.IsReturning) return;
+            headTween?.Kill();
+            headSpringActive = true;
+            float duration = Mathf.Max(0.02f, visualSettings.InteractionDuration);
+            float amount = visualSettings.SpringSquash;
+            headTween = DOTween.Sequence()
+                .Append(DOVirtual.Float(headSquash, amount, duration * 0.2f, value => headSquash = value).SetEase(Ease.OutQuad))
+                .Append(DOVirtual.Float(amount, -amount * 0.6f, duration * 0.35f, value => headSquash = value).SetEase(Ease.InOutSine))
+                .Append(DOVirtual.Float(-amount * 0.6f, 0f, duration * 0.45f, value => headSquash = value).SetEase(Ease.OutSine))
+                .OnComplete(() => headSpringActive = false);
         }
 
         public void ResetVisual(MovableEntity entity)
@@ -180,7 +204,7 @@ namespace TapTap
             if (!captured || entity == null || entity.Visual == null) return;
             bool lower = entity == body;
             if (lower) { bodyTween?.Kill(); bodySquash = bodyLag = motionLean = 0f; }
-            else { headTween?.Kill(); headSquash = headLag = headLean = 0f; }
+            else { headTween?.Kill(); headSpringActive = false; headSquash = headLag = headLean = 0f; }
             entity.Visual.localScale = lower ? bodyScale : headScale;
             entity.Visual.localPosition = lower ? bodyPosition : headPosition;
             entity.Visual.localRotation = lower ? bodyRotation : headRotation;
@@ -188,6 +212,8 @@ namespace TapTap
 
         private void Unsubscribe()
         {
+            if (subscribedHead != null) subscribedHead.SpringBounced -= OnHeadSpringBounce;
+            subscribedHead = null;
             if (subscribedController == null) return;
             subscribedController.Effect -= OnEffect;
             subscribedController.PhaseChanged -= OnPhase;

@@ -86,6 +86,7 @@ namespace TapTap
 
         public void Simulate(float unscaledDt)
         {
+            if (LevelAnnotation.IsFeedbackOpen) return;
             if (unscaledDt <= 0f) return;
             shakeClock += unscaledDt;
             shakeRemaining = Mathf.Max(0f, shakeRemaining - unscaledDt);

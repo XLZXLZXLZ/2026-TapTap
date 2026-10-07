@@ -59,7 +59,10 @@ namespace TapTap
         [Tooltip("每次松开空格尝试吸附后，到允许再次尝试的间隔。冷却期间最多缓存一次新的空格操作。")]
         [Min(0f)] public float RecallCooldown = 0.22f;
 
-        [Header("散落头部的弹簧交互")]
+        [Header("散落头部的拾取与弹簧交互")]
+        [InspectorName("拾取头部时长（秒）")]
+        [Tooltip("下半身从同高侧面接触散落头部时，头部平滑飞回身体上方的时间。拾取不会额外起跳；飞行遇地形阻挡时保持分离。")]
+        [Min(0.02f)] public float PickupDuration = 0.24f;
         [InspectorName("踩头弹起高度（格）")]
         [Tooltip("下半身或其他可运动实体从上方接触可弹跳的散落头部时，按此高度计算弹起速度。头部从上方落到下半身时执行合体，不使用此高度。")]
         [Min(0f)] public float SpringHeight = 3f;

@@ -48,6 +48,8 @@ namespace TapTap.Editor
         private Vector2Int? selectedCell;
         private Vector2 sidebarScroll;
         private string saveError;
+        private Texture2D annotationCircle;
+        private bool resetAnnotationFocus;
         [SerializeField] private string brushSearch = "";
         [SerializeField] private bool isolateLayer;
         [SerializeField] private RectInt selectionArea;
@@ -92,6 +94,7 @@ namespace TapTap.Editor
 
         private void OnEnable()
         {
+            resetAnnotationFocus = true;
             if (tool == GridTool.Stamp && clipboard.Count == 0) tool = GridTool.Select;
             minSize = new Vector2(720f, 450f);
             Undo.undoRedoPerformed += OnUndoRedo;
@@ -103,6 +106,8 @@ namespace TapTap.Editor
             }
             if (layout != null) palette = layout.Palette;
             if (palette == null) UseDefaultPalette();
+            LevelEditorAssets.EnsureAnnotationInPalette(palette);
+            LevelEditorAssets.EnsureSpringInPalette(palette);
             cacheDirty = true;
             fitPending = true;
         }
@@ -110,6 +115,7 @@ namespace TapTap.Editor
         private void OnDisable()
         {
             EndStroke();
+            if (annotationCircle != null) DestroyImmediate(annotationCircle);
             Undo.undoRedoPerformed -= OnUndoRedo;
             EditorApplication.projectChanged -= OnProjectChanged;
             RememberLayout();
@@ -176,6 +182,8 @@ namespace TapTap.Editor
             layout = definition;
             if (layout != null) palette = layout.Palette;
             if (palette == null) UseDefaultPalette();
+            LevelEditorAssets.EnsureAnnotationInPalette(palette);
+            LevelEditorAssets.EnsureSpringInPalette(palette);
             sampledBrush = null;
             settingsBrush = null;
             selectedPlacementId = null;
@@ -206,6 +214,13 @@ namespace TapTap.Editor
 
         private void OnGUI()
         {
+            if (resetAnnotationFocus)
+            {
+                // Clear the owner window's control too, in its own IMGUI context.
+                GUIUtility.keyboardControl = 0;
+                EditorGUIUtility.editingTextField = false;
+                resetAnnotationFocus = false;
+            }
             if (layout != null && palette != layout.Palette)
             {
                 EndStroke();
@@ -246,6 +261,7 @@ namespace TapTap.Editor
             EditorGUILayout.EndScrollView();
             GUILayout.EndArea();
             HandleCanvas(canvas);
+            DrawAnnotationTooltip(canvas);
             DrawStatus(canvas);
         }
 
@@ -295,6 +311,8 @@ namespace TapTap.Editor
             {
                 EndStroke();
                 palette = nextPalette;
+                LevelEditorAssets.EnsureAnnotationInPalette(palette);
+                LevelEditorAssets.EnsureSpringInPalette(palette);
                 sampledBrush = null;
                 brushIndex = 0;
                 settingsBrush = null;
@@ -728,12 +746,43 @@ namespace TapTap.Editor
             Color color = brush.Color;
             if (ghost) color.a *= 0.45f;
             var handler = LevelBrushHandlers.Get(brush.HandlerId);
-            if (handler != null && handler.IsCheckpoint)
+            if (brush.HandlerId == "annotation")
+            {
+                if (annotationCircle == null)
+                {
+                    annotationCircle = new Texture2D(64, 64, TextureFormat.RGBA32, false)
+                    { hideFlags = HideFlags.HideAndDontSave, filterMode = FilterMode.Bilinear, wrapMode = TextureWrapMode.Clamp };
+                    var pixels = new Color[64 * 64];
+                    for (int y = 0; y < 64; y++)
+                        for (int x = 0; x < 64; x++)
+                        {
+                            float distance = new Vector2(x - 31.5f, y - 31.5f).magnitude;
+                            pixels[y * 64 + x] = new Color(1f, 1f, 1f, Mathf.Clamp01(3.2f - Mathf.Abs(distance - 26f)));
+                        }
+                    annotationCircle.SetPixels(pixels);
+                    annotationCircle.Apply(false, true);
+                }
+                Color previous = GUI.color;
+                GUI.color = new Color(1f, 0.15f, 0.15f, ghost ? 0.45f : 1f);
+                GUI.DrawTexture(shape, annotationCircle, ScaleMode.ScaleToFit);
+                GUI.color = previous;
+                var style = new GUIStyle(CenterStyle()) { fontSize = Mathf.Max(10, Mathf.RoundToInt(cell.width * 0.55f)), fontStyle = FontStyle.Bold };
+                style.normal.textColor = new Color(1f, 0.15f, 0.15f, ghost ? 0.45f : 1f);
+                GUI.Label(shape, "!", style);
+            }
+            else if (handler != null && handler.IsCheckpoint)
             {
                 float poleX = shape.x + shape.width * 0.3f;
                 EditorGUI.DrawRect(new Rect(poleX, shape.y, Mathf.Max(1f, cell.width * 0.07f), shape.height), color);
                 EditorGUI.DrawRect(new Rect(poleX, shape.y, shape.width * 0.65f, shape.height * 0.4f), color);
                 EditorGUI.DrawRect(new Rect(shape.x, shape.yMax - 2f, shape.width, 2f), color);
+            }
+            else if (brush.HandlerId == "spring")
+            {
+                float baseHeight = Mathf.Max(2f, cell.height * 0.1f);
+                EditorGUI.DrawRect(new Rect(shape.x, shape.yMax - baseHeight, shape.width, baseHeight), color);
+                EditorGUI.DrawRect(new Rect(shape.x, shape.y, shape.width, baseHeight), color);
+                if (cell.width >= 14f) GUI.Label(shape, "↑", CenterStyle());
             }
             else if (brush.HandlerId == "endpoint")
             {
@@ -763,6 +812,23 @@ namespace TapTap.Editor
         private void HandleCanvas(Rect canvas)
         {
             Event e = Event.current;
+            if (e.type == EventType.KeyDown && e.keyCode == KeyCode.N && !EditorGUIUtility.editingTextField &&
+                !e.control && !e.command && !e.alt && !painting && !panning && !selecting)
+            {
+                LevelPlacement annotation = HoveredAnnotation(canvas);
+                if (annotation != null)
+                {
+                    Rect anchor = CellRect(annotation.Cell);
+                    anchor.position += canvas.position;
+                    e.Use();
+                    PopupWindow.Show(anchor, new AnnotationEditorPopup(layout, annotation, Changed, () =>
+                    {
+                        resetAnnotationFocus = true;
+                        Repaint();
+                    }));
+                    return;
+                }
+            }
             int control = GUIUtility.GetControlID("TapTap.LevelGrid".GetHashCode(), FocusType.Passive);
             bool inside = canvas.Contains(e.mousePosition);
             Vector2 local = e.mousePosition - canvas.position;
@@ -871,6 +937,33 @@ namespace TapTap.Editor
             }
             if (inside && e.type == EventType.MouseMove) Repaint();
             wantsMouseMove = true;
+        }
+
+        private LevelPlacement HoveredAnnotation(Rect canvas)
+        {
+            if (layout == null || !canvas.Contains(Event.current.mousePosition)) return null;
+            RebuildCache();
+            Vector2Int cell = MouseToCell(Event.current.mousePosition - canvas.position);
+            if (!layout.Contains(cell) || !cells.TryGetValue(cell, out var items)) return null;
+            return items.Find(item => Visible(item) && item.Brush != null && item.Brush.HandlerId == "annotation");
+        }
+
+        private void DrawAnnotationTooltip(Rect canvas)
+        {
+            if (painting || panning || selecting) return;
+            LevelPlacement annotation = HoveredAnnotation(canvas);
+            if (annotation == null) return;
+            string text = (annotation.Settings as AnnotationPlacementSettings)?.Text;
+            if (string.IsNullOrWhiteSpace(text)) text = "尚未编辑该批注";
+            var style = new GUIStyle(EditorStyles.wordWrappedLabel) { richText = false };
+            float width = Mathf.Min(320f, canvas.width - 16f);
+            float height = Mathf.Min(210f, style.CalcHeight(new GUIContent(text), width - 24f) + 48f);
+            Vector2 mouse = Event.current.mousePosition;
+            Rect rect = new Rect(Mathf.Clamp(mouse.x + 18f, canvas.x + 4f, canvas.xMax - width - 4f),
+                Mathf.Clamp(mouse.y + 18f, canvas.y + 4f, canvas.yMax - height - 4f), width, height);
+            GUI.Box(rect, GUIContent.none, EditorStyles.helpBox);
+            GUI.Label(new Rect(rect.x + 12f, rect.y + 8f, width - 24f, height - 38f), text, style);
+            GUI.Label(new Rect(rect.x + 12f, rect.yMax - 26f, width - 24f, 20f), "[N] 编辑批注", EditorStyles.boldLabel);
         }
 
         private bool CanPaint()

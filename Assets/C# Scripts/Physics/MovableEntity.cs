@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace TapTap
         [Min(0.01f)] public float Gravity = 24f;
         [Min(0f)] public float SpringHeight = 3f;
         public bool SpringEnabled = true;
+        public event Action<MovableEntity> SpringBounced;
+
+        public void NotifySpringBounce(MovableEntity bouncingEntity) => SpringBounced?.Invoke(bouncingEntity);
 
         public static IReadOnlyList<MovableEntity> ActiveEntities => activeEntities;
         public KinematicMotor2D Motor { get { Initialize(); return motor; } }
@@ -73,12 +77,18 @@ namespace TapTap
             if (!vertical.Blocked)
                 return;
 
-            if (Velocity.y <= 0f && vertical.Normal.y > 0.5f
-                && vertical.Entity != null && vertical.Entity.Part == EntityPart.Head
+            if (Velocity.y <= 0f && vertical.Normal.y > 0.5f &&
+                SpringPad.TryBounce(vertical.Surface, Gravity, out float springSpeed))
+            {
+                Velocity = new Vector2(Velocity.x, springSpeed);
+            }
+            else if (Velocity.y <= 0f && vertical.Entity != null
+                && HeadContactRules.Evaluate(Part, vertical.Entity.Part, vertical.Normal) == HeadContactAction.BounceEntity
                 && vertical.Entity.SpringEnabled && !vertical.Entity.IsReturning)
             {
                 Velocity = new Vector2(Velocity.x,
                     Mathf.Sqrt(2f * Gravity * vertical.Entity.SpringHeight));
+                vertical.Entity.NotifySpringBounce(this);
             }
             else
             {

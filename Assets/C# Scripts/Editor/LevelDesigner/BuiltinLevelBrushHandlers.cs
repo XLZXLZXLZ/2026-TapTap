@@ -3,6 +3,54 @@ using UnityEngine;
 
 namespace TapTap.Editor
 {
+    public sealed class SpringLevelBrushHandler : LevelBrushHandler
+    {
+        public override string Id => "spring";
+        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new SpringPlacementSettings();
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            if (!(placement.Settings is SpringPlacementSettings settings))
+            { EditorGUILayout.HelpBox("弹簧配置不兼容，请重新绘制。", MessageType.Error); return; }
+            settings.Height = EditorGUILayout.FloatField("弹起高度（格）", settings.Height);
+            settings.AnimationDuration = EditorGUILayout.FloatField("动画时长（秒）", settings.AnimationDuration);
+            EditorGUILayout.HelpBox("从顶部落下时触发；默认向上弹起 3 格。", MessageType.None);
+        }
+        public override string ValidatePlacement(LevelPlacement placement)
+        {
+            if (!(placement.Settings is SpringPlacementSettings settings)) return "弹簧缺少配置。";
+            if (float.IsNaN(settings.Height) || float.IsInfinity(settings.Height) || settings.Height <= 0f)
+                return "弹起高度必须是大于零的有限数值。";
+            if (float.IsNaN(settings.AnimationDuration) || float.IsInfinity(settings.AnimationDuration) || settings.AnimationDuration < 0.02f)
+                return "动画时长必须至少为 0.02 秒且是有限数值。";
+            return placement.Brush.Prefab.GetComponent<SpringPad>() == null ? "弹簧 Prefab 缺少 SpringPad。" : null;
+        }
+        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context)
+        {
+            var settings = (SpringPlacementSettings)placement.Settings;
+            SpringPad spring = instance.GetComponent<SpringPad>();
+            spring.BounceHeight = settings.Height * context.UnitSize;
+            spring.AnimationDuration = settings.AnimationDuration;
+        }
+    }
+
+    public sealed class AnnotationLevelBrushHandler : LevelBrushHandler
+    {
+        public override string Id => "annotation";
+        public override bool TestOnly => true;
+        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new AnnotationPlacementSettings();
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            if (!(placement.Settings is AnnotationPlacementSettings settings)) return;
+            EditorGUILayout.LabelField("批注内容（仅测试）");
+            settings.Text = EditorGUILayout.TextArea(settings.Text ?? "", GUILayout.MinHeight(80f));
+        }
+        public override string ValidatePlacement(LevelPlacement placement) =>
+            !(placement.Settings is AnnotationPlacementSettings) || placement.Brush.Prefab.GetComponent<LevelAnnotation>() == null
+                ? "批注缺少配置或 LevelAnnotation。" : null;
+        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context) =>
+            instance.GetComponent<LevelAnnotation>().Text = ((AnnotationPlacementSettings)placement.Settings).Text;
+    }
+
     public sealed class EndpointLevelBrushHandler : LevelBrushHandler
     {
         public override string Id => "endpoint";

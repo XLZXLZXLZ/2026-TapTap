@@ -9,6 +9,19 @@ namespace TapTap
     }
 
     [Serializable]
+    public sealed class AnnotationPlacementSettings : LevelPlacementSettings
+    {
+        [TextArea] public string Text = "";
+    }
+
+    [Serializable]
+    public sealed class SpringPlacementSettings : LevelPlacementSettings
+    {
+        public float Height = 3f;
+        public float AnimationDuration = 0.28f;
+    }
+
+    [Serializable]
     public sealed class EmptyPlacementSettings : LevelPlacementSettings
     {
     }

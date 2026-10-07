@@ -11,19 +11,35 @@ namespace TapTap
         public float Horizontal { get; private set; }
         public bool SpaceHeld { get; private set; }
         private readonly Queue<MagnetInput> edges = new Queue<MagnetInput>();
+        private bool waitForSpaceRelease;
 
         private void Update()
         {
+            if (LevelAnnotation.IsFeedbackOpen)
+            {
+                Horizontal = 0f;
+                SpaceHeld = false;
+                edges.Clear();
+                waitForSpaceRelease = true;
+                return;
+            }
             if (!UseKeyboard) return;
             float horizontal = 0f;
             if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) horizontal -= 1f;
             if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) horizontal += 1f;
-            Sample(horizontal, Input.GetKey(KeyCode.Space));
+            bool held = Input.GetKey(KeyCode.Space);
+            if (waitForSpaceRelease)
+            {
+                if (!held) waitForSpaceRelease = false;
+                held = false;
+            }
+            Sample(horizontal, held);
         }
 
         public void SetExternalInput(float horizontal, bool held)
         {
             UseKeyboard = false;
+            if (LevelAnnotation.IsFeedbackOpen) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
             Sample(horizontal, held);
         }
 

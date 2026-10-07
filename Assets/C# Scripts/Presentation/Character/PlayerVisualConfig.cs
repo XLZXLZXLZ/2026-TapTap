@@ -48,6 +48,8 @@ namespace TapTap
         [Range(0f, 0.4f)] public float LandingSquash = 0.12f;
         [InspectorName("合体挤压幅度"), Tooltip("头身接触拼装时下半身视觉挤压的比例，头部采用较小幅度。也作为伸头和踩头弹起反馈的强度基准。")]
         [Range(0f, 0.4f)] public float AssemblySquash = 0.16f;
+        [InspectorName("踩头弹簧形变幅度"), Tooltip("散落头部被从上方踩到时，先横向变宽、纵向压扁，再横向变窄、纵向拉长，最后恢复。仅影响视觉，不改变碰撞体。")]
+        [Range(0f, 0.4f)] public float SpringSquash = 0.2f;
         [InspectorName("运动拉伸幅度"), Tooltip("下半身随纵向速度拉长、变窄的最大比例；头部在伸头和吸附期间使用此拉伸幅度。仅影响视觉，不改变实际伸头距离或跃起高度。")]
         [Range(0f, 0.4f)] public float MotionStretch = 0.05f;
         [InspectorName("形变恢复时长（秒）"), Tooltip("一次挤压或拉伸反馈恢复到原始形状的时间，采用缓出曲线；不控制伸头、收头或吸附动作的时长。")]
