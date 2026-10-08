@@ -21,7 +21,9 @@ namespace TapTap
         public static bool IsFeedbackOpen => activeFeedback != null;
         private GameObject feedbackCanvas;
         private GameObject ownedEventSystem;
-        private InputField experienceInput, ideasInput, designInput;
+        private InputField noteInput;
+        private readonly List<Button> ratingButtons = new List<Button>();
+        private int rating;
         private Text saveStatus;
         private float previousTimeScale;
         private bool feedbackDirty;
@@ -106,6 +108,9 @@ namespace TapTap
             previousTimeScale = Time.timeScale;
             Time.timeScale = 0f;
             savedFeedback = null;
+            feedbackDirty = false;
+            rating = 3;
+            ratingButtons.Clear();
             feedbackTimestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             if (EventSystem.current == null)
                 ownedEventSystem = new GameObject("Annotation EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
@@ -121,35 +126,73 @@ namespace TapTap
             scaler.matchWidthOrHeight = 1f;
             Image shade = CreateUI<Image>("Backdrop", feedbackCanvas.transform);
             Place(shade.rectTransform, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            shade.color = new Color(0f, 0f, 0f, 0.7f);
+            shade.color = new Color(0f, 0f, 0f, 0.45f);
             Image panel = CreateUI<Image>("Panel", shade.transform);
-            Place(panel.rectTransform, new Vector2(0.08f, 0.04f), new Vector2(0.92f, 0.96f), Vector2.zero, Vector2.zero);
+            float panelWidth = Mathf.Min(520f, 720f * Screen.width / Mathf.Max(1, Screen.height) - 32f);
+            Place(panel.rectTransform, Vector2.one * 0.5f, Vector2.one * 0.5f,
+                new Vector2(-panelWidth * 0.5f, -200f), new Vector2(panelWidth * 0.5f, 200f));
             panel.color = new Color(0.12f, 0.15f, 0.2f);
-            AddText(panel.transform, "测试批注 · 体验评价", 26, 0.91f, 0.98f);
-            AddText(panel.transform, "对应体验是否感受到？有没有更好的想法？整体设计是否合理？", 17, 0.86f, 0.92f);
-            AddText(panel.transform, DisplayText, 17, 0.72f, 0.86f, true);
-            experienceInput = AddInput(panel.transform, "体验感受", "例如：感受到了／没感受到，原因是……", 0.52f, 0.69f);
-            ideasInput = AddInput(panel.transform, "改进想法", "这里还可以尝试……", 0.32f, 0.49f);
-            designInput = AddInput(panel.transform, "整体设计评价", "合理／不合理的地方，以及理由……", 0.12f, 0.29f);
-            saveStatus = AddText(panel.transform, "输入后自动保存到原始批注；Esc 返回体验", 16, 0.06f, 0.12f);
+            AddText(panel.transform, "感觉如何？", 26, 0.86f, 0.96f);
+            AddText(panel.transform, DisplayText, 17, 0.64f, 0.84f, true);
+            for (int score = 1; score <= 5; score++)
+            {
+                int selectedScore = score;
+                Image ratingImage = CreateUI<Image>("Rating " + score, panel.transform);
+                float left = 0.04f + (score - 1) * 0.188f;
+                Place(ratingImage.rectTransform, new Vector2(left, 0.49f), new Vector2(left + 0.168f, 0.61f),
+                    Vector2.zero, Vector2.zero);
+                Button ratingButton = ratingImage.gameObject.AddComponent<Button>();
+                ratingButton.targetGraphic = ratingImage;
+                ratingButton.onClick.AddListener(() =>
+                {
+                    rating = selectedScore;
+                    RefreshRatingButtons();
+                    MarkFeedbackDirty();
+                    SaveFeedback();
+                });
+                ratingButtons.Add(ratingButton);
+                AddText(ratingButton.transform, score.ToString(), 23, 0f, 1f).alignment = TextAnchor.MiddleCenter;
+            }
+            RefreshRatingButtons();
+            noteInput = AddInput(panel.transform, "补充两句（可不写）", "想说什么都行～", 0.17f, 0.44f);
+            saveStatus = AddText(panel.transform, "会自动保存 · Esc 返回", 15, 0.08f, 0.14f);
 #if !UNITY_EDITOR
             saveStatus.text = "评价回写需要在 Unity 编辑器的 Play 模式中进行。";
-            experienceInput.interactable = ideasInput.interactable = designInput.interactable = false;
+            SetFeedbackInteractable(false);
 #else
             if (SourceSettings == null || !UnityEditor.AssetDatabase.Contains(Source))
             {
                 saveStatus.text = "无法找到原始批注，请从关卡编辑器重新生成测试场景。";
-                experienceInput.interactable = ideasInput.interactable = designInput.interactable = false;
+                SetFeedbackInteractable(false);
             }
 #endif
             Image buttonImage = CreateUI<Image>("Close", panel.transform);
-            Place(buttonImage.rectTransform, new Vector2(0.7f, 0.01f), new Vector2(0.96f, 0.06f), Vector2.zero, Vector2.zero);
+            Place(buttonImage.rectTransform, new Vector2(0.72f, 0.02f), new Vector2(0.96f, 0.08f), Vector2.zero, Vector2.zero);
             buttonImage.color = new Color(0.22f, 0.38f, 0.5f);
             Button button = buttonImage.gameObject.AddComponent<Button>();
             button.targetGraphic = buttonImage;
             button.onClick.AddListener(CloseFeedback);
-            AddText(button.transform, "保存并继续体验", 17, 0f, 1f).alignment = TextAnchor.MiddleCenter;
-            experienceInput.ActivateInputField();
+            AddText(button.transform, "继续玩", 17, 0f, 1f).alignment = TextAnchor.MiddleCenter;
+        }
+
+        private void RefreshRatingButtons()
+        {
+            for (int i = 0; i < ratingButtons.Count; i++)
+                ratingButtons[i].image.color = i + 1 == rating
+                    ? new Color(0.85f, 0.49f, 0.2f) : new Color(0.22f, 0.27f, 0.34f);
+        }
+
+        private void SetFeedbackInteractable(bool interactable)
+        {
+            noteInput.interactable = interactable;
+            foreach (Button button in ratingButtons) button.interactable = interactable;
+        }
+
+        private void MarkFeedbackDirty()
+        {
+            feedbackDirty = true;
+            saveAt = Time.unscaledTime + 0.5f;
+            saveStatus.text = "保存中…";
         }
 
         private T CreateUI<T>(string name, Transform parent) where T : Component
@@ -200,9 +243,9 @@ namespace TapTap
 
         private InputField AddInput(Transform parent, string title, string placeholder, float bottom, float top)
         {
-            AddText(parent, title, 18, top - 0.045f, top);
+            AddText(parent, title, 18, top - 0.065f, top);
             Image background = CreateUI<Image>(title, parent);
-            Place(background.rectTransform, new Vector2(0.04f, bottom), new Vector2(0.96f, top - 0.05f), Vector2.zero, Vector2.zero);
+            Place(background.rectTransform, new Vector2(0.04f, bottom), new Vector2(0.96f, top - 0.07f), Vector2.zero, Vector2.zero);
             background.color = new Color(0.95f, 0.96f, 0.98f);
             background.gameObject.AddComponent<RectMask2D>();
             InputField input = background.gameObject.AddComponent<InputField>();
@@ -217,19 +260,14 @@ namespace TapTap
             input.placeholder = hint;
             input.targetGraphic = background;
             input.lineType = InputField.LineType.MultiLineNewline;
-            input.onValueChanged.AddListener(_ =>
-            {
-                feedbackDirty = true;
-                saveAt = Time.unscaledTime + 0.5f;
-                saveStatus.text = "正在输入，稍后自动保存……";
-            });
+            input.onValueChanged.AddListener(_ => MarkFeedbackDirty());
             input.onEndEdit.AddListener(_ => SaveFeedback());
             return input;
         }
 
         private void SaveFeedback()
         {
-            if (!feedbackDirty || experienceInput == null) return;
+            if (!feedbackDirty || noteInput == null) return;
 #if UNITY_EDITOR
             AnnotationPlacementSettings settings = SourceSettings;
             if (settings == null || !UnityEditor.AssetDatabase.Contains(Source))
@@ -244,11 +282,8 @@ namespace TapTap
                 int index = current.LastIndexOf(savedFeedback, StringComparison.Ordinal);
                 if (index >= 0) current = current.Remove(index, savedFeedback.Length);
             }
-            string entry = "";
-            if (!string.IsNullOrWhiteSpace(experienceInput.text) || !string.IsNullOrWhiteSpace(ideasInput.text) ||
-                !string.IsNullOrWhiteSpace(designInput.text))
-                entry = "\n\n【体验评价 " + feedbackTimestamp + "】\n体验感受：" + experienceInput.text.Trim() +
-                    "\n改进想法：" + ideasInput.text.Trim() + "\n整体设计：" + designInput.text.Trim();
+            string entry = "\n\n【体验评价 " + feedbackTimestamp + "】\n感觉如何：" + rating + "/5";
+            if (!string.IsNullOrWhiteSpace(noteInput.text)) entry += "\n补充：" + noteInput.text.Trim();
             try
             {
                 if (current + entry != settings.Text)
@@ -261,7 +296,7 @@ namespace TapTap
                 Text = settings.Text;
                 UnityEditor.AssetDatabase.SaveAssetIfDirty(Source);
                 feedbackDirty = false;
-                saveStatus.text = "已保存到原始批注；Esc 返回体验";
+                saveStatus.text = "已保存 · Esc 返回";
             }
             catch (Exception exception)
             {

@@ -24,10 +24,11 @@ MonoBehaviour:
   PullStartSpeed: 1
   PullMaxSpeed: 15
   PullAccelerationTime: 0.45
-  DistantThreshold: 5
+  DistantThreshold: 7
   NormalLaunchHeight: 1.1
-  DistantLaunchHeight: 2.5
+  DistantLaunchHeight: 3.4
   RecallCooldown: 0.22
+  PickupDuration: 0.24
   SpringHeight: 3
   LandingShakeSpeed: 5
   JoinTolerance: 0.015

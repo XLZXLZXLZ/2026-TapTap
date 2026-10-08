@@ -109,9 +109,53 @@ namespace TapTap.Editor
         public override string Id => "default";
     }
 
-    public sealed class ConveyorLevelBrushHandler : LevelBrushHandler
+    public sealed class SpikesLevelBrushHandler : LevelBrushHandler, ILevelBrushRotation
+    {
+        public override string Id => "spikes";
+        public int RotationStepDegrees => 90;
+        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new SpikePlacementSettings();
+        // Existing layouts used EmptyPlacementSettings for upward spikes.
+        public bool CanRotate(LevelPlacement placement) => placement.Settings is SpikePlacementSettings ||
+            placement.Settings is EmptyPlacementSettings;
+        public void Rotate(LevelPlacement placement)
+        {
+            if (!CanRotate(placement)) return;
+            var settings = placement.Settings as SpikePlacementSettings ?? new SpikePlacementSettings();
+            settings.QuarterTurns = (settings.QuarterTurns + 1) & 3;
+            placement.Settings = settings;
+        }
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            if (!CanRotate(placement))
+            { EditorGUILayout.HelpBox("尖刺配置不兼容，请重新绘制。", MessageType.Error); return; }
+            var settings = placement.Settings as SpikePlacementSettings ?? new SpikePlacementSettings();
+            settings.QuarterTurns = EditorGUILayout.Popup("朝向", settings.QuarterTurns & 3,
+                new[] { "上 ↑", "右 →", "下 ↓", "左 ←" });
+            placement.Settings = settings;
+        }
+        public override string ValidatePlacement(LevelPlacement placement) => !CanRotate(placement)
+            ? "尖刺缺少方向配置。"
+            : placement.Brush.Prefab.GetComponentInChildren<LethalZone>(true) == null ? "尖刺 Prefab 缺少 LethalZone。" : null;
+        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context)
+        {
+            int turns = (placement.Settings as SpikePlacementSettings)?.QuarterTurns ?? 0;
+            // Rotate both the visual and lethal collider around the cell's anchor.
+            instance.transform.localRotation = Quaternion.Euler(0f, 0f, -(turns & 3) * 90f);
+        }
+    }
+
+    public sealed class ConveyorLevelBrushHandler : LevelBrushHandler, ILevelBrushRotation
     {
         public override string Id => "conveyor";
+        public int RotationStepDegrees => 180;
+        public bool CanRotate(LevelPlacement placement) => placement.Settings is ConveyorPlacementSettings;
+        public void Rotate(LevelPlacement placement)
+        {
+            if (!(placement.Settings is ConveyorPlacementSettings settings)) return;
+            bool wasLeft = settings.FacingLeft;
+            settings.Speed = -settings.Speed;
+            settings.FacingLeftWhenStopped = !wasLeft;
+        }
         public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new ConveyorPlacementSettings();
 
         public override void DrawSettings(LevelPlacement placement)
@@ -141,7 +185,7 @@ namespace TapTap.Editor
             instance.GetComponentInChildren<WorldSurface>().ConveyorSpeed = settings.Speed * context.UnitSize;
             foreach (Transform child in instance.GetComponentsInChildren<Transform>(true))
                 if (child.name.StartsWith("Belt arrow ", System.StringComparison.Ordinal))
-                    child.localRotation = Quaternion.Euler(0f, 0f, settings.Speed < 0f ? 90f : -90f);
+                    child.localRotation = Quaternion.Euler(0f, 0f, settings.FacingLeft ? 90f : -90f);
         }
     }
 

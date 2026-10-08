@@ -18,6 +18,14 @@ namespace TapTap.Editor
         }
     }
 
+    // Implement only when turning is meaningful for this object; the handler owns its semantics.
+    public interface ILevelBrushRotation
+    {
+        int RotationStepDegrees { get; }
+        bool CanRotate(LevelPlacement placement);
+        void Rotate(LevelPlacement placement);
+    }
+
     // Add a concrete handler with a unique Id to extend the palette without changing the window.
     public abstract class LevelBrushHandler
     {

@@ -149,7 +149,7 @@ namespace TapTap.Editor
                     new Vector2(0.5f, 0.5f), new Rect(0f, 0.75f, 1f, 0.25f), new Color(0.22f, 0.89f, 0.78f)),
                 EnsureBrush("Conveyor", "传送带", "conveyor", "geometry", conveyor,
                     new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.46f, 0.38f, 0.70f)),
-                EnsureBrush("Spikes", "尖刺", "default", "geometry", spikes,
+                EnsureBrush("Spikes", "尖刺", "spikes", "geometry", spikes,
                     new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(1f, 0.43f, 0.36f)),
                 EnsureBrush("Checkpoint", "复活点", "checkpoint", "markers", checkpoint,
                     new Vector2(0.5f, 0f), new Rect(0.25f, 0f, 0.5f, 1f), new Color(1f, 0.94f, 0.79f)),

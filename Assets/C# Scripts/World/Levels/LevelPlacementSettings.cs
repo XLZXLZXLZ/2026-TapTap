@@ -30,6 +30,14 @@ namespace TapTap
     public sealed class ConveyorPlacementSettings : LevelPlacementSettings
     {
         public float Speed = 1.25f;
+        public bool FacingLeftWhenStopped;
+        public bool FacingLeft => Speed < 0f || Speed == 0f && FacingLeftWhenStopped;
+    }
+
+    [Serializable]
+    public sealed class SpikePlacementSettings : LevelPlacementSettings
+    {
+        public int QuarterTurns;
     }
 
     [Serializable]

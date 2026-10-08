@@ -473,7 +473,7 @@ namespace TapTap.Editor
             if (!string.IsNullOrEmpty(saveError)) EditorGUILayout.HelpBox(saveError, MessageType.Error);
             EditorGUILayout.Space(10f);
             EditorGUILayout.LabelField(ToolHelp(), EditorStyles.wordWrappedMiniLabel);
-            EditorGUILayout.LabelField("B 笔刷 · E 橡皮 · R 矩形 · F 油漆桶 · V 选择\nCtrl+C/V 区域复制/粘贴 · Delete 删除选择\n方向键移动选择 · Ctrl+S 保存 · Home 适应窗口\n右键擦当前层 · Shift + 右键擦整格\n中键拾取 · Alt/空格 + 左键平移 · 滚轮缩放", EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.LabelField("B 笔刷 · E 橡皮 · R 矩形 · F 油漆桶 · V 选择\nT 转向物体／当前笔刷\nCtrl+C/V 区域复制/粘贴 · Delete 删除选择\n方向键移动选择 · Ctrl+S 保存 · Home 适应窗口\n右键擦当前层 · Shift + 右键擦整格\n中键拾取 · Alt/空格 + 左键平移 · 滚轮缩放", EditorStyles.wordWrappedMiniLabel);
         }
 
         private void GenerateTestScene()
@@ -554,6 +554,51 @@ namespace TapTap.Editor
             var template = new LevelPlacement { Brush = brush, Settings = paintSettings };
             handler.DrawSettings(template);
             paintSettings = template.Settings;
+            if (tool != GridTool.Eraser && handler is ILevelBrushRotation rotation && rotation.CanRotate(template) &&
+                GUILayout.Button($"转向 [T] · {rotation.RotationStepDegrees}°")) RotateCurrentTarget();
+        }
+
+        private static ILevelBrushRotation RotationHandler(LevelPlacement placement)
+        {
+            if (placement?.Brush == null) return null;
+            var rotation = LevelBrushHandlers.Get(placement.Brush.HandlerId) as ILevelBrushRotation;
+            return rotation != null && rotation.CanRotate(placement) ? rotation : null;
+        }
+
+        private void RotateCurrentTarget()
+        {
+            if (SelectionMode)
+            {
+                List<LevelPlacement> targets = hasAreaSelection && (selectionArea.width > 1 || selectionArea.height > 1)
+                    ? AreaContents() : new List<LevelPlacement>();
+                if (targets.Count == 0 && SelectedPlacement() != null) targets.Add(SelectedPlacement());
+                targets.RemoveAll(item => RotationHandler(item) == null);
+                if (targets.Count == 0)
+                { ShowNotification(new GUIContent("选中的物体不支持转向")); return; }
+                RecordLayoutUndo("转向关卡物体");
+                foreach (LevelPlacement target in targets) RotationHandler(target).Rotate(target);
+                Changed();
+                return;
+            }
+            if (tool == GridTool.Stamp || tool == GridTool.Eraser)
+            { ShowNotification(new GUIContent("请在笔刷或选择工具中转向")); return; }
+            LevelBrush brush = Brush;
+            if (brush == null) return;
+            LevelBrushHandler handler = LevelBrushHandlers.Get(brush.HandlerId);
+            if (handler == null) return;
+            if (settingsBrush != brush || paintSettings == null)
+            {
+                settingsBrush = brush;
+                paintSettings = handler.CreateSettings(brush);
+            }
+            var template = new LevelPlacement { Brush = brush, Settings = paintSettings };
+            ILevelBrushRotation rotation = RotationHandler(template);
+            if (rotation == null)
+            { ShowNotification(new GUIContent("当前笔刷不支持转向")); return; }
+            rotation.Rotate(template);
+            paintSettings = template.Settings;
+            GUIUtility.keyboardControl = 0;
+            Repaint();
         }
 
         private void DrawSelection()
@@ -615,6 +660,8 @@ namespace TapTap.Editor
                     placement.Settings = draft.Settings;
                     Changed();
                 }
+                if (handler is ILevelBrushRotation rotation && rotation.CanRotate(placement) &&
+                    GUILayout.Button($"转向 [T] · {rotation.RotationStepDegrees}°")) RotateCurrentTarget();
                 if (handler.IsCheckpoint)
                 {
                     bool isEntry = placement.Id == layout.EntryPlacementId;
@@ -805,7 +852,12 @@ namespace TapTap.Editor
             }
             if (placement.Settings is ConveyorPlacementSettings conveyor && cell.width >= 14f)
             {
-                GUI.Label(shape, conveyor.Speed < 0f ? "←" : conveyor.Speed > 0f ? "→" : "·", CenterStyle());
+                GUI.Label(shape, conveyor.FacingLeft ? "←" : "→", CenterStyle());
+            }
+            else if (brush.HandlerId == "spikes" && cell.width >= 14f)
+            {
+                int turns = (placement.Settings as SpikePlacementSettings)?.QuarterTurns ?? 0;
+                GUI.Label(shape, new[] { "↑", "→", "↓", "←" }[turns & 3], CenterStyle());
             }
         }
 
@@ -1209,6 +1261,7 @@ namespace TapTap.Editor
                     case KeyCode.R: tool = e.shift ? GridTool.RectangleOutline : GridTool.Rectangle; break;
                     case KeyCode.F: tool = GridTool.Bucket; break;
                     case KeyCode.V: tool = GridTool.Select; break;
+                    case KeyCode.T: if (e.alt || e.shift) return; RotateCurrentTarget(); break;
                     case KeyCode.Home: fitPending = true; break;
                     case KeyCode.Delete: case KeyCode.Backspace: if (SelectionMode) DeleteArea(); else return; break;
                     case KeyCode.LeftArrow: if (SelectionMode) MoveArea(Vector2Int.left); else return; break;
