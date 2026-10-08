@@ -86,7 +86,7 @@ namespace TapTap
                 if (Input.GetKeyDown(KeyCode.Escape)) CloseFeedback();
                 return;
             }
-            if (IsFeedbackOpen || !Input.GetKeyDown(KeyCode.Space)) return;
+            if (IsFeedbackOpen || !Input.GetKeyDown(KeyCode.E)) return;
             LevelAnnotation nearest = null;
             float nearestDistance = float.PositiveInfinity;
             foreach (LevelAnnotation annotation in annotations)
@@ -353,7 +353,7 @@ namespace TapTap
             GUI.DrawTexture(rect, Texture2D.whiteTexture);
             GUI.color = Color.white;
             GUILayout.BeginArea(new Rect(rect.x + 12f, rect.y + 8f, rect.width - 24f, rect.height - 16f));
-            GUILayout.Label("! 测试批注 · [空格] 输入评价", textStyle);
+            GUILayout.Label("! 测试批注 · [E] 输入评价", textStyle);
             scroll = GUILayout.BeginScrollView(scroll);
             GUILayout.Label(DisplayText, textStyle);
             GUILayout.EndScrollView();

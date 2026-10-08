@@ -17,7 +17,7 @@ namespace TapTap.Editor
         {
             new GUIContent("笔刷", "按住左键连续绘制"), new GUIContent("橡皮擦", "擦除当前图层，Shift 擦除整格"),
             new GUIContent("矩形填充", "拖出矩形；右键拖动可批量擦除"), new GUIContent("矩形边框", "只绘制矩形边缘"),
-            new GUIContent("油漆桶 [F]", "填充当前图层中四方向连通的同类格子；右键擦除"), new GUIContent("选择 [V]", "点击配置物体，拖动选择区域，Ctrl+C 复制"),
+            new GUIContent("油漆桶 [F]", "填充当前图层中四方向连通的同类格子；右键擦除"), new GUIContent("框选 / 移动 [V]", "拖动框选；在选区内拖动移动，Shift 拖动重新框选；方向键微调，Ctrl+C 复制"),
             new GUIContent("粘贴图章", "Ctrl+V 后点击目标格子放置；Esc 退出")
         };
         [SerializeField] private LevelDefinition layout;
@@ -56,6 +56,9 @@ namespace TapTap.Editor
         [SerializeField] private bool hasAreaSelection;
         private Vector2Int selectionAnchor;
         private bool selecting;
+        private bool movingSelection;
+        private Vector2Int selectionMoveAnchor;
+        private Vector2Int selectionMoveDelta;
         private bool spacePan;
         [SerializeField] private bool prefabNeedsUpdate;
         [SerializeField] private bool previewPhaseActive;
@@ -115,6 +118,7 @@ namespace TapTap.Editor
         private void OnDisable()
         {
             EndStroke();
+            movingSelection = false;
             if (annotationCircle != null) DestroyImmediate(annotationCircle);
             Undo.undoRedoPerformed -= OnUndoRedo;
             EditorApplication.projectChanged -= OnProjectChanged;
@@ -132,6 +136,7 @@ namespace TapTap.Editor
             EndStroke();
             panning = false;
             selecting = false;
+            movingSelection = false;
             spacePan = false;
             GUIUtility.hotControl = 0;
         }
@@ -144,10 +149,11 @@ namespace TapTap.Editor
 
         private void OnUndoRedo()
         {
-            if (painting || panning) GUIUtility.hotControl = 0;
+            if (painting || panning || selecting || movingSelection) GUIUtility.hotControl = 0;
             painting = false;
             panning = false;
             selecting = false;
+            movingSelection = false;
             undoGroup = -1;
             strokeUndoRecorded = false;
             previousPaintCell = null;
@@ -179,6 +185,7 @@ namespace TapTap.Editor
         private void UseLayout(LevelDefinition definition)
         {
             EndStroke();
+            selecting = movingSelection = false;
             layout = definition;
             if (layout != null) palette = layout.Palette;
             if (palette == null) UseDefaultPalette();
@@ -235,6 +242,7 @@ namespace TapTap.Editor
                 EndStroke();
                 panning = false;
                 selecting = false;
+                movingSelection = false;
                 if (tool == GridTool.Stamp) tool = GridTool.Select;
                 GUIUtility.hotControl = 0;
                 Event.current.Use();
@@ -451,6 +459,7 @@ namespace TapTap.Editor
                 if (hasAreaSelection)
                 {
                     EditorGUILayout.LabelField($"已选 {selectionArea.width} × {selectionArea.height} 格", EditorStyles.boldLabel);
+                    EditorGUILayout.HelpBox("拖动选区移动，方向键逐格微调；Shift + 拖动重新框选。移动覆盖目标格（包括选区中的空格），原位置留空。Ctrl+Z 撤销。", MessageType.Info);
                     if (GUILayout.Button("复制区域 [Ctrl+C]")) CopyArea();
                 }
                 DrawSelection();
@@ -529,7 +538,7 @@ namespace TapTap.Editor
                 case GridTool.Rectangle: return "左键拖出填充矩形 · 右键拖出擦除矩形";
                 case GridTool.RectangleOutline: return "拖动绘制矩形边框 · 右键擦除边框";
                 case GridTool.Bucket: return "左键填充相连的同类格子 · 右键擦除该区域";
-                case GridTool.Select: return "左键选中格子";
+                case GridTool.Select: return "拖动框选 · 拖动选区移动 · Shift 拖动重新框选 · 方向键微调";
                 case GridTool.Stamp: return "点击目标位置粘贴区域；Esc 退出图章";
                 default: return "左键绘制 · 拖动连续绘制";
             }
@@ -711,9 +720,18 @@ namespace TapTap.Editor
                 if (!layout.Contains(pair.Key)) continue;
                 Rect cell = CellRect(pair.Key);
                 if (cell.xMax < 0 || cell.yMax < 0 || cell.x > canvas.width || cell.y > canvas.height) continue;
-                foreach (LevelPlacement item in pair.Value) if (Visible(item)) DrawPlacement(item, cell, false);
+                foreach (LevelPlacement item in pair.Value)
+                {
+                    if (!Visible(item)) continue;
+                    if (movingSelection && selectionMoveDelta != Vector2Int.zero &&
+                        (selectionArea.Contains(item.Cell) || MovePreviewArea().Contains(item.Cell))) continue;
+                    DrawPlacement(item, cell, false);
+                }
             }
             DrawGrid(canvas, bounds);
+            if (movingSelection && selectionMoveDelta != Vector2Int.zero)
+                foreach (LevelPlacement item in AreaContents())
+                    DrawPlacement(item, CellRect(item.Cell + selectionMoveDelta), true);
             if (hoveringCanvas && layout.Contains(hover))
             {
                 Rect cell = CellRect(hover);
@@ -727,12 +745,13 @@ namespace TapTap.Editor
                 Outline(cell, new Color(1f, 1f, 1f, 0.8f), 1f);
             }
             LevelPlacement selected = SelectedPlacement();
-            if (selected != null && layout.Contains(selected.Cell))
+            if (selected != null && layout.Contains(selected.Cell) && !movingSelection)
                 Outline(CellRect(selected.Cell), new Color(1f, 0.82f, 0.24f), 2f);
             if (hasAreaSelection && SelectionMode)
             {
-                Rect first = CellRect(new Vector2Int(selectionArea.xMin, selectionArea.yMax - 1));
-                Rect area = new Rect(first.x, first.y, selectionArea.width * cellPixels, selectionArea.height * cellPixels);
+                RectInt preview = movingSelection ? MovePreviewArea() : selectionArea;
+                Rect first = CellRect(new Vector2Int(preview.xMin, preview.yMax - 1));
+                Rect area = new Rect(first.x, first.y, preview.width * cellPixels, preview.height * cellPixels);
                 EditorGUI.DrawRect(area, new Color(1f, 0.82f, 0.24f, 0.08f));
                 Outline(area, new Color(1f, 0.82f, 0.24f, 0.9f), 2f);
             }
@@ -865,7 +884,7 @@ namespace TapTap.Editor
         {
             Event e = Event.current;
             if (e.type == EventType.KeyDown && e.keyCode == KeyCode.N && !EditorGUIUtility.editingTextField &&
-                !e.control && !e.command && !e.alt && !painting && !panning && !selecting)
+                !e.control && !e.command && !e.alt && !painting && !panning && !selecting && !movingSelection)
             {
                 LevelPlacement annotation = HoveredAnnotation(canvas);
                 if (annotation != null)
@@ -920,11 +939,20 @@ namespace TapTap.Editor
                 if (tool == GridTool.Stamp && e.button == 0) PasteArea(cell);
                 else if (SelectionMode && e.button == 0)
                 {
-                    SelectCell(cell);
-                    selecting = true;
-                    selectionAnchor = cell;
-                    selectionArea = new RectInt(cell, Vector2Int.one);
-                    hasAreaSelection = true;
+                    if (hasAreaSelection && selectionArea.Contains(cell) && !e.shift)
+                    {
+                        movingSelection = true;
+                        selectionMoveAnchor = cell;
+                        selectionMoveDelta = Vector2Int.zero;
+                    }
+                    else
+                    {
+                        SelectCell(cell);
+                        selecting = true;
+                        selectionAnchor = cell;
+                        selectionArea = new RectInt(cell, Vector2Int.one);
+                        hasAreaSelection = true;
+                    }
                     GUIUtility.hotControl = control;
                 }
                 else if (e.button == 1 || tool == GridTool.Eraser || CanPaint())
@@ -953,6 +981,11 @@ namespace TapTap.Editor
                 e.Use();
                 Repaint();
             }
+            else if (e.type == EventType.MouseDrag && movingSelection)
+            {
+                selectionMoveDelta = ClampSelectionMove(cell - selectionMoveAnchor);
+                e.Use(); Repaint();
+            }
             else if (e.type == EventType.MouseDrag && selecting)
             {
                 Vector2Int end = ClampCell(cell);
@@ -972,8 +1005,14 @@ namespace TapTap.Editor
                 e.Use();
                 Repaint();
             }
-            else if (e.type == EventType.MouseUp && (painting || panning || selecting))
+            else if (e.type == EventType.MouseUp && (painting || panning || selecting || movingSelection))
             {
+                if (movingSelection)
+                {
+                    selectionMoveDelta = ClampSelectionMove(cell - selectionMoveAnchor);
+                    MoveArea(selectionMoveDelta);
+                    movingSelection = false;
+                }
                 if (RectangleStroke)
                 {
                     rectangleEnd = ClampCell(cell);
@@ -1002,7 +1041,7 @@ namespace TapTap.Editor
 
         private void DrawAnnotationTooltip(Rect canvas)
         {
-            if (painting || panning || selecting) return;
+            if (painting || panning || selecting || movingSelection) return;
             LevelPlacement annotation = HoveredAnnotation(canvas);
             if (annotation == null) return;
             string text = (annotation.Settings as AnnotationPlacementSettings)?.Text;
@@ -1237,7 +1276,7 @@ namespace TapTap.Editor
             if (e.type == EventType.KeyUp && e.keyCode == KeyCode.Space) { spacePan = false; e.Use(); return; }
             if (e.type != EventType.KeyDown || EditorGUIUtility.editingTextField) return;
             if (e.keyCode == KeyCode.Space) { spacePan = true; e.Use(); return; }
-            if (painting || panning || selecting) return;
+            if (painting || panning || selecting || movingSelection) return;
             if (e.control || e.command)
             {
                 switch (e.keyCode)
@@ -1340,21 +1379,27 @@ namespace TapTap.Editor
 
         private void MoveArea(Vector2Int delta)
         {
-            List<LevelPlacement> items = AreaContents();
-            if (items.Count == 0) return;
-            foreach (LevelPlacement item in items)
+            if (layout == null || !hasAreaSelection || delta == Vector2Int.zero) return;
+            RectInt destination = new RectInt(selectionArea.position + delta, selectionArea.size);
+            if (!layout.Contains(destination.min) || !layout.Contains(destination.max - Vector2Int.one))
             {
-                if (item.Brush == null) return;
-                Vector2Int destination = item.Cell + delta;
-                var occupied = layout.Find(destination, item.Brush.LayerId);
-                if (!layout.Contains(destination) || occupied != null && !items.Contains(occupied))
-                { ShowNotification(new GUIContent("移动目标越界或同层已有物体")); return; }
+                ShowNotification(new GUIContent("移动区域不能超出地图边界"));
+                return;
             }
-            RecordLayoutUndo("移动选择区域");
-            foreach (LevelPlacement item in items) item.Cell += delta;
+            bool changed = LevelGridEditing.MoveArea(layout, selectionArea, delta, Visible,
+                () => RecordLayoutUndo("移动选择区域"));
             selectionArea.position += delta;
             if (selectedCell.HasValue) selectedCell += delta;
-            Changed();
+            if (SelectedPlacement() == null) selectedPlacementId = null;
+            if (changed) Changed();
+        }
+
+        private RectInt MovePreviewArea() => new RectInt(selectionArea.position + selectionMoveDelta, selectionArea.size);
+
+        private Vector2Int ClampSelectionMove(Vector2Int delta)
+        {
+            return new Vector2Int(Mathf.Clamp(delta.x, -selectionArea.xMin, layout.Size.x - selectionArea.xMax),
+                Mathf.Clamp(delta.y, -selectionArea.yMin, layout.Size.y - selectionArea.yMax));
         }
 
         private void DrawStatus(Rect canvas)

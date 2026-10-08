@@ -8,6 +8,8 @@ namespace TapTap
         [Header("Shake strength (world units)")]
         [SerializeField, Min(0f)] private float headLandedShakeStrength = 0.07f;
         [SerializeField, Min(0f)] private float pullBlockedShakeStrength = 0.07f;
+        [Tooltip("头部伸出上升受阻时的轻微震屏强度。")]
+        [SerializeField, Min(0f)] private float extensionBlockedShakeStrength = 0.035f;
         [SerializeField, Min(0f)] private float deathShakeStrength = 0.1f;
         [SerializeField, Min(0f)] private float headReturnShakeStrength = 0.035f;
         [SerializeField, Min(0f)] private float landingShakeStrength = 0.045f;
@@ -55,6 +57,7 @@ namespace TapTap
         {
             if (effect == PlayerEffect.HeadLanded) Shake(headLandedShakeStrength);
             if (effect == PlayerEffect.PullBlocked) Shake(pullBlockedShakeStrength);
+            if (effect == PlayerEffect.ExtensionBlocked) Shake(extensionBlockedShakeStrength);
             if (effect == PlayerEffect.HeadReturned) Shake(headReturnShakeStrength);
             if (effect == PlayerEffect.Landed) Shake(landingShakeStrength);
             if (effect == PlayerEffect.Death) Shake(deathShakeStrength);

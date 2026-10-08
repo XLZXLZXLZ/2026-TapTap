@@ -1475,6 +1475,11 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188235249123555
+  - Id: 34d3b150ae1b4bbb967ac647463a4821
+    Cell: {x: 22, y: 9}
+    Brush: {fileID: 11400000, guid: 769019c704f5cdc44a88fbb3723bcedd, type: 2}
+    Settings:
+      rid: 5387188251474002931
   EntryPlacementId: 
   OutputPrefab: {fileID: 5034803642415282954, guid: 3bb4d418591debd4b8445f74db2b5809, type: 3}
   references:
@@ -2387,3 +2392,7 @@ MonoBehaviour:
     - rid: 5387188235249123555
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
+    - rid: 5387188251474002931
+      type: {class: AnnotationPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        Text: "\u8FD9\u91CC\u7684\u89E3\u9898\u65B9\u5F0F\u9700\u8981\u4E00\u70B9\u8D76\u65F6\u95F4\uFF0C\u7565\u5FAE\u6709\u70B9\"\u5403\u64CD\u4F5C\"\uFF0C\u6682\u65F6\u6CA1\u60F3\u597D\u4F18\u5316\u7684\u529E\u6CD5\u3002"

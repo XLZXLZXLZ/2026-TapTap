@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TapTap
 {
     public enum PlayerPhase { Joined, Extending, Holding, Retracting, Pulling, Detached, PickingUp }
-    public enum PlayerEffect { HeadLanded, PullBlocked, Joined, DownwardJoined, Bounce, Death, RecallFailed, HeadReturned, Landed }
+    public enum PlayerEffect { HeadLanded, PullBlocked, Joined, DownwardJoined, Bounce, Death, RecallFailed, HeadReturned, Landed, ExtensionBlocked }
 
     public struct PlayerContactFeedback
     {
@@ -182,7 +182,8 @@ namespace TapTap
         {
             Vector2 velocity = body.Velocity;
             float impactSpeed = Mathf.Max(0f, -velocity.y);
-            velocity.x = input.Horizontal * config.ToWorld(config.MoveSpeed);
+            // Lock player steering until the head has finished rising, including an early collision stop.
+            velocity.x = phase == PlayerPhase.Extending ? 0f : input.Horizontal * config.ToWorld(config.MoveSpeed);
             if (body.Motor.Grounded && velocity.y <= 0f) velocity.y = 0f;
             velocity.y -= config.WorldGravity * dt;
             impactSpeed = Mathf.Max(impactSpeed, -velocity.y);
@@ -242,6 +243,7 @@ namespace TapTap
             float wantedExtra = DOVirtual.EasedValue(0f, config.ToWorld(config.MaxExtension), t, Ease.OutQuad);
             float extra = head.Motor.Position.y - body.Motor.Position.y - config.ToWorld(config.JoinedOffset);
             MoveResult moved = head.Motor.Move(Vector2.up * Mathf.Max(0f, wantedExtra - extra), body);
+            if (moved.Blocked) effects.Add(PlayerEffect.ExtensionBlocked);
             if (moved.Blocked || t >= 1f) SetPhase(PlayerPhase.Holding);
         }
 

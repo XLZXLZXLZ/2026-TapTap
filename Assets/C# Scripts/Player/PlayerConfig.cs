@@ -13,7 +13,7 @@ namespace TapTap
         [Tooltip("角色与分离头部向下的重力加速度；实际世界加速度为此值乘以单格长度。")]
         [Min(0.1f)] public float Gravity = 24f;
         [InspectorName("左右移动速度（格/秒）")]
-        [Tooltip("左右输入控制下半身的水平速度。头身处于磁力连接状态时，头部跟随下半身移动。")]
+        [Tooltip("左右输入控制下半身的水平速度。伸头上升期间暂停左右操控，到顶或受阻停止后恢复；头身处于磁力连接状态时，头部跟随下半身移动。")]
         [Min(0f)] public float MoveSpeed = 5f;
 
         [Header("伸头与收头")]

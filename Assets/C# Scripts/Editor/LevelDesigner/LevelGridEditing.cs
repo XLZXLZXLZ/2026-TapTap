@@ -92,6 +92,29 @@ namespace TapTap.Editor
             return changed;
         }
 
+        public static bool MoveArea(LevelDefinition layout, RectInt area, Vector2Int delta,
+            Predicate<LevelPlacement> included, Action beforeChange = null)
+        {
+            if (layout == null || layout.Placements == null || delta == Vector2Int.zero ||
+                area.width <= 0 || area.height <= 0) return false;
+            RectInt destination = new RectInt(area.position + delta, area.size);
+            if (!layout.Contains(destination.min) || !layout.Contains(destination.max - Vector2Int.one)) return false;
+
+            // Capture the whole source before clearing the destination, so overlapping moves keep every item.
+            List<LevelPlacement> moving = layout.Placements.FindAll(item => item != null &&
+                included(item) && area.Contains(item.Cell));
+            var sources = new HashSet<LevelPlacement>(moving);
+            Predicate<LevelPlacement> overwritten = item => item != null && included(item) &&
+                destination.Contains(item.Cell) && !sources.Contains(item);
+            if (moving.Count == 0 && !layout.Placements.Exists(overwritten)) return false;
+
+            beforeChange?.Invoke();
+            layout.Placements.RemoveAll(overwritten);
+            foreach (LevelPlacement item in moving) item.Cell += delta;
+            if (layout.EntryPlacement == null) layout.EntryPlacementId = null;
+            return true;
+        }
+
         public static LevelPlacementSettings CloneSettings(LevelPlacementSettings source)
         {
             return source == null ? new EmptyPlacementSettings() :

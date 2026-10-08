@@ -46,8 +46,10 @@ namespace TapTap
         [Header("接触形变与恢复")]
         [InspectorName("落地挤压幅度"), Tooltip("接触地面时角色视觉横向变宽、纵向变扁的基础比例；实际幅度随碰撞速度调整，也用于分离和吸附失败的小幅反馈。仅影响视觉，不改变碰撞体。")]
         [Range(0f, 0.4f)] public float LandingSquash = 0.12f;
-        [InspectorName("合体挤压幅度"), Tooltip("头身接触拼装时下半身视觉挤压的比例，头部采用较小幅度。也作为伸头和踩头弹起反馈的强度基准。")]
+        [InspectorName("合体挤压幅度"), Tooltip("头身接触拼装时下半身视觉挤压的比例，头部采用较小幅度。也作为踩头弹起反馈的强度基准。")]
         [Range(0f, 0.4f)] public float AssemblySquash = 0.16f;
+        [InspectorName("伸头形变幅度"), Tooltip("伸头开始时身体先压扁再拉伸并恢复，头部轻微拉伸后恢复。仅影响视觉，不改变碰撞体或移动锁定时长。")]
+        [Range(0f, 0.4f)] public float ExtensionSquash = 0.16f;
         [InspectorName("踩头弹簧形变幅度"), Tooltip("散落头部被从上方踩到时，先横向变宽、纵向压扁，再横向变窄、纵向拉长，最后恢复。仅影响视觉，不改变碰撞体。")]
         [Range(0f, 0.4f)] public float SpringSquash = 0.2f;
         [InspectorName("运动拉伸幅度"), Tooltip("下半身随纵向速度拉长、变窄的最大比例；头部在伸头和吸附期间使用此拉伸幅度。仅影响视觉，不改变实际伸头距离或跃起高度。")]

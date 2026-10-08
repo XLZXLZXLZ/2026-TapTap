@@ -156,7 +156,11 @@ namespace TapTap
         private void OnPhase(PlayerPhase phase)
         {
             if (visualSettings == null) return;
-            if (phase == PlayerPhase.Extending) { Pulse(body, visualSettings.AssemblySquash * 0.45f); Pulse(head, -visualSettings.MotionStretch); }
+            if (phase == PlayerPhase.Extending)
+            {
+                PlayExtensionSquash();
+                Pulse(head, -visualSettings.ExtensionSquash * 0.6f);
+            }
             if (phase == PlayerPhase.Pulling) Pulse(body, -visualSettings.MotionStretch);
             if (phase == PlayerPhase.Detached) Pulse(head, visualSettings.LandingSquash * 0.45f);
         }
@@ -166,6 +170,18 @@ namespace TapTap
             EffectManager.Instance.Play(effect, body.Visual);
             if (effect == PlayerEffect.Bounce && visualSettings != null) Pulse(body, -visualSettings.AssemblySquash * 0.7f);
             if (effect == PlayerEffect.RecallFailed && visualSettings != null) Pulse(body, visualSettings.LandingSquash * 0.4f);
+        }
+
+        private void PlayExtensionSquash()
+        {
+            if (body == null || body.IsReturning) return;
+            bodyTween?.Kill();
+            float duration = Mathf.Max(0.02f, visualSettings.InteractionDuration);
+            float amount = visualSettings.ExtensionSquash;
+            bodyTween = DOTween.Sequence()
+                .Append(DOVirtual.Float(bodySquash, amount, duration * 0.2f, value => bodySquash = value).SetEase(Ease.OutQuad))
+                .Append(DOVirtual.Float(amount, -amount * 0.6f, duration * 0.35f, value => bodySquash = value).SetEase(Ease.InOutSine))
+                .Append(DOVirtual.Float(-amount * 0.6f, 0f, duration * 0.45f, value => bodySquash = value).SetEase(Ease.OutSine));
         }
 
         private void Pulse(MovableEntity entity, float amount)
