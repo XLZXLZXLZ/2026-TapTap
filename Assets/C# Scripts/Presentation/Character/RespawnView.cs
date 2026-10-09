@@ -85,11 +85,41 @@ namespace TapTap
 
         private void LateUpdate()
         {
+            RenderPresentations(RewindManager.Rewinding);
+        }
+
+        public void RefreshAfterRestore()
+        {
+            for (int i = presentations.Count - 1; i >= 0; i--)
+            {
+                bool present = false;
+                foreach (RespawnService.Journey journey in service.Journeys)
+                    if (journey == presentations[i].Journey) { present = true; break; }
+                if (present) continue;
+                Dispose(presentations[i]);
+                presentations.RemoveAt(i);
+            }
+            foreach (RespawnService.Journey journey in service.Journeys)
+            {
+                bool present = false;
+                foreach (Presentation presentation in presentations)
+                    if (presentation.Journey == journey) { present = true; break; }
+                if (!present) Begin(journey);
+            }
+            RenderPresentations(true);
+        }
+
+        private void RenderPresentations(bool rewinding)
+        {
             foreach (Presentation presentation in presentations)
             {
                 float t = RespawnService.RenderTime(presentation.Journey);
                 presentation.Timeline.Goto(t, false);
-                if (presentation.Trail != null) presentation.Trail.emitting = t >= presentation.Journey.FlightStart && t < presentation.Journey.ArrivalTime;
+                if (presentation.Trail != null)
+                {
+                    if (rewinding) presentation.Trail.Clear();
+                    presentation.Trail.emitting = !rewinding && t >= presentation.Journey.FlightStart && t < presentation.Journey.ArrivalTime;
+                }
             }
         }
 
@@ -125,6 +155,11 @@ namespace TapTap
         private void OnDisable()
         {
             if (service != null) { service.ReturnStarted -= Begin; service.ReturnEnded -= End; }
+            ClearPresentations();
+        }
+
+        public void ClearPresentations()
+        {
             foreach (Presentation presentation in presentations) Dispose(presentation);
             presentations.Clear();
         }

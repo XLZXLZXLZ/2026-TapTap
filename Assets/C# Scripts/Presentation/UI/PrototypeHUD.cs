@@ -29,7 +29,8 @@ namespace TapTap
                 : "Hold to extend. Early release waits for Holding.";
             GUI.Label(new Rect(30f, 81f, 350f, 23f), instruction, textStyle);
             GUI.Label(new Rect(30f, 103f, 350f, 23f), "Mint: one-way    Purple: belt    Red: lethal", textStyle);
-            GUI.Label(new Rect(30f, 125f, 350f, 23f), "R: restart current scene", textStyle);
+            string rewind = RewindManager.Rewinding ? "Z: rewinding — release to continue" : "Hold Z: undo    R: restart";
+            GUI.Label(new Rect(30f, 125f, 350f, 23f), rewind, textStyle);
             GUI.color = Color.white;
         }
     }

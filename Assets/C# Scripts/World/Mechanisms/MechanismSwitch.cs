@@ -5,8 +5,13 @@ namespace TapTap
 {
     [DefaultExecutionOrder(100)]
     [RequireComponent(typeof(BoxCollider2D))]
-    public sealed class MechanismSwitch : MonoBehaviour
+    public sealed class MechanismSwitch : MonoBehaviour, IRewindable<MechanismSwitch.Snapshot>
     {
+        public struct Snapshot
+        {
+            public bool Occupied;
+            public double ReadyAt;
+        }
         [SerializeField] private SpriteRenderer indicator;
         [SerializeField] private Transform cap;
         [SerializeField, Min(0.02f)] private float transitionDuration = 0.18f;
@@ -16,7 +21,7 @@ namespace TapTap
         private Vector3 indicatorScale;
         private Vector3 capScale;
         private bool occupied;
-        private float readyAt;
+        private double readyAt;
         private Sequence indicatorTween;
         private Tween capTween;
 
@@ -34,9 +39,15 @@ namespace TapTap
             SetIndicator(state.Active);
             occupied = false;
             readyAt = 0f;
+            if (RewindManager.Current != null) RewindManager.Current.Register(this, this, 30);
         }
 
         private void FixedUpdate()
+        {
+            if (!RewindManager.DrivesSimulation) SimulateStep();
+        }
+
+        public void SimulateStep()
         {
             bool touching = false;
             Bounds zone = sensor.bounds;
@@ -56,9 +67,10 @@ namespace TapTap
                 }
                 if (touching) break;
             }
-            if (touching && !occupied && Time.time >= readyAt)
+            double now = RewindManager.Current != null ? RewindManager.Current.SimulationTime : Time.time;
+            if (touching && !occupied && now >= readyAt)
             {
-                readyAt = Time.time + retriggerDelay;
+                readyAt = now + retriggerDelay;
                 state.Toggle();
             }
             if (occupied != touching && cap != null)
@@ -68,6 +80,19 @@ namespace TapTap
                     .SetEase(Ease.OutSine);
             }
             occupied = touching;
+        }
+
+        public Snapshot CaptureState() => new Snapshot { Occupied = occupied, ReadyAt = readyAt };
+
+        public void RestoreState(in Snapshot snapshot)
+        {
+            occupied = snapshot.Occupied;
+            readyAt = snapshot.ReadyAt;
+            indicatorTween?.Kill();
+            capTween?.Kill();
+            SetIndicator(state.Active);
+            if (cap != null) cap.localScale = Vector3.Scale(capScale,
+                occupied ? new Vector3(1.08f, 0.6f, 1f) : Vector3.one);
         }
 
         private void SetIndicator(bool value)
@@ -93,6 +118,7 @@ namespace TapTap
 
         private void OnDisable()
         {
+            if (RewindManager.Current != null) RewindManager.Current.Unregister(this);
             indicatorTween?.Kill();
             capTween?.Kill();
             if (state != null) state.Changed -= AnimateState;

@@ -5,6 +5,7 @@ namespace TapTap
     public abstract class LazySingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         private static T instance;
+        public static T Existing => instance;
         public static T Instance
         {
             get

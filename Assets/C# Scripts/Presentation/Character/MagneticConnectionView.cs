@@ -37,11 +37,11 @@ namespace TapTap
                 if (dots[i] != null) { dotScales[i] = dots[i].transform.localScale; dotColors[i] = dots[i].color; }
         }
 
-        public void Render(MovableEntity body, MovableEntity head, bool connected, bool pulling, float unit)
+        public void Render(MovableEntity body, MovableEntity head, bool connected, bool pulling, float unit, bool immediate = false)
         {
             Initialize();
             if (line == null || points == null) return;
-            alpha = Mathf.MoveTowards(alpha, connected ? 1f : 0f, Time.deltaTime * 8f);
+            alpha = immediate ? (connected ? 1f : 0f) : Mathf.MoveTowards(alpha, connected ? 1f : 0f, Time.deltaTime * 8f);
             Transform lowerVisual = body.Visual != null ? body.Visual : body.transform;
             Transform upperVisual = head.Visual != null ? head.Visual : head.transform;
             Vector3 from = lowerVisual.position + lowerVisual.up * body.Motor.Size.y * 0.42f;

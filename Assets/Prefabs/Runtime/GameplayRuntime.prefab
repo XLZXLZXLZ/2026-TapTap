@@ -67,6 +67,7 @@ GameObject:
   - component: {fileID: 312070320304211498}
   - component: {fileID: 4269678303838219423}
   - component: {fileID: 909487050568122248}
+  - component: {fileID: 7114082495912377001}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -140,6 +141,18 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 992906619644290264}
   m_Enabled: 1
+--- !u!114 &7114082495912377001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992906619644290264}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22d8d0d790c44c2b971053f33d85f7f9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1 &2985126321829605025
 GameObject:
   m_ObjectHideFlags: 0
@@ -5138,6 +5151,7 @@ GameObject:
   - component: {fileID: 3967833582752496628}
   - component: {fileID: 5007852659324761205}
   - component: {fileID: 2673354439751536454}
+  - component: {fileID: 7114082495912377002}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -5185,6 +5199,21 @@ MonoBehaviour:
   zoomAmount: 0.3
   zoomInDuration: 0.07
   zoomOutDuration: 0.18
+  rewindVisualEnabled: 1
+  rewindShader: {fileID: 4800000, guid: f3d268e3d2af438591d105563b9fcd19, type: 3}
+  rewindFadeIn: 0.15
+  rewindFadeOut: 0.2
+  rewindSaturation: 0.8
+  rewindColdTint: 0.045
+  rewindTearPixels: 8
+  rewindTearFrequency: 2.8
+  rewindBandHeight: 0.035
+  rewindTearDuty: 0.22
+  rewindChromaticPixels: 1.25
+  rewindScanlines: 0.035
+  rewindGrain: 0.008
+  rewindVignette: 0.1
+  rewindSpeedBoost: 0.5
 --- !u!114 &2673354439751536454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5198,6 +5227,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
+--- !u!114 &7114082495912377002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8401836164538262444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 313d644ba479423a8a3723e344adc91b, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  historySeconds: 20
+  startSpeed: 1
+  maxSpeed: 2
+  accelerationDuration: 5
+  UseKeyboard: 1
 --- !u!1001 &3604884505120691010
 PrefabInstance:
   m_ObjectHideFlags: 0

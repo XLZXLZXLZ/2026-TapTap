@@ -9,6 +9,12 @@ namespace TapTap
         public void Configure(ParticleSystem landingEffect, ParticleSystem assemblyEffect)
         { landing = landingEffect; assembly = assemblyEffect; }
 
+        public void Clear()
+        {
+            if (landing != null) landing.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            if (assembly != null) assembly.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
         public void Burst(Vector2 point, Vector2 normal, bool assembled, float unit)
         {
             ParticleSystem effect = assembled ? assembly : landing;

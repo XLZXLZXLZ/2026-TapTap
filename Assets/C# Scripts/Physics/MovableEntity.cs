@@ -6,8 +6,14 @@ namespace TapTap
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(KinematicMotor2D))]
-    public sealed class MovableEntity : MonoBehaviour
+    public sealed class MovableEntity : MonoBehaviour, IRewindable<MovableEntity.Snapshot>
     {
+        public struct Snapshot
+        {
+            public Vector2 Position, Velocity;
+            public float IgnoreOneWayRemaining;
+            public bool CollisionsEnabled, IsReturning, SpringEnabled;
+        }
         private static readonly List<MovableEntity> activeEntities = new List<MovableEntity>();
         private KinematicMotor2D motor;
 
@@ -47,13 +53,34 @@ namespace TapTap
         {
             if (!activeEntities.Contains(this))
                 activeEntities.Add(this);
+            if (RewindManager.Current != null) RewindManager.Current.Register(this, this, 10);
         }
 
-        private void OnDisable() => activeEntities.Remove(this);
+        private void OnDisable()
+        {
+            activeEntities.Remove(this);
+            if (RewindManager.Current != null) RewindManager.Current.Unregister(this);
+        }
+
+        public Snapshot CaptureState() => new Snapshot
+        {
+            Position = Motor.Position, Velocity = Velocity,
+            IgnoreOneWayRemaining = Motor.IgnoreOneWayRemaining,
+            CollisionsEnabled = Motor.CollisionsEnabled,
+            IsReturning = IsReturning, SpringEnabled = SpringEnabled
+        };
+
+        public void RestoreState(in Snapshot state)
+        {
+            Velocity = state.Velocity;
+            IsReturning = state.IsReturning;
+            SpringEnabled = state.SpringEnabled;
+            Motor.RestoreState(state.Position, state.IgnoreOneWayRemaining, state.CollisionsEnabled);
+        }
 
         private void FixedUpdate()
         {
-            if (ControlledExternally || IsReturning)
+            if (RewindManager.DrivesSimulation || ControlledExternally || IsReturning)
                 return;
             Motor.BeginStep(Time.fixedDeltaTime);
             SimulateFree(Time.fixedDeltaTime, 0f);

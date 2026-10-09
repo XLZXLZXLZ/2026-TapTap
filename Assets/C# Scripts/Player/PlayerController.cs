@@ -17,8 +17,19 @@ namespace TapTap
         public bool Assembly;
     }
 
-    public sealed class PlayerController : MonoBehaviour
+    public sealed class PlayerController : MonoBehaviour, IRewindable<PlayerController.Snapshot>
     {
+        public struct Snapshot
+        {
+            public PlayerPhase Phase;
+            public bool RetractPending, RecallBuffered, BufferedRelease, GuideActive;
+            public float Clock, RecallReadyAt, FailedGuideUntil, ActionTime;
+            public float RetractStartExtra, PullStartX, PendingLaunchHeight;
+            public Vector2 PullBodyTarget, PickupStartOffset;
+            public bool BodyGroundContact, HeadGroundContact, SpaceHeld;
+            public RespawnService.Snapshot Respawn;
+        }
+
         private enum Outcome { None, HeadLanded, Join, Detach, DownwardJoin, Pickup }
         [SerializeField] private PlayerInput input;
         [SerializeField] private PlayerConfig config;
@@ -99,16 +110,39 @@ namespace TapTap
             initialized = true;
         }
 
-        private void FixedUpdate() => SimulateStep(Time.fixedDeltaTime);
+        private void OnEnable()
+        {
+            if (RewindManager.Current != null) RewindManager.Current.Register(this, this, 20);
+        }
+
+        private void OnDisable()
+        {
+            if (RewindManager.Current != null) RewindManager.Current.Unregister(this);
+        }
+
+        private void FixedUpdate()
+        {
+            if (!RewindManager.DrivesSimulation) SimulateStep(Time.fixedDeltaTime);
+        }
+
+        internal bool PrepareSimulation() { Initialize(); return initialized; }
+        internal void AdvanceRespawn(float dt) => respawn.Simulate(dt);
 
         public void SimulateStep(float dt)
         {
             Initialize();
             if (!initialized || dt <= 0f) return;
-            clock += dt;
             respawn.Simulate(dt);
             body.Motor.BeginStep(dt);
             head.Motor.BeginStep(dt);
+            SimulatePreparedStep(dt);
+            body.Motor.Commit();
+            head.Motor.Commit();
+        }
+
+        internal void SimulatePreparedStep(float dt)
+        {
+            clock += dt;
             effects.Clear();
             contacts.Clear();
             outcome = Outcome.None;
@@ -138,11 +172,68 @@ namespace TapTap
 
             CollectWorldInteractions();
             ResolveOutcomes();
-            body.Motor.Commit();
-            head.Motor.Commit();
             foreach (PlayerEffect effect in effects) Effect?.Invoke(effect);
             foreach (PlayerContactFeedback contact in contacts) ContactFeedback?.Invoke(contact);
         }
+
+        public Snapshot CaptureState() => new Snapshot
+        {
+            Phase = phase, RetractPending = retractPending, RecallBuffered = recallBuffered,
+            BufferedRelease = bufferedRelease, GuideActive = guideActive,
+            Clock = clock, RecallReadyAt = recallReadyAt, FailedGuideUntil = failedGuideUntil,
+            ActionTime = actionTime, RetractStartExtra = retractStartExtra, PullStartX = pullStartX,
+            PendingLaunchHeight = pendingLaunchHeight, PullBodyTarget = pullBodyTarget,
+            PickupStartOffset = pickupStartOffset, BodyGroundContact = bodyGroundContact,
+            HeadGroundContact = headGroundContact, SpaceHeld = input.ConsumedSpaceHeld,
+            Respawn = respawn.CaptureState()
+        };
+
+        public void RestoreState(in Snapshot state)
+        {
+            phase = state.Phase;
+            retractPending = state.RetractPending;
+            recallBuffered = state.RecallBuffered;
+            bufferedRelease = state.BufferedRelease;
+            guideActive = state.GuideActive;
+            clock = state.Clock;
+            recallReadyAt = state.RecallReadyAt;
+            failedGuideUntil = state.FailedGuideUntil;
+            actionTime = state.ActionTime;
+            retractStartExtra = state.RetractStartExtra;
+            pullStartX = state.PullStartX;
+            pendingLaunchHeight = state.PendingLaunchHeight;
+            pullBodyTarget = state.PullBodyTarget;
+            pickupStartOffset = state.PickupStartOffset;
+            bodyGroundContact = state.BodyGroundContact;
+            headGroundContact = state.HeadGroundContact;
+            outcome = Outcome.None;
+            bodyDied = headDied = false;
+            pairSupport = null;
+            pairSurface = null;
+            pairContactNormal = Vector2.zero;
+            effects.Clear();
+            contacts.Clear();
+            input.RestoreHeldState(state.SpaceHeld);
+            respawn.RestoreState(in state.Respawn);
+            UpdateJoinedCollision();
+        }
+
+        internal void BeginRewind()
+        {
+            input.ClearMagnetBuffer();
+            var returnsView = GetComponent<RespawnView>();
+            if (returnsView != null) returnsView.ClearPresentations();
+            if (view != null) view.ClearTransientEffects();
+        }
+
+        internal void AfterRewindRestore()
+        {
+            if (view != null) view.RenderRewindState();
+            var returnsView = GetComponent<RespawnView>();
+            if (returnsView != null) returnsView.RefreshAfterRestore();
+        }
+
+        internal void EndRewind() => input.ResumeAfterRewind();
 
         private void ConsumeInput()
         {

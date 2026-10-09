@@ -46,11 +46,13 @@ namespace TapTap
                 .Append(visual.DOScale(initialScale, duration * 0.4f).SetEase(Ease.OutSine));
         }
 
-        private void OnDisable()
+        public void ResetAnimation()
         {
             animation?.Kill();
             animation = null;
             if (visual != null) visual.localScale = initialScale;
         }
+
+        private void OnDisable() => ResetAnimation();
     }
 }

@@ -29,6 +29,25 @@ namespace TapTap
         [SerializeField, Min(0f)] private float fadeOutDuration = 0.2f;
         [Tooltip("从黑屏恢复画面所需的时间（秒）。场景加载完成后才开始恢复。")]
         [SerializeField, Min(0f)] private float fadeInDuration = 0.25f;
+        [Header("回溯：画面过渡")]
+        [SerializeField] private bool rewindVisualEnabled = true;
+        [SerializeField] private Shader rewindShader;
+        [SerializeField, Min(0f)] private float rewindFadeIn = 0.15f;
+        [SerializeField, Min(0f)] private float rewindFadeOut = 0.2f;
+        [Header("回溯：信号质感")]
+        [SerializeField, Range(0f, 1f)] private float rewindSaturation = 0.8f;
+        [SerializeField, Range(0f, 0.2f)] private float rewindColdTint = 0.045f;
+        [Tooltip("以 1080p 为基准的横向撕裂像素偏移。")]
+        [SerializeField, Min(0f)] private float rewindTearPixels = 8f;
+        [SerializeField, Min(0f)] private float rewindTearFrequency = 2.8f;
+        [SerializeField, Range(0.005f, 0.15f)] private float rewindBandHeight = 0.035f;
+        [SerializeField, Range(0.05f, 0.5f)] private float rewindTearDuty = 0.22f;
+        [SerializeField, Min(0f)] private float rewindChromaticPixels = 1.25f;
+        [SerializeField, Range(0f, 0.15f)] private float rewindScanlines = 0.035f;
+        [SerializeField, Range(0f, 0.05f)] private float rewindGrain = 0.008f;
+        [SerializeField, Range(0f, 0.3f)] private float rewindVignette = 0.1f;
+        [Tooltip("达到最大回溯速度时，动态干扰的增幅。")]
+        [SerializeField, Range(0f, 1f)] private float rewindSpeedBoost = 0.5f;
         private float shakeRemaining;
         private float shakeStrength;
         private float activeShakeDuration;
@@ -39,6 +58,29 @@ namespace TapTap
         private bool zoomActive;
         private float slowRemaining;
         private float previousTimeScale = 1f;
+        private bool rewindVisualActive;
+        private bool rewindAtOldest;
+        private float rewindBlend;
+        private float rewindMotion;
+        private float rewindSpeedProgress;
+        private float rewindClock;
+        private float rewindSignalClock;
+        public float RewindVisualStrength => rewindVisualEnabled ? rewindBlend : 0f;
+        public float RewindMotionStrength => rewindMotion;
+        public Shader RewindShader
+        {
+            get
+            {
+                // Resources also keeps the shader in builds when the manager is created at runtime.
+                if (rewindShader == null) rewindShader = Resources.Load<Shader>("Shaders/RewindSignal");
+                return rewindShader;
+            }
+        }
+        private static readonly int RewindParamsId = Shader.PropertyToID("_RewindParams");
+        private static readonly int SignalParamsId = Shader.PropertyToID("_SignalParams");
+        private static readonly int DetailParamsId = Shader.PropertyToID("_DetailParams");
+        private static readonly int ClockParamsId = Shader.PropertyToID("_ClockParams");
+        private static readonly int TearDutyId = Shader.PropertyToID("_TearDuty");
         public float ZoomPulse => zoomPulse;
         public float ZoomAmount => Mathf.Max(0f, zoomAmount);
         public float ZoomProgress => zoomAmount > 0f ? Mathf.Clamp01(zoomPulse / zoomAmount) : 0f;
@@ -89,8 +131,9 @@ namespace TapTap
 
         public void Simulate(float unscaledDt)
         {
-            if (LevelAnnotation.IsFeedbackOpen) return;
             if (unscaledDt <= 0f) return;
+            SimulateRewindVisual(unscaledDt);
+            if (LevelAnnotation.IsFeedbackOpen || RewindManager.Rewinding) return;
             shakeClock += unscaledDt;
             shakeRemaining = Mathf.Max(0f, shakeRemaining - unscaledDt);
             if (zoomActive)
@@ -110,6 +153,47 @@ namespace TapTap
             if (slowRemaining <= 0f) return;
             slowRemaining -= unscaledDt;
             if (slowRemaining <= 0f) Time.timeScale = previousTimeScale;
+        }
+
+        public void SetRewindVisual(bool active, float speedProgress = 0f, bool atOldest = false)
+        {
+            rewindVisualActive = active;
+            if (!active) return;
+            rewindSpeedProgress = Mathf.Clamp01(speedProgress);
+            rewindAtOldest = atOldest;
+        }
+
+        private void SimulateRewindVisual(float dt)
+        {
+            bool active = rewindVisualActive && rewindVisualEnabled;
+            float duration = active ? rewindFadeIn : rewindFadeOut;
+            rewindBlend = duration > 0f ? Mathf.MoveTowards(rewindBlend, active ? 1f : 0f, dt / duration)
+                : (active ? 1f : 0f);
+            float motionTarget = active ? (rewindAtOldest ? 0.15f : 1f) : 0f;
+            rewindMotion = Mathf.MoveTowards(rewindMotion, motionTarget, dt / 0.2f);
+            if (rewindBlend <= 0f) return;
+            // These clocks belong to the presentation and keep advancing while world time goes backwards.
+            rewindClock = Mathf.Repeat(rewindClock + dt, 3600f);
+            rewindSignalClock = Mathf.Repeat(rewindSignalClock
+                + dt * rewindTearFrequency * (1f + rewindSpeedProgress * rewindSpeedBoost), 4096f);
+        }
+
+        public void ApplyRewindMaterial(Material material)
+        {
+            float blend = Mathf.SmoothStep(0f, 1f, RewindVisualStrength);
+            float motion = rewindMotion * (1f + rewindSpeedProgress * rewindSpeedBoost);
+            material.SetVector(RewindParamsId, new Vector4(blend, rewindSaturation, rewindColdTint, rewindVignette));
+            material.SetVector(SignalParamsId, new Vector4(rewindTearPixels, rewindBandHeight, rewindChromaticPixels, motion));
+            material.SetVector(DetailParamsId, new Vector4(rewindScanlines, rewindGrain, 0f, 0f));
+            material.SetVector(ClockParamsId, new Vector4(rewindClock, rewindSignalClock, 0f, 0f));
+            material.SetFloat(TearDutyId, rewindTearDuty);
+        }
+
+        public void ClearTransientEffects()
+        {
+            if (slowRemaining > 0f) Time.timeScale = previousTimeScale;
+            slowRemaining = shakeRemaining = shakeStrength = zoomPulse = zoomElapsed = 0f;
+            zoomActive = false;
         }
 
         protected override void OnDestroy()

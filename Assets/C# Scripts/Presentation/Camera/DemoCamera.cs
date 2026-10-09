@@ -92,6 +92,8 @@ namespace TapTap
         private void Initialize()
         {
             if (initialized || viewCamera == null) return;
+            if (Application.isPlaying && viewCamera.GetComponent<RewindScreenEffect>() == null)
+                viewCamera.gameObject.AddComponent<RewindScreenEffect>();
             baseSize = viewCamera.orthographicSize;
             followBaseSize = baseSize;
             shakeOrigin = shakeRoot != null ? shakeRoot.localPosition : Vector3.zero;
@@ -107,8 +109,16 @@ namespace TapTap
             {
                 if (player == null || player.Body == null) return;
                 baseSize = followBaseSize;
-                float smooth = player.Body.IsReturning ? Mathf.Min(0.06f, followSmoothTime) : followSmoothTime;
-                transform.position = Vector3.SmoothDamp(transform.position, FollowTarget(), ref followVelocity, smooth);
+                if (RewindManager.Rewinding)
+                {
+                    transform.position = FollowTarget();
+                    followVelocity = Vector3.zero;
+                }
+                else
+                {
+                    float smooth = player.Body.IsReturning ? Mathf.Min(0.06f, followSmoothTime) : followSmoothTime;
+                    transform.position = Vector3.SmoothDamp(transform.position, FollowTarget(), ref followVelocity, smooth);
+                }
             }
             ApplyCameraEffects();
         }

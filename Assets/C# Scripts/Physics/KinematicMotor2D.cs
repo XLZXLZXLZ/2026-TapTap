@@ -16,6 +16,8 @@ namespace TapTap
         private bool includeJoinedPartner;
         private Vector2 plannedPosition;
         private float ignoreOneWayRemaining;
+        private RigidbodyInterpolation2D normalInterpolation;
+        private bool rewinding;
         private readonly List<MotionSegment> motionSegments = new List<MotionSegment>(8);
         private readonly List<MoveResult> contacts = new List<MoveResult>(8);
 
@@ -56,6 +58,7 @@ namespace TapTap
         }
         public bool CollisionsEnabled { get { Initialize(); return box.enabled && physicsBody.simulated; } }
         public bool IgnoringOneWay => ignoreOneWayRemaining > 0f;
+        public float IgnoreOneWayRemaining => ignoreOneWayRemaining;
         public bool Grounded { get; private set; }
         public WorldSurface SupportSurface { get; private set; }
         public MovableEntity SupportEntity { get; private set; }
@@ -83,16 +86,16 @@ namespace TapTap
 
         private void Awake() => Initialize();
 
-        public void BeginStep(float dt = -1f)
+        public void BeginStep(float dt = -1f, bool probeGround = true)
         {
             Initialize();
             float simulationDt = dt < 0f ? Time.fixedDeltaTime : dt;
             ignoreOneWayRemaining = Mathf.Max(0f, ignoreOneWayRemaining - Mathf.Max(0f, simulationDt));
-            plannedPosition = physicsBody.position;
+            // Logical position is authoritative; MovePosition only mirrors it to Unity.
             motionSegments.Clear();
             contacts.Clear();
             LastMoveResult = default;
-            ProbeGround();
+            if (probeGround) ProbeGround();
         }
 
         public SweepResult Sweep(Vector2 delta, MovableEntity ignoredEntity = null)
@@ -155,6 +158,31 @@ namespace TapTap
         }
 
         public void EndDrop() => ignoreOneWayRemaining = 0f;
+
+        public void RestoreState(Vector2 position, float ignoreOneWay, bool collisionsEnabled)
+        {
+            Teleport(position);
+            ignoreOneWayRemaining = ignoreOneWay;
+            SetCollisionsEnabled(collisionsEnabled);
+            // Assign the transform too, so an interpolated future pose cannot leak into rewind.
+            Vector3 pose = transform.position;
+            transform.position = new Vector3(position.x, position.y, pose.z);
+        }
+
+        public void SetRewinding(bool value)
+        {
+            Initialize();
+            if (rewinding == value) return;
+            rewinding = value;
+            if (value)
+            {
+                normalInterpolation = physicsBody.interpolation;
+                physicsBody.interpolation = RigidbodyInterpolation2D.None;
+                physicsBody.position = plannedPosition;
+                physicsBody.velocity = Vector2.zero;
+            }
+            else physicsBody.interpolation = normalInterpolation;
+        }
 
         public void SetSkin(float value) => skin = Mathf.Max(0.001f, value);
 

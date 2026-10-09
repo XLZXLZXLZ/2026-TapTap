@@ -24,7 +24,10 @@ namespace TapTap.Editor
                 if (existing.GetComponent<LevelSceneRuntime>() == null)
                     throw new InvalidOperationException("Runtime Prefab 缺少 LevelSceneRuntime 配置。");
                 var existingOutline = existing.GetComponentInChildren<PhaseBlockOutline>(true);
-                if (existing.GetComponentInChildren<WorldPhaseState>(true) == null || existingOutline == null || existingOutline.GetComponent<MeshFilter>() == null)
+                if (existing.GetComponentInChildren<WorldPhaseState>(true) == null || existingOutline == null
+                    || existingOutline.GetComponent<MeshFilter>() == null
+                    || existing.GetComponentInChildren<RewindManager>(true) == null
+                    || existing.GetComponentInChildren<RewindScreenEffect>(true) == null)
                 {
                     GameObject root = PrefabUtility.LoadPrefabContents(RuntimePrefabPath);
                     try
@@ -32,6 +35,10 @@ namespace TapTap.Editor
                         Transform managers = root.transform.Find("Managers");
                         if (managers == null) { managers = new GameObject("Managers").transform; managers.SetParent(root.transform, false); }
                         if (managers.GetComponent<WorldPhaseState>() == null) managers.gameObject.AddComponent<WorldPhaseState>();
+                        if (managers.GetComponent<RewindManager>() == null) managers.gameObject.AddComponent<RewindManager>();
+                        Camera viewCamera = root.GetComponentInChildren<Camera>(true);
+                        if (viewCamera != null && viewCamera.GetComponent<RewindScreenEffect>() == null)
+                            viewCamera.gameObject.AddComponent<RewindScreenEffect>();
                         PlayerEffectsPrefabs.BindRuntime(root, GameplayVisualAssets.EnsureVisualSettings());
                         PrefabUtility.SaveAsPrefabAsset(root, RuntimePrefabPath);
                     }
@@ -54,6 +61,7 @@ namespace TapTap.Editor
                 effects.transform.SetParent(root.transform, false);
                 effects.AddComponent<EffectManager>();
                 effects.AddComponent<WorldPhaseState>();
+                effects.AddComponent<RewindManager>();
                 var follow = new GameObject("Camera Rig");
                 follow.transform.SetParent(root.transform, false);
                 follow.transform.localPosition = new Vector3(3f, 3.5f, -10f);
@@ -63,6 +71,7 @@ namespace TapTap.Editor
                 cameraObject.transform.SetParent(shake.transform, false);
                 cameraObject.tag = "MainCamera";
                 Camera camera = cameraObject.AddComponent<Camera>();
+                cameraObject.AddComponent<RewindScreenEffect>();
                 camera.orthographic = true;
                 camera.orthographicSize = 5.6f;
                 camera.clearFlags = CameraClearFlags.SolidColor;

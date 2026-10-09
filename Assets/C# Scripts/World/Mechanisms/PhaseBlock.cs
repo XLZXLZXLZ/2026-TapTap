@@ -50,6 +50,8 @@ namespace TapTap
             }
         }
 
+        internal void ApplyRestoredState(bool active) => Apply(active);
+
         private void OnDisable()
         {
             if (state == null) return;

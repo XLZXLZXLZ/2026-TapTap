@@ -7,8 +7,27 @@ namespace TapTap
 {
     public sealed class RespawnService : MonoBehaviour
     {
+        public struct JourneySnapshot
+        {
+            public long Id;
+            public MovableEntity Primary, Companion;
+            public Vector2 Origin, PrimaryOrigin, Destination;
+            public float GroupOffset, Elapsed;
+            public float ShakeDuration, CollapseDuration, DotDuration, FlightDuration, RebuildDuration;
+            public bool Arrived;
+        }
+
+        public struct Snapshot
+        {
+            public Vector2 Checkpoint;
+            public bool HasCheckpoint;
+            public int Count;
+            public JourneySnapshot First, Second;
+        }
+
         public sealed class Journey
         {
+            public long Id { get; internal set; }
             public MovableEntity Primary { get; internal set; }
             public MovableEntity Companion { get; internal set; }
             public Vector2 Origin { get; internal set; }
@@ -31,6 +50,7 @@ namespace TapTap
         [SerializeField] private Vector2 checkpoint;
         [SerializeField] private bool hasCheckpoint;
         private readonly List<Journey> journeys = new List<Journey>();
+        private long nextJourneyId;
         public IReadOnlyList<Journey> Journeys => journeys;
         public Vector2 Checkpoint => checkpoint;
         public bool HasCheckpoint => hasCheckpoint;
@@ -48,6 +68,7 @@ namespace TapTap
             if (entity == null || entity.IsReturning || (companion != null && companion.IsReturning)) return;
             var journey = new Journey
             {
+                Id = ++nextJourneyId,
                 Primary = entity, Companion = companion, GroupOffset = offset,
                 Origin = companion != null ? (entity.Motor.Position + companion.Motor.Position) * 0.5f : entity.Motor.Position,
                 PrimaryOrigin = entity.Motor.Position,
@@ -81,7 +102,63 @@ namespace TapTap
         }
 
         public static float RenderTime(Journey journey) => Mathf.Min(journey.TotalDuration,
-            journey.Elapsed + Mathf.Clamp(Time.time - Time.fixedTime, 0f, Time.fixedDeltaTime));
+            journey.Elapsed + (RewindManager.Rewinding ? 0f : Mathf.Clamp(Time.time - Time.fixedTime, 0f, Time.fixedDeltaTime)));
+
+        public Snapshot CaptureState()
+        {
+            if (journeys.Count > 2)
+                throw new InvalidOperationException("Player rewind supports at most two simultaneous return journeys.");
+            return new Snapshot
+            {
+                Checkpoint = checkpoint, HasCheckpoint = hasCheckpoint, Count = journeys.Count,
+                First = journeys.Count > 0 ? CaptureJourney(journeys[0]) : default,
+                Second = journeys.Count > 1 ? CaptureJourney(journeys[1]) : default
+            };
+        }
+
+        private static JourneySnapshot CaptureJourney(Journey journey) => new JourneySnapshot
+        {
+            Id = journey.Id, Primary = journey.Primary, Companion = journey.Companion,
+            Origin = journey.Origin, PrimaryOrigin = journey.PrimaryOrigin, Destination = journey.Destination,
+            GroupOffset = journey.GroupOffset, Elapsed = journey.Elapsed, Arrived = journey.Arrived,
+            ShakeDuration = journey.ShakeDuration, CollapseDuration = journey.CollapseDuration,
+            DotDuration = journey.DotDuration, FlightDuration = journey.FlightDuration,
+            RebuildDuration = journey.RebuildDuration
+        };
+
+        public void RestoreState(in Snapshot state)
+        {
+            checkpoint = state.Checkpoint;
+            hasCheckpoint = state.HasCheckpoint;
+            bool sameTasks = journeys.Count == state.Count
+                && (state.Count < 1 || journeys[0].Id == state.First.Id)
+                && (state.Count < 2 || journeys[1].Id == state.Second.Id);
+            if (!sameTasks)
+            {
+                journeys.Clear();
+                for (int i = 0; i < state.Count; i++) journeys.Add(new Journey());
+            }
+            if (state.Count > 0) RestoreJourney(journeys[0], in state.First);
+            if (state.Count > 1) RestoreJourney(journeys[1], in state.Second);
+        }
+
+        private static void RestoreJourney(Journey journey, in JourneySnapshot state)
+        {
+            journey.Id = state.Id;
+            journey.Primary = state.Primary;
+            journey.Companion = state.Companion;
+            journey.Origin = state.Origin;
+            journey.PrimaryOrigin = state.PrimaryOrigin;
+            journey.Destination = state.Destination;
+            journey.GroupOffset = state.GroupOffset;
+            journey.Elapsed = state.Elapsed;
+            journey.Arrived = state.Arrived;
+            journey.ShakeDuration = state.ShakeDuration;
+            journey.CollapseDuration = state.CollapseDuration;
+            journey.DotDuration = state.DotDuration;
+            journey.FlightDuration = state.FlightDuration;
+            journey.RebuildDuration = state.RebuildDuration;
+        }
 
         public Vector2 FollowPosition(MovableEntity entity)
         {

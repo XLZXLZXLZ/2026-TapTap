@@ -5,7 +5,7 @@ using UnityEngine;
 namespace TapTap
 {
     [DefaultExecutionOrder(-200)]
-    public sealed class WorldPhaseState : LazySingleton<WorldPhaseState>
+    public sealed class WorldPhaseState : LazySingleton<WorldPhaseState>, IRewindable<bool>
     {
         [SerializeField] private bool active;
         private readonly List<PhaseBlock> blocks = new List<PhaseBlock>();
@@ -30,6 +30,16 @@ namespace TapTap
             Changed?.Invoke(active);
             Physics2D.SyncTransforms();
             ResolveMaterialization();
+            RefreshOutline();
+        }
+
+        public bool CaptureState() => active;
+
+        public void RestoreState(in bool value)
+        {
+            active = value;
+            // Do not emit Changed or eject actors: their historical positions are restored separately.
+            foreach (PhaseBlock block in blocks) if (block != null) block.ApplyRestoredState(active);
             RefreshOutline();
         }
 
@@ -119,13 +129,12 @@ namespace TapTap
                     && Overlaps(destination, other.Motor.CollisionBounds)) return false;
             foreach (Collider2D collider in Physics2D.OverlapBoxAll((Vector2)actor.center + delta, size, 0f))
             {
-                if (collider.isTrigger || collider == entity.Motor.Collider || (partner != null && collider == partner.Collider)) continue;
+                if (collider.isTrigger || collider.GetComponentInParent<MovableEntity>() != null) continue;
                 return false;
             }
             foreach (RaycastHit2D hit in Physics2D.BoxCastAll(actor.center, size, 0f, delta.normalized, delta.magnitude))
             {
-                if (hit.collider.isTrigger || hit.collider == entity.Motor.Collider
-                    || (partner != null && hit.collider == partner.Collider)
+                if (hit.collider.isTrigger || hit.collider.GetComponentInParent<MovableEntity>() != null
                     || hit.collider.GetComponent<PhaseBlock>() != null) continue;
                 return false;
             }

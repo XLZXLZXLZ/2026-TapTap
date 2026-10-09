@@ -74,7 +74,48 @@ namespace TapTap
             if (guide != null && guideWidth <= 0f) guideWidth = guide.widthMultiplier;
         }
 
-        private void LateUpdate() => Simulate(Time.deltaTime);
+        private void LateUpdate()
+        {
+            if (RewindManager.Rewinding) RenderRewindState();
+            else Simulate(Time.deltaTime);
+        }
+
+        public void ClearTransientEffects()
+        {
+            EnsureVisuals();
+            ResetVisual(body);
+            ResetVisual(head);
+            guideAlpha = 0f;
+            if (particles != null) particles.Clear();
+        }
+
+        public void RenderRewindState()
+        {
+            if (controller == null || body == null || head == null || config == null) return;
+            EnsureVisuals();
+            float unit = body.Motor.Size.x / Mathf.Max(0.01f, body.Motor.Collider.size.x);
+            bool returning = body.IsReturning || head.IsReturning;
+            bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined && !returning;
+            RenderGuide(unit, returning, 0f, true);
+            if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit, true);
+        }
+
+        private void RenderGuide(float unit, bool returning, float dt, bool immediate)
+        {
+            float target = controller.GuideVisible && !returning ? 0.75f : 0f;
+            guideAlpha = immediate ? target : Mathf.MoveTowards(guideAlpha, target, dt * 6f);
+            bool canRecall = controller.CanRecall;
+            Color color = canRecall ? recallReadyColor : recallBlockedColor;
+            color.a *= guideAlpha;
+            if (guide == null) return;
+            guide.startColor = guide.endColor = color;
+            guide.widthMultiplier = guideWidth * unit;
+            guide.enabled = guideAlpha > 0.001f;
+            guide.SetPosition(0, head.transform.position);
+            Vector3 guideEnd = head.transform.position + Vector3.down * 1000f;
+            if (canRecall) guideEnd.y = body.transform.position.y;
+            guide.SetPosition(1, guideEnd);
+        }
 
         public void Simulate(float dt)
         {
@@ -83,20 +124,7 @@ namespace TapTap
             float unit = body.Motor.Size.x / Mathf.Max(0.01f, body.Motor.Collider.size.x);
             bool returning = body.IsReturning || head.IsReturning;
             bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined && !returning;
-            guideAlpha = Mathf.MoveTowards(guideAlpha, controller.GuideVisible && !returning ? 0.75f : 0f, dt * 6f);
-            bool canRecall = controller.CanRecall;
-            Color color = canRecall ? recallReadyColor : recallBlockedColor;
-            color.a *= guideAlpha;
-            if (guide != null)
-            {
-                guide.startColor = guide.endColor = color;
-                guide.widthMultiplier = guideWidth * unit;
-                guide.enabled = guideAlpha > 0.001f;
-                guide.SetPosition(0, head.transform.position);
-                Vector3 guideEnd = head.transform.position + Vector3.down * 1000f;
-                if (canRecall) guideEnd.y = body.transform.position.y;
-                guide.SetPosition(1, guideEnd);
-            }
+            RenderGuide(unit, returning, dt, false);
             if (!captured || visualSettings == null)
             {
                 if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit);

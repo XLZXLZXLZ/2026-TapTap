@@ -36,6 +36,7 @@ namespace TapTap
             }
 #endif
             IsResetting = true;
+            if (RewindManager.Current != null) RewindManager.Current.ClearHistory();
             StartCoroutine(Reload(scene));
             return true;
         }
