@@ -13,8 +13,6 @@ namespace TapTap.Editor
         public const string TestSceneFolder = "Assets/Scenes/Test";
         private const string DefaultPlayerPath = "Assets/Prefabs/Characters/Player.prefab";
         private const string DefaultConfigPath = "Assets/Runtime/Config/PrototypePlayer.asset";
-        private static float ReferenceAspect => (float)Mathf.Max(1, PlayerSettings.defaultScreenWidth)
-            / Mathf.Max(1, PlayerSettings.defaultScreenHeight);
 
         public static GameObject EnsureRuntimePrefab()
         {
@@ -73,7 +71,7 @@ namespace TapTap.Editor
                 Camera camera = cameraObject.AddComponent<Camera>();
                 cameraObject.AddComponent<RewindScreenEffect>();
                 camera.orthographic = true;
-                camera.orthographicSize = 5.6f;
+                camera.orthographicSize = SceneCameraDefaults.Size;
                 camera.clearFlags = CameraClearFlags.SolidColor;
                 camera.backgroundColor = new Color(0.045f, 0.075f, 0.12f);
                 camera.nearClipPlane = 0.1f;
@@ -155,7 +153,8 @@ namespace TapTap.Editor
                 LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
                 runtime.Configure(player, region, config, spawn);
                 GenerateAnnotations(region, player);
-                runtime.CameraRig?.FrameRegionHorizontally(region, ReferenceAspect);
+                runtime.CameraRig?.CenterOnRegion(region);
+                SceneCameraDefaults.Apply(runtimeObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(regionObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(playerObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
@@ -234,7 +233,8 @@ namespace TapTap.Editor
                         if (runtime == null) runtime = root.GetComponentInChildren<LevelSceneRuntime>(true);
                     }
                     if (region == null || runtime == null || runtime.CameraRig == null) continue;
-                    runtime.CameraRig.FrameRegionHorizontally(region, ReferenceAspect);
+                    runtime.CameraRig.CenterOnRegion(region);
+                    SceneCameraDefaults.Apply(runtime.gameObject);
                     LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
                     if (!EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存测试场景：" + path);
                     updated++;
@@ -353,6 +353,7 @@ namespace TapTap.Editor
                 if (oldEffects != null)
                     EditorUtility.CopySerialized(oldEffects, runtimeObject.GetComponentInChildren<EffectManager>());
                 runtime.Configure(player, null, player.Config, player.Body.transform.position);
+                SceneCameraDefaults.Apply(runtimeObject);
                 if (oldCamera != null) UnityEngine.Object.DestroyImmediate(oldCamera.gameObject);
                 if (oldHud != null) UnityEngine.Object.DestroyImmediate(oldHud.gameObject);
                 if (oldEffects != null) UnityEngine.Object.DestroyImmediate(oldEffects);

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace TapTap
 {
@@ -12,20 +11,12 @@ namespace TapTap
         [SerializeField] private float minimumY = 3.5f;
         [SerializeField, Min(0.01f)] private float followSmoothTime = 0.2f;
         [SerializeField] private LevelRegion fixedRegion;
-        [Header("Fixed region framing")]
-        [Tooltip("Crop this fraction of the region width from each side, within the outer one-grid wall.")]
-        [FormerlySerializedAs("fixedRegionPadding")]
-        [SerializeField, Range(0f, 0.25f)] private float fixedRegionInset = 0.015f;
+        [Header("Fixed region shake")]
         [Tooltip("Shake strength multiplier while the camera is locked to a region.")]
         [SerializeField, Min(0f)] private float fixedShakeMultiplier = 1f;
         [Tooltip("Maximum shake displacement as a fraction of the viewport height.")]
         [SerializeField, Range(0f, 0.02f)] private float fixedShakeViewportLimit = 0.004f;
-        [Tooltip("Maximum zoom-in as a fraction of the resting camera size.")]
-        [SerializeField, Range(0f, 0.1f)] private float fixedZoomLimit = 0.015f;
         private Vector3 followVelocity;
-        private float baseSize;
-        private float followBaseSize;
-        private float fixedFittedSize;
         private Vector3 shakeOrigin;
         private bool initialized;
 
@@ -52,18 +43,18 @@ namespace TapTap
             followVelocity = Vector3.zero;
         }
 
-        public void FrameRegionHorizontally(LevelRegion region, float referenceAspect = 0f)
+        public void CenterOnRegion(LevelRegion region)
         {
             fixedRegion = region;
             Initialize();
             if (fixedRegion != null)
             {
-                FrameFixedRegion(referenceAspect);
+                FrameFixedRegion();
                 ApplyCameraEffects();
             }
         }
 
-        private void FrameFixedRegion(float referenceAspect = 0f)
+        private void FrameFixedRegion()
         {
             if (viewCamera == null) return;
             Bounds bounds = fixedRegion.WorldBounds;
@@ -73,13 +64,6 @@ namespace TapTap
             transform.position += center - viewCamera.transform.position;
             viewCamera.transform.rotation = Quaternion.identity;
             viewCamera.orthographic = true;
-            // Runtime framing must use the actual viewport on the first frame as well.
-            float aspect = !Application.isPlaying && referenceAspect > 0f ? referenceAspect : viewCamera.aspect;
-            aspect = Mathf.Max(0.01f, aspect);
-            // The outer one-grid wall may be cropped; protect the playable interior instead.
-            float wallWidth = Mathf.Abs(fixedRegion.transform.lossyScale.x) * fixedRegion.UnitSize;
-            fixedFittedSize = Mathf.Max(0.01f, (bounds.extents.x - wallWidth) / aspect);
-            baseSize = Mathf.Max(fixedFittedSize, bounds.extents.x / aspect * (1f - 2f * fixedRegionInset));
             followVelocity = Vector3.zero;
         }
 
@@ -94,8 +78,6 @@ namespace TapTap
             if (initialized || viewCamera == null) return;
             if (Application.isPlaying && viewCamera.GetComponent<RewindScreenEffect>() == null)
                 viewCamera.gameObject.AddComponent<RewindScreenEffect>();
-            baseSize = viewCamera.orthographicSize;
-            followBaseSize = baseSize;
             shakeOrigin = shakeRoot != null ? shakeRoot.localPosition : Vector3.zero;
             initialized = true;
         }
@@ -108,7 +90,6 @@ namespace TapTap
             else
             {
                 if (player == null || player.Body == null) return;
-                baseSize = followBaseSize;
                 if (RewindManager.Rewinding)
                 {
                     transform.position = FollowTarget();
@@ -126,33 +107,19 @@ namespace TapTap
         private void ApplyCameraEffects()
         {
             if (viewCamera == null) return;
-            if (!Application.isPlaying)
-            {
-                viewCamera.orthographicSize = baseSize;
-                return;
-            }
+            if (!Application.isPlaying) return;
             EffectManager effects = EffectManager.Instance;
             Vector2 shake = shakeRoot != null ? effects.ShakeOffset : Vector2.zero;
-            float zoom = effects.ZoomPulse;
             if (fixedRegion != null)
             {
-                float aspect = Mathf.Max(0.01f, viewCamera.aspect);
-                float margin = Mathf.Max(0f, baseSize - fixedFittedSize);
                 Vector3 scale = shakeRoot != null && shakeRoot.parent != null
                     ? shakeRoot.parent.lossyScale : Vector3.one;
                 float worldScale = Mathf.Max(0.0001f, Mathf.Abs(scale.x), Mathf.Abs(scale.y));
                 float shakeLimit = shakeRoot != null
-                    ? Mathf.Min(baseSize * 2f * fixedShakeViewportLimit, margin * aspect / worldScale) : 0f;
+                    ? viewCamera.orthographicSize * 2f * fixedShakeViewportLimit / worldScale : 0f;
                 shake = Vector2.ClampMagnitude(shake * fixedShakeMultiplier, shakeLimit);
-                // Reserve a constant shake budget instead of resizing with each oscillation.
-                // Scale the whole zoom curve; clipping its instantaneous value creates a plateau.
-                float zoomBudget = Mathf.Max(0f, margin - shakeLimit * worldScale / aspect);
-                float amplitude = Mathf.Min(effects.ZoomAmount, baseSize * fixedZoomLimit, zoomBudget);
-                zoom = effects.ZoomProgress * amplitude;
             }
-            float size = Mathf.Max(0.01f, baseSize - zoom);
             if (shakeRoot != null) shakeRoot.localPosition = shakeOrigin + (Vector3)shake;
-            viewCamera.orthographicSize = size;
         }
     }
 }

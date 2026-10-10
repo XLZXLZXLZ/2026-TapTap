@@ -48,7 +48,7 @@ namespace TapTap.Editor
             results.Clear();
             try
             {
-                Test("History wraps, stops at oldest, and discards the old future", HistoryBranches);
+                Test("Unlimited history spans chunks, restores the beginning, and discards old futures", HistoryBranches);
                 Test("Spring velocity and one-way suppression restore", SpringAndOneWay);
                 Test("Extension replays identically and a historical hold can release", ExtensionAndInput);
                 Test("Pulling and pickup continue from restored action progress", PullAndPickup);
@@ -105,15 +105,13 @@ namespace TapTap.Editor
             public PlayerConfig Config;
             public Vector2 Spawn => Origin + Vector2.up * 0.36f;
 
-            public Fixture(float historySeconds = 20f)
+            public Fixture()
             {
                 if (RewindManager.Current != null) UnityEngine.Object.DestroyImmediate(RewindManager.Current.gameObject);
                 EffectManager.Instance.ClearTransientEffects();
                 WorldPhaseState.Instance.RestoreState(false);
                 GameObject managerObject = NewObject("Test Rewind", Vector2.zero, false);
                 Manager = managerObject.AddComponent<RewindManager>();
-                typeof(RewindManager).GetField("historySeconds", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .SetValue(Manager, historySeconds);
                 managerObject.SetActive(true);
                 Manager.UseKeyboard = false;
             }
@@ -201,7 +199,13 @@ namespace TapTap.Editor
             public void Back(long steps)
             {
                 Check(Manager.BeginRewind(), "Could not begin rewind");
-                Manager.RewindBy(steps * Time.fixedDeltaTime);
+                // Keep bulk test seeks precise even for many minutes of history.
+                while (steps > 0)
+                {
+                    long batch = Math.Min(256, steps);
+                    Manager.RewindBy(batch * Time.fixedDeltaTime);
+                    steps -= batch;
+                }
             }
 
             public void FinishReturn()
@@ -220,13 +224,17 @@ namespace TapTap.Editor
 
         private static void HistoryBranches()
         {
-            using (var f = new Fixture(0.1f))
+            using (var f = new Fixture())
             {
                 MovableEntity actor = f.Actor("Recorded actor", Origin, true);
-                for (int i = 1; i <= 10; i++) { actor.Motor.Teleport(Origin + Vector2.right * i); f.Step(); }
-                Check(f.Manager.OldestTick == 5 && f.Manager.NewestTick == 10, "Ring capacity is incorrect");
-                f.Back(2);
-                Near(actor.Motor.Position, Origin + Vector2.right * 8f, "Wrong wrapped snapshot");
+                f.Manager.BeginRewind();
+                f.Manager.EndRewind();
+                const int recordedSteps = 30000;
+                for (int i = 1; i <= recordedSteps; i++) { actor.Motor.Teleport(Origin + Vector2.right * i); f.Step(); }
+                Check(f.Manager.OldestTick == 0 && f.Manager.NewestTick == recordedSteps
+                    && f.Manager.AvailableSeconds > 599f, "Ten minutes of history evicted early frames");
+                f.Back(recordedSteps - 8);
+                Near(actor.Motor.Position, Origin + Vector2.right * 8f, "Early snapshot did not survive chunk growth");
                 long tick = f.Manager.CurrentTick;
                 f.Manager.SimulateStep(Time.fixedDeltaTime);
                 Check(f.Manager.CurrentTick == tick, "Forward simulation ran while rewinding");
@@ -237,11 +245,36 @@ namespace TapTap.Editor
                 f.Back(1);
                 Near(actor.Motor.Position, Origin + Vector2.right * 8f, "Past branch was overwritten");
                 f.Manager.EndRewind();
-                f.Step();
+                f.Step(600);
                 Near(actor.Motor.Position, Origin + Vector2.right * 8f, "Old future replayed");
+                f.Back(600);
+                Near(actor.Motor.Position, Origin + Vector2.right * 8f, "New branch did not span freshly allocated chunks");
                 f.Back(100);
                 Check(f.Manager.CurrentTick == f.Manager.OldestTick, "Did not stop at oldest history");
-                Near(actor.Motor.Position, Origin + Vector2.right * 5f, "Wrong oldest snapshot");
+                Near(actor.Motor.Position, Origin, "Initial snapshot was lost");
+                f.Manager.EndRewind();
+                actor.Motor.Teleport(Origin + Vector2.right * 99f);
+                f.Step();
+                f.Manager.ClearHistory();
+                Check(f.Manager.CurrentTick == 0 && f.Manager.NewestTick == 0 && f.Manager.AvailableSeconds == 0f,
+                    "Clearing history retained timeline bounds");
+                f.Step();
+                f.Back(100);
+                Near(actor.Motor.Position, Origin + Vector2.right * 99f, "Cleared history retained a previous initial state");
+            }
+            foreach (int branchTick in new[] { 255, 256, 257 })
+            {
+                using (var f = new Fixture())
+                {
+                    MovableEntity actor = f.Actor("Chunk boundary actor", Origin, true);
+                    f.Step(800);
+                    f.Back(800 - branchTick);
+                    f.Manager.EndRewind();
+                    actor.Motor.Teleport(Origin + Vector2.right * 99f);
+                    f.Step();
+                    f.Back(1);
+                    Near(actor.Motor.Position, Origin, "Truncating at a chunk boundary damaged retained snapshots");
+                }
             }
         }
 
@@ -617,18 +650,20 @@ namespace TapTap.Editor
                 RenderTexture previous = RenderTexture.active;
                 try
                 {
-                    void Rectangle(string name, Vector2 center, Vector2 size, Color color)
+                    GameObject Rectangle(string name, Vector2 center, Vector2 size, Color color)
                     {
                         GameObject item = f.NewObject(name, Origin + center);
                         item.transform.localScale = size;
                         SpriteRenderer renderer = item.AddComponent<SpriteRenderer>();
                         renderer.sprite = sprite;
                         renderer.color = color;
+                        return item;
                     }
                     Rectangle("Floor", new Vector2(0f, -2.6f), new Vector2(12f, 0.5f), new Color(0.25f, 0.34f, 0.4f));
                     Rectangle("Platform", new Vector2(1.3f, -0.6f), new Vector2(3f, 0.3f), new Color(0.3f, 0.7f, 0.65f));
-                    Rectangle("Player", new Vector2(-1.5f, -1.9f), new Vector2(0.7f, 0.9f), new Color(1f, 0.32f, 0.16f));
-                    Rectangle("Head", new Vector2(-1.5f, -1.2f), new Vector2(0.7f, 0.5f), new Color(1f, 0.8f, 0.2f));
+                    GameObject body = Rectangle("Player", new Vector2(-1.5f, -1.9f), new Vector2(0.7f, 0.9f), new Color(1f, 0.32f, 0.16f));
+                    GameObject head = Rectangle("Head", new Vector2(-1.5f, -1.2f), new Vector2(0.7f, 0.5f), new Color(1f, 0.8f, 0.2f));
+                    Vector3 bodyOrigin = body.transform.position, headOrigin = head.transform.position;
                     Rectangle("Block", new Vector2(3f, 0.4f), new Vector2(0.8f, 1.8f), new Color(0.4f, 0.6f, 0.95f));
                     for (int i = 0; i < 12; i++)
                         Rectangle("Grid", new Vector2(i - 5.5f, 0f), new Vector2(0.015f, 6f), new Color(0.12f, 0.18f, 0.24f));
@@ -664,6 +699,44 @@ namespace TapTap.Editor
                     effects.Simulate(0.2f);
                     SetField(effects, "rewindSignalClock", 4.1f);
                     Capture("rewind-fast.png");
+                    body.transform.position += Vector3.left * 0.6f;
+                    head.transform.position += Vector3.left * 0.6f;
+                    effects.Simulate(0.06f);
+                    Color[] trails = Capture("rewind-trails.png");
+                    float ghostStrength = effects.RewindGhostStrength;
+                    SetField(effects, "rewindGhostStrength", 0f);
+                    Color[] withoutTrails = Capture("rewind-no-trails.png");
+                    float trailDifference = 0f;
+                    for (int i = 0; i < trails.Length; i++)
+                        trailDifference += Mathf.Abs(trails[i].g - withoutTrails[i].g)
+                            + Mathf.Abs(trails[i].b - withoutTrails[i].b);
+                    Check(trailDifference / trails.Length > 0.0004f, "Moving actors did not leave temporal ghosts");
+                    SetField(effects, "rewindGhostStrength", ghostStrength);
+                    Capture("rewind-warm.png");
+                    effects.Simulate(0.06f);
+                    Capture("rewind-warm-older.png");
+                    body.transform.position += Vector3.left * 0.6f;
+                    head.transform.position += Vector3.left * 0.6f;
+                    // Release and repress between camera renders must still clear the previous attempt.
+                    effects.SetRewindVisual(false);
+                    effects.SetRewindVisual(true, 1f);
+                    Color[] freshSession = Capture("rewind-fresh-session.png");
+                    SetField(effects, "rewindGhostStrength", 0f);
+                    Color[] cleanSession = Capture("rewind-clean-session.png");
+                    float oldTrailResidue = 0f;
+                    for (int i = 0; i < freshSession.Length; i++)
+                        oldTrailResidue += Mathf.Abs(freshSession[i].g - cleanSession[i].g)
+                            + Mathf.Abs(freshSession[i].b - cleanSession[i].b);
+                    Check(oldTrailResidue / freshSession.Length < 0.0001f, "A new rewind session retained old ghosts");
+                    SetField(effects, "rewindGhostStrength", ghostStrength);
+                    Capture("rewind-new-session.png");
+                    RewindScreenEffect screen = cameraObject.GetComponent<RewindScreenEffect>();
+                    screen.enabled = false;
+                    Check(typeof(RewindScreenEffect).GetField("recentFrame", BindingFlags.Instance | BindingFlags.NonPublic)
+                        .GetValue(screen) == null, "Disabling the camera effect retained history buffers");
+                    screen.enabled = true;
+                    body.transform.position = bodyOrigin;
+                    head.transform.position = headOrigin;
                     effects.SetRewindVisual(false);
                     effects.Simulate(0.3f);
                     Color[] released = Capture("rewind-released.png");
@@ -675,6 +748,21 @@ namespace TapTap.Editor
                     }
                     Check(difference / baseline.Length > 0.003f, "Shader did not modify the camera output");
                     Check(residue / baseline.Length < 0.0001f, "Shader remained visible after release");
+                    effects.SetRewindVisual(true, 1f);
+                    effects.Simulate(0.2f);
+                    Capture("rewind-before-resize.png");
+                    RenderTexture.active = null;
+                    camera.targetTexture = null;
+                    UnityEngine.Object.DestroyImmediate(target);
+                    UnityEngine.Object.DestroyImmediate(image);
+                    target = new RenderTexture(640, 360, 24);
+                    image = new Texture2D(640, 360, TextureFormat.RGB24, false);
+                    camera.targetTexture = target;
+                    Capture("rewind-resized.png");
+                    var history = (RenderTexture)typeof(RewindScreenEffect)
+                        .GetField("recentFrame", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(screen);
+                    Check(history != null && history.width == 320 && history.height == 180,
+                        "Changing resolution did not reallocate half-resolution history");
                     foreach (var message in ShaderUtil.GetShaderMessages(shader))
                         Check(message.severity.ToString() != "Error", "Shader compilation failed: " + message.message);
                 }

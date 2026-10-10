@@ -14,30 +14,73 @@ namespace TapTap
         {
             MonoBehaviour Owner { get; }
             int Order { get; }
-            void Capture(int slot);
-            void Restore(int slot);
+            void Capture(long tick);
+            void Restore(long tick);
+            void DiscardFuture(long lastTick);
+            void ClearHistory();
+        }
+
+        private sealed class FrameHistory<TState> where TState : struct
+        {
+            private const int ChunkSize = 256;
+            private readonly List<TState[]> chunks = new List<TState[]>();
+            private long count;
+
+            public void Store(long tick, in TState state)
+            {
+                int chunk = checked((int)(tick / ChunkSize));
+                // Allocate a small page only when needed; older snapshots are never copied or overwritten.
+                while (chunks.Count <= chunk) chunks.Add(new TState[ChunkSize]);
+                chunks[chunk][(int)(tick % ChunkSize)] = state;
+                count = Math.Max(count, tick + 1);
+            }
+
+            public TState Read(long tick) => chunks[checked((int)(tick / ChunkSize))][(int)(tick % ChunkSize)];
+
+            public void Truncate(long retainedCount)
+            {
+                if (retainedCount >= count) return;
+                if (retainedCount == 0) { Clear(); return; }
+                int retainedChunks = checked((int)((retainedCount - 1) / ChunkSize + 1));
+                int lastChunkUsed = (int)(retainedCount % ChunkSize);
+                // Snapshots can contain object references, so clear abandoned entries in the remaining page too.
+                if (lastChunkUsed > 0)
+                    Array.Clear(chunks[retainedChunks - 1], lastChunkUsed, ChunkSize - lastChunkUsed);
+                if (chunks.Count > retainedChunks) chunks.RemoveRange(retainedChunks, chunks.Count - retainedChunks);
+                count = retainedCount;
+            }
+
+            public void Clear() { chunks.Clear(); count = 0; }
         }
 
         private sealed class Track<TState> : ITrack where TState : struct
         {
             private readonly IRewindable<TState> participant;
-            private readonly TState[] frames;
+            private readonly FrameHistory<TState> frames = new FrameHistory<TState>();
             public MonoBehaviour Owner { get; }
             public int Order { get; }
 
-            public Track(MonoBehaviour owner, IRewindable<TState> target, int capacity, int order)
+            public Track(MonoBehaviour owner, IRewindable<TState> target, int order)
             {
                 Owner = owner;
                 participant = target;
-                frames = new TState[capacity];
                 Order = order;
             }
 
-            public void Capture(int slot) => frames[slot] = participant.CaptureState();
-            public void Restore(int slot) => participant.RestoreState(in frames[slot]);
+            public void Capture(long tick)
+            {
+                TState state = participant.CaptureState();
+                frames.Store(tick, in state);
+            }
+            public void Restore(long tick)
+            {
+                TState state = frames.Read(tick);
+                participant.RestoreState(in state);
+            }
+            public void DiscardFuture(long lastTick) => frames.Truncate(lastTick + 1);
+            public void ClearHistory() => frames.Clear();
         }
 
-        [SerializeField, Min(0.1f)] private float historySeconds = 20f;
         [Header("回溯速度")]
         [Tooltip("每次开始按住 Z 时的回溯倍速。")]
         [FormerlySerializedAs("rewindSpeed")]
@@ -51,10 +94,9 @@ namespace TapTap
         private readonly List<PlayerController> players = new List<PlayerController>();
         private readonly List<MovableEntity> entities = new List<MovableEntity>();
         private readonly List<MechanismSwitch> switches = new List<MechanismSwitch>();
-        private double[] times;
-        private int capacity;
+        private readonly FrameHistory<double> times = new FrameHistory<double>();
         private float stepDuration;
-        private long oldestTick, newestTick, currentTick;
+        private long newestTick, currentTick;
         private double rewindRemainder;
         private double rewindHeldSeconds;
         private bool discovered;
@@ -67,10 +109,10 @@ namespace TapTap
         public bool IsRewinding { get; private set; }
         public double SimulationTime { get; private set; }
         public long CurrentTick => currentTick;
-        public long OldestTick => oldestTick;
+        public long OldestTick => 0;
         public long NewestTick => newestTick;
-        public float AvailableSeconds => hasHistory ? (currentTick - oldestTick) * stepDuration : 0f;
-        public bool AtOldestHistory => hasHistory && currentTick <= oldestTick;
+        public float AvailableSeconds => hasHistory ? currentTick * stepDuration : 0f;
+        public bool AtOldestHistory => hasHistory && currentTick == 0;
         public double RewindHeldSeconds => rewindHeldSeconds;
         public float RewindSpeedProgress => accelerationDuration > 0f
             ? Mathf.Clamp01((float)(rewindHeldSeconds / accelerationDuration)) : 1f;
@@ -98,23 +140,16 @@ namespace TapTap
         private void Awake()
         {
             current = this;
-            AllocateTimeline(Time.fixedDeltaTime);
+            stepDuration = Time.fixedDeltaTime;
         }
 
         private void Start() => DiscoverParticipants();
-
-        private void AllocateTimeline(float dt)
-        {
-            stepDuration = dt;
-            capacity = Mathf.Max(2, Mathf.CeilToInt(historySeconds / dt) + 1);
-            times = new double[capacity];
-        }
 
         public void Register<TState>(MonoBehaviour owner, IRewindable<TState> participant, int order)
             where TState : struct
         {
             foreach (ITrack track in tracks) if (track.Owner == owner) return;
-            tracks.Add(new Track<TState>(owner, participant, capacity, order));
+            tracks.Add(new Track<TState>(owner, participant, order));
             tracks.Sort((a, b) => a.Order != b.Order ? a.Order.CompareTo(b.Order)
                 : a.Owner.GetInstanceID().CompareTo(b.Owner.GetInstanceID()));
             if (owner is PlayerController player) { players.Add(player); players.Sort(CompareOwners); }
@@ -149,6 +184,9 @@ namespace TapTap
         private void InvalidateHistory()
         {
             EndRewind();
+            times.Clear();
+            foreach (ITrack track in tracks) track.ClearHistory();
+            newestTick = currentTick = 0;
             historyDirty = true;
             hasHistory = false;
         }
@@ -161,7 +199,7 @@ namespace TapTap
             foreach (PlayerController player in players) if (!player.PrepareSimulation()) return false;
             if (!historyDirty) return true;
             historyDirty = false;
-            oldestTick = newestTick = currentTick = 0;
+            newestTick = currentTick = 0;
             CaptureFrame();
             hasHistory = true;
             return true;
@@ -230,15 +268,13 @@ namespace TapTap
             foreach (MovableEntity entity in entities) entity.Motor.Commit();
             currentTick++;
             newestTick = currentTick;
-            oldestTick = Math.Max(oldestTick, newestTick - capacity + 1);
             CaptureFrame();
         }
 
         private void CaptureFrame()
         {
-            int slot = (int)(currentTick % capacity);
-            times[slot] = SimulationTime;
-            foreach (ITrack track in tracks) track.Capture(slot);
+            times.Store(currentTick, SimulationTime);
+            foreach (ITrack track in tracks) track.Capture(currentTick);
         }
 
         public bool BeginRewind()
@@ -264,7 +300,7 @@ namespace TapTap
             long steps = (long)Math.Floor(rewindRemainder + 0.00001d);
             if (steps == 0) return;
             rewindRemainder -= steps;
-            long target = Math.Max(oldestTick, currentTick - steps);
+            long target = Math.Max(0, currentTick - steps);
             if (target == currentTick) return;
             currentTick = target;
             RestoreFrame();
@@ -274,9 +310,8 @@ namespace TapTap
 
         private void RestoreFrame()
         {
-            int slot = (int)(currentTick % capacity);
-            SimulationTime = times[slot];
-            foreach (ITrack track in tracks) track.Restore(slot);
+            SimulationTime = times.Read(currentTick);
+            foreach (ITrack track in tracks) track.Restore(currentTick);
             Physics2D.SyncTransforms();
             foreach (MovableEntity entity in entities) entity.Motor.ProbeGround();
             foreach (PlayerController player in players) player.AfterRewindRestore();
@@ -285,8 +320,10 @@ namespace TapTap
         public void EndRewind()
         {
             if (!IsRewinding) return;
-            // Discard the abandoned future. Its slots are overwritten by the new branch.
+            // Release the abandoned future while retaining every snapshot up to the selected frame.
             newestTick = currentTick;
+            times.Truncate(currentTick + 1);
+            foreach (ITrack track in tracks) track.DiscardFuture(currentTick);
             IsRewinding = false;
             rewindRemainder = 0d;
             rewindHeldSeconds = 0d;

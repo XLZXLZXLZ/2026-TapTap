@@ -675,21 +675,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188271369683504
-  - Id: 8ed5809a4b3f4afca1dee8e2d9bdb7b2
-    Cell: {x: 22, y: 5}
-    Brush: {fileID: 11400000, guid: b98a9f3e4675ff540a782fda9d5f7c11, type: 2}
-    Settings:
-      rid: 5387188271369683507
-  - Id: 2141dad130ad470690ecc2de6d93a6c1
-    Cell: {x: 23, y: 5}
-    Brush: {fileID: 11400000, guid: b98a9f3e4675ff540a782fda9d5f7c11, type: 2}
-    Settings:
-      rid: 5387188271369683508
-  - Id: e1a35494ad2f42578aee974c1602b168
-    Cell: {x: 24, y: 5}
-    Brush: {fileID: 11400000, guid: b98a9f3e4675ff540a782fda9d5f7c11, type: 2}
-    Settings:
-      rid: 5387188271369683509
   - Id: 0d992df3d84c4e71b85a6a8461d5cd5e
     Cell: {x: 0, y: 8}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
@@ -1258,18 +1243,6 @@ MonoBehaviour:
     - rid: 5387188271369683504
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
-    - rid: 5387188271369683507
-      type: {class: SpikePlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        QuarterTurns: 2
-    - rid: 5387188271369683508
-      type: {class: SpikePlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        QuarterTurns: 2
-    - rid: 5387188271369683509
-      type: {class: SpikePlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        QuarterTurns: 2
     - rid: 5387188271369683510
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 

@@ -35,19 +35,35 @@ namespace TapTap
         [SerializeField, Min(0f)] private float rewindFadeIn = 0.15f;
         [SerializeField, Min(0f)] private float rewindFadeOut = 0.2f;
         [Header("回溯：信号质感")]
-        [SerializeField, Range(0f, 1f)] private float rewindSaturation = 0.8f;
-        [SerializeField, Range(0f, 0.2f)] private float rewindColdTint = 0.045f;
+        [SerializeField, Range(0f, 1f)] private float rewindSaturation = 0.72f;
+        [SerializeField, Range(0f, 0.2f)] private float rewindColdTint = 0.12f;
         [Tooltip("以 1080p 为基准的横向撕裂像素偏移。")]
-        [SerializeField, Min(0f)] private float rewindTearPixels = 8f;
+        [SerializeField, Min(0f)] private float rewindTearPixels = 16f;
         [SerializeField, Min(0f)] private float rewindTearFrequency = 2.8f;
         [SerializeField, Range(0.005f, 0.15f)] private float rewindBandHeight = 0.035f;
-        [SerializeField, Range(0.05f, 0.5f)] private float rewindTearDuty = 0.22f;
-        [SerializeField, Min(0f)] private float rewindChromaticPixels = 1.25f;
+        [SerializeField, Range(0.05f, 0.5f)] private float rewindTearDuty = 0.3f;
+        [SerializeField, Min(0f)] private float rewindChromaticPixels = 2.25f;
         [SerializeField, Range(0f, 0.15f)] private float rewindScanlines = 0.035f;
-        [SerializeField, Range(0f, 0.05f)] private float rewindGrain = 0.008f;
-        [SerializeField, Range(0f, 0.3f)] private float rewindVignette = 0.1f;
+        [SerializeField, Range(0f, 0.05f)] private float rewindGrain = 0.006f;
+        [SerializeField, Range(0f, 0.3f)] private float rewindVignette = 0.16f;
         [Tooltip("达到最大回溯速度时，动态干扰的增幅。")]
         [SerializeField, Range(0f, 1f)] private float rewindSpeedBoost = 0.5f;
+        [Header("回溯：时间倒流")]
+        [Tooltip("最近两次画面采样产生的青色、紫色时间残影。仅突出移动和变化的区域。")]
+        [SerializeField, Range(0f, 0.5f)] private float rewindGhostStrength = 0.24f;
+        [Tooltip("残影采样间隔（真实秒数）；两张半分辨率画面只在回溯期间保留。")]
+        [SerializeField, Range(0.02f, 0.15f)] private float rewindGhostInterval = 0.055f;
+        [SerializeField, Range(0f, 0.4f)] private float rewindSweepStrength = 0.18f;
+        [Tooltip("倒扫亮带每秒移动的屏幕高度。随回溯加速提升。")]
+        [SerializeField, Min(0f)] private float rewindSweepSpeed = 0.45f;
+        [SerializeField, Range(0.02f, 0.25f)] private float rewindSweepWidth = 0.12f;
+        [Tooltip("从屏幕边缘向内收拢的波纹幅度（屏幕 UV 比例）。中心区域保持清晰。")]
+        [SerializeField, Range(0f, 0.02f)] private float rewindEdgeRipple = 0.002f;
+        [Tooltip("边缘波纹的变化速度；越小越平缓。")]
+        [SerializeField, Min(0f)] private float rewindEdgeRippleSpeed = 4f;
+        [SerializeField, Min(0f)] private float rewindEdgeChromaticPixels = 2f;
+        [Tooltip("屏幕上下角落向左流动的倒带箭纹强度。")]
+        [SerializeField, Range(0f, 0.4f)] private float rewindChevronStrength = 0.2f;
         private float shakeRemaining;
         private float shakeStrength;
         private float activeShakeDuration;
@@ -65,6 +81,12 @@ namespace TapTap
         private float rewindSpeedProgress;
         private float rewindClock;
         private float rewindSignalClock;
+        private float rewindFlowClock;
+        public bool RewindVisualActive => rewindVisualActive && rewindVisualEnabled;
+        public int RewindVisualSession { get; private set; }
+        public float RewindPresentationClock => rewindClock;
+        public float RewindGhostStrength => rewindGhostStrength;
+        public float RewindGhostInterval => Mathf.Max(0.02f, rewindGhostInterval);
         public float RewindVisualStrength => rewindVisualEnabled ? rewindBlend : 0f;
         public float RewindMotionStrength => rewindMotion;
         public Shader RewindShader
@@ -81,6 +103,8 @@ namespace TapTap
         private static readonly int DetailParamsId = Shader.PropertyToID("_DetailParams");
         private static readonly int ClockParamsId = Shader.PropertyToID("_ClockParams");
         private static readonly int TearDutyId = Shader.PropertyToID("_TearDuty");
+        private static readonly int TimeParamsId = Shader.PropertyToID("_TimeParams");
+        private static readonly int FlowParamsId = Shader.PropertyToID("_FlowParams");
         public float ZoomPulse => zoomPulse;
         public float ZoomAmount => Mathf.Max(0f, zoomAmount);
         public float ZoomProgress => zoomAmount > 0f ? Mathf.Clamp01(zoomPulse / zoomAmount) : 0f;
@@ -157,6 +181,7 @@ namespace TapTap
 
         public void SetRewindVisual(bool active, float speedProgress = 0f, bool atOldest = false)
         {
+            if (active && !rewindVisualActive) RewindVisualSession++;
             rewindVisualActive = active;
             if (!active) return;
             rewindSpeedProgress = Mathf.Clamp01(speedProgress);
@@ -176,6 +201,8 @@ namespace TapTap
             rewindClock = Mathf.Repeat(rewindClock + dt, 3600f);
             rewindSignalClock = Mathf.Repeat(rewindSignalClock
                 + dt * rewindTearFrequency * (1f + rewindSpeedProgress * rewindSpeedBoost), 4096f);
+            rewindFlowClock = Mathf.Repeat(rewindFlowClock
+                + dt * rewindMotion * (1f + rewindSpeedProgress * rewindSpeedBoost), 3600f);
         }
 
         public void ApplyRewindMaterial(Material material)
@@ -185,8 +212,12 @@ namespace TapTap
             material.SetVector(RewindParamsId, new Vector4(blend, rewindSaturation, rewindColdTint, rewindVignette));
             material.SetVector(SignalParamsId, new Vector4(rewindTearPixels, rewindBandHeight, rewindChromaticPixels, motion));
             material.SetVector(DetailParamsId, new Vector4(rewindScanlines, rewindGrain, 0f, 0f));
-            material.SetVector(ClockParamsId, new Vector4(rewindClock, rewindSignalClock, 0f, 0f));
+            material.SetVector(ClockParamsId, new Vector4(rewindClock, rewindSignalClock, rewindEdgeRippleSpeed, 0f));
             material.SetFloat(TearDutyId, rewindTearDuty);
+            material.SetVector(TimeParamsId, new Vector4(rewindGhostStrength * motion,
+                rewindSweepStrength, rewindSweepWidth, rewindEdgeRipple));
+            material.SetVector(FlowParamsId, new Vector4(rewindFlowClock,
+                rewindSweepSpeed, rewindChevronStrength, rewindEdgeChromaticPixels));
         }
 
         public void ClearTransientEffects()

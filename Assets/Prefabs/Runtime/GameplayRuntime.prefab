@@ -117,7 +117,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 8.73
+  orthographic size: 9
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -5090,10 +5090,8 @@ MonoBehaviour:
   minimumY: 3.5
   followSmoothTime: 0.2
   fixedRegion: {fileID: 0}
-  fixedRegionInset: 0.015
   fixedShakeMultiplier: 1
   fixedShakeViewportLimit: 0.004
-  fixedZoomLimit: 0.015
 --- !u!1 &6673302170658178863
 GameObject:
   m_ObjectHideFlags: 0
@@ -5203,17 +5201,26 @@ MonoBehaviour:
   rewindShader: {fileID: 4800000, guid: f3d268e3d2af438591d105563b9fcd19, type: 3}
   rewindFadeIn: 0.15
   rewindFadeOut: 0.2
-  rewindSaturation: 0.8
-  rewindColdTint: 0.045
-  rewindTearPixels: 8
+  rewindSaturation: 0.72
+  rewindColdTint: 0.12
+  rewindTearPixels: 16
   rewindTearFrequency: 2.8
   rewindBandHeight: 0.035
-  rewindTearDuty: 0.22
-  rewindChromaticPixels: 1.25
+  rewindTearDuty: 0.3
+  rewindChromaticPixels: 2.25
   rewindScanlines: 0.035
-  rewindGrain: 0.008
-  rewindVignette: 0.1
+  rewindGrain: 0.006
+  rewindVignette: 0.16
   rewindSpeedBoost: 0.5
+  rewindGhostStrength: 0.24
+  rewindGhostInterval: 0.055
+  rewindSweepStrength: 0.18
+  rewindSweepSpeed: 0.45
+  rewindSweepWidth: 0.12
+  rewindEdgeRipple: 0.002
+  rewindEdgeRippleSpeed: 4
+  rewindEdgeChromaticPixels: 2
+  rewindChevronStrength: 0.2
 --- !u!114 &2673354439751536454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5239,7 +5246,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 313d644ba479423a8a3723e344adc91b, type: 3}
   m_Name:
   m_EditorClassIdentifier:
-  historySeconds: 20
   startSpeed: 1
   maxSpeed: 2
   accelerationDuration: 5

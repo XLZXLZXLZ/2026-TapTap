@@ -102,6 +102,7 @@ namespace TapTap.Editor
                 LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
                 runtime.Configure(player, null, config, player.Body.transform.position);
                 runtime.CameraRig?.SnapToPlayer();
+                SceneCameraDefaults.Apply(runtimeObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
 
                 EditorSceneManager.SaveScene(demo, DemoScenePath);
