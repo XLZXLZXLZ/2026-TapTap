@@ -1,0 +1,14 @@
+Unity: 2021.3.24f1c1
+Pipeline: Built-in
+Scene reopened: Assets/ArtStyleTest/Scenes/LowPoly_ArtStyle_Test.unity
+Mesh renderers: 96
+Materials: Standard plus simple additive window-light shader, no textures
+Lights: 2
+Camera render: 1600x1000
+Window light beams: 2 geometrical shafts, 3 additive materials, no textures.
+Shader compilation and 1600x1000 camera render passed in Unity 2021.3.24f1c1.
+Final editor exit code: 0.
+Visual QA: clear shaft edges, fading toward floor, bright window source and floor light patches.
+Effect is a lightweight stylized approximation; shafts do not calculate volumetric shadow occlusion.
+Original project not opened by Unity; verification performed in isolated copy.
+Free-fly camera component preserved.
