@@ -6,6 +6,31 @@ namespace TapTap.Editor
 {
     internal static class LevelGridEditing
     {
+        public static Vector2Int MirrorCell(RectInt bounds, Vector2Int cell, bool horizontal) => horizontal
+            ? new Vector2Int(bounds.xMin + bounds.xMax - 1 - cell.x, cell.y)
+            : new Vector2Int(cell.x, bounds.yMin + bounds.yMax - 1 - cell.y);
+
+        public static bool Mirror(LevelDefinition layout, bool horizontal, Action beforeChange = null)
+        {
+            if (layout == null || layout.Size.x <= 0 || layout.Size.y <= 0 ||
+                (!(layout.Placements?.Exists(item => item != null) ?? false) &&
+                 !(layout.UseCustomBoundary && layout.BoundaryCells != null && layout.BoundaryCells.Count > 0))) return false;
+            beforeChange?.Invoke();
+            RectInt bounds = layout.CanvasBounds;
+            if (layout.Placements != null)
+                foreach (LevelPlacement item in layout.Placements)
+                {
+                    if (item == null) continue;
+                    item.Cell = MirrorCell(bounds, item.Cell, horizontal);
+                    if (item.Brush != null) LevelBrushHandlers.Get(item.Brush.HandlerId)?.MirrorSettings(item, horizontal);
+                }
+            if (layout.UseCustomBoundary && layout.BoundaryCells != null)
+                for (int i = 0; i < layout.BoundaryCells.Count; i++)
+                    layout.BoundaryCells[i] = MirrorCell(bounds, layout.BoundaryCells[i], horizontal);
+            layout.InvalidateFootprint();
+            return true;
+        }
+
         public static IEnumerable<Vector2Int> Rectangle(Vector2Int start, Vector2Int end, bool outline)
         {
             int left = Mathf.Min(start.x, end.x), right = Mathf.Max(start.x, end.x);

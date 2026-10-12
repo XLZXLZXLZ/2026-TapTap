@@ -161,7 +161,6 @@ namespace TapTap.Editor
             LevelPrefabBuilder.RecordInstanceOverrides(root);
         }
 
-        [MenuItem("TapTap/Prepare Effect Prefabs")]
         public static void PrepareAssets()
         {
             var root = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Characters/Player.prefab");

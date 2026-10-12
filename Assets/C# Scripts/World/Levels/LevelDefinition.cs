@@ -8,10 +8,31 @@ namespace TapTap
     public sealed class LevelDefinition : ScriptableObject
     {
         public Vector2Int Size = new Vector2Int(32, 18);
+        [HideInInspector] public Vector2Int CanvasOrigin;
+        public RectInt CanvasBounds => new RectInt(CanvasOrigin, Size);
         public LevelPalette Palette;
         public List<LevelPlacement> Placements = new List<LevelPlacement>();
         public string EntryPlacementId;
         public GameObject OutputPrefab;
+        [HideInInspector] public string TestSceneGuid;
+        [HideInInspector] public bool UseCustomBoundary;
+        [HideInInspector] public List<Vector2Int> BoundaryCells = new List<Vector2Int>();
+        [NonSerialized] private LevelFootprint footprint;
+#if UNITY_EDITOR
+        [NonSerialized] private int footprintDirtyCount = -1;
+#endif
+        public LevelFootprint Footprint
+        {
+            get
+            {
+#if UNITY_EDITOR
+                int dirtyCount = UnityEditor.EditorUtility.GetDirtyCount(this);
+                if (footprintDirtyCount != dirtyCount) { footprint = null; footprintDirtyCount = dirtyCount; }
+#endif
+                return footprint ?? (footprint = LevelFootprint.Build(this));
+            }
+        }
+        public void InvalidateFootprint() => footprint = null;
 
         public LevelPlacement EntryPlacement
         {
@@ -27,7 +48,7 @@ namespace TapTap
 
         public bool Contains(Vector2Int cell)
         {
-            return cell.x >= 0 && cell.y >= 0 && cell.x < Size.x && cell.y < Size.y;
+            return CanvasBounds.Contains(cell);
         }
 
         public LevelPlacement Find(Vector2Int cell, string layerId)
@@ -54,6 +75,7 @@ namespace TapTap
                 Settings = settings ?? new EmptyPlacementSettings()
             };
             Placements.Add(placement);
+            InvalidateFootprint();
             return placement;
         }
 
@@ -75,6 +97,7 @@ namespace TapTap
                 Placements.RemoveAt(i);
                 removed = true;
             }
+            if (removed) InvalidateFootprint();
             return removed;
         }
 
@@ -87,6 +110,7 @@ namespace TapTap
         private void OnValidate()
         {
             Size = new Vector2Int(Mathf.Max(1, Size.x), Mathf.Max(1, Size.y));
+            InvalidateFootprint();
         }
     }
 }

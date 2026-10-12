@@ -49,7 +49,6 @@ namespace TapTap.Editor
             BuildPrototype();
         }
 
-        [MenuItem("TapTap/Build Prototype")]
         public static void BuildPrototype()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)

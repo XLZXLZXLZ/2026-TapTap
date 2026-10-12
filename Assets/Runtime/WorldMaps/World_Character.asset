@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f82ce2fd68140e891944b4df733fd42, type: 3}
+  m_Name: World_Character
+  m_EditorClassIdentifier: 
+  Template: 1
+  TemplateSize: {x: 80, y: 120}
+  CharacterGapRatio: 0.022
+  CharacterCornerRatio: 0.055
+  Padding: 8
+  Modules:
+  - Id: e3d4dc65b67d431cb4a96331e6e6e586
+    Level: {fileID: 11400000, guid: d28be2a0c754ecd49a66e45eac456d06, type: 2}
+    Position: {x: 11, y: 110}
+    Label: 
+  - Id: d8b0a52796e04e4bbddd92188c1c4808
+    Level: {fileID: 11400000, guid: 7b43a87cc927908419659516eecd81d1, type: 2}
+    Position: {x: 40, y: 119}
+    Label: 
+  - Id: a0cadc7204034720ab7eff930c366903
+    Level: {fileID: 11400000, guid: edbe0ee7af4bfbe4ab3b6e3f8316fc5f, type: 2}
+    Position: {x: 11, y: 93}
+    Label: 
+  - Id: 76fbb97aa8144e238fbd9ae00d5f1283
+    Level: {fileID: 11400000, guid: 0be07a979d71b3444a96dfd677d65f19, type: 2}
+    Position: {x: 53, y: 103}
+    Label: 
+  - Id: d739a00201634759a77941122e7335c5
+    Level: {fileID: 11400000, guid: 91fc236193d9002428e99fd0b82f9a57, type: 2}
+    Position: {x: 22, y: 81}
+    Label: 
+  - Id: 053542e014f14fff885f4627b3f34e75
+    Level: {fileID: 11400000, guid: 46854f81c94dfd9449ee5464c04229ce, type: 2}
+    Position: {x: 40, y: 98}
+    Label: 
+  - Id: 7d2861e155f94be491b6c5437f229f83
+    Level: {fileID: 11400000, guid: dc994f9b9342cb04e8aa86e169c9e180, type: 2}
+    Position: {x: 40, y: 92}
+    Label: 
+  - Id: d1f89e7af7a6404299db80c1d30b56cb
+    Level: {fileID: 11400000, guid: 2bcadc27f5798e04982c8492385de60b, type: 2}
+    Position: {x: 54, y: 81}
+    Label: 
+  - Id: 704d4109545f4f288c9048b4c8a679a7
+    Level: {fileID: 11400000, guid: 526b091eba2255a4db147ce17714ef39, type: 2}
+    Position: {x: 32, y: 48}
+    Label: 
+  - Id: 30a4ad492bd142e8aaf02cc9e42103fc
+    Level: {fileID: 11400000, guid: 9f09cbfb9cd7e9145991362929ad80ee, type: 2}
+    Position: {x: 22, y: 73}
+    Label: 
+  - Id: 68a9c1d14d45404c8ac7a979b0bd2899
+    Level: {fileID: 11400000, guid: 54fa2d8e6c1220e41a9d5773a504aae5, type: 2}
+    Position: {x: 66, y: 23}
+    Label: 
+  - Id: 412005a821984653ab3b0a215fe811ba
+    Level: {fileID: 11400000, guid: aff15986e01a91c49a04fc6cf80cd52b, type: 2}
+    Position: {x: 57, y: 70}
+    Label: 
+  Passages:
+  - Id: f419bfd551d4499e9ed48651fac724b8
+    Position: {x: 35, y: 110}
+    FromModuleId: a0cadc7204034720ab7eff930c366903
+    ToModuleId: e3d4dc65b67d431cb4a96331e6e6e586
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: 64897d2540ed45a5bc96b03ecaf3e139
+    Position: {x: 15, y: 93}
+    FromModuleId: a0cadc7204034720ab7eff930c366903
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: 771d5bcd91e044889819d366313050df
+    Position: {x: 22, y: 81}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 270
+    Bidirectional: 0
+    Note: 
+  - Id: 2862404a4c4942b2b23a912f206a3df7
+    Position: {x: 53, y: 81}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  OutputPrefab: {fileID: 0}

@@ -84,8 +84,8 @@ namespace TapTap
         [Header("回溯速度")]
         [Tooltip("每次开始按住 Z 时的回溯倍速。")]
         [FormerlySerializedAs("rewindSpeed")]
-        [SerializeField, Min(0.1f)] private float startSpeed = 1f;
-        [SerializeField, Min(0.1f)] private float maxSpeed = 2f;
+        [SerializeField, Min(0.1f)] private float startSpeed = 1.5f;
+        [SerializeField, Min(0.1f)] private float maxSpeed = 3f;
         [Tooltip("从起始速度线性提升到最大速度的真实时间（秒）；0 表示立即达到最大速度。")]
         [SerializeField, Min(0f)] private float accelerationDuration = 5f;
         public bool UseKeyboard = true;

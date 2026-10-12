@@ -159,6 +159,9 @@ namespace TapTap.Editor
                 LevelPrefabBuilder.RecordInstanceOverrides(playerObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
                 if (!EditorSceneManager.SaveScene(scene, scenePath)) throw new IOException("无法保存测试场景。");
+                AssetDatabase.ImportAsset(scenePath, ImportAssetOptions.ForceSynchronousImport);
+                if (region.Source != null)
+                    LevelSceneNavigation.Assign(region.Source, AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath));
                 AssetDatabase.SaveAssets();
             }
             finally
@@ -210,7 +213,6 @@ namespace TapTap.Editor
             }
         }
 
-        [MenuItem("TapTap/Level Designer/Update Test Scene Cameras")]
         public static void UpdateTestSceneCameras()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;

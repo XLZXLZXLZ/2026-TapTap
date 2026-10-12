@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f82ce2fd68140e891944b4df733fd42, type: 3}
+  m_Name: World_Heart
+  m_EditorClassIdentifier: 
+  HeartSize: {x: 160, y: 144}
+  Padding: 8
+  Modules:
+  - Id: b1836cc3b9244c3d992460fe381d24c4
+    Level: {fileID: 11400000, guid: a580511b52e7d4b40bb7e275b531828a, type: 2}
+    Position: {x: 22, y: 71}
+    Label: 
+  - Id: c1fddcffbfaf4f2aa19ef6440fcc81d3
+    Level: {fileID: 11400000, guid: 54fa2d8e6c1220e41a9d5773a504aae5, type: 2}
+    Position: {x: 38, y: 128}
+    Label: 
+  - Id: 90c40e05e0b5430e9caca6b9231171ed
+    Level: {fileID: 11400000, guid: 54fa2d8e6c1220e41a9d5773a504aae5, type: 2}
+    Position: {x: 118, y: 128}
+    Label: 
+  - Id: cb409c8c99544199807c55cf7ce37930
+    Level: {fileID: 11400000, guid: 617e31ae39485a2458d37c5cb3ff7be0, type: 2}
+    Position: {x: 68, y: 84}
+    Label: 
+  OutputPrefab: {fileID: 0}

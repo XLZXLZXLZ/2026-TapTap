@@ -208,7 +208,6 @@ namespace TapTap.Editor
             return renderer;
         }
 
-        [MenuItem("TapTap/Prepare Gameplay Visuals and Mechanisms")]
         public static void PrepareAssets()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode) return;

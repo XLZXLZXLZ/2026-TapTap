@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TapTap.Editor
 {
-    public sealed class LevelEditorWindow : EditorWindow
+    public sealed partial class LevelEditorWindow : EditorWindow
     {
         private const float SidebarWidth = 285f;
         private const float GridMargin = 27f;
@@ -73,7 +73,7 @@ namespace TapTap.Editor
             palette != null && palette.Brushes != null && brushIndex >= 0 && brushIndex < palette.Brushes.Count
                 ? palette.Brushes[brushIndex] : null;
 
-        [MenuItem("TapTap/Level Designer/Open")]
+        [MenuItem("TapTap/Level Designer", false, 100)]
         public static void Open()
         {
             GetWindow<LevelEditorWindow>("区域编辑器").Show();
@@ -117,6 +117,7 @@ namespace TapTap.Editor
 
         private void OnDisable()
         {
+            CancelCanvasExpansion();
             EndStroke();
             movingSelection = false;
             if (annotationCircle != null) DestroyImmediate(annotationCircle);
@@ -133,6 +134,7 @@ namespace TapTap.Editor
 
         private void OnLostFocus()
         {
+            CancelCanvasExpansion();
             EndStroke();
             panning = false;
             selecting = false;
@@ -149,6 +151,7 @@ namespace TapTap.Editor
 
         private void OnUndoRedo()
         {
+            CancelCanvasExpansion();
             if (painting || panning || selecting || movingSelection) GUIUtility.hotControl = 0;
             painting = false;
             panning = false;
@@ -184,6 +187,7 @@ namespace TapTap.Editor
 
         private void UseLayout(LevelDefinition definition)
         {
+            CancelCanvasExpansion();
             EndStroke();
             selecting = movingSelection = false;
             layout = definition;
@@ -221,6 +225,7 @@ namespace TapTap.Editor
 
         private void OnGUI()
         {
+            gridControlId = GUIUtility.GetControlID("TapTap.LevelGrid".GetHashCode(), FocusType.Passive);
             if (resetAnnotationFocus)
             {
                 // Clear the owner window's control too, in its own IMGUI context.
@@ -239,6 +244,7 @@ namespace TapTap.Editor
             }
             if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Escape)
             {
+                CancelCanvasExpansion();
                 EndStroke();
                 panning = false;
                 selecting = false;
@@ -248,7 +254,7 @@ namespace TapTap.Editor
                 Event.current.Use();
                 Repaint();
             }
-            HandleShortcuts();
+            if (!expandingCanvas) HandleShortcuts();
             GUILayout.BeginArea(new Rect(0f, 0f, position.width, ToolbarHeight));
             DrawToolbar();
             GUILayout.EndArea();
@@ -395,6 +401,8 @@ namespace TapTap.Editor
 
         private void DrawSidebar()
         {
+            DrawMapMirrorSidebar();
+            DrawCanvasExpansionSidebar();
             EditorGUILayout.Space(4f);
             using (new EditorGUI.DisabledScope(layout == null || EditorApplication.isPlayingOrWillChangePlaymode))
                 if (GUILayout.Button("一键生成测试场景", GUILayout.Height(28f))) GenerateTestScene();
@@ -729,6 +737,8 @@ namespace TapTap.Editor
                 }
             }
             DrawGrid(canvas, bounds);
+            DrawLevelBoundary();
+            DrawCanvasExpansion(canvas, bounds);
             if (movingSelection && selectionMoveDelta != Vector2Int.zero)
                 foreach (LevelPlacement item in AreaContents())
                     DrawPlacement(item, CellRect(item.Cell + selectionMoveDelta), true);
@@ -775,6 +785,18 @@ namespace TapTap.Editor
             GUI.EndGroup();
         }
 
+        private void DrawLevelBoundary()
+        {
+            foreach (LevelBoundaryEdge edge in layout.Footprint.Edges)
+            {
+                Vector2 a = pan + new Vector2(edge.Start.x - layout.CanvasBounds.xMin, layout.CanvasBounds.yMax - edge.Start.y) * cellPixels;
+                Vector2 b = pan + new Vector2(edge.End.x - layout.CanvasBounds.xMin, layout.CanvasBounds.yMax - edge.End.y) * cellPixels;
+                Rect line = edge.Outward.x == 0 ? new Rect(a.x, a.y - 1f, b.x - a.x, 2f)
+                    : new Rect(a.x - 1f, b.y, 2f, a.y - b.y);
+                EditorGUI.DrawRect(line, new Color(0.4f, 1f, 0.65f, 0.8f));
+            }
+        }
+
         private void DrawGrid(Rect canvas, Rect bounds)
         {
             Color gridColor = new Color(0.65f, 0.75f, 0.85f, 0.17f);
@@ -788,13 +810,13 @@ namespace TapTap.Editor
                 float px = pan.x + x * cellPixels;
                 EditorGUI.DrawRect(new Rect(px, bounds.y, 1f, bounds.height), gridColor);
                 if (x < layout.Size.x && x % labelStep == 0)
-                    GUI.Label(new Rect(px, Mathf.Max(0f, pan.y - 20f), cellPixels * labelStep, 18f), x.ToString(), CoordinateStyle());
+                    GUI.Label(new Rect(px, Mathf.Max(0f, pan.y - 20f), cellPixels * labelStep, 18f), (x + layout.CanvasOrigin.x).ToString(), CoordinateStyle());
             }
             for (int row = firstRow; row <= lastRow; row++)
             {
                 float py = pan.y + row * cellPixels;
                 EditorGUI.DrawRect(new Rect(bounds.x, py, bounds.width, 1f), gridColor);
-                int y = layout.Size.y - 1 - row;
+                int y = layout.CanvasBounds.yMax - 1 - row;
                 if (row < layout.Size.y && y % labelStep == 0)
                     GUI.Label(new Rect(Mathf.Max(0f, pan.x - 26f), py, 25f, cellPixels), y.ToString(), CoordinateStyle());
             }
@@ -900,7 +922,8 @@ namespace TapTap.Editor
                     return;
                 }
             }
-            int control = GUIUtility.GetControlID("TapTap.LevelGrid".GetHashCode(), FocusType.Passive);
+            if (HandleCanvasExpansion(canvas)) return;
+            int control = gridControlId;
             bool inside = canvas.Contains(e.mousePosition);
             Vector2 local = e.mousePosition - canvas.position;
             Vector2Int cell = MouseToCell(local);
@@ -1152,7 +1175,8 @@ namespace TapTap.Editor
 
         private Vector2Int ClampCell(Vector2Int cell)
         {
-            return new Vector2Int(Mathf.Clamp(cell.x, 0, layout.Size.x - 1), Mathf.Clamp(cell.y, 0, layout.Size.y - 1));
+            return new Vector2Int(Mathf.Clamp(cell.x, layout.CanvasBounds.xMin, layout.CanvasBounds.xMax - 1),
+                Mathf.Clamp(cell.y, layout.CanvasBounds.yMin, layout.CanvasBounds.yMax - 1));
         }
 
         private Rect RectanglePreview()
@@ -1260,7 +1284,9 @@ namespace TapTap.Editor
 
         private void Changed()
         {
+            layout.InvalidateFootprint();
             EditorUtility.SetDirty(layout);
+            LevelLayoutChanges.Notify(layout);
             prefabNeedsUpdate = true;
             cacheDirty = true;
             saveError = null;
@@ -1398,8 +1424,8 @@ namespace TapTap.Editor
 
         private Vector2Int ClampSelectionMove(Vector2Int delta)
         {
-            return new Vector2Int(Mathf.Clamp(delta.x, -selectionArea.xMin, layout.Size.x - selectionArea.xMax),
-                Mathf.Clamp(delta.y, -selectionArea.yMin, layout.Size.y - selectionArea.yMax));
+            return new Vector2Int(Mathf.Clamp(delta.x, layout.CanvasBounds.xMin - selectionArea.xMin, layout.CanvasBounds.xMax - selectionArea.xMax),
+                Mathf.Clamp(delta.y, layout.CanvasBounds.yMin - selectionArea.yMin, layout.CanvasBounds.yMax - selectionArea.yMax));
         }
 
         private void DrawStatus(Rect canvas)
@@ -1418,13 +1444,14 @@ namespace TapTap.Editor
         private Vector2Int MouseToCell(Vector2 local)
         {
             Vector2 p = (local - pan) / cellPixels;
-            return new Vector2Int(Mathf.FloorToInt(p.x), layout != null ? layout.Size.y - 1 - Mathf.FloorToInt(p.y) : 0);
+            return new Vector2Int((layout != null ? layout.CanvasOrigin.x : 0) + Mathf.FloorToInt(p.x),
+                layout != null ? layout.CanvasBounds.yMax - 1 - Mathf.FloorToInt(p.y) : 0);
         }
 
         private Rect CellRect(Vector2Int cell)
         {
-            return new Rect(pan.x + cell.x * cellPixels,
-                pan.y + (layout.Size.y - 1 - cell.y) * cellPixels, cellPixels, cellPixels);
+            return new Rect(pan.x + (cell.x - layout.CanvasOrigin.x) * cellPixels,
+                pan.y + (layout.CanvasBounds.yMax - 1 - cell.y) * cellPixels, cellPixels, cellPixels);
         }
 
         private static void Outline(Rect rect, Color color, float width)

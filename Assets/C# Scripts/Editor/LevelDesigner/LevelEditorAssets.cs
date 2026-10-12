@@ -107,7 +107,6 @@ namespace TapTap.Editor
                 new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.92f), new Color(0.45f, 0.95f, 0.65f));
         }
 
-        [MenuItem("TapTap/Level Designer/Create Endpoint Brush")]
         public static void CreateEndpointAssets()
         {
             LevelBrush brush = EnsureEndpointBrush();
@@ -193,7 +192,6 @@ namespace TapTap.Editor
             return palette;
         }
 
-        [MenuItem("TapTap/Level Designer/Create Example Region")]
         public static void CreateStarterAssets()
         {
             LevelPalette palette = EnsureDefaults();

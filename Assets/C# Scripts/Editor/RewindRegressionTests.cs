@@ -549,30 +549,30 @@ namespace TapTap.Editor
                 {
                     f.Step(950);
                     Check(f.Manager.BeginRewind(), "Acceleration could not begin");
-                    Check(Mathf.Approximately(f.Manager.CurrentRewindSpeed, 1f), "Starting speed is incorrect");
+                    Check(Mathf.Approximately(f.Manager.CurrentRewindSpeed, 1.5f), "Starting speed is incorrect");
                     float previousScale = Time.timeScale;
                     try
                     {
                         Time.timeScale = 0.25f;
                         for (int frame = 0; frame < frameRate * 5; frame++) f.Manager.SimulateRewind(1f / frameRate);
-                        Check(Mathf.Abs(f.Manager.CurrentRewindSpeed - 2f) < 0.0001f, "Speed did not reach its cap");
+                        Check(Mathf.Abs(f.Manager.CurrentRewindSpeed - 3f) < 0.0001f, "Speed did not reach its cap");
                         long steps = 950 - f.Manager.CurrentTick;
-                        Check(Math.Abs(steps * Time.fixedDeltaTime - 7.5f) <= Time.fixedDeltaTime,
-                            "Ramp did not integrate to 7.5 seconds");
+                        Check(Math.Abs(steps * Time.fixedDeltaTime - 11.25f) <= Time.fixedDeltaTime,
+                            "Ramp did not integrate to 11.25 seconds");
                         if (referenceSteps.HasValue) Check(Math.Abs(steps - referenceSteps.Value) <= 1, "Frame rates produced different histories");
                         referenceSteps = steps;
                         double held = f.Manager.RewindHeldSeconds;
                         f.Manager.BeginRewind();
                         Check(f.Manager.RewindHeldSeconds == held, "Repeated key polling reset acceleration");
                         f.Manager.SimulateRewind(0.1f);
-                        Check(Mathf.Abs((950 - f.Manager.CurrentTick) * Time.fixedDeltaTime - 7.7f) <= Time.fixedDeltaTime,
+                        Check(Mathf.Abs((950 - f.Manager.CurrentTick) * Time.fixedDeltaTime - 11.55f) <= Time.fixedDeltaTime,
                             "Speed did not remain capped");
                     }
                     finally { Time.timeScale = previousScale; }
                     f.Manager.EndRewind();
                     Check(!f.Manager.IsRewinding && f.Manager.RewindHeldSeconds == 0d, "Release retained the hold timer");
                     f.Manager.BeginRewind();
-                    Check(Mathf.Approximately(f.Manager.CurrentRewindSpeed, 1f), "Repress did not restart at one-times speed");
+                    Check(Mathf.Approximately(f.Manager.CurrentRewindSpeed, 1.5f), "Repress did not restart at the starting speed");
                     f.Manager.ClearHistory();
                     Check(!f.Manager.IsRewinding && f.Manager.RewindHeldSeconds == 0d, "Clearing history retained acceleration");
                 }
@@ -582,7 +582,7 @@ namespace TapTap.Editor
                 f.Step(950);
                 f.Manager.BeginRewind();
                 f.Manager.SimulateRewind(5.1f);
-                Check(Mathf.Abs((950 - f.Manager.CurrentTick) * Time.fixedDeltaTime - 7.7f) <= Time.fixedDeltaTime,
+                Check(Mathf.Abs((950 - f.Manager.CurrentTick) * Time.fixedDeltaTime - 11.55f) <= Time.fixedDeltaTime,
                     "A frame crossing the cap was integrated incorrectly");
                 f.Manager.EndRewind();
                 SetField(f.Manager, "startSpeed", 2f);
@@ -788,8 +788,8 @@ namespace TapTap.Editor
             Check(rewind != null && effects != null && camera != null
                 && camera.GetComponent<RewindScreenEffect>() != null, "Runtime prefab did not wire rewind components");
             var settings = new SerializedObject(rewind);
-            Check(settings.FindProperty("startSpeed").floatValue == 1f
-                && settings.FindProperty("maxSpeed").floatValue == 2f
+            Check(settings.FindProperty("startSpeed").floatValue == 1.5f
+                && settings.FindProperty("maxSpeed").floatValue == 3f
                 && settings.FindProperty("accelerationDuration").floatValue == 5f, "Runtime prefab has incorrect speed defaults");
             Check(effects.RewindShader != null && Array.IndexOf(AssetDatabase.GetDependencies(LevelTestSceneBuilder.RuntimePrefabPath),
                 AssetDatabase.GetAssetPath(effects.RewindShader)) >= 0, "Runtime prefab does not reference the rewind shader");

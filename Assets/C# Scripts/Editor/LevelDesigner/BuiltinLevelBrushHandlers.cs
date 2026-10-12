@@ -114,6 +114,13 @@ namespace TapTap.Editor
         public override string Id => "spikes";
         public int RotationStepDegrees => 90;
         public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new SpikePlacementSettings();
+        public override void MirrorSettings(LevelPlacement placement, bool horizontal)
+        {
+            if (!CanRotate(placement)) return;
+            var settings = placement.Settings as SpikePlacementSettings ?? new SpikePlacementSettings();
+            settings.QuarterTurns = (horizontal ? -settings.QuarterTurns : 2 - settings.QuarterTurns) & 3;
+            placement.Settings = settings;
+        }
         // Existing layouts used EmptyPlacementSettings for upward spikes.
         public bool CanRotate(LevelPlacement placement) => placement.Settings is SpikePlacementSettings ||
             placement.Settings is EmptyPlacementSettings;
@@ -149,6 +156,12 @@ namespace TapTap.Editor
         public override string Id => "conveyor";
         public int RotationStepDegrees => 180;
         public bool CanRotate(LevelPlacement placement) => placement.Settings is ConveyorPlacementSettings;
+        public override void MirrorSettings(LevelPlacement placement, bool horizontal)
+        {
+            if (!horizontal || !(placement.Settings is ConveyorPlacementSettings settings)) return;
+            settings.Speed = -settings.Speed;
+            settings.FacingLeftWhenStopped = !settings.FacingLeftWhenStopped;
+        }
         public void Rotate(LevelPlacement placement)
         {
             if (!(placement.Settings is ConveyorPlacementSettings settings)) return;
@@ -193,6 +206,12 @@ namespace TapTap.Editor
     {
         public override string Id => "checkpoint";
         public override bool IsCheckpoint => true;
+        public override void MirrorSettings(LevelPlacement placement, bool horizontal)
+        {
+            if (!(placement.Settings is CheckpointPlacementSettings settings)) return;
+            settings.SpawnOffset = horizontal ? new Vector2(-settings.SpawnOffset.x, settings.SpawnOffset.y)
+                : new Vector2(settings.SpawnOffset.x, -settings.SpawnOffset.y);
+        }
         public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new CheckpointPlacementSettings();
 
         public override void DrawSettings(LevelPlacement placement)

@@ -14,11 +14,13 @@ namespace TapTap
         {
             get
             {
-                Vector3 size = new Vector3(Size.x * UnitSize, Size.y * UnitSize, 0f);
-                var bounds = new Bounds(transform.TransformPoint(Vector3.zero), Vector3.zero);
-                bounds.Encapsulate(transform.TransformPoint(new Vector3(size.x, 0f, 0f)));
-                bounds.Encapsulate(transform.TransformPoint(new Vector3(0f, size.y, 0f)));
-                bounds.Encapsulate(transform.TransformPoint(size));
+                RectInt area = Source != null ? Source.Footprint.Bounds : new RectInt(Vector2Int.zero, Size);
+                var min = new Vector3(area.xMin * UnitSize, area.yMin * UnitSize, 0f);
+                var max = new Vector3(area.xMax * UnitSize, area.yMax * UnitSize, 0f);
+                var bounds = new Bounds(transform.TransformPoint(min), Vector3.zero);
+                bounds.Encapsulate(transform.TransformPoint(new Vector3(max.x, min.y, 0f)));
+                bounds.Encapsulate(transform.TransformPoint(new Vector3(min.x, max.y, 0f)));
+                bounds.Encapsulate(transform.TransformPoint(max));
                 return bounds;
             }
         }
@@ -34,7 +36,10 @@ namespace TapTap
             Vector3 size = new Vector3(Size.x * UnitSize, Size.y * UnitSize, 0f);
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.color = new Color(0.25f, 0.8f, 1f, 0.85f);
-            Gizmos.DrawWireCube(size * 0.5f, size);
+            if (Source != null)
+                foreach (LevelBoundaryEdge edge in Source.Footprint.Edges)
+                    Gizmos.DrawLine((Vector2)edge.Start * UnitSize, (Vector2)edge.End * UnitSize);
+            else Gizmos.DrawWireCube(size * 0.5f, size);
             Gizmos.matrix = Matrix4x4.identity;
             if (EntryCheckpoint != null)
             {

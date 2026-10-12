@@ -273,8 +273,9 @@ namespace TapTap
         {
             Vector2 velocity = body.Velocity;
             float impactSpeed = Mathf.Max(0f, -velocity.y);
-            // Lock player steering until the head has finished rising, including an early collision stop.
-            velocity.x = phase == PlayerPhase.Extending ? 0f : input.Horizontal * config.ToWorld(config.MoveSpeed);
+            // Lock player steering until extension or retraction finishes, including an early collision stop.
+            velocity.x = phase == PlayerPhase.Extending || phase == PlayerPhase.Retracting
+                ? 0f : input.Horizontal * config.ToWorld(config.MoveSpeed);
             if (body.Motor.Grounded && velocity.y <= 0f) velocity.y = 0f;
             velocity.y -= config.WorldGravity * dt;
             impactSpeed = Mathf.Max(impactSpeed, -velocity.y);
