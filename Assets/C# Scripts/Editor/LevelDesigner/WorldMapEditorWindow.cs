@@ -221,7 +221,11 @@ namespace TapTap.Editor
                     if (GUILayout.Button("查看全图", EditorStyles.toolbarButton, GUILayout.Width(70f))) fitPending = true;
                     if (GUILayout.Button("导出 PNG", EditorStyles.toolbarButton, GUILayout.Width(72f))) ExportPng();
                     using (new EditorGUI.DisabledScope(EditorApplication.isPlayingOrWillChangePlaymode))
+                    {
                         if (GUILayout.Button("生成整体 Prefab", EditorStyles.toolbarButton, GUILayout.Width(108f))) ExportPrefab();
+                        if (GUILayout.Button("生成入口与游玩", EditorStyles.toolbarButton, GUILayout.Width(108f))) GeneratePlayScene();
+                        if (GUILayout.Button("生成选关入口", EditorStyles.toolbarButton, GUILayout.Width(100f))) GenerateSelectionScene();
+                    }
                 }
             }
         }
@@ -286,6 +290,29 @@ namespace TapTap.Editor
             catch (Exception exception) { error = exception.Message; }
         }
 
+        private void GeneratePlayScene()
+        {
+            try
+            {
+                string path = WorldMapSceneBuilder.Generate(map);
+                if (string.IsNullOrEmpty(path)) return;
+                error = null;
+                ShowNotification(new GUIContent("选关入口、全部关卡和同场景流程已生成"));
+            }
+            catch (Exception exception) { error = exception.Message; }
+        }
+
+        private void GenerateSelectionScene()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(WorldMapMenuSceneBuilder.Generate(map))) return;
+                error = null;
+                ShowNotification(new GUIContent("拼图选关入口已生成并加入构建列表"));
+            }
+            catch (Exception exception) { error = exception.Message; }
+        }
+
         private void DrawSidebar()
         {
             if (map == null)
@@ -331,6 +358,13 @@ namespace TapTap.Editor
             EditorGUILayout.LabelField("一格 = 单关的一格；缩放模板保留模块位置", EditorStyles.miniLabel);
             showTerrain = EditorGUILayout.Toggle("显示内部地形", showTerrain);
             showNames = EditorGUILayout.Toggle("显示模块名称", showNames);
+            if (GUILayout.Button("按当前列表重新编号 1…N"))
+            {
+                Record("重新编号关卡");
+                for (int i = 0; i < map.Modules.Count; i++) if (map.Modules[i] != null) map.Modules[i].Sequence = i + 1;
+                Changed();
+            }
+            EditorGUILayout.HelpBox("按关卡序号从小到大推进；0 沿用旧列表顺序。游玩场景只显示当前关，PageDown 跳到下一关。", MessageType.None);
             DrawProblems();
             if (!string.IsNullOrEmpty(error)) EditorGUILayout.HelpBox(error, MessageType.Error);
             GUILayout.Space(8f);
@@ -352,12 +386,14 @@ namespace TapTap.Editor
                 EditorGUILayout.LabelField("选中的关卡模块", EditorStyles.boldLabel);
                 EditorGUILayout.ObjectField("来源", selected.Level, typeof(LevelDefinition), false);
                 string label = EditorGUILayout.DelayedTextField("显示名称", selected.Label);
+                int sequence = Mathf.Max(0, EditorGUILayout.DelayedIntField("关卡序号", selected.Sequence));
                 Vector2Int next = EditorGUILayout.Vector2IntField("关卡原点坐标", selected.Position);
-                if (label != selected.Label || next != selected.Position)
+                if (label != selected.Label || next != selected.Position || sequence != selected.Sequence)
                 {
                     Record("调整关卡模块");
                     selected.Label = label;
                     selected.Position = next;
+                    selected.Sequence = sequence;
                     Changed();
                 }
                 if (selected.Level != null)
@@ -393,7 +429,7 @@ namespace TapTap.Editor
                 {
                     bool invalid = module.Level == null || WorldMapDrawing.CountOutside(mask, DisplayFootprint(module), DisplayPosition(module)) > 0 || Overlapping(module, DisplayFootprint(module), DisplayPosition(module));
                     bool moduleSelected = ModuleSelected(module) && SelectedPassage == null;
-                    if (GUILayout.Toggle(moduleSelected, (invalid ? "⚠ " : "") + module.DisplayName, "Button") != moduleSelected)
+                    if (GUILayout.Toggle(moduleSelected, (invalid ? "⚠ " : "") + map.SequenceNumber(module) + ". " + module.DisplayName, "Button") != moduleSelected)
                         SelectModule(module);
                     if (GUILayout.Button("定位", GUILayout.Width(42f))) { SelectModule(module); FocusModule(module); }
                 }
@@ -480,7 +516,7 @@ namespace TapTap.Editor
         private void Add(LevelDefinition level, Vector2Int cell)
         {
             Record("放置关卡模块");
-            var module = new WorldMapModule { Level = level, Position = cell };
+            var module = new WorldMapModule { Level = level, Position = cell, Sequence = map.NextSequence() };
             map.Modules.Add(module);
             SelectSingleModule(module);
             selectedPassageId = null;
@@ -497,7 +533,7 @@ namespace TapTap.Editor
             selectedModuleIds.Clear();
             foreach (WorldMapModule source in selected)
             {
-                var module = new WorldMapModule { Level = source.Level, Position = source.Position + new Vector2Int(2, -2), Label = source.Label };
+                var module = new WorldMapModule { Level = source.Level, Position = source.Position + new Vector2Int(2, -2), Label = source.Label, Sequence = map.NextSequence() };
                 map.Modules.Add(module); selectedModuleIds.Add(module.Id);
             }
             selectedId = selectedModuleIds[0];
@@ -634,7 +670,7 @@ namespace TapTap.Editor
                     EditorGUI.DrawRect(title, new Color(0f, 0f, 0f, 0.72f));
                     var style = new GUIStyle(EditorStyles.miniLabel) { clipping = TextClipping.Clip };
                     style.normal.textColor = Color.white;
-                    GUI.Label(title, module.DisplayName, style);
+                    GUI.Label(title, map.SequenceNumber(module) + ". " + module.DisplayName, style);
                 }
             }
             DrawGrid(canvas);

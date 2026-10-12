@@ -22,86 +22,107 @@ MonoBehaviour:
     Level: {fileID: 11400000, guid: d28be2a0c754ecd49a66e45eac456d06, type: 2}
     Position: {x: 11, y: 110}
     Label: 
+    Sequence: 1
   - Id: d8b0a52796e04e4bbddd92188c1c4808
     Level: {fileID: 11400000, guid: 7b43a87cc927908419659516eecd81d1, type: 2}
     Position: {x: 40, y: 119}
     Label: 
+    Sequence: 4
   - Id: a0cadc7204034720ab7eff930c366903
     Level: {fileID: 11400000, guid: edbe0ee7af4bfbe4ab3b6e3f8316fc5f, type: 2}
     Position: {x: 11, y: 93}
     Label: 
+    Sequence: 3
   - Id: 76fbb97aa8144e238fbd9ae00d5f1283
     Level: {fileID: 11400000, guid: 0be07a979d71b3444a96dfd677d65f19, type: 2}
     Position: {x: 53, y: 103}
     Label: 
+    Sequence: 5
   - Id: d739a00201634759a77941122e7335c5
     Level: {fileID: 11400000, guid: 91fc236193d9002428e99fd0b82f9a57, type: 2}
     Position: {x: 22, y: 81}
     Label: 
+    Sequence: 7
   - Id: 053542e014f14fff885f4627b3f34e75
     Level: {fileID: 11400000, guid: 46854f81c94dfd9449ee5464c04229ce, type: 2}
     Position: {x: 40, y: 98}
     Label: 
+    Sequence: 6
   - Id: 7d2861e155f94be491b6c5437f229f83
     Level: {fileID: 11400000, guid: dc994f9b9342cb04e8aa86e169c9e180, type: 2}
     Position: {x: 40, y: 92}
     Label: 
+    Sequence: 2
   - Id: d1f89e7af7a6404299db80c1d30b56cb
     Level: {fileID: 11400000, guid: 2bcadc27f5798e04982c8492385de60b, type: 2}
     Position: {x: 54, y: 81}
     Label: 
+    Sequence: 6
   - Id: 704d4109545f4f288c9048b4c8a679a7
     Level: {fileID: 11400000, guid: 526b091eba2255a4db147ce17714ef39, type: 2}
     Position: {x: 53, y: 48}
     Label: 
+    Sequence: 10
   - Id: 30a4ad492bd142e8aaf02cc9e42103fc
     Level: {fileID: 11400000, guid: 9f09cbfb9cd7e9145991362929ad80ee, type: 2}
     Position: {x: 22, y: 73}
     Label: 
+    Sequence: 9
   - Id: 412005a821984653ab3b0a215fe811ba
     Level: {fileID: 11400000, guid: aff15986e01a91c49a04fc6cf80cd52b, type: 2}
     Position: {x: 57, y: 70}
     Label: 
+    Sequence: 8
   - Id: 1249a37049554f77a3bd3cc1c1fbfe4e
     Level: {fileID: 11400000, guid: a580511b52e7d4b40bb7e275b531828a, type: 2}
     Position: {x: 5, y: 50}
     Label: 
+    Sequence: 11
   - Id: c56ef1126bb941f5aa90ad28f3b62dcd
     Level: {fileID: 11400000, guid: 617e31ae39485a2458d37c5cb3ff7be0, type: 2}
     Position: {x: 40, y: 38}
     Label: 
+    Sequence: 13
   - Id: 83f81c461527499dbef1314c6a6086a3
     Level: {fileID: 11400000, guid: fd6ad1de836826645b7efa6d83652d56, type: 2}
     Position: {x: 38, y: 26}
     Label: 
+    Sequence: 15
   - Id: 8e53708b328042ad8235f2eac0808179
     Level: {fileID: 11400000, guid: f108e44757853c848aac15fc26974a5d, type: 2}
     Position: {x: 25, y: 38}
     Label: 
+    Sequence: 12
   - Id: 58d3f3cac75f407a8c2b193aecebc6b9
     Level: {fileID: 11400000, guid: e3587cc2c446b174388c6f544cb1601c, type: 2}
     Position: {x: 10, y: 25}
     Label: 
+    Sequence: 14
   - Id: 0d82da05cf0149f3a34b263f051f9da6
     Level: {fileID: 11400000, guid: 8e3367066469817419af5e9e644bd432, type: 2}
     Position: {x: 69, y: 26}
     Label: 
+    Sequence: 17
   - Id: 16e4d0ba687846938cc39173dbe4c164
     Level: {fileID: 11400000, guid: 9329f31dbd49b9f478820fc711bf61fc, type: 2}
     Position: {x: 55, y: 8}
     Label: 
+    Sequence: 18
   - Id: debbcc0b7b4047a1baff7945de02234e
     Level: {fileID: 11400000, guid: dfea38bd1fc09ab4c9f5813d7bba49aa, type: 2}
     Position: {x: 25, y: 17}
     Label: 
+    Sequence: 19
   - Id: 1aa84240b1db41b4a30440c429a675a4
     Level: {fileID: 11400000, guid: c84b7c44bf5732e469a6f65b882d9980, type: 2}
     Position: {x: 11, y: 8}
     Label: 
+    Sequence: 16
   - Id: 58a00ac9703d478badf56eefbfbfe6d1
     Level: {fileID: 11400000, guid: ebaade9bdb9957548a3744a459b91420, type: 2}
-    Position: {x: 26, y: 5}
+    Position: {x: 26, y: 4}
     Label: 
+    Sequence: 20
   Passages:
   - Id: f419bfd551d4499e9ed48651fac724b8
     Position: {x: 35, y: 110}
@@ -174,3 +195,8 @@ MonoBehaviour:
     Bidirectional: 0
     Note: 
   OutputPrefab: {fileID: 0}
+  PlaySceneGuid: 15919f8d0b0bb8f4ea7d0a2a321df91b
+  PlayScenePath: Assets/Scenes/WorldMaps/World_Character_Play.unity
+  SelectionSceneGuid: 7f302f32ca6330b4487bcc180bb9faac
+  SelectionScenePath: Assets/Scenes/WorldMaps/World_Character_Select.unity
+  ProgressId: 68ee005a21b54a878b9a8faa9e7ccba0

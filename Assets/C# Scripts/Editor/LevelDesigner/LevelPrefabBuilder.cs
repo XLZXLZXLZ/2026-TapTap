@@ -119,6 +119,7 @@ namespace TapTap.Editor
                 region.UnitSize = layout.Palette.UnitSize;
                 region.Source = layout;
                 region.EntryCheckpoint = null;
+                LevelOutlineBuilder.Save(layout);
 
                 Transform generated = FindChild(root.transform, "Generated");
                 if (generated == null)

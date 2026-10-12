@@ -8,11 +8,14 @@ namespace TapTap
         [SerializeField] private PlayerConfig config;
         private GUIStyle titleStyle;
         private GUIStyle textStyle;
+        private string jumpNumber = "1";
         public void Configure(PlayerController target, PlayerConfig settings) { player = target; config = settings; }
 
         private void OnGUI()
         {
             if (player == null || config == null) return;
+            WorldMapProgression flow = WorldMapProgression.Current;
+            if (WorldMapProgression.InputBlocked) return;
             if (titleStyle == null)
             {
                 titleStyle = new GUIStyle(GUI.skin.label) { fontSize = 18, fontStyle = FontStyle.Bold };
@@ -32,6 +35,26 @@ namespace TapTap
             string rewind = RewindManager.Rewinding ? "Z: rewinding — release to continue" : "Hold Z: undo    R: restart";
             GUI.Label(new Rect(30f, 125f, 350f, 23f), rewind, textStyle);
             GUI.color = Color.white;
+            if (flow != null)
+            {
+                GUI.Box(new Rect(16f, 162f, 370f, 122f), "");
+                GUI.Label(new Rect(30f, 170f, 340f, 24f), "第 " + flow.CurrentNumber + " 关 · " + flow.CurrentModule.DisplayName, textStyle);
+                GUI.Label(new Rect(30f, 194f, 220f, 22f), "已通过 " + flow.CompletedCount + " / " + flow.LevelCount + " · PageDown 跳关", textStyle);
+                jumpNumber = GUI.TextField(new Rect(30f, 220f, 60f, 24f), jumpNumber, 6);
+                if (GUI.Button(new Rect(98f, 220f, 88f, 24f), "跳到序号") && int.TryParse(jumpNumber, out int number))
+                    flow.GoToSequence(number);
+                using (new GUIEnabledScope(flow.CurrentIndex + 1 < flow.LevelCount))
+                    if (GUI.Button(new Rect(194f, 220f, 80f, 24f), "下一关")) flow.SkipNext();
+                if (GUI.Button(new Rect(282f, 220f, 85f, 24f), "重开本关")) flow.RestartCurrent();
+                if (GUI.Button(new Rect(30f, 252f, 337f, 24f), "返回选关（Esc） · P 解锁全部关卡")) flow.ReturnToSelection();
+            }
+        }
+
+        private readonly struct GUIEnabledScope : System.IDisposable
+        {
+            private readonly bool previous;
+            public GUIEnabledScope(bool enabled) { previous = GUI.enabled; GUI.enabled = previous && enabled; }
+            public void Dispose() { GUI.enabled = previous; }
         }
     }
 }

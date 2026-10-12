@@ -15,6 +15,13 @@ MonoBehaviour:
   Size: {x: 37, y: 18}
   CanvasOrigin: {x: 1, y: 0}
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
+  CameraSettings:
+    AutoSize: 1
+    ViewSize: 9
+    FollowHorizontal: 1
+    FollowVertical: 1
+    Offset: {x: 0, y: 1.5}
+    DeadZone: {x: 0.1, y: 0.15}
   Placements:
   - Id: 46e3e40d1c6140c7ae0ddac0e6159a98
     Cell: {x: 31, y: 0}
@@ -1171,8 +1178,9 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
     Settings:
       rid: 5387188345260212328
-  EntryPlacementId: 
+  EntryPlacementId: 6c8c5a9a97da4a74b145f8a50286cb60
   OutputPrefab: {fileID: 7233534188566855133, guid: 4a682c58963343d428334e2c2676a326, type: 3}
+  Outline: {fileID: 11400000, guid: c4016b52415a9594a942fdc7dee5755a, type: 2}
   TestSceneGuid: 
   UseCustomBoundary: 0
   BoundaryCells: []

@@ -19,6 +19,7 @@ namespace TapTap.Editor
             if (map.Modules == null || map.Modules.Count == 0) { errors.Add("大地图还没有关卡模块。"); return errors; }
             var mask = new WorldMapMask(map);
             var ids = new HashSet<string>();
+            var sequenceNumbers = new HashSet<int>();
             var checkedLevels = new HashSet<LevelDefinition>();
             float? unit = null;
             for (int i = 0; i < map.Modules.Count; i++)
@@ -26,6 +27,8 @@ namespace TapTap.Editor
                 WorldMapModule module = map.Modules[i];
                 if (module?.Level == null) { errors.Add("第 " + (i + 1) + " 个模块缺少关卡。"); continue; }
                 if (string.IsNullOrEmpty(module.Id) || !ids.Add(module.Id)) errors.Add(module.DisplayName + "：模块 ID 为空或重复。");
+                if (module.Sequence < 0 || !sequenceNumbers.Add(map.SequenceNumber(module)))
+                    errors.Add(module.DisplayName + "：关卡序号为负数或重复，请设置唯一的正数序号。");
                 int outside = WorldMapDrawing.CountOutside(mask, module.Level.Footprint, module.Position);
                 if (outside > 0) errors.Add(module.DisplayName + "：整块关卡有 " + outside + " 格超出" + map.TemplateName + "模板。");
                 for (int j = 0; j < i; j++)
@@ -93,6 +96,9 @@ namespace TapTap.Editor
                     instance.transform.SetParent(generated, false);
                     instance.name = module.DisplayName + " [" + module.Position.x + "," + module.Position.y + "] " + module.Id;
                     instance.transform.localPosition = (Vector2)module.Position * module.Level.Palette.UnitSize;
+                    LevelRegion region = instance.GetComponent<LevelRegion>();
+                    region.WorldModuleId = module.Id;
+                    region.SequenceNumber = map.SequenceNumber(module);
                     LevelPrefabBuilder.RecordInstanceOverrides(instance);
                 }
                 result = PrefabUtility.SaveAsPrefabAsset(root, path, out bool success);

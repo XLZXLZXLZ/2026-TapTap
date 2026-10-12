@@ -290,7 +290,7 @@ namespace TapTap.Editor
             return region.transform.TransformPoint(new Vector2(region.UnitSize * 0.5f, region.UnitSize * 2f));
         }
 
-        private static void SetConfig(Component component, PlayerConfig config)
+        internal static void SetConfig(Component component, PlayerConfig config)
         {
             if (component == null) return;
             var serialized = new SerializedObject(component);

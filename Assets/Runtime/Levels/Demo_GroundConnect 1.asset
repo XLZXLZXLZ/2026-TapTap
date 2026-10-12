@@ -13,7 +13,15 @@ MonoBehaviour:
   m_Name: Demo_GroundConnect 1
   m_EditorClassIdentifier: 
   Size: {x: 14, y: 27}
+  CanvasOrigin: {x: 0, y: 0}
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
+  CameraSettings:
+    AutoSize: 1
+    ViewSize: 9
+    FollowHorizontal: 1
+    FollowVertical: 1
+    Offset: {x: 0, y: 1.5}
+    DeadZone: {x: 0.1, y: 0.15}
   Placements:
   - Id: 127784ebb9f9422f883833aa43d9f9c1
     Cell: {x: 0, y: 0}
@@ -810,8 +818,9 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188341502640461
-  EntryPlacementId: 
+  EntryPlacementId: 86cc11524f3f4cf69b259f36c9d8e599
   OutputPrefab: {fileID: 2867261262455047614, guid: c433a50715a74c74abaf3a3650eeae13, type: 3}
+  Outline: {fileID: 11400000, guid: 7b53e6a482ac54340b2c37c99d81876b, type: 2}
   TestSceneGuid: 351e4e0160caec740bcd8cee27f8e7a1
   UseCustomBoundary: 1
   BoundaryCells:

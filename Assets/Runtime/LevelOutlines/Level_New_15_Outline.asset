@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6820a52999d2c94b851d532cc3895dc, type: 3}
+  m_Name: Level_New_15_Outline
+  m_EditorClassIdentifier: 
+  Loops:
+  - Points:
+    - {x: -9, y: 21}
+    - {x: -9, y: 15}
+    - {x: 0, y: 15}
+    - {x: 0, y: -3}
+    - {x: 28, y: -3}
+    - {x: 28, y: -2}
+    - {x: 29, y: -2}
+    - {x: 29, y: -1}
+    - {x: 30, y: -1}
+    - {x: 30, y: 13}
+    - {x: 15, y: 13}
+    - {x: 15, y: 21}
+  LabelPosition: {x: 10.5, y: 8.5}
+  Bounds:
+    x: -9
+    y: -3
+    width: 39
+    height: 24

@@ -13,7 +13,7 @@ namespace TapTap.Editor
             { EditorGUILayout.HelpBox("弹簧配置不兼容，请重新绘制。", MessageType.Error); return; }
             settings.Height = EditorGUILayout.FloatField("弹起高度（格）", settings.Height);
             settings.AnimationDuration = EditorGUILayout.FloatField("动画时长（秒）", settings.AnimationDuration);
-            EditorGUILayout.HelpBox("从顶部落下时触发；默认向上弹起 3 格。", MessageType.None);
+            EditorGUILayout.HelpBox("从顶部落下时触发；默认向上弹起 4.5 格。", MessageType.None);
         }
         public override string ValidatePlacement(LevelPlacement placement)
         {
@@ -62,7 +62,7 @@ namespace TapTap.Editor
             { EditorGUILayout.HelpBox("终点配置不兼容，请重新绘制此格。", MessageType.Error); return; }
             settings.EndpointId = EditorGUILayout.TextField("终点标识", settings.EndpointId);
             settings.Label = EditorGUILayout.TextField("备注名称", settings.Label);
-            EditorGUILayout.HelpBox("终点占位符：保存位置和标识，暂不触发通关或场景切换。", MessageType.None);
+            EditorGUILayout.HelpBox("身体触及终点后，按大世界序号转场到下一关入口。所有关卡保持在同一场景。", MessageType.None);
         }
 
         public override string ValidatePlacement(LevelPlacement placement)
@@ -79,6 +79,7 @@ namespace TapTap.Editor
             LevelEndpoint endpoint = instance.GetComponentInChildren<LevelEndpoint>();
             endpoint.EndpointId = settings.EndpointId;
             endpoint.Label = settings.Label;
+            endpoint.EnsureTrigger();
         }
     }
 

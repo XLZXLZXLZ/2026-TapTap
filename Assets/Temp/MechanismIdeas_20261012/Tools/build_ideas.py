@@ -218,7 +218,7 @@ def settings(item):
     if k in ('PhaseBlock','InversePhaseBlock'): return 'PhaseBlockPlacementSettings',dict(SolidWhenActive=int(k=='PhaseBlock'))
     if k=='Checkpoint': return 'CheckpointPlacementSettings',dict(SpawnOffset={'x':0,'y':0.46})
     if k=='Spikes': return 'SpikePlacementSettings',dict(QuarterTurns=v.get('QuarterTurns',0))
-    if k=='Spring': return 'SpringPlacementSettings',dict(Height=v.get('Height',3),AnimationDuration=0.28)
+    if k=='Spring': return 'SpringPlacementSettings',dict(Height=v.get('Height',4.5),AnimationDuration=0.28)
     if k=='Endpoint': return 'EndpointPlacementSettings',dict(EndpointId='inspiration_observation',Label='观察目标')
     if k=='Annotation': return 'AnnotationPlacementSettings',v
     return 'EmptyPlacementSettings',{}

@@ -19,7 +19,7 @@ namespace TapTap
         private void Update()
         {
             if (RewindManager.Rewinding) { Horizontal = 0f; edges.Clear(); return; }
-            if (LevelAnnotation.IsFeedbackOpen)
+            if (LevelAnnotation.IsFeedbackOpen || WorldMapProgression.InputBlocked)
             {
                 Horizontal = 0f;
                 SpaceHeld = false;
@@ -44,7 +44,7 @@ namespace TapTap
             externalHorizontal = horizontal;
             externalHeld = held;
             if (RewindManager.Rewinding) { edges.Clear(); return; }
-            if (LevelAnnotation.IsFeedbackOpen) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
+            if (LevelAnnotation.IsFeedbackOpen || WorldMapProgression.InputBlocked) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
             if (waitForSpaceRelease) { if (!held) waitForSpaceRelease = false; held = false; }
             Sample(horizontal, held);
         }
@@ -94,6 +94,14 @@ namespace TapTap
         }
 
         public void ClearMagnetBuffer() => edges.Clear();
+
+        public void ResetForTransition()
+        {
+            edges.Clear();
+            Horizontal = 0f;
+            SpaceHeld = ConsumedSpaceHeld = false;
+            waitForSpaceRelease = true;
+        }
 
         private void OnApplicationFocus(bool focused)
         {

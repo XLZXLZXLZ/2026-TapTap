@@ -206,6 +206,7 @@ namespace TapTap
         }
 
         private bool Blocked => LevelAnnotation.IsFeedbackOpen
+            || WorldMapProgression.InputBlocked
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         private void ReadControls()

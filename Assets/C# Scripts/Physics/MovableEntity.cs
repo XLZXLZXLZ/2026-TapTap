@@ -24,7 +24,7 @@ namespace TapTap
         public bool IsReturning;
         public bool ControlledExternally;
         [Min(0.01f)] public float Gravity = 24f;
-        [Min(0f)] public float SpringHeight = 3f;
+        [Min(0f)] public float SpringHeight = 4.5f;
         public bool SpringEnabled = true;
         public event Action<MovableEntity> SpringBounced;
 

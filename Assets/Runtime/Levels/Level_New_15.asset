@@ -1743,8 +1743,9 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188348257043119
-  EntryPlacementId: 
+  EntryPlacementId: ecae39f057e14efebe61e2c1c0e3fb92
   OutputPrefab: {fileID: 112601882100883498, guid: c1a9e96e8245e2148803044d2cb50dbe, type: 3}
+  Outline: {fileID: 11400000, guid: 337d0227bc376d84bb036328a00e2a7f, type: 2}
   TestSceneGuid: 868467aa6cf7a264a8207c7119497c57
   UseCustomBoundary: 1
   BoundaryCells:
@@ -3121,7 +3122,7 @@ MonoBehaviour:
     - rid: 5387188346387956689
       type: {class: SpringPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data:
-        Height: 3
+        Height: 4.5
         AnimationDuration: 0.28
     - rid: 5387188346387956700
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}

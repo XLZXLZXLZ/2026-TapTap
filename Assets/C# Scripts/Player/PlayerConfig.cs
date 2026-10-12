@@ -65,7 +65,7 @@ namespace TapTap
         [Min(0.02f)] public float PickupDuration = 0.24f;
         [InspectorName("踩头弹起高度（格）")]
         [Tooltip("下半身或其他可运动实体从上方接触可弹跳的散落头部时，按此高度计算弹起速度。头部从上方落到下半身时执行合体，不使用此高度。")]
-        [Min(0f)] public float SpringHeight = 3f;
+        [Min(0f)] public float SpringHeight = 4.5f;
 
         [Header("落地反馈与碰撞精度")]
         [InspectorName("落地震屏速度阈值（格/秒）")]

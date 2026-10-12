@@ -17,7 +17,7 @@ namespace TapTap
     [Serializable]
     public sealed class SpringPlacementSettings : LevelPlacementSettings
     {
-        public float Height = 3f;
+        public float Height = 4.5f;
         public float AnimationDuration = 0.28f;
     }
 

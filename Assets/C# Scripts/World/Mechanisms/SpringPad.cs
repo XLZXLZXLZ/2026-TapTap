@@ -7,7 +7,7 @@ namespace TapTap
     [RequireComponent(typeof(BoxCollider2D), typeof(WorldSurface))]
     public sealed class SpringPad : MonoBehaviour
     {
-        [Min(0.01f)] public float BounceHeight = 3f;
+        [Min(0.01f)] public float BounceHeight = 4.5f;
         [Min(0.02f)] public float AnimationDuration = 0.28f;
         [SerializeField] private Transform visual;
         private Vector3 initialScale = Vector3.one;

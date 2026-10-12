@@ -16,6 +16,7 @@ MonoBehaviour:
   CanvasOrigin: {x: 0, y: 0}
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
   CameraSettings:
+    AutoSize: 1
     ViewSize: 9
     FollowHorizontal: 1
     FollowVertical: 1
@@ -1397,8 +1398,9 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188347434434814
-  EntryPlacementId: 
+  EntryPlacementId: f585509b34304137b03d3b41e71ba3d2
   OutputPrefab: {fileID: 7618824635317889498, guid: 3c25537d1ae6cc740860d380f1aefe12, type: 3}
+  Outline: {fileID: 11400000, guid: 376c3d52b81e2cc47899e48a2e87cf4e, type: 2}
   TestSceneGuid: 
   UseCustomBoundary: 0
   BoundaryCells: []
@@ -1986,7 +1988,7 @@ MonoBehaviour:
     - rid: 5387188342531556297
       type: {class: SpringPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data:
-        Height: 3
+        Height: 4.5
         AnimationDuration: 0.28
     - rid: 5387188342531556298
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}

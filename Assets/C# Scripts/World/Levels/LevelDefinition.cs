@@ -15,6 +15,7 @@ namespace TapTap
         public List<LevelPlacement> Placements = new List<LevelPlacement>();
         public string EntryPlacementId;
         public GameObject OutputPrefab;
+        public LevelOutlineData Outline;
         [HideInInspector] public string TestSceneGuid;
         [HideInInspector] public bool UseCustomBoundary;
         [HideInInspector] public List<Vector2Int> BoundaryCells = new List<Vector2Int>();

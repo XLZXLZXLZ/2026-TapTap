@@ -119,6 +119,7 @@ namespace TapTap.Editor
             AssetDatabase.CreateAsset(map, Folder + "/Editing.asset");
             var level = AssetDatabase.LoadAssetAtPath<LevelDefinition>("Assets/Runtime/Levels/Level_Test_1.asset");
             Check(level != null, "Existing level was not imported.");
+            Vector2Int originalSize = level.Size;
             var window = ScriptableObject.CreateInstance<WorldMapEditorWindow>();
             try
             {
@@ -149,7 +150,7 @@ namespace TapTap.Editor
                 AssetDatabase.SaveAssetIfDirty(map);
                 string serialized = File.ReadAllText(Folder + "/Editing.asset");
                 Check(serialized.Contains(originalId) && serialized.Contains("x: 140") && serialized.Contains("TemplateSize:"), "Layout not serialized.");
-                Check(level.Size == new Vector2Int(32, 18), "Source level changed by map editing.");
+                Check(level.Size == originalSize, "Source level changed by map editing.");
             }
             finally { UnityEngine.Object.DestroyImmediate(window); }
         }

@@ -43,7 +43,7 @@ namespace TapTap.Editor
             level = AssetDatabase.LoadAssetAtPath<LevelDefinition>(path);
             if (!string.IsNullOrEmpty(mapPath)) map = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(mapPath);
             Undo.RegisterCompleteObjectUndo(map, "框选创建子关卡");
-            var module = new WorldMapModule { Level = level, Position = area.min };
+            var module = new WorldMapModule { Level = level, Position = area.min, Sequence = map.NextSequence() };
             map.Modules.Add(module);
             EditorUtility.SetDirty(map);
             AssetDatabase.SaveAssetIfDirty(map);

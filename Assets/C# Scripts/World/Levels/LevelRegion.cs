@@ -8,6 +8,8 @@ namespace TapTap
         public Vector2Int Size = new Vector2Int(32, 18);
         [Min(0.01f)] public float UnitSize = 1f;
         public LevelDefinition Source;
+        [HideInInspector] public string WorldModuleId;
+        [HideInInspector] public int SequenceNumber;
         public CheckpointFlag EntryCheckpoint;
         [Tooltip("没有来源布局时使用的镜头设置；有来源时在布局资源中配置。")]
         [SerializeField] private LevelCameraSettings cameraSettings = new LevelCameraSettings();
