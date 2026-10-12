@@ -1,0 +1,574 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f07095e12944db7bf7d2e87df43e5fd, type: 3}
+  m_Name: TEMP_S09
+  m_EditorClassIdentifier:
+  Size: {x: 24, y: 17}
+  CanvasOrigin: {x: 0, y: 0}
+  Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
+  Placements:
+  - Id: 7fe380a5699e5a708aa2cb07555a492a
+    Cell: {x: 0, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100000
+  - Id: 3adda548fad85ad1b8456861639a0bc1
+    Cell: {x: 1, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100001
+  - Id: b4f17e1b7cbf556496e06594c8818e14
+    Cell: {x: 2, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100002
+  - Id: 95a04225542c554eb74b44c354e2deb8
+    Cell: {x: 3, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100003
+  - Id: 8358a3348c495b9a9be14a5d9aa053b9
+    Cell: {x: 4, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100004
+  - Id: cff72f4e78875d5d94bfefc559f937ba
+    Cell: {x: 5, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100005
+  - Id: a30d0e5e6a045f6392d9e0a819648a4e
+    Cell: {x: 6, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100006
+  - Id: 6f13b60a46d4509bb83614cb4580006a
+    Cell: {x: 7, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100007
+  - Id: 3f1391607ea150ecac2cd272a744dd06
+    Cell: {x: 8, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100008
+  - Id: ec6f62c9c5aa553da4b3a229233e9c66
+    Cell: {x: 9, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100009
+  - Id: 52f74117aadf5a5cb815556b309fb99d
+    Cell: {x: 10, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100010
+  - Id: 1743d7bef55d5e3a922c3dd14d8a906b
+    Cell: {x: 11, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100011
+  - Id: 19ea5cdd133658eea248cde99edfea41
+    Cell: {x: 12, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100012
+  - Id: 6f5b586333175cd6bafa8d185f348cd8
+    Cell: {x: 13, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100013
+  - Id: a84ee5ba42f25fe3933a256ec186f3bd
+    Cell: {x: 14, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100014
+  - Id: 13ea8de2f9fa5562afaaa1df44d28056
+    Cell: {x: 15, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100015
+  - Id: bdc9bae75802544ca35a7e1f9059c6a3
+    Cell: {x: 16, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100016
+  - Id: ecb578f95ed9569985c7c95307c42636
+    Cell: {x: 17, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100017
+  - Id: 83965635b29e5629a7a7bd44899ff53f
+    Cell: {x: 18, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100018
+  - Id: fa20e33e256450aa8419e7362e25e684
+    Cell: {x: 19, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100019
+  - Id: 0fbe0b97c1375a3294961228c193d6df
+    Cell: {x: 20, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100020
+  - Id: db68b08646c65e5fb58f98b98eb62b4f
+    Cell: {x: 21, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100021
+  - Id: 9950f2c67c5159af806e58eabdf7837e
+    Cell: {x: 22, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100022
+  - Id: 6bfcf192283350ac888131006db53581
+    Cell: {x: 23, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100023
+  - Id: aebce8465ab15bdea6257f7c77cff698
+    Cell: {x: 0, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100024
+  - Id: c09527df164d54b38d5d0b8853d5615b
+    Cell: {x: 0, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100025
+  - Id: d3db58c46d79554a804d0fcba2d7adbc
+    Cell: {x: 0, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100026
+  - Id: 36627648191450af8b944f991ab3752b
+    Cell: {x: 0, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100027
+  - Id: 545c2f85e9515048a7a00d26b58ce751
+    Cell: {x: 0, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100028
+  - Id: 13e314311efa579e865aad2ad20d7546
+    Cell: {x: 0, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100029
+  - Id: 72a1e30b9b975f00b5609d9b7f710fcb
+    Cell: {x: 1, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100030
+  - Id: f163cb6cc9f75a26a90e3d37486ab6b9
+    Cell: {x: 1, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100031
+  - Id: a659ba53932f5fce9a156e233d98cbd7
+    Cell: {x: 1, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100032
+  - Id: 6a1983d4ad6d50b5b2ac07647f219179
+    Cell: {x: 1, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100033
+  - Id: 7aac028f5086528ebedd2e0d6e97a93f
+    Cell: {x: 1, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100034
+  - Id: 06e042b80b1f5548859bab4266b09245
+    Cell: {x: 1, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100035
+  - Id: bc5de8a3ca34599fba4bcd9db236f726
+    Cell: {x: 2, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100036
+  - Id: c3b12a9599a650b1af25f68af663d635
+    Cell: {x: 2, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100037
+  - Id: 7e937b0f206f5ecbb56b65632538ebb3
+    Cell: {x: 2, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100038
+  - Id: 15cf4db615e25122921523fc0da3823c
+    Cell: {x: 2, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100039
+  - Id: c2d8a8443413506cb7da0d5c5c86d6c8
+    Cell: {x: 2, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100040
+  - Id: 63bda74396ae5c3296943e4b62222e17
+    Cell: {x: 2, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100041
+  - Id: ea258db90653584fa47a89bc395f4128
+    Cell: {x: 3, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100042
+  - Id: db14d7beb51a5e85865c042d30b68bd3
+    Cell: {x: 3, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100043
+  - Id: 045b35c4aae95a0badfe704507664671
+    Cell: {x: 3, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100044
+  - Id: 74e794b2d67155749a122feaddee4520
+    Cell: {x: 3, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100045
+  - Id: e4e0f80ac1a05d58b4b8281b150be239
+    Cell: {x: 3, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100046
+  - Id: 8529ac37dac9512baf04afacc75b4597
+    Cell: {x: 3, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100047
+  - Id: b4e1bbb5383a52678c5afb7ffc77b8f3
+    Cell: {x: 4, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100048
+  - Id: d2949057dc455589a75c1f69b70f5fc6
+    Cell: {x: 4, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100049
+  - Id: 0647e5b989835a3188f990d6f553122b
+    Cell: {x: 4, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100050
+  - Id: f18461402d105f93ac0e4087ed3b2ed5
+    Cell: {x: 4, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100051
+  - Id: b88b7302e0335d0fbf7db8bd4e12209c
+    Cell: {x: 4, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100052
+  - Id: de731c92386552ffb1f4971aebde9eee
+    Cell: {x: 4, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 100053
+  - Id: 5426238b28e3585a9a2f0452de5d863b
+    Cell: {x: 6, y: 9}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100054
+  - Id: c3ffd582a266504d88f7f81f03d33093
+    Cell: {x: 7, y: 9}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100055
+  - Id: d31a516c937b52589d3efb85a9e12f68
+    Cell: {x: 8, y: 9}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100056
+  - Id: 115cadb0ea31533ea4c37d638e4d9ba4
+    Cell: {x: 6, y: 4}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100057
+  - Id: dd719a1fd4175fa9a0248c73652ff228
+    Cell: {x: 7, y: 4}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100058
+  - Id: 93ba17da79025181a79a9e9142287053
+    Cell: {x: 8, y: 4}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100059
+  - Id: 212dda1595d453ddba9fd4edcb13b82b
+    Cell: {x: 11, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100060
+  - Id: 15880b506f2154ee8c19c42116c35d12
+    Cell: {x: 12, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100061
+  - Id: 42488d37a5c65cc7abde5f790fe56e25
+    Cell: {x: 13, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100062
+  - Id: f5d5212dfa615ab6bd21e71bb3a4c751
+    Cell: {x: 14, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100063
+  - Id: 18947ffd63d056108741b6db889eef3b
+    Cell: {x: 15, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 100064
+  - Id: f25f555e7f7b53ef88e92eab425573af
+    Cell: {x: 13, y: 12}
+    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
+    Settings:
+      rid: 100065
+  - Id: 7d4ebd162eee53adbd00ffb0caf425d4
+    Cell: {x: 2, y: 7}
+    Brush: {fileID: 11400000, guid: 6f73250888787e648860cdc75ee6831d, type: 2}
+    Settings:
+      rid: 100066
+  - Id: e2f12b264c2554b683645e8d8c016faa
+    Cell: {x: 2, y: 9}
+    Brush: {fileID: 11400000, guid: 769019c704f5cdc44a88fbb3723bcedd, type: 2}
+    Settings:
+      rid: 100067
+  EntryPlacementId: 7d4ebd162eee53adbd00ffb0caf425d4
+  OutputPrefab: {fileID: 0}
+  TestSceneGuid:
+  UseCustomBoundary: 0
+  BoundaryCells: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 100000
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100001
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100002
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100003
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100004
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100005
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100006
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100007
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100008
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100009
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100010
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100011
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100012
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100013
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100014
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100015
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100016
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100017
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100018
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100019
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100020
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100021
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100022
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100023
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100024
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100025
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100026
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100027
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100028
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100029
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100030
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100031
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100032
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100033
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100034
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100035
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100036
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100037
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100038
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100039
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100040
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100041
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100042
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100043
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100044
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100045
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100046
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100047
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100048
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100049
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100050
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100051
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100052
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100053
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100054
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100055
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100056
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100057
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100058
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100059
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100060
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100061
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100062
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100063
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100064
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 100065
+      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        EndpointId: "inspiration_observation"
+        Label: "观察目标"
+    - rid: 100066
+      type: {class: CheckpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        SpawnOffset: {x: 0, y: 0.46}
+    - rid: 100067
+      type: {class: AnnotationPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        Text: "头已在高处。为什么在较近的位置吸附够不到目标，先往下走反而可以？\n机制：远距离吸附 × 落差 × 单向平台\n机制可组合，布局待实测\n观察：距离既是负担，也能是输入资源；“远”在这里改变动作种类。"

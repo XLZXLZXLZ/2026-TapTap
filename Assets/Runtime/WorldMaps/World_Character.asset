@@ -28,7 +28,7 @@ MonoBehaviour:
     Label: 
   - Id: a0cadc7204034720ab7eff930c366903
     Level: {fileID: 11400000, guid: edbe0ee7af4bfbe4ab3b6e3f8316fc5f, type: 2}
-    Position: {x: 11, y: 93}
+    Position: {x: 10, y: 93}
     Label: 
   - Id: 76fbb97aa8144e238fbd9ae00d5f1283
     Level: {fileID: 11400000, guid: 0be07a979d71b3444a96dfd677d65f19, type: 2}
@@ -52,7 +52,7 @@ MonoBehaviour:
     Label: 
   - Id: 704d4109545f4f288c9048b4c8a679a7
     Level: {fileID: 11400000, guid: 526b091eba2255a4db147ce17714ef39, type: 2}
-    Position: {x: 32, y: 48}
+    Position: {x: 11, y: 48}
     Label: 
   - Id: 30a4ad492bd142e8aaf02cc9e42103fc
     Level: {fileID: 11400000, guid: 9f09cbfb9cd7e9145991362929ad80ee, type: 2}
@@ -60,11 +60,23 @@ MonoBehaviour:
     Label: 
   - Id: 68a9c1d14d45404c8ac7a979b0bd2899
     Level: {fileID: 11400000, guid: 54fa2d8e6c1220e41a9d5773a504aae5, type: 2}
-    Position: {x: 66, y: 23}
+    Position: {x: -20, y: -6}
     Label: 
   - Id: 412005a821984653ab3b0a215fe811ba
     Level: {fileID: 11400000, guid: aff15986e01a91c49a04fc6cf80cd52b, type: 2}
     Position: {x: 57, y: 70}
+    Label: 
+  - Id: 1249a37049554f77a3bd3cc1c1fbfe4e
+    Level: {fileID: 11400000, guid: a580511b52e7d4b40bb7e275b531828a, type: 2}
+    Position: {x: 68, y: 34}
+    Label: 
+  - Id: c56ef1126bb941f5aa90ad28f3b62dcd
+    Level: {fileID: 11400000, guid: 617e31ae39485a2458d37c5cb3ff7be0, type: 2}
+    Position: {x: 11, y: 34}
+    Label: 
+  - Id: 83f81c461527499dbef1314c6a6086a3
+    Level: {fileID: 11400000, guid: fd6ad1de836826645b7efa6d83652d56, type: 2}
+    Position: {x: 11, y: 17}
     Label: 
   Passages:
   - Id: f419bfd551d4499e9ed48651fac724b8
@@ -82,14 +94,14 @@ MonoBehaviour:
     Bidirectional: 0
     Note: 
   - Id: 771d5bcd91e044889819d366313050df
-    Position: {x: 22, y: 81}
+    Position: {x: 24, y: 81}
     FromModuleId: 
     ToModuleId: 
     Angle: 270
     Bidirectional: 0
     Note: 
   - Id: 2862404a4c4942b2b23a912f206a3df7
-    Position: {x: 53, y: 81}
+    Position: {x: 54, y: 81}
     FromModuleId: 
     ToModuleId: 
     Angle: 90

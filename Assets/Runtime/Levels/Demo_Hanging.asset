@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Demo_Hanging
   m_EditorClassIdentifier: 
   Size: {x: 18, y: 24}
+  CanvasOrigin: {x: 0, y: 0}
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
   Placements:
   - Id: 14cb521cb13d4ef5932e8a73b34d432e
@@ -880,8 +881,31 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
     Settings:
       rid: 5387188271369683931
+  - Id: acc97f7f3c014817a2a6b608f0d4f6ff
+    Cell: {x: 7, y: 14}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188342531555687
+  - Id: 6710fc9040834b989cce395de6a4a14b
+    Cell: {x: 8, y: 14}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188342531555688
+  - Id: da4f49919351434282c434a5f1848902
+    Cell: {x: 9, y: 14}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188342531555689
+  - Id: 6acecd99884d478483365e99a672769d
+    Cell: {x: 10, y: 14}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188342531555690
   EntryPlacementId: 
   OutputPrefab: {fileID: 5669822098299669811, guid: fb272e3834092dd4c833e1394233d70b, type: 3}
+  TestSceneGuid: 
+  UseCustomBoundary: 0
+  BoundaryCells: []
   references:
     version: 2
     RefIds:
@@ -1408,5 +1432,17 @@ MonoBehaviour:
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
     - rid: 5387188271369683931
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188342531555687
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188342531555688
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188342531555689
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188342531555690
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
