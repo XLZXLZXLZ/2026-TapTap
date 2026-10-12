@@ -606,8 +606,10 @@ namespace TapTap
             if (downward)
             {
                 velocity.y = Mathf.Min(-4f * config.UnitSize, headFallSpeed);
-                body.Motor.IgnoreOneWayFor(0.3f);
-                head.Motor.IgnoreOneWayFor(0.3f);
+                body.Motor.ProbeGround(head);
+                Collider2D platform = body.Motor.SupportCollider;
+                body.Motor.IgnoreOneWayPlatform(platform);
+                head.Motor.IgnoreOneWayPlatform(platform);
             }
             else if (height > 0f) velocity.y = config.LaunchSpeed(height);
             body.Velocity = head.Velocity = velocity;

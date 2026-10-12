@@ -1,0 +1,1740 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f07095e12944db7bf7d2e87df43e5fd, type: 3}
+  m_Name: Level_New_18
+  m_EditorClassIdentifier: 
+  Size: {x: 30, y: 13}
+  CanvasOrigin: {x: 0, y: 0}
+  Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
+  CameraSettings:
+    AutoSize: 1
+    ViewSize: 9
+    FollowHorizontal: 1
+    FollowVertical: 1
+    Offset: {x: 0, y: 1.5}
+    DeadZone: {x: 0.1, y: 0.15}
+  Placements:
+  - Id: 1093b35ca13944fb93b1c0ad3b3bfb9f
+    Cell: {x: 0, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042715
+  - Id: c41221dde0474c6296129e2d66f1d41e
+    Cell: {x: 1, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042716
+  - Id: 403dbf0f0b394b94ad2932baa03e90a8
+    Cell: {x: 2, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042717
+  - Id: 61b63256e5464d44a46b7922c57e2467
+    Cell: {x: 3, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042718
+  - Id: f6434b97ddd64ef995d633f9adc03e70
+    Cell: {x: 4, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042719
+  - Id: 63ed1e2a12de4e83b8cc1a1406a5ad35
+    Cell: {x: 5, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042720
+  - Id: b071b4ce668b4fd8a3e862656e34aa64
+    Cell: {x: 6, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042721
+  - Id: 129553495b5d490bb7bfd10fae52a18b
+    Cell: {x: 7, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042722
+  - Id: 1b8c1c400ad3468e914183af2946004c
+    Cell: {x: 8, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042723
+  - Id: 6f16341653c84a298aae8ab80f9f92e1
+    Cell: {x: 9, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042724
+  - Id: a9a17bdb04c944db84aab2dfc847c456
+    Cell: {x: 10, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042725
+  - Id: db0e0f72461c4f4da5e689f8c97a92e5
+    Cell: {x: 11, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042726
+  - Id: 0c2bcd7571a347658fb990a2f656bba8
+    Cell: {x: 12, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042727
+  - Id: aa4c9a2b20e64cd59c06e7e495014b4d
+    Cell: {x: 13, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042728
+  - Id: c51d81098dd64f80a0ccc59fa5e4cc17
+    Cell: {x: 14, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042729
+  - Id: c978bb66f8b14b8c90a95838a7400283
+    Cell: {x: 15, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042730
+  - Id: b24b3d6c2f9d46bb8398dea364742159
+    Cell: {x: 16, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042731
+  - Id: bf9ba3c20ba5450dbd7e865b6159b76b
+    Cell: {x: 17, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042732
+  - Id: 9b72aa99f3674de29a423fd0b9399e83
+    Cell: {x: 18, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042733
+  - Id: 3b261b2fe61f4d9183cd4daa22e3be59
+    Cell: {x: 19, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042734
+  - Id: 7cea5a5663d946feb2e5a98fff5991e4
+    Cell: {x: 20, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042735
+  - Id: d92fb6249f9742d5942f8b8d9bb6f86f
+    Cell: {x: 21, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042736
+  - Id: 28e2e57e99fb445a860fb1337c5e647e
+    Cell: {x: 22, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042737
+  - Id: eb4bd736e8294c589935821e3a725dc1
+    Cell: {x: 23, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042738
+  - Id: e10c092383714514ae2b43062927392b
+    Cell: {x: 24, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042739
+  - Id: 8eea00aa03664f7488720fb84e23658d
+    Cell: {x: 25, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042740
+  - Id: 613d53e4483445318811f2c3c0581414
+    Cell: {x: 26, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042741
+  - Id: 57e8c220486e49be9a8de570d5eb573c
+    Cell: {x: 27, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042742
+  - Id: cb90563a65974f598b9ff75ce31394af
+    Cell: {x: 28, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042743
+  - Id: 49123ac42f344784b748241942ce58ac
+    Cell: {x: 29, y: 0}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042744
+  - Id: c15c1afe881d4cce8e748e0716711f55
+    Cell: {x: 0, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042746
+  - Id: bdabf2a8df1a4b00af1ec00a80da3889
+    Cell: {x: 0, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042748
+  - Id: 79b5749c78874696a80e8f62df474abf
+    Cell: {x: 0, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042750
+  - Id: 59bb5b98000f468f91569c7c5c7fe749
+    Cell: {x: 0, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042752
+  - Id: 8f8a2fcf404a48a09114fd42318aa59f
+    Cell: {x: 0, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042754
+  - Id: 2bc14e9266504301964e9dc236d1f3ef
+    Cell: {x: 0, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042756
+  - Id: 46322b9638344bdead223fe78b53cbe0
+    Cell: {x: 0, y: 7}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042758
+  - Id: 1d6c0c72de6b4612b035620dc8cda724
+    Cell: {x: 0, y: 8}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042760
+  - Id: c33f6b4b63b94161959fe6e91e5bf3c3
+    Cell: {x: 29, y: 8}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042789
+  - Id: 7e561816183747f791fa3a1a13133e11
+    Cell: {x: 1, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042791
+  - Id: 7d50593810a54049a5af09c9f43f961d
+    Cell: {x: 2, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042792
+  - Id: c5a3e6c846fd4818b801b7d349055929
+    Cell: {x: 3, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042793
+  - Id: d9c3d3e4be9c4e82a19e2af6c06fba54
+    Cell: {x: 4, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042794
+  - Id: 687ec283e46e402eb62d28bbea5061bc
+    Cell: {x: 5, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042795
+  - Id: 2945fa2d057443aba8adf554fb47fae1
+    Cell: {x: 6, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042796
+  - Id: 0ac0b9f48b944fb4bb508e4f6864eb66
+    Cell: {x: 7, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042797
+  - Id: e73d1b76db55449f9eddb2d818723f41
+    Cell: {x: 8, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042798
+  - Id: 8e557486600343d18ca52ab514ff306f
+    Cell: {x: 9, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042799
+  - Id: 71fa6126ae464b50ab4751a257ab0af9
+    Cell: {x: 10, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042800
+  - Id: 0d478539218e44ee803deed4c5523c3e
+    Cell: {x: 11, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042801
+  - Id: 0ec1af6de2414ceab36e4cada8e909e7
+    Cell: {x: 12, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042802
+  - Id: 51e1ea118ea34a219d653b6852cad867
+    Cell: {x: 13, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042803
+  - Id: eca5b2f02bd04b21a5c43ce408f528ed
+    Cell: {x: 14, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042804
+  - Id: 44d052a85ac2414c8b99083f831cec01
+    Cell: {x: 15, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042805
+  - Id: 3ada039a66144dc8bcea99e7e0e820b4
+    Cell: {x: 16, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042806
+  - Id: 29b1dde767584c20868c420f6c3aa5f0
+    Cell: {x: 17, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042807
+  - Id: e54d3cd96efe456895c2f0f8125f6f4f
+    Cell: {x: 18, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042808
+  - Id: ae86d8ed34864a6ba316b343d18df239
+    Cell: {x: 19, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042809
+  - Id: 38bb0c99a06e4de29e8190ab355a641e
+    Cell: {x: 20, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042810
+  - Id: 8c2fac017b8e4152b9a7e32e609ccbb5
+    Cell: {x: 21, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042811
+  - Id: 3b062de632ee424189beaf9ff98eb943
+    Cell: {x: 22, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042812
+  - Id: aa96309605be479b80e4f3e254f35317
+    Cell: {x: 23, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042813
+  - Id: 3eabb02df2f44e42996b908ab70e3fd8
+    Cell: {x: 24, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042814
+  - Id: 0a74689f41f6499880bb3cbeee909b99
+    Cell: {x: 27, y: 3}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188348257042815
+  - Id: 22a2c105954a4c478a0f520e31c0dbd4
+    Cell: {x: 28, y: 3}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188348257042816
+  - Id: 7950b11c147945a0983ff494d17374bf
+    Cell: {x: 29, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042939
+  - Id: 4f9a47c125404279a67091168429c88d
+    Cell: {x: 25, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042818
+  - Id: 0a7fce5c59ea4048afdebeeb4e2b7a5a
+    Cell: {x: 26, y: 3}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042819
+  - Id: 138c133d4112445db1f6510830872ea6
+    Cell: {x: 29, y: 1}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042940
+  - Id: 1da40e0084d040c7b748cb0b1c2ed190
+    Cell: {x: 29, y: 2}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042941
+  - Id: b5f812c6c6e345ad8bb1340cb79bee50
+    Cell: {x: 29, y: 4}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042942
+  - Id: 670c79136e9b4f629ee3004696e78d36
+    Cell: {x: 29, y: 5}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042943
+  - Id: bb8ea6f36b6e4a389dc058efe2b82af4
+    Cell: {x: 29, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042944
+  - Id: b3c07e2af9a14dc8b774e1bcadec6ef0
+    Cell: {x: 29, y: 7}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042945
+  - Id: f23e47515de74590a4ab50bf26cdd54f
+    Cell: {x: 0, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042946
+  - Id: bb5b9787a85f4909ba0e2cc4d82d7d1f
+    Cell: {x: 29, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257042975
+  - Id: 0e674ed55dcb4deaaf798944fe0ecb49
+    Cell: {x: 29, y: 10}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043005
+  - Id: b9af7e44cec94b86a2bc40d80f2e00ba
+    Cell: {x: 0, y: 11}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043006
+  - Id: f19a09ac9b3c42d89c5a1749f6762933
+    Cell: {x: 29, y: 11}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043035
+  - Id: 28bb313110414afab428ac3d334ed219
+    Cell: {x: 3, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043036
+  - Id: 99ed547edad44b07ba19ff57ccfd402d
+    Cell: {x: 4, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043037
+  - Id: fb7b04db2b134394b7b70836b6f9d817
+    Cell: {x: 5, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043038
+  - Id: aa3645b693cf436887a6638136433b0b
+    Cell: {x: 6, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043039
+  - Id: a52b0faeac304c6493382b86754864ae
+    Cell: {x: 7, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043040
+  - Id: 19ca50f8d65b4bb69ff12521068bcf04
+    Cell: {x: 8, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043041
+  - Id: cabd187e844f4e29800b0aa30111d564
+    Cell: {x: 9, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043042
+  - Id: 2b4f6b7a01ab4a0dbae271b86b2e143e
+    Cell: {x: 10, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043043
+  - Id: aee1ce31d6c849a7a35d5b99cc39451f
+    Cell: {x: 11, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043044
+  - Id: cb184c9caa7c443face9f9146481d35d
+    Cell: {x: 12, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043045
+  - Id: f4b3bd85baa342d487c8a38ecbc82b45
+    Cell: {x: 13, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043046
+  - Id: 7934abb4a1df4ea1a4a211976dabc6e6
+    Cell: {x: 14, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043047
+  - Id: 0167a8920e0348848806bbb155ae48f8
+    Cell: {x: 15, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043048
+  - Id: fbad855a3b0842b1b4591ae2f16f2fd1
+    Cell: {x: 16, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043049
+  - Id: be08eb63dea54d4ab35cf98e5af25d22
+    Cell: {x: 17, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043050
+  - Id: 821079dd7d8e4ed6bab3774f62468c3e
+    Cell: {x: 18, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043051
+  - Id: 1bfbb8db2abb487495a72a572f627ff8
+    Cell: {x: 19, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043052
+  - Id: 8a662dbaf94645c1b555fab5ae0d142a
+    Cell: {x: 20, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043053
+  - Id: cd59f6fcc78844a0982d06d0672e6892
+    Cell: {x: 21, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043054
+  - Id: b91cc3fcf0564c21b1e253e39556516f
+    Cell: {x: 22, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043055
+  - Id: baafc0aa09764d0da5645a3f7b07ef00
+    Cell: {x: 23, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043056
+  - Id: 45ca5bf74c4d410b8a5e07a696f9436b
+    Cell: {x: 24, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043057
+  - Id: 9fb05077680445bf8fc9bd61bba20e38
+    Cell: {x: 25, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043058
+  - Id: c748916e9ec144ad8742f68e1fb3ef8f
+    Cell: {x: 26, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043059
+  - Id: 88dffcc4c06d440a87ff8c5a8a746bdb
+    Cell: {x: 1, y: 6}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188348257043062
+  - Id: c8bdd5722a33460f8b057d27d172b34e
+    Cell: {x: 2, y: 6}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188348257043063
+  - Id: 525effd721a5431ebc6c255101935dc6
+    Cell: {x: 1, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043064
+  - Id: 3080a02566a441d19094689109b02a6e
+    Cell: {x: 2, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043065
+  - Id: 565d0ce3aa3d4edaa0c6e17e42c5efa1
+    Cell: {x: 3, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043066
+  - Id: 7c1f582c7f2e47e58f733762bda4b6c9
+    Cell: {x: 4, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043067
+  - Id: c56cf5faa31c4267bbb99dbf2b37219c
+    Cell: {x: 5, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043068
+  - Id: 0c48e9272d1e43109866049850d42a16
+    Cell: {x: 6, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043069
+  - Id: 47ff67075aba471f928dcfbf347ff6f3
+    Cell: {x: 7, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043070
+  - Id: 54fc4e4c109344f0884adbaa95c2d4d8
+    Cell: {x: 8, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043071
+  - Id: 74d221ffa7974d019e472f7d2bd06424
+    Cell: {x: 9, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043072
+  - Id: 123ccdd04e2b4eeb87e4fad42dd14b16
+    Cell: {x: 10, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043073
+  - Id: 902177c16ffe4ffdb575824f368010bf
+    Cell: {x: 11, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043074
+  - Id: 4916b105a33847a09c1c144727fad630
+    Cell: {x: 12, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043075
+  - Id: 493a0c66fa2140ea853d3f13c2f2c6dd
+    Cell: {x: 13, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043076
+  - Id: 261c22206c7649ae85767ae4220622a4
+    Cell: {x: 14, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043077
+  - Id: 04ef04422c4b42b39b80bb6cb5a4c64b
+    Cell: {x: 15, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043078
+  - Id: ab598324c86249dea0137a72065dd453
+    Cell: {x: 16, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043079
+  - Id: d92e365ce05c462796fbd09d5bcedaae
+    Cell: {x: 17, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043080
+  - Id: 762bd88aab634117a53ef40bb7acecae
+    Cell: {x: 18, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043081
+  - Id: 972cf92eb2ae4a3aa5d6e088c4aeb6ac
+    Cell: {x: 19, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043082
+  - Id: 269462f5ab06474bad4c38d5de78555b
+    Cell: {x: 20, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043083
+  - Id: 9f695573cb3c4d059a03926188f71b85
+    Cell: {x: 21, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043084
+  - Id: ca58921ee1cc4f07aa831dd52fe87437
+    Cell: {x: 22, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043085
+  - Id: 044c12fdf97a4ab18013f921c22923f2
+    Cell: {x: 23, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043086
+  - Id: 778eb3718fc2467bbc2bf3cf66dbb88f
+    Cell: {x: 24, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043087
+  - Id: d0340b14bf9048ca8b482b0e993de6af
+    Cell: {x: 25, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043088
+  - Id: 0d59e95d166c44c9b30ec6013d5ae8cb
+    Cell: {x: 26, y: 9}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043089
+  - Id: 4114d06eca5e44e18dca874a731bd2d5
+    Cell: {x: 2, y: 10}
+    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
+    Settings:
+      rid: 5387188348257043122
+  - Id: 4e3292ac77304ac6919b4156359aef67
+    Cell: {x: 0, y: 10}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043123
+  - Id: 68f6497e6097460e8e68c1758e3b3fe1
+    Cell: {x: 4, y: 1}
+    Brush: {fileID: 11400000, guid: 6f73250888787e648860cdc75ee6831d, type: 2}
+    Settings:
+      rid: 5387188348257043223
+  - Id: 52349a3533d844b3bd40cd87c2b7f002
+    Cell: {x: 27, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043224
+  - Id: a5f1e3ed7c47451c87cf6e1f1b9db9de
+    Cell: {x: 28, y: 6}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043225
+  - Id: 3595fb90751d4dfc96511d9419d459ea
+    Cell: {x: 27, y: 8}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188348257043226
+  - Id: 2266de5fdf414e5c9d1af311d1b1586b
+    Cell: {x: 28, y: 8}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188348257043227
+  - Id: bef0c2321272468088ceafce5c224641
+    Cell: {x: 0, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043228
+  - Id: 371f247f3f03437488170e2ebf2d0ebd
+    Cell: {x: 1, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043229
+  - Id: 2cde78a4b025408ca2677d4a15ca1c3f
+    Cell: {x: 2, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043230
+  - Id: b7f0e15c01554bc39876bf3d066d4b1b
+    Cell: {x: 3, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043231
+  - Id: 8518b666bf254a78985580121e8e5cc0
+    Cell: {x: 4, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043232
+  - Id: 29a29038e0074ffba8b74d7239fbca02
+    Cell: {x: 5, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043233
+  - Id: 9e3676812d774787b5f4a591351f96e6
+    Cell: {x: 6, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043234
+  - Id: ea8363287d03403abb4f24605c6598d5
+    Cell: {x: 7, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043235
+  - Id: 54015c70108746e79a2a1a161c1fe7bd
+    Cell: {x: 8, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043236
+  - Id: 6313f2afadfa438aac9a3a0dc67760e1
+    Cell: {x: 9, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043237
+  - Id: 948e5da1064e4b4ba0d0dc69f14ffe81
+    Cell: {x: 10, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043238
+  - Id: 6aaffe131aab4e05ba89d52433d2dfde
+    Cell: {x: 11, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043239
+  - Id: 03a9f04e5d7346f6b9b2934abc31dd55
+    Cell: {x: 12, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043240
+  - Id: f986a7f5f62b4dabab330f3b0ae4f4d4
+    Cell: {x: 13, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043241
+  - Id: 62994758576e486eb00965e56aaaa4cd
+    Cell: {x: 14, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043242
+  - Id: 220248c03f5846beac1597317ba1fa1f
+    Cell: {x: 15, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043243
+  - Id: 2efbdc03f10b48af9757c690b8a6b840
+    Cell: {x: 16, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043244
+  - Id: 6d23a0da1c4a44459664cc0784a88c30
+    Cell: {x: 17, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043245
+  - Id: 50328d03c5044bbea15d662dd1440afa
+    Cell: {x: 18, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043246
+  - Id: 09f18bd26047456aa57bbbc9a783fe15
+    Cell: {x: 19, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043247
+  - Id: 6ad81da05fa64663b208f7559fbcebcf
+    Cell: {x: 20, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043248
+  - Id: 8c421df2180742f7ad3535396f732cfa
+    Cell: {x: 21, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043249
+  - Id: abacbabfc2294ac7827ea50db9e84acd
+    Cell: {x: 22, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043250
+  - Id: 6d98763655524c7f96b94bdb57c63c38
+    Cell: {x: 23, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043251
+  - Id: 2fe1259bcc7d4884b19acce6794f2778
+    Cell: {x: 24, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043252
+  - Id: 7dacab7a7cf64b0cbc83c81478420616
+    Cell: {x: 25, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043253
+  - Id: 3bf4cab01ede484ea4266af80671bdd6
+    Cell: {x: 26, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043254
+  - Id: 14441967ebe0407693bc508141169274
+    Cell: {x: 29, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043257
+  - Id: 1da91231d50c4876bf52c35fa3e24c0f
+    Cell: {x: 27, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043260
+  - Id: 0433cb730cde47a297fbbb6795029360
+    Cell: {x: 28, y: 12}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188348257043261
+  EntryPlacementId: 
+  OutputPrefab: {fileID: 2390967039799832991, guid: 2383e6c73f58585429f081b219e0485a, type: 3}
+  TestSceneGuid: 8454a72ccada2ff41b4ab3719fd7fdc2
+  UseCustomBoundary: 1
+  BoundaryCells:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 4, y: 0}
+  - {x: 5, y: 0}
+  - {x: 6, y: 0}
+  - {x: 7, y: 0}
+  - {x: 8, y: 0}
+  - {x: 9, y: 0}
+  - {x: 10, y: 0}
+  - {x: 11, y: 0}
+  - {x: 12, y: 0}
+  - {x: 13, y: 0}
+  - {x: 14, y: 0}
+  - {x: 15, y: 0}
+  - {x: 16, y: 0}
+  - {x: 17, y: 0}
+  - {x: 18, y: 0}
+  - {x: 19, y: 0}
+  - {x: 20, y: 0}
+  - {x: 21, y: 0}
+  - {x: 22, y: 0}
+  - {x: 23, y: 0}
+  - {x: 24, y: 0}
+  - {x: 25, y: 0}
+  - {x: 26, y: 0}
+  - {x: 27, y: 0}
+  - {x: 28, y: 0}
+  - {x: 29, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  - {x: 2, y: 1}
+  - {x: 3, y: 1}
+  - {x: 4, y: 1}
+  - {x: 5, y: 1}
+  - {x: 6, y: 1}
+  - {x: 7, y: 1}
+  - {x: 8, y: 1}
+  - {x: 9, y: 1}
+  - {x: 10, y: 1}
+  - {x: 11, y: 1}
+  - {x: 12, y: 1}
+  - {x: 13, y: 1}
+  - {x: 14, y: 1}
+  - {x: 15, y: 1}
+  - {x: 16, y: 1}
+  - {x: 17, y: 1}
+  - {x: 18, y: 1}
+  - {x: 19, y: 1}
+  - {x: 20, y: 1}
+  - {x: 21, y: 1}
+  - {x: 22, y: 1}
+  - {x: 23, y: 1}
+  - {x: 24, y: 1}
+  - {x: 25, y: 1}
+  - {x: 26, y: 1}
+  - {x: 27, y: 1}
+  - {x: 28, y: 1}
+  - {x: 29, y: 1}
+  - {x: 0, y: 2}
+  - {x: 1, y: 2}
+  - {x: 2, y: 2}
+  - {x: 3, y: 2}
+  - {x: 4, y: 2}
+  - {x: 5, y: 2}
+  - {x: 6, y: 2}
+  - {x: 7, y: 2}
+  - {x: 8, y: 2}
+  - {x: 9, y: 2}
+  - {x: 10, y: 2}
+  - {x: 11, y: 2}
+  - {x: 12, y: 2}
+  - {x: 13, y: 2}
+  - {x: 14, y: 2}
+  - {x: 15, y: 2}
+  - {x: 16, y: 2}
+  - {x: 17, y: 2}
+  - {x: 18, y: 2}
+  - {x: 19, y: 2}
+  - {x: 20, y: 2}
+  - {x: 21, y: 2}
+  - {x: 22, y: 2}
+  - {x: 23, y: 2}
+  - {x: 24, y: 2}
+  - {x: 25, y: 2}
+  - {x: 26, y: 2}
+  - {x: 27, y: 2}
+  - {x: 28, y: 2}
+  - {x: 29, y: 2}
+  - {x: 0, y: 3}
+  - {x: 1, y: 3}
+  - {x: 2, y: 3}
+  - {x: 3, y: 3}
+  - {x: 4, y: 3}
+  - {x: 5, y: 3}
+  - {x: 6, y: 3}
+  - {x: 7, y: 3}
+  - {x: 8, y: 3}
+  - {x: 9, y: 3}
+  - {x: 10, y: 3}
+  - {x: 11, y: 3}
+  - {x: 12, y: 3}
+  - {x: 13, y: 3}
+  - {x: 14, y: 3}
+  - {x: 15, y: 3}
+  - {x: 16, y: 3}
+  - {x: 17, y: 3}
+  - {x: 18, y: 3}
+  - {x: 19, y: 3}
+  - {x: 20, y: 3}
+  - {x: 21, y: 3}
+  - {x: 22, y: 3}
+  - {x: 23, y: 3}
+  - {x: 24, y: 3}
+  - {x: 25, y: 3}
+  - {x: 26, y: 3}
+  - {x: 27, y: 3}
+  - {x: 28, y: 3}
+  - {x: 29, y: 3}
+  - {x: 0, y: 4}
+  - {x: 1, y: 4}
+  - {x: 2, y: 4}
+  - {x: 3, y: 4}
+  - {x: 4, y: 4}
+  - {x: 5, y: 4}
+  - {x: 6, y: 4}
+  - {x: 7, y: 4}
+  - {x: 8, y: 4}
+  - {x: 9, y: 4}
+  - {x: 10, y: 4}
+  - {x: 11, y: 4}
+  - {x: 12, y: 4}
+  - {x: 13, y: 4}
+  - {x: 14, y: 4}
+  - {x: 15, y: 4}
+  - {x: 16, y: 4}
+  - {x: 17, y: 4}
+  - {x: 18, y: 4}
+  - {x: 19, y: 4}
+  - {x: 20, y: 4}
+  - {x: 21, y: 4}
+  - {x: 22, y: 4}
+  - {x: 23, y: 4}
+  - {x: 24, y: 4}
+  - {x: 25, y: 4}
+  - {x: 26, y: 4}
+  - {x: 27, y: 4}
+  - {x: 28, y: 4}
+  - {x: 29, y: 4}
+  - {x: 0, y: 5}
+  - {x: 1, y: 5}
+  - {x: 2, y: 5}
+  - {x: 3, y: 5}
+  - {x: 4, y: 5}
+  - {x: 5, y: 5}
+  - {x: 6, y: 5}
+  - {x: 7, y: 5}
+  - {x: 8, y: 5}
+  - {x: 9, y: 5}
+  - {x: 10, y: 5}
+  - {x: 11, y: 5}
+  - {x: 12, y: 5}
+  - {x: 13, y: 5}
+  - {x: 14, y: 5}
+  - {x: 15, y: 5}
+  - {x: 16, y: 5}
+  - {x: 17, y: 5}
+  - {x: 18, y: 5}
+  - {x: 19, y: 5}
+  - {x: 20, y: 5}
+  - {x: 21, y: 5}
+  - {x: 22, y: 5}
+  - {x: 23, y: 5}
+  - {x: 24, y: 5}
+  - {x: 25, y: 5}
+  - {x: 26, y: 5}
+  - {x: 27, y: 5}
+  - {x: 28, y: 5}
+  - {x: 29, y: 5}
+  - {x: 0, y: 6}
+  - {x: 1, y: 6}
+  - {x: 2, y: 6}
+  - {x: 3, y: 6}
+  - {x: 4, y: 6}
+  - {x: 5, y: 6}
+  - {x: 6, y: 6}
+  - {x: 7, y: 6}
+  - {x: 8, y: 6}
+  - {x: 9, y: 6}
+  - {x: 10, y: 6}
+  - {x: 11, y: 6}
+  - {x: 12, y: 6}
+  - {x: 13, y: 6}
+  - {x: 14, y: 6}
+  - {x: 15, y: 6}
+  - {x: 16, y: 6}
+  - {x: 17, y: 6}
+  - {x: 18, y: 6}
+  - {x: 19, y: 6}
+  - {x: 20, y: 6}
+  - {x: 21, y: 6}
+  - {x: 22, y: 6}
+  - {x: 23, y: 6}
+  - {x: 24, y: 6}
+  - {x: 25, y: 6}
+  - {x: 26, y: 6}
+  - {x: 27, y: 6}
+  - {x: 28, y: 6}
+  - {x: 29, y: 6}
+  - {x: 0, y: 7}
+  - {x: 1, y: 7}
+  - {x: 2, y: 7}
+  - {x: 3, y: 7}
+  - {x: 4, y: 7}
+  - {x: 5, y: 7}
+  - {x: 6, y: 7}
+  - {x: 7, y: 7}
+  - {x: 8, y: 7}
+  - {x: 9, y: 7}
+  - {x: 10, y: 7}
+  - {x: 11, y: 7}
+  - {x: 12, y: 7}
+  - {x: 13, y: 7}
+  - {x: 14, y: 7}
+  - {x: 15, y: 7}
+  - {x: 16, y: 7}
+  - {x: 17, y: 7}
+  - {x: 18, y: 7}
+  - {x: 19, y: 7}
+  - {x: 20, y: 7}
+  - {x: 21, y: 7}
+  - {x: 22, y: 7}
+  - {x: 23, y: 7}
+  - {x: 24, y: 7}
+  - {x: 25, y: 7}
+  - {x: 26, y: 7}
+  - {x: 27, y: 7}
+  - {x: 28, y: 7}
+  - {x: 29, y: 7}
+  - {x: 0, y: 8}
+  - {x: 1, y: 8}
+  - {x: 2, y: 8}
+  - {x: 3, y: 8}
+  - {x: 4, y: 8}
+  - {x: 5, y: 8}
+  - {x: 6, y: 8}
+  - {x: 7, y: 8}
+  - {x: 8, y: 8}
+  - {x: 9, y: 8}
+  - {x: 10, y: 8}
+  - {x: 11, y: 8}
+  - {x: 12, y: 8}
+  - {x: 13, y: 8}
+  - {x: 14, y: 8}
+  - {x: 15, y: 8}
+  - {x: 16, y: 8}
+  - {x: 17, y: 8}
+  - {x: 18, y: 8}
+  - {x: 19, y: 8}
+  - {x: 20, y: 8}
+  - {x: 21, y: 8}
+  - {x: 22, y: 8}
+  - {x: 23, y: 8}
+  - {x: 24, y: 8}
+  - {x: 25, y: 8}
+  - {x: 26, y: 8}
+  - {x: 27, y: 8}
+  - {x: 28, y: 8}
+  - {x: 29, y: 8}
+  - {x: 0, y: 9}
+  - {x: 1, y: 9}
+  - {x: 2, y: 9}
+  - {x: 3, y: 9}
+  - {x: 4, y: 9}
+  - {x: 5, y: 9}
+  - {x: 6, y: 9}
+  - {x: 7, y: 9}
+  - {x: 8, y: 9}
+  - {x: 9, y: 9}
+  - {x: 10, y: 9}
+  - {x: 11, y: 9}
+  - {x: 12, y: 9}
+  - {x: 13, y: 9}
+  - {x: 14, y: 9}
+  - {x: 15, y: 9}
+  - {x: 16, y: 9}
+  - {x: 17, y: 9}
+  - {x: 18, y: 9}
+  - {x: 19, y: 9}
+  - {x: 20, y: 9}
+  - {x: 21, y: 9}
+  - {x: 22, y: 9}
+  - {x: 23, y: 9}
+  - {x: 24, y: 9}
+  - {x: 25, y: 9}
+  - {x: 26, y: 9}
+  - {x: 27, y: 9}
+  - {x: 28, y: 9}
+  - {x: 29, y: 9}
+  - {x: 0, y: 10}
+  - {x: 1, y: 10}
+  - {x: 2, y: 10}
+  - {x: 3, y: 10}
+  - {x: 4, y: 10}
+  - {x: 5, y: 10}
+  - {x: 6, y: 10}
+  - {x: 7, y: 10}
+  - {x: 8, y: 10}
+  - {x: 9, y: 10}
+  - {x: 10, y: 10}
+  - {x: 11, y: 10}
+  - {x: 12, y: 10}
+  - {x: 13, y: 10}
+  - {x: 14, y: 10}
+  - {x: 15, y: 10}
+  - {x: 16, y: 10}
+  - {x: 17, y: 10}
+  - {x: 18, y: 10}
+  - {x: 19, y: 10}
+  - {x: 20, y: 10}
+  - {x: 21, y: 10}
+  - {x: 22, y: 10}
+  - {x: 23, y: 10}
+  - {x: 24, y: 10}
+  - {x: 25, y: 10}
+  - {x: 26, y: 10}
+  - {x: 27, y: 10}
+  - {x: 28, y: 10}
+  - {x: 29, y: 10}
+  - {x: 0, y: 11}
+  - {x: 1, y: 11}
+  - {x: 2, y: 11}
+  - {x: 3, y: 11}
+  - {x: 4, y: 11}
+  - {x: 5, y: 11}
+  - {x: 6, y: 11}
+  - {x: 7, y: 11}
+  - {x: 8, y: 11}
+  - {x: 9, y: 11}
+  - {x: 10, y: 11}
+  - {x: 11, y: 11}
+  - {x: 12, y: 11}
+  - {x: 13, y: 11}
+  - {x: 14, y: 11}
+  - {x: 15, y: 11}
+  - {x: 16, y: 11}
+  - {x: 17, y: 11}
+  - {x: 18, y: 11}
+  - {x: 19, y: 11}
+  - {x: 20, y: 11}
+  - {x: 21, y: 11}
+  - {x: 22, y: 11}
+  - {x: 23, y: 11}
+  - {x: 24, y: 11}
+  - {x: 25, y: 11}
+  - {x: 26, y: 11}
+  - {x: 27, y: 11}
+  - {x: 28, y: 11}
+  - {x: 29, y: 11}
+  references:
+    version: 2
+    RefIds:
+    - rid: 5387188348257042715
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042716
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042717
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042718
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042719
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042720
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042721
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042722
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042723
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042724
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042725
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042726
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042727
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042728
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042729
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042730
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042731
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042732
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042733
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042734
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042735
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042736
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042737
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042738
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042739
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042740
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042741
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042742
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042743
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042744
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042746
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042748
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042750
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042752
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042754
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042756
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042758
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042760
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042789
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042791
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042792
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042793
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042794
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042795
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042796
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042797
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042798
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042799
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042800
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042801
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042802
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042803
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042804
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042805
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042806
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042807
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042808
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042809
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042810
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042811
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042812
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042813
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042814
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042815
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042816
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042818
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042819
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042939
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042940
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042941
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042942
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042943
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042944
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042945
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042946
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257042975
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043005
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043006
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043035
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043036
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043037
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043038
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043039
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043040
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043041
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043042
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043043
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043044
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043045
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043046
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043047
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043048
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043049
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043050
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043051
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043052
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043053
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043054
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043055
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043056
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043057
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043058
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043059
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043062
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043063
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043064
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043065
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043066
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043067
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043068
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043069
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043070
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043071
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043072
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043073
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043074
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043075
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043076
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043077
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043078
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043079
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043080
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043081
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043082
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043083
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043084
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043085
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043086
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043087
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043088
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043089
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043122
+      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        EndpointId: finish
+        Label: "\u7EC8\u70B9"
+    - rid: 5387188348257043123
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043223
+      type: {class: CheckpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        SpawnOffset: {x: 0, y: 0.45}
+    - rid: 5387188348257043224
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043225
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043226
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043227
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043228
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043229
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043230
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043231
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043232
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043233
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043234
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043235
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043236
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043237
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043238
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043239
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043240
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043241
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043242
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043243
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043244
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043245
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043246
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043247
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043248
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043249
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043250
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043251
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043252
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043253
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043254
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043257
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043260
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188348257043261
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 

@@ -16,6 +16,7 @@ namespace TapTap
         private bool includeJoinedPartner;
         private Vector2 plannedPosition;
         private float ignoreOneWayRemaining;
+        private Collider2D ignoredOneWayPlatform;
         private RigidbodyInterpolation2D normalInterpolation;
         private bool rewinding;
         private readonly List<MotionSegment> motionSegments = new List<MotionSegment>(8);
@@ -59,8 +60,10 @@ namespace TapTap
         public bool CollisionsEnabled { get { Initialize(); return box.enabled && physicsBody.simulated; } }
         public bool IgnoringOneWay => ignoreOneWayRemaining > 0f;
         public float IgnoreOneWayRemaining => ignoreOneWayRemaining;
+        public Collider2D IgnoredOneWayPlatform => ignoredOneWayPlatform;
         public bool Grounded { get; private set; }
         public WorldSurface SupportSurface { get; private set; }
+        public Collider2D SupportCollider { get; private set; }
         public MovableEntity SupportEntity { get; private set; }
         public float ConveyorSpeed { get; private set; }
         public MoveResult LastMoveResult { get; private set; }
@@ -91,6 +94,7 @@ namespace TapTap
             Initialize();
             float simulationDt = dt < 0f ? Time.fixedDeltaTime : dt;
             ignoreOneWayRemaining = Mathf.Max(0f, ignoreOneWayRemaining - Mathf.Max(0f, simulationDt));
+            UpdateIgnoredPlatform();
             // Logical position is authoritative; MovePosition only mirrors it to Unity.
             motionSegments.Clear();
             contacts.Clear();
@@ -121,6 +125,7 @@ namespace TapTap
             Initialize();
             Vector2 from = plannedPosition;
             plannedPosition += validatedDelta;
+            UpdateIgnoredPlatform();
             if (validatedDelta.sqrMagnitude > 0.0000000001f)
                 motionSegments.Add(new MotionSegment(from, plannedPosition));
         }
@@ -139,11 +144,13 @@ namespace TapTap
             physicsBody.velocity = Vector2.zero;
             plannedPosition = position;
             ignoreOneWayRemaining = 0f;
+            ignoredOneWayPlatform = null;
             motionSegments.Clear();
             contacts.Clear();
             LastMoveResult = default;
             Grounded = false;
             SupportSurface = null;
+            SupportCollider = null;
             SupportEntity = null;
             ConveyorSpeed = 0f;
         }
@@ -153,16 +160,52 @@ namespace TapTap
             ignoreOneWayRemaining = Mathf.Max(ignoreOneWayRemaining, Mathf.Max(0f, seconds));
             Grounded = false;
             SupportSurface = null;
+            SupportCollider = null;
             SupportEntity = null;
             ConveyorSpeed = 0f;
         }
 
-        public void EndDrop() => ignoreOneWayRemaining = 0f;
+        public void IgnoreOneWayPlatform(Collider2D platform)
+        {
+            WorldSurface surface = platform != null ? platform.GetComponentInParent<WorldSurface>() : null;
+            if (surface == null || surface.Kind != SurfaceKind.OneWay) return;
+            ignoredOneWayPlatform = platform;
+            Grounded = false;
+            SupportSurface = null;
+            SupportCollider = null;
+            SupportEntity = null;
+            ConveyorSpeed = 0f;
+        }
 
-        public void RestoreState(Vector2 position, float ignoreOneWay, bool collisionsEnabled)
+        public bool IsIgnoringOneWay(Collider2D platform) =>
+            IgnoringOneWay || (ignoredOneWayPlatform != null && ignoredOneWayPlatform == platform);
+
+        private void UpdateIgnoredPlatform()
+        {
+            if (ignoredOneWayPlatform == null) return;
+            Bounds actor = CollisionBounds;
+            if (JoinedPartner != null) actor.Encapsulate(JoinedPartner.PartBounds);
+            Bounds platform = ignoredOneWayPlatform.bounds;
+            // Keep the target until the entire joined shape clears it, even on thick platforms.
+            if (!ignoredOneWayPlatform.enabled || !ignoredOneWayPlatform.gameObject.activeInHierarchy
+                || actor.max.y < platform.min.y - skin
+                || actor.min.y > platform.max.y + skin * 2f
+                || actor.max.x < platform.min.x - skin || actor.min.x > platform.max.x + skin)
+                ignoredOneWayPlatform = null;
+        }
+
+        public void EndDrop()
+        {
+            ignoreOneWayRemaining = 0f;
+            ignoredOneWayPlatform = null;
+        }
+
+        public void RestoreState(Vector2 position, float ignoreOneWay, bool collisionsEnabled,
+            Collider2D ignoredPlatform = null)
         {
             Teleport(position);
             ignoreOneWayRemaining = ignoreOneWay;
+            ignoredOneWayPlatform = ignoredPlatform;
             SetCollisionsEnabled(collisionsEnabled);
             // Assign the transform too, so an interpolated future pose cannot leak into rewind.
             Vector3 pose = transform.position;
@@ -205,6 +248,7 @@ namespace TapTap
             physicsBody.velocity = Vector2.zero;
             Grounded = false;
             SupportSurface = null;
+            SupportCollider = null;
             SupportEntity = null;
             ConveyorSpeed = 0f;
         }
@@ -215,6 +259,7 @@ namespace TapTap
             SweepResult support = groundQuery.Probe(this, ignoredEntity, out float conveyorSpeed);
             Grounded = support.Blocked && support.Normal.y > 0.5f;
             SupportSurface = Grounded ? support.Surface : null;
+            SupportCollider = Grounded ? support.Hit.collider : null;
             SupportEntity = Grounded ? support.Entity : null;
             ConveyorSpeed = Grounded ? conveyorSpeed : 0f;
         }

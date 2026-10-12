@@ -63,7 +63,7 @@ namespace TapTap
 
                 Bounds surfaceBounds = collider.bounds;
                 if (surface.Kind == SurfaceKind.OneWay
-                    && (motor.IgnoringOneWay
+                    && (motor.IsIgnoringOneWay(collider)
                         || bounds.min.y < surfaceBounds.max.y - motor.Skin * 2f))
                     continue;
 

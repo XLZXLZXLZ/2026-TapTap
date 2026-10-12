@@ -63,7 +63,7 @@ namespace TapTap
                 if (surface != null && surface.Kind == SurfaceKind.OneWay)
                 {
                     float bottom = bounds.min.y;
-                    if (motor.IgnoringOneWay || delta.y >= 0f || hit.normal.y < 0.5f
+                    if (motor.IsIgnoringOneWay(collider) || delta.y >= 0f || hit.normal.y < 0.5f
                         || bottom < collider.bounds.max.y - motor.Skin * 2f)
                         continue;
                 }

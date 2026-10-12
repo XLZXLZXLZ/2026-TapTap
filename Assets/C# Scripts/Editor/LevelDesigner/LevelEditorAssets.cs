@@ -158,7 +158,7 @@ namespace TapTap.Editor
                 EnsureBrush("InversePhaseBlock", "虚实方块（亮时虚）", "phase-block", "geometry",
                     AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.InversePhasePrefabPath),
                     new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.4f, 0.76f, 0.94f)),
-                EnsureBrush("MechanismSwitch", "机关按钮", "default", "markers",
+                EnsureBrush("MechanismSwitch", "机关按钮", "mechanism-switch", "markers",
                     AssetDatabase.LoadAssetAtPath<GameObject>(GameplayVisualAssets.SwitchPrefabPath),
                     new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f)),
                 EnsureEndpointBrush(),

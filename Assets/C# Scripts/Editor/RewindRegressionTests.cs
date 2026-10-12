@@ -50,6 +50,7 @@ namespace TapTap.Editor
             {
                 Test("Unlimited history spans chunks, restores the beginning, and discards old futures", HistoryBranches);
                 Test("Spring velocity and one-way suppression restore", SpringAndOneWay);
+                Test("Downward head contact drops through only its supporting platform and rewinds", SinglePlatformDrop);
                 Test("Extension replays identically and a historical hold can release", ExtensionAndInput);
                 Test("Pulling and pickup continue from restored action progress", PullAndPickup);
                 Test("Switch undo restores phase and position without events or ejection", SwitchAndPhase);
@@ -302,6 +303,90 @@ namespace TapTap.Editor
                 f.Step(4);
                 f.Back(4);
                 Check(Mathf.Abs(f.Body.Motor.IgnoreOneWayRemaining - remaining) < 0.0001f, "Drop-through time was lost");
+            }
+        }
+
+        private static void SinglePlatformDrop()
+        {
+            using (var f = new Fixture())
+            {
+                var upper = f.Box("Drop target", Origin + Vector2.down * 0.1f, new Vector2(10f, 0.2f));
+                upper.AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                var lower = f.Box("Next platform", Origin + Vector2.down * 0.65f, new Vector2(10f, 0.2f));
+                lower.AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                f.Box("Third platform", Origin + Vector2.down * 1.2f, new Vector2(10f, 0.2f))
+                    .AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                f.CreatePlayer();
+                f.Detach(f.Spawn, f.Spawn + Vector2.up * 1.5f);
+                f.Head.Velocity = Vector2.down * 30f;
+                for (int i = 0; i < 8 && f.Player.Phase != PlayerPhase.Joined; i++) f.Step();
+                Check(f.Player.Phase == PlayerPhase.Joined, "Head contact did not assemble downward");
+                var target = upper.GetComponent<Collider2D>();
+                Check(f.Body.Motor.IgnoredOneWayPlatform == target && f.Head.Motor.IgnoredOneWayPlatform == target,
+                    "Head and body did not select the same supporting platform");
+                Check(!f.Body.Motor.IgnoringOneWay, "Head contact still suppresses every one-way platform");
+                f.Step(5);
+                Vector2 landed = f.Body.Motor.Position;
+                Check(f.Body.Motor.Grounded && f.Body.Motor.SupportCollider == lower.GetComponent<Collider2D>(),
+                    "Fast downward join passed through the next closely spaced platform");
+                f.Back(5);
+                Check(f.Body.Motor.IgnoredOneWayPlatform == target && f.Head.Motor.IgnoredOneWayPlatform == target,
+                    "Rewind lost the selected drop platform");
+                f.Manager.EndRewind();
+                f.Step(5);
+                Near(f.Body.Motor.Position, landed, "Drop-through diverged after rewind");
+                Check(f.Body.Motor.IgnoredOneWayPlatform == target && f.Head.Motor.IgnoredOneWayPlatform == target,
+                    "Suppression cleared before the joined head left the closely spaced upper platform");
+                var bodyState = f.Body.CaptureState();
+                var headState = f.Head.CaptureState();
+                f.Body.Motor.StageTranslation(Vector2.up * 2f);
+                f.Head.Motor.StageTranslation(Vector2.up * 2f);
+                f.Body.Motor.BeginStep(0f, false);
+                f.Head.Motor.BeginStep(0f, false);
+                Check(f.Body.Motor.IgnoredOneWayPlatform == null && f.Head.Motor.IgnoredOneWayPlatform == null,
+                    "Returning fully above the original platform left it permanently ignored");
+                f.Body.RestoreState(in bodyState);
+                f.Head.RestoreState(in headState);
+                f.Input.SetExternalInput(1f, false);
+                f.Step(80);
+                Check(f.Body.Motor.IgnoredOneWayPlatform == null && f.Head.Motor.IgnoredOneWayPlatform == null,
+                    "Leaving the platform sideways did not clear suppression");
+            }
+            using (var f = new Fixture())
+            {
+                var thick = f.Box("Thick one-way", Origin + Vector2.down, new Vector2(10f, 2f));
+                thick.AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                var lower = f.Box("Lower landing", Origin + Vector2.down * 3.6f, new Vector2(10f, 0.2f));
+                lower.AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                f.CreatePlayer();
+                f.Detach(f.Spawn, f.Spawn + Vector2.up * 1.5f);
+                f.Head.Velocity = Vector2.down * 5f;
+                f.Step(60);
+                Check(f.Body.Motor.Grounded && f.Body.Motor.SupportCollider == lower.GetComponent<Collider2D>(),
+                    "Thick platform stopped the drop or suppressed the lower platform");
+                Check(f.Body.Motor.IgnoredOneWayPlatform == null && f.Head.Motor.IgnoredOneWayPlatform == null,
+                    "Suppression did not clear after the whole assembly passed below the platform");
+            }
+            using (var f = new Fixture())
+            {
+                f.Floor();
+                f.CreatePlayer();
+                f.Detach(f.Spawn, f.Spawn + Vector2.up * 1.5f);
+                f.Head.Velocity = Vector2.down * 30f;
+                f.Step(12);
+                Check(f.Body.Motor.Grounded && f.Body.Motor.IgnoredOneWayPlatform == null,
+                    "Head contact ignored a solid floor");
+            }
+            using (var f = new Fixture())
+            {
+                var platform = f.Box("Airborne landing", Origin + Vector2.down * 0.1f, new Vector2(10f, 0.2f));
+                platform.AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                f.CreatePlayer();
+                f.Detach(Origin + Vector2.up * 3f, Origin + Vector2.up * 4.5f);
+                f.Head.Velocity = Vector2.down * 30f;
+                f.Step(20);
+                Check(f.Body.Motor.Grounded && f.Body.Motor.SupportCollider == platform.GetComponent<Collider2D>(),
+                    "Airborne head contact ignored a platform that was not supporting the body");
             }
         }
 

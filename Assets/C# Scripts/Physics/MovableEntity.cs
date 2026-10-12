@@ -12,6 +12,7 @@ namespace TapTap
         {
             public Vector2 Position, Velocity;
             public float IgnoreOneWayRemaining;
+            public Collider2D IgnoredOneWayPlatform;
             public bool CollisionsEnabled, IsReturning, SpringEnabled;
         }
         private static readonly List<MovableEntity> activeEntities = new List<MovableEntity>();
@@ -66,6 +67,7 @@ namespace TapTap
         {
             Position = Motor.Position, Velocity = Velocity,
             IgnoreOneWayRemaining = Motor.IgnoreOneWayRemaining,
+            IgnoredOneWayPlatform = Motor.IgnoredOneWayPlatform,
             CollisionsEnabled = Motor.CollisionsEnabled,
             IsReturning = IsReturning, SpringEnabled = SpringEnabled
         };
@@ -75,7 +77,8 @@ namespace TapTap
             Velocity = state.Velocity;
             IsReturning = state.IsReturning;
             SpringEnabled = state.SpringEnabled;
-            Motor.RestoreState(state.Position, state.IgnoreOneWayRemaining, state.CollisionsEnabled);
+            Motor.RestoreState(state.Position, state.IgnoreOneWayRemaining, state.CollisionsEnabled,
+                state.IgnoredOneWayPlatform);
         }
 
         private void FixedUpdate()

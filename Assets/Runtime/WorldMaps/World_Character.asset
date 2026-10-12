@@ -28,7 +28,7 @@ MonoBehaviour:
     Label: 
   - Id: a0cadc7204034720ab7eff930c366903
     Level: {fileID: 11400000, guid: edbe0ee7af4bfbe4ab3b6e3f8316fc5f, type: 2}
-    Position: {x: 10, y: 93}
+    Position: {x: 11, y: 93}
     Label: 
   - Id: 76fbb97aa8144e238fbd9ae00d5f1283
     Level: {fileID: 11400000, guid: 0be07a979d71b3444a96dfd677d65f19, type: 2}
@@ -52,15 +52,11 @@ MonoBehaviour:
     Label: 
   - Id: 704d4109545f4f288c9048b4c8a679a7
     Level: {fileID: 11400000, guid: 526b091eba2255a4db147ce17714ef39, type: 2}
-    Position: {x: 11, y: 48}
+    Position: {x: 53, y: 48}
     Label: 
   - Id: 30a4ad492bd142e8aaf02cc9e42103fc
     Level: {fileID: 11400000, guid: 9f09cbfb9cd7e9145991362929ad80ee, type: 2}
     Position: {x: 22, y: 73}
-    Label: 
-  - Id: 68a9c1d14d45404c8ac7a979b0bd2899
-    Level: {fileID: 11400000, guid: 54fa2d8e6c1220e41a9d5773a504aae5, type: 2}
-    Position: {x: -20, y: -6}
     Label: 
   - Id: 412005a821984653ab3b0a215fe811ba
     Level: {fileID: 11400000, guid: aff15986e01a91c49a04fc6cf80cd52b, type: 2}
@@ -68,15 +64,43 @@ MonoBehaviour:
     Label: 
   - Id: 1249a37049554f77a3bd3cc1c1fbfe4e
     Level: {fileID: 11400000, guid: a580511b52e7d4b40bb7e275b531828a, type: 2}
-    Position: {x: 68, y: 34}
+    Position: {x: 5, y: 50}
     Label: 
   - Id: c56ef1126bb941f5aa90ad28f3b62dcd
     Level: {fileID: 11400000, guid: 617e31ae39485a2458d37c5cb3ff7be0, type: 2}
-    Position: {x: 11, y: 34}
+    Position: {x: 40, y: 38}
     Label: 
   - Id: 83f81c461527499dbef1314c6a6086a3
     Level: {fileID: 11400000, guid: fd6ad1de836826645b7efa6d83652d56, type: 2}
-    Position: {x: 11, y: 17}
+    Position: {x: 38, y: 26}
+    Label: 
+  - Id: 8e53708b328042ad8235f2eac0808179
+    Level: {fileID: 11400000, guid: f108e44757853c848aac15fc26974a5d, type: 2}
+    Position: {x: 25, y: 38}
+    Label: 
+  - Id: 58d3f3cac75f407a8c2b193aecebc6b9
+    Level: {fileID: 11400000, guid: e3587cc2c446b174388c6f544cb1601c, type: 2}
+    Position: {x: 10, y: 25}
+    Label: 
+  - Id: 0d82da05cf0149f3a34b263f051f9da6
+    Level: {fileID: 11400000, guid: 8e3367066469817419af5e9e644bd432, type: 2}
+    Position: {x: 69, y: 26}
+    Label: 
+  - Id: 16e4d0ba687846938cc39173dbe4c164
+    Level: {fileID: 11400000, guid: 9329f31dbd49b9f478820fc711bf61fc, type: 2}
+    Position: {x: 55, y: 8}
+    Label: 
+  - Id: debbcc0b7b4047a1baff7945de02234e
+    Level: {fileID: 11400000, guid: dfea38bd1fc09ab4c9f5813d7bba49aa, type: 2}
+    Position: {x: 25, y: 17}
+    Label: 
+  - Id: 1aa84240b1db41b4a30440c429a675a4
+    Level: {fileID: 11400000, guid: c84b7c44bf5732e469a6f65b882d9980, type: 2}
+    Position: {x: 11, y: 8}
+    Label: 
+  - Id: 58a00ac9703d478badf56eefbfbfe6d1
+    Level: {fileID: 11400000, guid: ebaade9bdb9957548a3744a459b91420, type: 2}
+    Position: {x: 26, y: 5}
     Label: 
   Passages:
   - Id: f419bfd551d4499e9ed48651fac724b8
@@ -102,6 +126,48 @@ MonoBehaviour:
     Note: 
   - Id: 2862404a4c4942b2b23a912f206a3df7
     Position: {x: 54, y: 81}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: eb75ee0a549b46f7ab40bf1624432a25
+    Position: {x: 67, y: 48}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 270
+    Bidirectional: 0
+    Note: 
+  - Id: 087129e3f5204fe8850650323ec95e39
+    Position: {x: 77, y: 48}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: 9904dfb424cd48109a9bf6f9013d6460
+    Position: {x: 49, y: 65}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: 4a61eff8739340b99b9e9b1915d7c08e
+    Position: {x: 76, y: 20}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: a7cdc937f9eb48d187b8de1a3cc0db28
+    Position: {x: 51, y: 23}
+    FromModuleId: 
+    ToModuleId: 
+    Angle: 90
+    Bidirectional: 0
+    Note: 
+  - Id: 8e696a56c08c42b58aaec7bc5dfa3c31
+    Position: {x: 51, y: 16}
     FromModuleId: 
     ToModuleId: 
     Angle: 90

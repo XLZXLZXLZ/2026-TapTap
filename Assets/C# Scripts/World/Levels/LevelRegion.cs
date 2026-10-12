@@ -9,6 +9,11 @@ namespace TapTap
         [Min(0.01f)] public float UnitSize = 1f;
         public LevelDefinition Source;
         public CheckpointFlag EntryCheckpoint;
+        [Tooltip("没有来源布局时使用的镜头设置；有来源时在布局资源中配置。")]
+        [SerializeField] private LevelCameraSettings cameraSettings = new LevelCameraSettings();
+
+        public LevelCameraSettings CameraSettings => Source != null && Source.CameraSettings != null
+            ? Source.CameraSettings : cameraSettings ?? (cameraSettings = new LevelCameraSettings());
 
         public Bounds WorldBounds
         {

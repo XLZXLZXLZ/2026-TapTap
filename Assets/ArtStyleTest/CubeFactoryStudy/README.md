@@ -34,7 +34,7 @@ Main Camera：自由观察相机。
 实体使用 Standard Lit，Base Color 为主，无纹理，Metallic 0，Smoothness 0。
 关闭材质高光与反射。光窗和光束复用已有简单加法透明 Shader。
 暖色方向光支持软阴影，斜向几何光束提供清楚的边缘线。
-场景使用少量远景线性雾，没有后处理，没有更换渲染管线。
+场景使用少量远景线性雾，主相机增加清晰像素化后处理，没有更换渲染管线。
 几何光束和发光桥光晕为风格化近似，不模拟真实体积散射和遮挡。
 
 ## 文件与验证
@@ -47,3 +47,22 @@ Validation.txt 与 PlayValidation.txt：检查记录。
 在当前完整原项目的临时副本中，用同版本 Unity 编译、重新打开、渲染并进入实际 Play 模式。
 程序化验证自由相机移动、升降、加速、转向、复位和鼠标清理；
 没有模拟物理键盘/鼠标输入。原项目未由编辑器打开。
+
+## 清晰像素化
+主相机已挂载 `Crisp Pixelation`，在 Game 视图和 Play 模式生效。
+在 Inspector 调整 `Pixel Size`：1 为原分辨率，默认 4，8 的像素感更强；范围 1–64。
+单位为相机输出画面的实际像素，改变 Game 分辨率会改变像素块相对于场景的大小。
+运行时也可通过 `CrispPixelation.PixelSize` 调整。禁用组件可查看原画。
+Scene 视图仍用于查看原始几何，不显示相机后处理。
+
+Shader 对最终相机图像按整数方格取样，固定选取源纹理中的一个像素，使用 Point 过滤和 LOD 0。
+每格颜色完全一致，最后不足一格的边缘直接裁切，不拉伸整张画面。
+组件启用期间关闭该相机的 MSAA，禁用时恢复原值；不会修改全局 Quality 设置。
+已有光照、雾和阴影保留。这是整个画面的像素化，不是轮廓描边，也不包含颜色数量压缩。
+建议直接以 Game 视图原始大小观察，外部图片查看器缩放可能再次平滑像素。
+
+文件：`Shaders/CrispPixelation.shader`、`Scripts/CrispPixelation.cs`（相对于 ArtStyleTest）。
+验证菜单：`Tools > Art Style Test > Validate Cube Factory Pixelation`（打开目标场景并渲染）。
+批处理入口：`ArtStyleTestTools.CrispPixelationValidation.RunBatch`，同时验证编辑状态和实际 Play 模式。
+验证检查 1 倍图像保持、4/8 倍像素格颜色完全一致、641×359 下 7 倍的边缘裁切及参数范围。
+测试报告：`PixelationValidation.txt`；预览：`Preview/Pixelation_Edit_4.png`、`Pixelation_Edit_8.png` 等。

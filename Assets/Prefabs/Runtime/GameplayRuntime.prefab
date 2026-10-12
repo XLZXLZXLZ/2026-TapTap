@@ -5086,9 +5086,15 @@ MonoBehaviour:
   player: {fileID: 0}
   viewCamera: {fileID: 4269678303838219423}
   shakeRoot: {fileID: 8274286137399667327}
-  followOffset: {x: 3, y: 2}
+  defaultSettings:
+    ViewSize: 9
+    FollowHorizontal: 1
+    FollowVertical: 1
+    Offset: {x: 0, y: 1.5}
+    DeadZone: {x: 0.1, y: 0.15}
   minimumY: 3.5
   followSmoothTime: 0.2
+  verticalSmoothTime: 0.3
   fixedRegion: {fileID: 0}
   fixedShakeMultiplier: 1
   fixedShakeViewportLimit: 0.004

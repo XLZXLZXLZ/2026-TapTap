@@ -33,7 +33,11 @@ namespace TapTap
             region = level;
             if (settings != null) playerConfig = settings;
             fallbackSpawnLocal = region != null ? (Vector2)region.transform.InverseTransformPoint(spawn) : spawn;
-            if (cameraRig != null) cameraRig.BindPlayer(player);
+            if (cameraRig != null)
+            {
+                cameraRig.BindPlayer(player);
+                cameraRig.SetRegion(region);
+            }
             if (hud != null) hud.Configure(player, playerConfig);
         }
 
@@ -53,7 +57,7 @@ namespace TapTap
             if (cameraRig != null)
             {
                 cameraRig.BindPlayer(player);
-                cameraRig.SnapToPlayer();
+                cameraRig.SetRegion(region);
             }
             if (hud != null) hud.Configure(player, playerConfig);
         }

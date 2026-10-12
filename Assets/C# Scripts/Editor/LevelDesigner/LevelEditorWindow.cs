@@ -827,13 +827,13 @@ namespace TapTap.Editor
         {
             LevelBrush brush = placement.Brush;
             if (brush == null) return;
-            Rect preview = brush.PreviewRect;
+            var handler = LevelBrushHandlers.Get(brush.HandlerId);
+            Rect preview = handler != null ? handler.GetPreviewRect(placement) : brush.PreviewRect;
             Rect shape = new Rect(cell.x + preview.x * cell.width,
                 cell.y + (1f - preview.yMax) * cell.height,
                 preview.width * cell.width, preview.height * cell.height);
             Color color = brush.Color;
             if (ghost) color.a *= 0.45f;
-            var handler = LevelBrushHandlers.Get(brush.HandlerId);
             if (brush.HandlerId == "annotation")
             {
                 if (annotationCircle == null)
@@ -899,6 +899,11 @@ namespace TapTap.Editor
             {
                 int turns = (placement.Settings as SpikePlacementSettings)?.QuarterTurns ?? 0;
                 GUI.Label(shape, new[] { "↑", "→", "↓", "←" }[turns & 3], CenterStyle());
+            }
+            else if (brush.HandlerId == "mechanism-switch" && cell.width >= 14f)
+            {
+                bool down = (placement.Settings as MechanismSwitchPlacementSettings)?.FacingDown == true;
+                GUI.Label(shape, down ? "↓" : "↑", CenterStyle());
             }
         }
 
@@ -1200,7 +1205,8 @@ namespace TapTap.Editor
             for (int i = contents.Count - 1; i >= 0; i--)
             {
                 LevelPlacement item = contents[i];
-                    if (Visible(item) && item.Brush != null && item.Brush.PreviewRect.Contains(pointInCell))
+                if (Visible(item) && item.Brush != null &&
+                    (LevelBrushHandlers.Get(item.Brush.HandlerId)?.GetPreviewRect(item) ?? item.Brush.PreviewRect).Contains(pointInCell))
                 {
                     picked = item;
                     break;

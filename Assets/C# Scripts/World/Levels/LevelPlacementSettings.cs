@@ -41,6 +41,12 @@ namespace TapTap
     }
 
     [Serializable]
+    public sealed class MechanismSwitchPlacementSettings : LevelPlacementSettings
+    {
+        public bool FacingDown;
+    }
+
+    [Serializable]
     public sealed class CheckpointPlacementSettings : LevelPlacementSettings
     {
         public Vector2 SpawnOffset = new Vector2(0f, 0.45f);

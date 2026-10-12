@@ -153,8 +153,8 @@ namespace TapTap.Editor
                 LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
                 runtime.Configure(player, region, config, spawn);
                 GenerateAnnotations(region, player);
-                runtime.CameraRig?.CenterOnRegion(region);
                 SceneCameraDefaults.Apply(runtimeObject);
+                runtime.CameraRig?.SetRegion(region);
                 LevelPrefabBuilder.RecordInstanceOverrides(regionObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(playerObject);
                 LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
@@ -235,8 +235,8 @@ namespace TapTap.Editor
                         if (runtime == null) runtime = root.GetComponentInChildren<LevelSceneRuntime>(true);
                     }
                     if (region == null || runtime == null || runtime.CameraRig == null) continue;
-                    runtime.CameraRig.CenterOnRegion(region);
                     SceneCameraDefaults.Apply(runtime.gameObject);
+                    runtime.CameraRig.SetRegion(region);
                     LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
                     if (!EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存测试场景：" + path);
                     updated++;
@@ -247,7 +247,7 @@ namespace TapTap.Editor
                     if (!loaded && scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true);
                 }
             }
-            Debug.Log("Fixed test scene cameras updated: " + updated);
+            Debug.Log("Following test scene cameras updated: " + updated);
         }
 
         private static Vector2 FindSpawn(LevelRegion region, PlayerController player, PlayerConfig config)

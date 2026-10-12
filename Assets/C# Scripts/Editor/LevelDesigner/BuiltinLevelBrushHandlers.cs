@@ -109,6 +109,62 @@ namespace TapTap.Editor
         public override string Id => "default";
     }
 
+    public sealed class MechanismSwitchLevelBrushHandler : LevelBrushHandler, ILevelBrushRotation
+    {
+        public override string Id => "mechanism-switch";
+        public int RotationStepDegrees => 180;
+        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new MechanismSwitchPlacementSettings();
+        // Existing buttons have empty settings and keep their original upward orientation.
+        public bool CanRotate(LevelPlacement placement) => placement.Settings is MechanismSwitchPlacementSettings ||
+            placement.Settings is EmptyPlacementSettings;
+
+        public void Rotate(LevelPlacement placement)
+        {
+            if (!CanRotate(placement)) return;
+            placement.Settings = new MechanismSwitchPlacementSettings
+            {
+                FacingDown = (placement.Settings as MechanismSwitchPlacementSettings)?.FacingDown != true
+            };
+        }
+
+        public override void MirrorSettings(LevelPlacement placement, bool horizontal)
+        {
+            if (!horizontal) Rotate(placement);
+        }
+
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            if (!CanRotate(placement))
+            { EditorGUILayout.HelpBox("按钮配置不兼容，请重新绘制。", MessageType.Error); return; }
+            bool down = (placement.Settings as MechanismSwitchPlacementSettings)?.FacingDown == true;
+            EditorGUI.BeginChangeCheck();
+            int direction = EditorGUILayout.Popup("朝向", down ? 1 : 0, new[] { "上 ↑", "下 ↓" });
+            if (EditorGUI.EndChangeCheck())
+                placement.Settings = new MechanismSwitchPlacementSettings { FacingDown = direction == 1 };
+        }
+
+        public override Rect GetPreviewRect(LevelPlacement placement)
+        {
+            Rect rect = base.GetPreviewRect(placement);
+            if ((placement.Settings as MechanismSwitchPlacementSettings)?.FacingDown == true)
+                rect.position = new Vector2(1f - rect.xMax, 1f - rect.yMax);
+            return rect;
+        }
+
+        public override string ValidatePlacement(LevelPlacement placement) => !CanRotate(placement)
+            ? "按钮缺少朝向配置。"
+            : placement.Brush.Prefab.GetComponent<MechanismSwitch>() == null ? "按钮 Prefab 缺少 MechanismSwitch。" : null;
+
+        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context)
+        {
+            if ((placement.Settings as MechanismSwitchPlacementSettings)?.FacingDown != true) return;
+            // Turn around the cell centre, so the ceiling button stays inside the same cell.
+            Vector2 offset = (Vector2.one - placement.Brush.Anchor * 2f) * context.UnitSize;
+            instance.transform.localPosition += (Vector3)offset;
+            instance.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
+        }
+    }
+
     public sealed class SpikesLevelBrushHandler : LevelBrushHandler, ILevelBrushRotation
     {
         public override string Id => "spikes";
