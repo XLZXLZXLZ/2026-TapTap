@@ -1,11 +1,12 @@
-# URP 试验分支
+# URP 渲染配置
 
 迁移前基准：`main` 的 `a88199f`。试验分支：`codex/urp-trial`。
+URP 试验提交 `0c69c0b` 已合入 `C:\GitHub\2026-TapTap` 的本地 `main`；最近的手感优化和关卡编辑改动一并保留。
 编辑器保持 Unity 2021.3.24f1c1，URP / Core RP / Shader Graph 使用 12.1.11。
 
 ## 打开与试用
 
-在 Unity Hub 中添加本工作目录，用上述版本打开。渲染管线配置和转换后的材质已经保存，正常打开不需要运行迁移命令。
+直接打开 `C:\GitHub\2026-TapTap`，用上述版本等待 Unity 完成包、脚本和 Shader 导入。渲染管线配置和转换后的材质已经保存，正常打开不需要运行迁移命令。
 
 - 游戏入口：`Assets/Scenes/WorldMaps/World_Character_Select.unity`。
 - 游戏表现：`Assets/Scenes/WorldMaps/World_Character_Play.unity`、`Assets/Scenes/Demo/TapTapDemo.unity`。
@@ -43,10 +44,10 @@ Windows 构建：`UrpTrialValidation.BuildBatch`。
 最新 URP 截图在 `Preview/`，包括两个工厂场景、运行时玩法、像素化和倒带残影。
 
 本机的 Windows 构建模块只安装在 Unity 2021.3.32f1c1 中，因此附带的本地开发构建使用该编辑器及其自带 URP 12.1.13。构建成功后进行了启动检查。源码目标仍为 2021.3.24f1c1 / URP 12.1.11；该目标的同版本 Windows 构建尚未验证。
-本地构建位于 `Builds/URPTrial/TapTap-URP.exe`，没有加入 Git。
+该早期构建仍在原试验工作目录的 `Builds/URPTrial/TapTap-URP.exe` 中，没有加入 Git，也不包含后来新增的手感优化。当前版本请在主项目目录进入 Play 试用。
 
 ## 当前边界
 
 目标是保留现有玩法和效果，提供可比较的 URP 版本；灯光、阴影与透明混合需要人工比较，画面不承诺与 Built-in 逐像素一致。
 尚未对 Android / iOS 真机进行帧率、显存及 Shader 变体验证。
-回退可重新打开主项目的 main，试验在独立工作目录中进行。
+迁移前参考提交为 `a88199f`。合入前未提交文件的本地备份位置记在 `Logs/URPIntegrationBackup.txt`；回退或切换提交前需保留当前手感和关卡编辑改动。

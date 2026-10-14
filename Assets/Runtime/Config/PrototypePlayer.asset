@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UnitSize: 1
   Gravity: 24
+  ApexGraceDuration: 0.1
+  ApexGravityScale: 0.65
   MoveSpeed: 4
   JoinedOffset: 0.75
   MaxExtension: 3.4
   ExtensionDuration: 0.45
   RetractionDuration: 0.25
-  AlignmentTolerance: 0.35
+  AlignmentTolerance: 0.4
   AlignmentDuration: 0.18
   PullStartSpeed: 1
   PullMaxSpeed: 15

@@ -87,6 +87,7 @@ namespace TapTap
 
         private static void Suspend(MovableEntity entity)
         {
+            entity.ClearApexGrace();
             entity.IsReturning = true;
             entity.Velocity = Vector2.zero;
             entity.Motor.SetCollisionsEnabled(false);

@@ -16,6 +16,14 @@ namespace TapTap
         [Tooltip("左右输入控制下半身的水平速度。伸头上升和收头期间暂停左右操控，动作完成或受阻停止后恢复；头身处于磁力连接状态时，头部跟随下半身移动。")]
         [Min(0f)] public float MoveSpeed = 5f;
 
+        [Header("最高点与触顶后的下降缓冲")]
+        [InspectorName("下降缓冲时长（秒）")]
+        [Tooltip("玩家或分离头部到达上升最高点、或向上撞顶后，仅在这段短时间内减轻下降重力。0 可关闭；使用游戏时间，支持回溯。")]
+        [Range(0f, 0.2f)] public float ApexGraceDuration = 0.10f;
+        [InspectorName("缓冲期间重力倍率")]
+        [Tooltip("只影响短暂缓冲期的下降，不改变上升重力或起跳速度；结束后恢复正常重力。")]
+        [Range(0.1f, 1f)] public float ApexGravityScale = 0.65f;
+
         [Header("伸头与收头")]
         [InspectorName("合体头身间距（格）")]
         [Tooltip("合体时头部与下半身位置基准的纵向距离；不是两者碰撞体边缘之间的空隙。")]
@@ -33,7 +41,7 @@ namespace TapTap
         [Header("分离后的吸附与合体")]
         [InspectorName("吸附对齐容差（格）")]
         [Tooltip("允许吸附的最大头身水平位置差。下半身还必须位于头部下方，并超过合体间距。")]
-        [Min(0.01f)] public float AlignmentTolerance = 0.35f;
+        [Min(0.01f)] public float AlignmentTolerance = 0.40f;
         [InspectorName("横向对齐时长（秒）")]
         [Tooltip("吸附开始后，下半身缓出对齐到头部正下方的时间；不控制纵向吸附速度。")]
         [Min(0.02f)] public float AlignmentDuration = 0.18f;
@@ -56,7 +64,7 @@ namespace TapTap
         [Tooltip("远距离吸附成功合体后的总跃起高度，替代普通高度，不是叠加值。默认普通为一格、远距离为两格，即额外增加一格。")]
         [Min(0f)] public float DistantLaunchHeight = 2f;
         [InspectorName("吸附尝试冷却（秒）")]
-        [Tooltip("每次松开空格尝试吸附后，到允许再次尝试的间隔。冷却期间最多缓存一次新的空格操作。")]
+        [Tooltip("每次尝试吸附后，到允许再次尝试的间隔。按下已对齐则立即尝试，未对齐则松开时尝试；冷却期间最多缓存一次新的空格操作。")]
         [Min(0f)] public float RecallCooldown = 0.22f;
 
         [Header("散落头部的拾取与弹簧交互")]

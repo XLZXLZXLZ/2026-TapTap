@@ -42,3 +42,13 @@ Evidence: Logs/URPTrial/ (full logs/readbacks); selected captures in Rendering/P
 Older ArtStyleTest validation files and previews remain as historical Built-in evidence.
 Remaining manual checks: lighting/transparent appearance preference and mobile device
 performance, memory, shader variants. Exact visual identity with Built-in is not claimed.
+
+Integration into C:\GitHub\2026-TapTap — 2026-10-14:
+Local main fast-forwarded to the URP trial commit 0c69c0b.
+All 20 pre-existing modified/new files matched their backup hashes immediately after integration,
+including the latest game-feel code/configuration and the user's level edits.
+PASS: 17 combined Play/rewind/game-feel regression checks on Unity 2021.3.24f1c1 with URP 12.1.11.
+PASS: Five scene camera renders with zero pink shader-error pixels; 71 supported material assets;
+all six quality pipeline assignments; region sprite texture/tint/opacity restoration.
+Integration checks ran in an isolated copy; the original editing scenes were not replaced.
+Evidence: Logs/URPIntegratedRewindResults.txt and Logs/URPIntegratedRenderingResults.txt.

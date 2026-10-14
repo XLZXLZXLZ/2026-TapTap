@@ -10,8 +10,12 @@ namespace TapTap
         private static GameDebugTime current;
         private int speedIndex;
         private PlayerController player;
-        public float CurrentSpeed => speeds[speedIndex];
+        private bool bulletTimeActive;
+        private bool restoreAfterSceneChange;
+        public bool BulletTimeActive => bulletTimeActive;
+        public float CurrentSpeed => bulletTimeActive ? 0.5f : speeds[speedIndex];
         public static float Speed => current != null ? current.CurrentSpeed : 1f;
+        public static bool BulletTimeOn => current != null && current.bulletTimeActive;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() { current = null; Time.timeScale = 1f; }
@@ -31,21 +35,47 @@ namespace TapTap
             player = FindObjectOfType<PlayerController>();
         }
 
-        private void SceneLoaded(Scene scene, LoadSceneMode mode) => player = FindObjectOfType<PlayerController>();
+        private void SceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            player = FindObjectOfType<PlayerController>();
+            restoreAfterSceneChange |= bulletTimeActive;
+            bulletTimeActive = false;
+        }
 
         private bool CanControl => player != null && !WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         private void Update()
         {
-            if (Application.isFocused && CanControl && Input.GetKeyDown(KeyCode.I)) CycleSpeed();
+            if (!Application.isFocused || !CanControl) return;
+            if (Input.GetKeyDown(KeyCode.I)) CycleSpeed();
+            if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) ToggleBulletTime();
         }
 
         public void CycleSpeed() => speedIndex = (speedIndex + 1) % speeds.Length;
 
-        private void LateUpdate()
+        public void ToggleBulletTime()
         {
             if (!CanControl || Time.timeScale <= 0f) return;
+            bulletTimeActive = !bulletTimeActive;
+            if (bulletTimeActive) ScreenFadeOverlay.Instance.enabled = true;
+            ApplySpeed();
+        }
+
+        private void LateUpdate()
+        {
+            if (restoreAfterSceneChange && Time.timeScale > 0f && !WorldMapSceneRouter.IsLoading
+                && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting))
+            {
+                restoreAfterSceneChange = false;
+                ApplySpeed();
+            }
+            if (!CanControl || Time.timeScale <= 0f) return;
+            ApplySpeed();
+        }
+
+        private void ApplySpeed()
+        {
             if (EffectManager.Existing != null) EffectManager.Existing.SetGameplayTimeScale(CurrentSpeed);
             else Time.timeScale = CurrentSpeed;
         }

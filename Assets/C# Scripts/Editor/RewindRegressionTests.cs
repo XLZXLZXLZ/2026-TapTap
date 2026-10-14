@@ -11,7 +11,7 @@ namespace TapTap.Editor
 {
     // Run in an isolated project with -batchmode -executeMethod TapTap.Editor.RewindRegressionTests.RunBatch.
     // Uses the actual play-mode components and Physics2D queries, without a test-framework dependency.
-    public static class RewindRegressionTests
+    public static partial class RewindRegressionTests
     {
         private const string PendingKey = "TapTap.RewindRegression.Pending";
         private static readonly List<string> results = new List<string>();
@@ -58,6 +58,10 @@ namespace TapTap.Editor
                 Test("Grouped death, independent head death, and checkpoint undo", OtherReturnsAndCheckpoint);
                 Test("Rewind acceleration is frame-rate independent, capped, adjustable, and resets", Acceleration);
                 Test("Rewind visuals animate during undo, settle at oldest, and fade after release", RewindVisualLifecycle);
+                Test("Space press recalls immediately when aligned and preserves release/cooldown fallback", ImmediateRecallFeel);
+                Test("Apex gravity only softens early descent, restores after rewind and ends on time", ApexGravityFeel);
+                Test("Ceiling contact grants a short descent grace to the joined player and detached head", CeilingGravityFeel);
+                Test("Bullet time toggles, fades blue, composes with effects and respects pause/scene changes", BulletTimeFeel);
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(LevelTestSceneBuilder.RuntimePrefabPath) != null)
                     Test("Runtime prefab exposes rewind settings and binds the camera and shader", RuntimePrefabWiring);
                 if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)

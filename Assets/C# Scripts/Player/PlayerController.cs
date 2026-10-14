@@ -153,6 +153,8 @@ namespace TapTap
 
         internal void SimulatePreparedStep(float dt)
         {
+            body.ConfigureApexGravity(config.ApexGraceDuration, config.ApexGravityScale);
+            head.ConfigureApexGravity(config.ApexGraceDuration, config.ApexGravityScale);
             clock += dt;
             effects.Clear();
             contacts.Clear();
@@ -274,6 +276,7 @@ namespace TapTap
                 {
                     if (!recallBuffered) { recallBuffered = true; bufferedRelease = false; }
                 }
+                else if (CanRecall) AttemptRecall();
                 else guideActive = true;
             }
             else if (recallBuffered) bufferedRelease = true;
@@ -287,8 +290,12 @@ namespace TapTap
             // Lock player steering until extension or retraction finishes, including an early collision stop.
             velocity.x = phase == PlayerPhase.Extending || phase == PlayerPhase.Retracting
                 ? 0f : input.Horizontal * config.ToWorld(config.MoveSpeed);
-            if (body.Motor.Grounded && velocity.y <= 0f) velocity.y = 0f;
-            velocity.y -= config.WorldGravity * dt;
+            if (body.Motor.Grounded && velocity.y <= 0f)
+            {
+                velocity.y = 0f;
+                body.ClearApexGrace();
+            }
+            velocity.y = body.AdvanceGravity(velocity.y, config.WorldGravity, dt);
             impactSpeed = Mathf.Max(impactSpeed, -velocity.y);
             float conveyor = body.Motor.Grounded ? body.Motor.ConveyorSpeed
                 : HasJoinedShape ? 0f : head.Motor.ConveyorSpeed;
@@ -312,12 +319,17 @@ namespace TapTap
                     pairSupport.NotifySpringBounce(body);
                     effects.Add(PlayerEffect.Bounce);
                 }
-                else velocity.y = 0f;
+                else
+                {
+                    velocity.y = 0f;
+                    if (delta.y > 0f && pairContactNormal.y < -0.5f) body.BeginApexGrace();
+                }
             }
             bool groundContact = delta.y < 0f && pairContactNormal.y > 0.5f;
             QueueLanding(body, groundContact, bodyGroundContact, impactSpeed, pairContactNormal);
             bodyGroundContact = groundContact && velocity.y <= 0f;
             body.Velocity = head.Velocity = velocity;
+            head.CopyApexGrace(body);
         }
 
         private float MovePairAxis(Vector2 delta)
@@ -326,7 +338,7 @@ namespace TapTap
             SweepResult a = body.Motor.Sweep(delta, head);
             SweepResult b = HasJoinedShape ? SweepResult.Clear : head.Motor.Sweep(delta, body);
             float fraction = Mathf.Min(a.Fraction, b.Fraction);
-            if (delta.y < 0f && fraction < 1f)
+            if (delta.y != 0f && fraction < 1f)
             {
                 SweepResult contact = a.Fraction <= b.Fraction ? a : b;
                 pairSupport = contact.Entity;
@@ -384,6 +396,8 @@ namespace TapTap
 
         private void BeginPull(bool distant)
         {
+            body.ClearApexGrace();
+            head.ClearApexGrace();
             actionTime = 0f;
             pullStartX = body.Motor.Position.x;
             pullBodyTarget = head.Motor.Position - Vector2.up * config.ToWorld(config.JoinedOffset);
@@ -421,7 +435,7 @@ namespace TapTap
                 guideActive = true;
                 bool execute = bufferedRelease || !input.SpaceHeld;
                 recallBuffered = bufferedRelease = false;
-                if (execute) AttemptRecall();
+                if (execute || CanRecall) AttemptRecall();
             }
             if (phase != PlayerPhase.Detached) { TickPull(dt); return; }
             if (!body.IsReturning)
@@ -584,6 +598,7 @@ namespace TapTap
             {
                 case Outcome.HeadLanded:
                     CancelAction();
+                    head.ClearApexGrace();
                     head.Velocity = Vector2.zero;
                     head.SpringEnabled = true;
                     SetPhase(PlayerPhase.Detached);
@@ -621,6 +636,8 @@ namespace TapTap
                 head.Motor.IgnoreOneWayPlatform(platform);
             }
             else if (height > 0f) velocity.y = config.LaunchSpeed(height);
+            body.ClearApexGrace();
+            head.ClearApexGrace();
             body.Velocity = head.Velocity = velocity;
             head.SpringEnabled = false;
             CancelAction();
@@ -666,6 +683,8 @@ namespace TapTap
         {
             Initialize();
             if (!initialized) return;
+            body.ClearApexGrace();
+            head.ClearApexGrace();
             respawn.CancelAll();
             CancelAction();
             body.Motor.Teleport(bodyPosition);

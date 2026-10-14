@@ -28,10 +28,11 @@ namespace TapTap
             GUI.color = Color.white;
             GUI.Label(new Rect(30f, 57f, 350f, 23f), "A / D or LEFT / RIGHT     SPACE: magnetic action", textStyle);
             string instruction = player.Phase == PlayerPhase.Detached
-                ? "Hold to aim. Blue guide + release: recall."
+                ? "SPACE: aligned = recall now; otherwise aim + release."
                 : "Hold to extend. Early release waits for Holding.";
             GUI.Label(new Rect(30f, 81f, 350f, 23f), instruction, textStyle);
-            GUI.Label(new Rect(30f, 103f, 350f, 23f), "Debug · I: " + GameDebugTime.Speed + "x   (1 / 2 / 4 / 8)", textStyle);
+            GUI.Label(new Rect(30f, 103f, 350f, 23f), "Ctrl: bullet time " + (GameDebugTime.BulletTimeOn ? "ON · 0.5x" : "OFF")
+                + "   I: " + GameDebugTime.Speed + "x", textStyle);
             string rewind = RewindManager.Rewinding ? "Z: rewinding — release to continue" : "Hold Z: undo    R: restart";
             GUI.Label(new Rect(30f, 125f, 350f, 23f), rewind, textStyle);
             GUI.color = Color.white;

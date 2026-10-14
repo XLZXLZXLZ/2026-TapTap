@@ -12,11 +12,15 @@ namespace TapTap
         {
             public Vector2 Position, Velocity;
             public float IgnoreOneWayRemaining;
+            public float ApexGraceRemaining;
             public Collider2D IgnoredOneWayPlatform;
             public bool CollisionsEnabled, IsReturning, SpringEnabled;
         }
         private static readonly List<MovableEntity> activeEntities = new List<MovableEntity>();
         private KinematicMotor2D motor;
+        private float apexGraceRemaining;
+        private float apexGraceDuration;
+        private float apexGravityScale = 1f;
 
         public EntityPart Part = EntityPart.Other;
         public Transform Visual;
@@ -69,7 +73,8 @@ namespace TapTap
             IgnoreOneWayRemaining = Motor.IgnoreOneWayRemaining,
             IgnoredOneWayPlatform = Motor.IgnoredOneWayPlatform,
             CollisionsEnabled = Motor.CollisionsEnabled,
-            IsReturning = IsReturning, SpringEnabled = SpringEnabled
+            IsReturning = IsReturning, SpringEnabled = SpringEnabled,
+            ApexGraceRemaining = apexGraceRemaining
         };
 
         public void RestoreState(in Snapshot state)
@@ -77,6 +82,7 @@ namespace TapTap
             Velocity = state.Velocity;
             IsReturning = state.IsReturning;
             SpringEnabled = state.SpringEnabled;
+            apexGraceRemaining = state.ApexGraceRemaining;
             Motor.RestoreState(state.Position, state.IgnoreOneWayRemaining, state.CollisionsEnabled,
                 state.IgnoredOneWayPlatform);
         }
@@ -97,7 +103,8 @@ namespace TapTap
 
             Motor.ProbeGround(ignoredEntity);
             float conveyor = Motor.ConveyorSpeed;
-            Velocity = new Vector2(horizontalSpeed, Velocity.y - Gravity * dt);
+            if (Motor.Grounded && Velocity.y <= 0f) ClearApexGrace();
+            Velocity = new Vector2(horizontalSpeed, AdvanceGravity(Velocity.y, Gravity, dt));
 
             MoveResult horizontal = Motor.Move(Vector2.right * ((Velocity.x + conveyor) * dt), ignoredEntity);
             if (horizontal.Blocked)
@@ -122,8 +129,38 @@ namespace TapTap
             }
             else
             {
+                bool ceiling = Velocity.y > 0f && vertical.Normal.y < -0.5f;
                 Velocity = new Vector2(Velocity.x, 0f);
+                if (ceiling) BeginApexGrace();
             }
+        }
+
+        internal void ConfigureApexGravity(float duration, float scale)
+        {
+            apexGraceDuration = Part == EntityPart.Body || Part == EntityPart.Head ? Mathf.Clamp(duration, 0f, 0.2f) : 0f;
+            apexGravityScale = Mathf.Clamp(scale, 0.1f, 1f);
+        }
+
+        internal void ClearApexGrace() => apexGraceRemaining = 0f;
+        internal void BeginApexGrace() => apexGraceRemaining = apexGraceDuration;
+        internal void CopyApexGrace(MovableEntity other) => apexGraceRemaining = other.apexGraceRemaining;
+
+        internal float AdvanceGravity(float speed, float gravity, float dt)
+        {
+            if (dt <= 0f) return speed;
+            if (apexGraceDuration <= 0f) { ClearApexGrace(); return speed - gravity * dt; }
+            if (speed > 0f)
+            {
+                ClearApexGrace();
+                float timeToApex = speed / gravity;
+                if (dt < timeToApex) return speed - gravity * dt;
+                BeginApexGrace();
+                dt -= timeToApex;
+                speed = 0f;
+            }
+            float reducedTime = Mathf.Min(dt, apexGraceRemaining);
+            apexGraceRemaining = Mathf.Max(0f, apexGraceRemaining - dt);
+            return speed - gravity * (reducedTime * apexGravityScale + dt - reducedTime);
         }
     }
 }
