@@ -5,14 +5,14 @@ using UnityEngine.SceneManagement;
 
 namespace TapTap.Editor
 {
-    // Read-only Scene-view diagnostics. No scene loads, prefab generation or asset writes.
+    // Check once during explicit map synchronization; Scene view only draws the cached result.
     [InitializeOnLoad]
     public static class WorldMapSceneConflicts
     {
         static WorldMapSceneConflicts()
         {
             SceneView.duringSceneGui += Draw;
-            EditorApplication.update += Poll;
+            UnityEditor.SceneManagement.EditorSceneManager.sceneClosed += ForgetScene;
         }
 
         private sealed class RegionCells
@@ -29,29 +29,32 @@ namespace TapTap.Editor
             public string Names;
         }
         private static readonly List<Conflict> conflicts = new List<Conflict>();
-        private static double nextCheck;
-
-        private static void Poll()
+        public static int Check(Scene scene)
         {
-            if (Application.isBatchMode || Application.isPlaying || EditorApplication.isCompiling || EditorApplication.isUpdating
-                || EditorApplication.timeSinceStartup < nextCheck || Resources.FindObjectsOfTypeAll<SceneView>().Length == 0) return;
-            nextCheck = EditorApplication.timeSinceStartup + 0.25d;
-            int previous = Fingerprint(); Refresh();
-            if (previous != Fingerprint()) SceneView.RepaintAll();
+            if (Application.isPlaying || !scene.IsValid() || !scene.isLoaded) return 0;
+            ForgetScene(scene);
+            int previous = conflicts.Count;
+            CollectScene(scene);
+            int count = conflicts.Count - previous;
+            if (count > 0) Debug.LogWarning("场景重叠检查：" + scene.name + " 有 " + count
+                + " 处图块不一致。" + conflicts[previous].Names + " · 格子 " + conflicts[previous].Cell);
+            SceneView.RepaintAll();
+            return count;
         }
 
-        private static int Fingerprint()
-        {
-            int hash = conflicts.Count;
-            foreach (Conflict conflict in conflicts) hash = unchecked(hash * 31 + conflict.Cell.GetHashCode() + conflict.Names.GetHashCode());
-            return hash;
-        }
+        private static void ForgetScene(Scene scene) => conflicts.RemoveAll(conflict => conflict.World == null
+            || conflict.World.gameObject.scene == scene);
 
         private static void Refresh()
         {
             conflicts.Clear();
             for (int i = 0; i < SceneManager.sceneCount; i++)
-                foreach (GameObject root in SceneManager.GetSceneAt(i).GetRootGameObjects())
+                CollectScene(SceneManager.GetSceneAt(i));
+        }
+
+        private static void CollectScene(Scene scene)
+        {
+                foreach (GameObject root in scene.GetRootGameObjects())
                 {
                     WorldMapRoot world = root.GetComponent<WorldMapRoot>();
                     Transform generated = world != null ? world.transform.Find("Generated") : null;
@@ -118,8 +121,6 @@ namespace TapTap.Editor
         private static void Draw(SceneView view)
         {
             if (Application.isPlaying) return;
-            if (EditorApplication.timeSinceStartup >= nextCheck)
-            { nextCheck = EditorApplication.timeSinceStartup + 0.25d; Refresh(); }
             Color previous = Handles.color;
             Handles.color = new Color(1f, 0.42f, 0.08f, 0.9f);
             foreach (Conflict conflict in conflicts)
@@ -132,7 +133,7 @@ namespace TapTap.Editor
             if (conflicts.Count == 0) return;
             Handles.BeginGUI();
             GUILayout.BeginArea(new Rect(12, 12, 420, 64), EditorStyles.helpBox);
-            GUILayout.Label("大世界重叠图块不一致：" + conflicts.Count + " 处", EditorStyles.boldLabel);
+            GUILayout.Label("上次同步检查：重叠图块不一致 " + conflicts.Count + " 处", EditorStyles.boldLabel);
             GUILayout.Label(conflicts[0].Names + " · 格子 " + conflicts[0].Cell, EditorStyles.wordWrappedMiniLabel);
             GUILayout.EndArea();
             Handles.EndGUI();

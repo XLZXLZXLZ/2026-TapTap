@@ -108,6 +108,7 @@ namespace TapTap.Editor
                     opened = true;
                 }
                 Populate(scene, map, resources, levels, changedLevels);
+                WorldMapSceneConflicts.Check(scene);
                 EditorSceneManager.MarkSceneDirty(scene);
                 // Keep unsaved manual work in an already-open scene under normal Unity save control.
                 if (opened && !EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存游玩场景：" + path);
