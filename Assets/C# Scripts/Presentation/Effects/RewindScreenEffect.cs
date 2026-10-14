@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace TapTap
 {
@@ -16,36 +17,43 @@ namespace TapTap
         private static readonly int OlderHistoryTexId = Shader.PropertyToID("_OlderHistoryTex");
         private static readonly int HistoryStateId = Shader.PropertyToID("_HistoryState");
 
-        private void OnRenderImage(RenderTexture source, RenderTexture destination)
+        public bool HasActiveEffect
+        {
+            get
+            {
+                EffectManager effects = EffectManager.Existing;
+                if (effects != null && effects.isActiveAndEnabled && effects.RewindVisualStrength > 0f
+                    && effects.RewindShader != null && effects.RewindShader.isSupported) return true;
+                ReleaseHistory();
+                return false;
+            }
+        }
+
+        // Called by TapTapScreenEffectsFeature with a copy of the unprocessed camera color.
+        public void Render(CommandBuffer commands, RenderTargetIdentifier source,
+            RenderTargetIdentifier destination, RenderTextureDescriptor descriptor)
         {
             EffectManager effects = EffectManager.Existing;
-            if (effects == null || !effects.isActiveAndEnabled || effects.RewindVisualStrength <= 0f)
+            if (!HasActiveEffect)
             {
-                ReleaseHistory();
-                Graphics.Blit(source, destination);
+                commands.Blit(source, destination);
                 return;
             }
             Shader shader = effects.RewindShader;
-            if (shader == null || !shader.isSupported)
-            {
-                ReleaseHistory();
-                Graphics.Blit(source, destination);
-                return;
-            }
             if (material == null || material.shader != shader)
             {
                 ReleaseMaterial();
                 material = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
             }
             bool captureHistory = effects.RewindVisualActive && effects.RewindGhostStrength > 0f;
-            if (captureHistory) PrepareHistory(source, effects);
+            if (captureHistory) PrepareHistory(descriptor, effects);
             else ReleaseHistory();
             effects.ApplyRewindMaterial(material);
             material.SetTexture(HistoryTexId, historySamples > 0 ? (Texture)recentFrame : Texture2D.blackTexture);
             material.SetTexture(OlderHistoryTexId, historySamples > 1 ? (Texture)olderFrame : Texture2D.blackTexture);
             material.SetVector(HistoryStateId, new Vector4(historySamples > 0 ? 1f : 0f,
                 historySamples > 1 ? 1f : 0f, 0f, 0f));
-            Graphics.Blit(source, destination, material);
+            commands.Blit(source, destination, material);
             if (captureHistory && (historySamples == 0
                 || effects.RewindPresentationClock - lastCaptureClock >= effects.RewindGhostInterval))
             {
@@ -53,22 +61,20 @@ namespace TapTap
                 RenderTexture spare = olderFrame;
                 olderFrame = recentFrame;
                 recentFrame = spare;
-                Graphics.Blit(source, recentFrame);
-                RenderTexture.active = destination;
+                commands.Blit(source, recentFrame);
                 historySamples = Mathf.Min(2, historySamples + 1);
                 lastCaptureClock = effects.RewindPresentationClock;
             }
         }
 
-        private void PrepareHistory(RenderTexture source, EffectManager effects)
+        private void PrepareHistory(RenderTextureDescriptor descriptor, EffectManager effects)
         {
-            int width = Mathf.Max(1, source.width / 2);
-            int height = Mathf.Max(1, source.height / 2);
+            int width = Mathf.Max(1, descriptor.width / 2);
+            int height = Mathf.Max(1, descriptor.height / 2);
             if (recentFrame != null && (recentFrame.width != width || recentFrame.height != height
-                || recentFrame.graphicsFormat != source.graphicsFormat || historySession != effects.RewindVisualSession
+                || recentFrame.graphicsFormat != descriptor.graphicsFormat || historySession != effects.RewindVisualSession
                 || effects.RewindPresentationClock < lastCaptureClock)) ReleaseHistory();
             if (recentFrame != null) return;
-            var descriptor = source.descriptor;
             descriptor.width = width;
             descriptor.height = height;
             descriptor.depthBufferBits = 0;

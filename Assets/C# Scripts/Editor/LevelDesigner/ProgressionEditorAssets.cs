@@ -46,7 +46,7 @@ namespace TapTap.Editor
             const string path = "Assets/Resources/Materials/IndicatorVisual.mat";
             if (AssetDatabase.LoadAssetAtPath<Material>(path) != null) return;
             LevelPrefabBuilder.EnsureFolder("Assets/Resources/Materials");
-            AssetDatabase.CreateAsset(new Material(Shader.Find("Sprites/Default")), path);
+            AssetDatabase.CreateAsset(new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default")), path);
         }
 
         private static GameObject EnsurePrefab<T>(string path) where T : Component

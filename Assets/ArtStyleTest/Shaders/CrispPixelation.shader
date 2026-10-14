@@ -3,14 +3,15 @@ Shader "Hidden/ArtStyleTest/CrispPixelation"
     Properties { _MainTex ("Source", 2D) = "white" {} }
     SubShader
     {
+        Tags { "RenderPipeline"="UniversalPipeline" }
         Cull Off ZWrite Off ZTest Always
         Pass
         {
-            CGPROGRAM
+            HLSLPROGRAM
             #pragma vertex vert_img
             #pragma fragment frag
             #pragma target 3.0
-            #include "UnityCG.cginc"
+            #include "Assets/Rendering/Shaders/Fullscreen.hlsl"
 
             sampler2D _MainTex;
             float4 _MainTex_TexelSize;
@@ -26,7 +27,7 @@ Shader "Hidden/ArtStyleTest/CrispPixelation"
                 texel = min(texel, dimensions - 0.5);
                 return tex2Dlod(_MainTex, float4(texel / dimensions, 0, 0));
             }
-            ENDCG
+            ENDHLSL
         }
     }
     Fallback Off

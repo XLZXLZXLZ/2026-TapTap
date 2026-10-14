@@ -67,7 +67,9 @@ namespace ArtStyleTestTools
         {
             var camera = Camera.main;
             var effect = camera ? camera.GetComponent<CrispPixelation>() : null;
-            if (!effect || !effect.enabled) throw new Exception("Missing enabled pixelation on Main Camera.");
+            if (!effect) throw new Exception("Missing pixelation component on Main Camera.");
+            bool originallyEnabled = effect.enabled;
+            effect.enabled = true;
             var shader = Shader.Find("Hidden/ArtStyleTest/CrispPixelation");
             if (!shader || !shader.isSupported || ShaderUtil.ShaderHasError(shader))
                 throw new Exception("Pixelation shader unsupported or has compile errors.");
@@ -103,7 +105,7 @@ namespace ArtStyleTestTools
                     mode + ": PASS size 1 identity (max channel delta " + maxDifference
                     + "); exact solid blocks at 4/8/7; odd resolution; runtime size clamping.\n");
             }
-            finally { effect.enabled = true; effect.PixelSize = originalSize; }
+            finally { effect.enabled = originallyEnabled; effect.PixelSize = originalSize; }
         }
 
         static void CheckBlocks(Camera camera, CrispPixelation effect, string mode, int width, int height, int size)

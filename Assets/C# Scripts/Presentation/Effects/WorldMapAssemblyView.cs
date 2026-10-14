@@ -51,7 +51,7 @@ namespace TapTap
             caption = title;
             visuals = new GameObject("World Outline Preview");
             visuals.transform.position = new Vector3(100000f, 100000f, 0f);
-            lineMaterial = new Material(Shader.Find("Sprites/Default"));
+            lineMaterial = new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default"));
             Bounds bounds = default;
             bool first = true;
             foreach (WorldMapModule module in modules)

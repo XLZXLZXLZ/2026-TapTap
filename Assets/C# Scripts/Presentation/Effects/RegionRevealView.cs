@@ -74,6 +74,12 @@ namespace TapTap
                         if (!fadeMaterials.TryGetValue(original, out Material fading))
                         {
                             fading = new Material(original) { shader = shader, name = original.name + " (region fade)" };
+                            // URP Lit uses _BaseMap/_BaseColor; the sprite fade uses _MainTex/_Color.
+                            fading.mainTexture = original.mainTexture;
+                            fading.mainTextureScale = original.mainTextureScale;
+                            fading.mainTextureOffset = original.mainTextureOffset;
+                            if (original.HasProperty("_BaseColor")) fading.color = original.GetColor("_BaseColor");
+                            else if (original.HasProperty("_Color")) fading.color = original.GetColor("_Color");
                             fadeMaterials.Add(original, fading);
                         }
                         visual.Fading[i] = fading;

@@ -61,7 +61,7 @@ namespace TapTap.Editor
             string path = "Assets/Art/Materials/Prototype/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null) return material;
-            material = new Material(Shader.Find("Sprites/Default")) { name = name, mainTexture = texture };
+            material = new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default")) { name = name, mainTexture = texture };
             AssetDatabase.CreateAsset(material, path);
             return material;
         }

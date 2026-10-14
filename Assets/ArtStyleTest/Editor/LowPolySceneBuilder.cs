@@ -23,8 +23,8 @@ namespace ArtStyleTestTools
             if (File.Exists(ScenePath) || Directory.Exists(Root + "/Materials") || Directory.Exists(Root + "/Meshes"))
                 throw new InvalidOperationException("Test assets already exist. Generation stopped without overwriting.");
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-            var shader = Shader.Find("Standard");
-            if (shader == null || !shader.isSupported) throw new InvalidOperationException("Built-in Standard shader unavailable.");
+            var shader = Shader.Find("Universal Render Pipeline/Lit");
+            if (shader == null || !shader.isSupported) throw new InvalidOperationException("URP Lit shader unavailable.");
             Directory.CreateDirectory(Root + "/Scenes");
             Directory.CreateDirectory(Root + "/Materials");
             Directory.CreateDirectory(Root + "/Meshes");
@@ -211,10 +211,10 @@ namespace ArtStyleTestTools
         static Material Mat(string name,string hex)
         {
             Color color; ColorUtility.TryParseHtmlString(hex,out color);
-            var m=new Material(Shader.Find("Standard")) { name=name,color=color };
-            m.SetFloat("_Metallic",0); m.SetFloat("_Glossiness",0);
-            m.SetFloat("_SpecularHighlights",0); m.SetFloat("_GlossyReflections",0);
-            m.EnableKeyword("_SPECULARHIGHLIGHTS_OFF"); m.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+            var m=new Material(Shader.Find("Universal Render Pipeline/Lit")) { name=name,color=color };
+            m.SetFloat("_Metallic",0); m.SetFloat("_Smoothness",0);
+            m.SetFloat("_SpecularHighlights",0); m.SetFloat("_EnvironmentReflections",0);
+            m.EnableKeyword("_SPECULARHIGHLIGHTS_OFF"); m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
             AssetDatabase.CreateAsset(m,Root+"/Materials/"+name+".mat"); return m;
         }
         static GameObject Box(string name,Vector3 pos,Vector3 scale,Material mat,Transform parent)

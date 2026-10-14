@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ArtStyleTest
 {
-    /// <summary>Built-in camera effect with integer screen pixels and unfiltered sampling.</summary>
+    /// <summary>Camera settings consumed by the URP screen-effects renderer feature.</summary>
     [ExecuteAlways, DisallowMultipleComponent, RequireComponent(typeof(Camera))]
     [AddComponentMenu("Art Style Test/Crisp Pixelation")]
     public sealed class CrispPixelation : MonoBehaviour
@@ -39,24 +39,17 @@ namespace ArtStyleTest
             material = null;
         }
 
-        void OnRenderImage(RenderTexture source, RenderTexture destination)
+        public bool TryGetMaterial(out Material result)
         {
+            result = null;
             if (!pixelationShader || !pixelationShader.isSupported)
-            {
-                Graphics.Blit(source, destination);
-                return;
-            }
+                return false;
 
             if (!material)
                 material = new Material(pixelationShader) { hideFlags = HideFlags.HideAndDontSave };
             material.SetFloat("_PixelSize", PixelSize);
-            var previousFilter = source.filterMode;
-            try
-            {
-                source.filterMode = FilterMode.Point;
-                Graphics.Blit(source, destination, material);
-            }
-            finally { source.filterMode = previousFilter; }
+            result = material;
+            return true;
         }
     }
 }

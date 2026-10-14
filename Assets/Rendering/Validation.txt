@@ -1,0 +1,44 @@
+URP trial validation — 2026-10-14 (Asia/Shanghai)
+Baseline main commit: a88199f (confirmed pushed before migration).
+Branch: codex/urp-trial.
+Source target: Unity 2021.3.24f1c1, URP/Core/Shader Graph 12.1.11.
+
+PASS: Unity compilation and five real camera renders using the NVIDIA RTX 4060 graphics device.
+Scenes: World_Character_Play, TapTapDemo, LowPoly_ArtStyle_Test,
+Factory_Reference_Study, CubeFactory_Design_Study. Pink shader-error pixels: 0 in every capture.
+PASS: 71 material assets supported, without Standard or legacy Unlit material shaders.
+PASS: Graphics and all six quality levels reference URP pipeline assets.
+PASS: Region fade preserves texture and sprite tint, hides undiscovered sprites,
+and restores the original material after fading.
+
+PASS: Pixelation edit and actual Play rendering. Size 1 matches the unprocessed image
+(maximum channel delta 0); exact uniform blocks at sizes 4/8/7, including odd resolution;
+runtime size clamping preserved. Validation temporarily enables the component;
+the authored scene keeps its originally disabled state and size 1.
+
+PASS: 13 existing rewind regression cases, including actual camera rendering,
+temporal ghost trails, resized render targets, new rewind sessions, effect removal,
+and scene reload cleanup.
+PASS: 7 existing cross-region regression cases, including real rendered sprite fading,
+discovery/rewind, checkpoint restoration and camera transitions.
+PASS: Actual Play menu map-preview texture renders through URP, selects a module,
+enters the authored gameplay scene and initializes the player and gameplay camera.
+No new C# or Shader errors in these final checks. URP debug-input exceptions eliminated
+by disabling the optional runtime debugging menu; gameplay input mapping preserved.
+
+Pre-existing asset repair: the old LowPoly scene referenced 11 deleted materials.
+Only the missing referenced resources were restored from f88cf25's parent with their
+original GUIDs. Required materials were then converted to URP. Main was not modified.
+
+PASS: Windows Development build succeeded (0 errors, 2 warnings). This host has a Windows build module only for
+Unity 2021.3.32f1c1, whose bundled URP is 12.1.13. This separate build check is not
+same-version build verification for the source target.
+PASS: Built player initialized Direct3D11 on the RTX 4060 and ran for 82 seconds
+without runtime or Shader exceptions. Native gameplay input was not simulated.
+PASS: Source package versions restored to 12.1.11; final Unity 2021.3.24 camera,
+quality, material and fade verification repeated successfully after the separate build.
+
+Evidence: Logs/URPTrial/ (full logs/readbacks); selected captures in Rendering/Preview/.
+Older ArtStyleTest validation files and previews remain as historical Built-in evidence.
+Remaining manual checks: lighting/transparent appearance preference and mobile device
+performance, memory, shader variants. Exact visual identity with Built-in is not claimed.

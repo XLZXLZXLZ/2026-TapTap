@@ -87,7 +87,7 @@ namespace TapTap.Editor
                 Material material = AssetDatabase.LoadAssetAtPath<Material>(materialPath);
                 if (material == null)
                 {
-                    material = new Material(Shader.Find("Sprites/Default"));
+                    material = new Material(Shader.Find("Universal Render Pipeline/2D/Sprite-Unlit-Default"));
                     AssetDatabase.CreateAsset(material, materialPath);
                 }
                 Scene preview = EditorSceneManager.NewPreviewScene();

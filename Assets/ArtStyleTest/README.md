@@ -1,5 +1,8 @@
 # Low Poly 美术测试场景
 
+> URP 试验分支说明：当前使用 URP 12.1.11；本页其余内容及原有预览、验证记录描述迁移前的 Built-in 美术基准。最新配置与验证见 [Rendering 说明](../Rendering/README.md)。
+
+
 Unity 2021.3.24f1c1，Built-in 渲染管线，Linear 色彩空间。
 
 ## 打开与调整

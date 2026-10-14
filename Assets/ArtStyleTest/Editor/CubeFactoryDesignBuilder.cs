@@ -206,9 +206,9 @@ namespace ArtStyleTestTools
         static Material Mat(string name,string html)
         {
             Color color;ColorUtility.TryParseHtmlString(html,out color);
-            var m=new Material(Shader.Find("Standard")){name=name,color=color};
-            m.SetFloat("_Metallic",0);m.SetFloat("_Glossiness",0);m.SetFloat("_SpecularHighlights",0);m.SetFloat("_GlossyReflections",0);
-            m.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");m.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+            var m=new Material(Shader.Find("Universal Render Pipeline/Lit")){name=name,color=color};
+            m.SetFloat("_Metallic",0);m.SetFloat("_Smoothness",0);m.SetFloat("_SpecularHighlights",0);m.SetFloat("_EnvironmentReflections",0);
+            m.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");m.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
             AssetDatabase.CreateAsset(m,Root+"/Materials/"+name+".mat");return m;
         }
         static Material Additive(string name,Color color)

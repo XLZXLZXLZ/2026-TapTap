@@ -8,14 +8,15 @@ Shader "Hidden/TapTap/RewindSignal"
     }
     SubShader
     {
+        Tags { "RenderPipeline"="UniversalPipeline" }
         Cull Off ZWrite Off ZTest Always
         Pass
         {
-            CGPROGRAM
+            HLSLPROGRAM
             #pragma vertex vert_img
             #pragma fragment frag
             #pragma target 3.0
-            #include "UnityCG.cginc"
+            #include "Assets/Rendering/Shaders/Fullscreen.hlsl"
 
             sampler2D _MainTex;
             sampler2D _HistoryTex;
@@ -130,7 +131,7 @@ Shader "Hidden/TapTap/RewindSignal"
                 color.rgb += float3(0.12, 0.45, 0.6) * chevron * _FlowParams.z * blend * motion;
                 return float4(max(color.rgb, 0.0), color.a);
             }
-            ENDCG
+            ENDHLSL
         }
     }
     Fallback Off
