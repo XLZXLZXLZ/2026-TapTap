@@ -111,6 +111,8 @@ namespace TapTap.Editor
             if (palette == null) UseDefaultPalette();
             LevelEditorAssets.EnsureAnnotationInPalette(palette);
             LevelEditorAssets.EnsureSpringInPalette(palette);
+            LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+            ProgressionEditorAssets.EnsureInPalette(palette);
             cacheDirty = true;
             fitPending = true;
         }
@@ -195,6 +197,8 @@ namespace TapTap.Editor
             if (palette == null) UseDefaultPalette();
             LevelEditorAssets.EnsureAnnotationInPalette(palette);
             LevelEditorAssets.EnsureSpringInPalette(palette);
+            LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+            ProgressionEditorAssets.EnsureInPalette(palette);
             sampledBrush = null;
             settingsBrush = null;
             selectedPlacementId = null;
@@ -327,6 +331,8 @@ namespace TapTap.Editor
                 palette = nextPalette;
                 LevelEditorAssets.EnsureAnnotationInPalette(palette);
                 LevelEditorAssets.EnsureSpringInPalette(palette);
+                LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+                ProgressionEditorAssets.EnsureInPalette(palette);
                 sampledBrush = null;
                 brushIndex = 0;
                 settingsBrush = null;
@@ -723,6 +729,8 @@ namespace TapTap.Editor
             GUI.BeginGroup(canvas);
             Rect bounds = new Rect(pan.x, pan.y, layout.Size.x * cellPixels, layout.Size.y * cellPixels);
             EditorGUI.DrawRect(bounds, new Color(0.17f, 0.2f, 0.24f));
+            // Render lighting after the map, so a wide beam is not covered by later grid cells.
+            for (int pass = 0; pass < 2; pass++)
             foreach (var pair in cells)
             {
                 if (!layout.Contains(pair.Key)) continue;
@@ -731,6 +739,8 @@ namespace TapTap.Editor
                 foreach (LevelPlacement item in pair.Value)
                 {
                     if (!Visible(item)) continue;
+                    bool light = item.Brush != null && item.Brush.HandlerId == "indicator-light";
+                    if (light != (pass == 1)) continue;
                     if (movingSelection && selectionMoveDelta != Vector2Int.zero &&
                         (selectionArea.Contains(item.Cell) || MovePreviewArea().Contains(item.Cell))) continue;
                     DrawPlacement(item, cell, false);
@@ -857,6 +867,29 @@ namespace TapTap.Editor
                 var style = new GUIStyle(CenterStyle()) { fontSize = Mathf.Max(10, Mathf.RoundToInt(cell.width * 0.55f)), fontStyle = FontStyle.Bold };
                 style.normal.textColor = new Color(1f, 0.15f, 0.15f, ghost ? 0.45f : 1f);
                 GUI.Label(shape, "!", style);
+            }
+            else if (placement.Settings is LightPlacementSettings light)
+            {
+                Vector2 origin = cell.center;
+                float radians = -light.RotationDegrees * Mathf.Deg2Rad;
+                float cos = Mathf.Cos(radians), sin = Mathf.Sin(radians);
+                Vector2 TransformPoint(float x, float y) => origin + new Vector2(x * cos - y * sin, x * sin + y * cos) * cell.width;
+                Color previous = Handles.color;
+                Handles.BeginGUI();
+                for (int row = 0; Event.current.type == EventType.Repaint && row < 16; row++)
+                {
+                    float t = row / 16f, next = (row + 1) / 16f;
+                    float width = Mathf.Lerp(light.ShortWidth, light.LongWidth, t) * 0.5f;
+                    float nextWidth = Mathf.Lerp(light.ShortWidth, light.LongWidth, next) * 0.5f;
+                    Color tint = light.Tint;
+                    tint.a *= Mathf.Pow(1f - t, light.GradientPower) * (ghost ? 0.45f : 1f);
+                    Handles.color = tint;
+                    Handles.DrawAAConvexPolygon(TransformPoint(-width, t * light.Length), TransformPoint(width, t * light.Length),
+                        TransformPoint(nextWidth, next * light.Length), TransformPoint(-nextWidth, next * light.Length));
+                }
+                Handles.EndGUI();
+                Handles.color = previous;
+                Outline(shape, color, 1f);
             }
             else if (handler != null && handler.IsCheckpoint)
             {

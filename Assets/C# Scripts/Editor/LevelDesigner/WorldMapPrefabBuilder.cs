@@ -14,10 +14,7 @@ namespace TapTap.Editor
         {
             var errors = new List<string>();
             if (map == null) { errors.Add("请选择大地图。"); return errors; }
-            if (map.TemplateSize.x < 8 || map.TemplateSize.y < 8 || map.TemplateSize.x > 2048 || map.TemplateSize.y > 2048 ||
-                map.Padding < 0 || map.Padding > 64) { errors.Add("模板尺寸或留边超出范围。"); return errors; }
             if (map.Modules == null || map.Modules.Count == 0) { errors.Add("大地图还没有关卡模块。"); return errors; }
-            var mask = new WorldMapMask(map);
             var ids = new HashSet<string>();
             var sequenceNumbers = new HashSet<int>();
             var checkedLevels = new HashSet<LevelDefinition>();
@@ -29,8 +26,6 @@ namespace TapTap.Editor
                 if (string.IsNullOrEmpty(module.Id) || !ids.Add(module.Id)) errors.Add(module.DisplayName + "：模块 ID 为空或重复。");
                 if (module.Sequence < 0 || !sequenceNumbers.Add(map.SequenceNumber(module)))
                     errors.Add(module.DisplayName + "：关卡序号为负数或重复，请设置唯一的正数序号。");
-                int outside = WorldMapDrawing.CountOutside(mask, module.Level.Footprint, module.Position);
-                if (outside > 0) errors.Add(module.DisplayName + "：整块关卡有 " + outside + " 格超出" + map.TemplateName + "模板。");
                 for (int j = 0; j < i; j++)
                     if (map.Modules[j]?.Level != null && WorldMapOverlap.HasConflict(module.Level, module.Level.Footprint, module.Position,
                         map.Modules[j].Level, map.Modules[j].Level.Footprint, map.Modules[j].Position))

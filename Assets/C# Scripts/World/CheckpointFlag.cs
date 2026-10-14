@@ -6,6 +6,7 @@ namespace TapTap
     [RequireComponent(typeof(BoxCollider2D))]
     public sealed class CheckpointFlag : MonoBehaviour
     {
+        // A marker for region authoring; touching it no longer changes the player's checkpoint.
         public Vector2 SpawnOffset = new Vector2(0f, 0.45f);
         public Vector2 SpawnPosition => (Vector2)transform.position + SpawnOffset;
 

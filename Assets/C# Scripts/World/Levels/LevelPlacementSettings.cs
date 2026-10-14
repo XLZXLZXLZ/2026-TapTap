@@ -64,4 +64,16 @@ namespace TapTap
         public string EndpointId = "finish";
         public string Label = "终点";
     }
+
+    [Serializable]
+    public sealed class LightPlacementSettings : LevelPlacementSettings
+    {
+        public bool InitiallyOn;
+        public int ShortWidth = 2;
+        public float LongWidth = 6f;
+        public float Length = 8f;
+        public float RotationDegrees;
+        public Color Tint = new Color(1f, 0.88f, 0.58f, 0.3f);
+        public float GradientPower = 1.5f;
+    }
 }

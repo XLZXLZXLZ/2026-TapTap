@@ -36,6 +36,28 @@ namespace TapTap
             ? EntryCheckpoint.SpawnPosition
             : (Vector2)transform.position;
 
+        // The buffer is measured in authored grid units, including around concave boundaries.
+        public bool ContainsWorldPoint(Vector2 point, float buffer = 0f)
+        {
+            Vector2 local = (Vector2)transform.InverseTransformPoint(point) / Mathf.Max(0.0001f, UnitSize);
+            if (Source == null)
+                return local.x >= -buffer && local.x < Size.x + buffer
+                    && local.y >= -buffer && local.y < Size.y + buffer;
+            LevelFootprint footprint = Source.Footprint;
+            Vector2Int cell = Vector2Int.FloorToInt(local);
+            if (footprint.Contains(cell)) return true;
+            if (buffer <= 0f) return false;
+            int reach = Mathf.CeilToInt(buffer);
+            for (int y = cell.y - reach; y <= cell.y + reach; y++)
+                for (int x = cell.x - reach; x <= cell.x + reach; x++)
+                {
+                    if (!footprint.Contains(new Vector2Int(x, y))) continue;
+                    Vector2 closest = new Vector2(Mathf.Clamp(local.x, x, x + 1), Mathf.Clamp(local.y, y, y + 1));
+                    if ((closest - local).sqrMagnitude <= buffer * buffer) return true;
+                }
+            return false;
+        }
+
         private void OnDrawGizmosSelected()
         {
             Matrix4x4 previousMatrix = Gizmos.matrix;

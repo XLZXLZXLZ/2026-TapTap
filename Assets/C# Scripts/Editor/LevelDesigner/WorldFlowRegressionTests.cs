@@ -162,7 +162,7 @@ namespace TapTap.Editor
                         Check(flow.CurrentNumber == 10 && flow.LevelCount == 3, "Wrong first level.");
                         sceneHandle = SceneManager.GetActiveScene().handle;
                         firstRegion = flow.CurrentRegion;
-                        Check(UnityEngine.Object.FindObjectsOfType<LevelRegion>().Length == 1, "Neighbors are visible/active.");
+                        Check(UnityEngine.Object.FindObjectsOfType<LevelRegion>().Length == 3, "World regions are not resident.");
                         firstRegion.transform.Find("Custom/State Probe").localPosition = Vector3.one * 90f;
                         firstRegion.GetComponentInChildren<SpringPad>().BounceHeight = 99f;
                         WorldPhaseState.Instance.SetActive(true);
@@ -180,8 +180,8 @@ namespace TapTap.Editor
                             flow.CurrentRegion.EntrySpawnPosition) < 0.01f, "Player/respawn did not move to entry.");
                         Check(UnityEngine.Object.FindObjectOfType<DemoCamera>().Region == flow.CurrentRegion, "Camera still follows the old room.");
                         Check(Vector2.Distance(player.Body.Motor.Position, flow.CurrentRegion.EntrySpawnPosition) < 1f, "Player was not teleported.");
-                        Check(UnityEngine.Object.FindObjectsOfType<LevelRegion>().Length == 1, "Refreshed neighbors are active.");
-                        Pass("Endpoint advances, resets mechanisms/Custom/player and respawn, hides neighbors, preserves scene identity");
+                        Check(UnityEngine.Object.FindObjectsOfType<LevelRegion>().Length == 3, "Refreshed regions are not resident.");
+                        Pass("Endpoint advances, resets mechanisms/Custom/player and respawn, keeps regions resident, preserves scene identity");
                         Check(flow.SkipNext(), "Skip failed."); stage = 2;
                         break;
                     case 2:

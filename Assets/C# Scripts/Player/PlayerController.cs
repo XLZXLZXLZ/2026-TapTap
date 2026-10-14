@@ -66,6 +66,17 @@ namespace TapTap
         private readonly List<PlayerContactFeedback> contacts = new List<PlayerContactFeedback>(3);
 
         public PlayerPhase Phase => phase;
+        private bool HasJoinedShape => phase == PlayerPhase.Joined || phase == PlayerPhase.PickingUp;
+        public Vector2 PickupVisualOffset
+        {
+            get
+            {
+                if (phase != PlayerPhase.PickingUp) return Vector2.zero;
+                float t = Mathf.Clamp01(actionTime / Mathf.Max(0.02f, config.PickupDuration));
+                float eased = DOVirtual.EasedValue(0f, 1f, t, Ease.InOutSine);
+                return (pickupStartOffset - Vector2.up * config.ToWorld(config.JoinedOffset)) * (1f - eased);
+            }
+        }
         public MovableEntity Body => body;
         public MovableEntity Head => head;
         public PlayerConfig Config => config;
@@ -131,7 +142,7 @@ namespace TapTap
         public void SimulateStep(float dt)
         {
             Initialize();
-            if (!initialized || dt <= 0f) return;
+            if (!initialized || dt <= 0f || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen) return;
             respawn.Simulate(dt);
             body.Motor.BeginStep(dt);
             head.Motor.BeginStep(dt);
@@ -280,7 +291,7 @@ namespace TapTap
             velocity.y -= config.WorldGravity * dt;
             impactSpeed = Mathf.Max(impactSpeed, -velocity.y);
             float conveyor = body.Motor.Grounded ? body.Motor.ConveyorSpeed
-                : phase == PlayerPhase.Joined ? 0f : head.Motor.ConveyorSpeed;
+                : HasJoinedShape ? 0f : head.Motor.ConveyorSpeed;
             Vector2 delta = new Vector2((velocity.x + conveyor) * dt, velocity.y * dt);
             if (MovePairAxis(new Vector2(delta.x, 0f)) < 1f) velocity.x = 0f;
             pairSupport = null;
@@ -313,7 +324,7 @@ namespace TapTap
         {
             if (delta.sqrMagnitude < 0.00000001f) return 1f;
             SweepResult a = body.Motor.Sweep(delta, head);
-            SweepResult b = phase == PlayerPhase.Joined ? SweepResult.Clear : head.Motor.Sweep(delta, body);
+            SweepResult b = HasJoinedShape ? SweepResult.Clear : head.Motor.Sweep(delta, body);
             float fraction = Mathf.Min(a.Fraction, b.Fraction);
             if (delta.y < 0f && fraction < 1f)
             {
@@ -453,31 +464,26 @@ namespace TapTap
 
         private void BeginPickup()
         {
-            CancelAction();
-            pickupStartOffset = head.Motor.Position - body.Motor.Position;
-            head.Velocity = Vector2.zero;
-            head.SpringEnabled = false;
-            pendingLaunchHeight = 0f;
+            Vector2 target = body.Motor.Position + Vector2.up * config.ToWorld(config.JoinedOffset);
+            // Validate the final collision shape before changing either actor's logical position.
+            if (!body.Motor.CanJoinWith(head.Motor, target)) return;
+            Vector2 startOffset = head.Motor.Position - body.Motor.Position;
+            head.Motor.StageTranslation(target - head.Motor.Position);
+            ApplyJoin(0f, false);
+            if (phase != PlayerPhase.Joined) return;
+            pickupStartOffset = startOffset;
             SetPhase(PlayerPhase.PickingUp);
         }
 
         private void TickPickup(float dt)
         {
-            float impactSpeed = Mathf.Max(0f, config.WorldGravity * dt - body.Velocity.y);
-            body.SimulateFree(dt, input.Horizontal * config.ToWorld(config.MoveSpeed), head);
-            bool contact = body.Motor.LastMoveResult.Blocked && body.Motor.LastMoveResult.Normal.y > 0.5f;
-            QueueLanding(body, contact, bodyGroundContact, impactSpeed, body.Motor.LastMoveResult.Normal);
-            bodyGroundContact = contact && body.Velocity.y <= 0f;
-
+            TickMagneticMovement(dt);
             actionTime += dt;
-            float t = Mathf.Clamp01(actionTime / Mathf.Max(0.02f, config.PickupDuration));
-            float eased = DOVirtual.EasedValue(0f, 1f, t, Ease.InOutSine);
-            Vector2 offset = Vector2.Lerp(pickupStartOffset,
-                Vector2.up * config.ToWorld(config.JoinedOffset), eased);
-            Vector2 target = body.Motor.Position + offset;
-            MoveResult moved = head.Motor.Move(target - head.Motor.Position, body);
-            if (moved.Blocked) outcome = Outcome.Detach;
-            else if (t >= 1f) outcome = Outcome.Join;
+            if (actionTime >= Mathf.Max(0.02f, config.PickupDuration))
+            {
+                actionTime = 0f;
+                SetPhase(PlayerPhase.Joined);
+            }
         }
 
         private void QueueLanding(MovableEntity entity, bool groundContact, bool previousContact, float impactSpeed, Vector2 normal)
@@ -512,15 +518,18 @@ namespace TapTap
 
         private void CollectWorldInteractions()
         {
+            WorldMapProgression.Current?.UpdatePlayerRegion(this);
+            float deathBoundary = WorldMapProgression.Current != null
+                ? WorldMapProgression.Current.DeathBoundary : config.DeathBoundary;
             if (!body.IsReturning)
             {
-                CheckpointFlag flag = FindTrigger<CheckpointFlag>(body);
-                if (flag != null) respawn.SetCheckpoint(flag.SpawnPosition);
-                bodyDied = body.Motor.Position.y < config.DeathBoundary
-                    || FindTrigger<LethalZone>(body, phase == PlayerPhase.Joined) != null;
+                bodyDied = body.Motor.Position.y < deathBoundary
+                    || FindTrigger<LethalZone>(body, HasJoinedShape) != null;
             }
             if (!head.IsReturning)
-                headDied = head.Motor.Position.y < config.DeathBoundary || FindTrigger<LethalZone>(head) != null;
+                headDied = head.Motor.Position.y < deathBoundary || FindTrigger<LethalZone>(head) != null;
+            if (!body.IsReturning && !head.IsReturning && !bodyDied && !headDied)
+                FindTrigger<ProgressKey>(body)?.TryCollect(this);
         }
 
         private static T FindTrigger<T>(MovableEntity entity, bool useCollisionBounds = false) where T : Component
@@ -648,7 +657,7 @@ namespace TapTap
 
         private void UpdateJoinedCollision()
         {
-            bool joined = phase == PlayerPhase.Joined;
+            bool joined = HasJoinedShape;
             body.Motor.SetJoinedPartner(joined ? head.Motor : null, joined);
             head.Motor.SetJoinedPartner(joined ? body.Motor : null, false);
         }

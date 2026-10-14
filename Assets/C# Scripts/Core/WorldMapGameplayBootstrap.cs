@@ -36,7 +36,7 @@ namespace TapTap
                 region.SequenceNumber = World.SequenceNumber(module);
                 instance.transform.localPosition = (Vector2)module.Position * region.UnitSize;
                 if (region.EntryCheckpoint == null) region.EntryCheckpoint = instance.GetComponentInChildren<CheckpointFlag>(true);
-                instance.SetActive(module == first);
+                instance.SetActive(true);
             }
             GameObject resources = Instantiate(RuntimePrefab);
             LevelSceneRuntime runtime = resources.GetComponent<LevelSceneRuntime>();

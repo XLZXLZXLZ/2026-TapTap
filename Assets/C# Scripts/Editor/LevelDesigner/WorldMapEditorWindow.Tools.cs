@@ -219,8 +219,7 @@ namespace TapTap.Editor
         {
             if (!hasRegion || designTool != DesignTool.NewRegion) return;
             Rect rect = CellRect(regionArea);
-            bool valid = mask.CountOutside(regionArea) == 0;
-            Color color = valid ? new Color(0.3f, 1f, 0.65f) : new Color(1f, 0.35f, 0.35f);
+            Color color = new Color(0.3f, 1f, 0.65f);
             EditorGUI.DrawRect(rect, new Color(color.r, color.g, color.b, 0.16f));
             EditorGUI.DrawRect(new Rect(rect.x, rect.y, rect.width, 2f), color);
             EditorGUI.DrawRect(new Rect(rect.x, rect.yMax - 2f, rect.width, 2f), color);

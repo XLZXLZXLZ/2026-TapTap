@@ -125,10 +125,14 @@ namespace TapTap
             return nearest;
         }
 
-        public bool CanOccupyJoinedShape(KinematicMotor2D motor, KinematicMotor2D partner)
+        public bool CanOccupyJoinedShape(KinematicMotor2D motor, KinematicMotor2D partner,
+            Vector2? partnerPosition = null)
         {
             Bounds bounds = motor.CollisionBounds;
-            bounds.Encapsulate(partner.CollisionBounds);
+            Bounds partnerBounds = partner.CollisionBounds;
+            if (partnerPosition.HasValue)
+                partnerBounds.center += (Vector3)(partnerPosition.Value - partner.Position);
+            bounds.Encapsulate(partnerBounds);
             Vector2 size = (Vector2)bounds.size - Vector2.one * (motor.Skin * 2f);
             size.x = Mathf.Max(0.001f, size.x);
             size.y = Mathf.Max(0.001f, size.y);

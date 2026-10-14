@@ -74,6 +74,8 @@ namespace TapTap
         private bool zoomActive;
         private float slowRemaining;
         private float previousTimeScale = 1f;
+        private bool progressEmphasisActive;
+        private float progressSlowScale = 1f;
         private bool rewindVisualActive;
         private bool rewindAtOldest;
         private float rewindBlend;
@@ -222,13 +224,48 @@ namespace TapTap
 
         public void ClearTransientEffects()
         {
+            EndProgressEmphasis();
             if (slowRemaining > 0f) Time.timeScale = previousTimeScale;
             slowRemaining = shakeRemaining = shakeStrength = zoomPulse = zoomElapsed = 0f;
             zoomActive = false;
         }
 
+        public void SetGameplayTimeScale(float speed)
+        {
+            if (progressEmphasisActive)
+            {
+                previousTimeScale = speed;
+                Time.timeScale = speed * progressSlowScale;
+                return;
+            }
+            // Preserve the join effect's relative slowdown while updating its eventual resume speed.
+            if (slowRemaining > 0f)
+            {
+                previousTimeScale = speed;
+                Time.timeScale = speed * 0.75f;
+            }
+            else Time.timeScale = speed;
+        }
+
+        public void BeginProgressEmphasis(float relativeSpeed)
+        {
+            ClearTransientEffects();
+            previousTimeScale = Time.timeScale;
+            progressSlowScale = Mathf.Clamp(relativeSpeed, 0.01f, 1f);
+            progressEmphasisActive = true;
+            Time.timeScale = previousTimeScale * progressSlowScale;
+        }
+
+        public void EndProgressEmphasis()
+        {
+            if (!progressEmphasisActive) return;
+            progressEmphasisActive = false;
+            Time.timeScale = previousTimeScale;
+        }
+
         protected override void OnDestroy()
         {
+            EndProgressEmphasis();
             if (slowRemaining > 0f) Time.timeScale = previousTimeScale;
             base.OnDestroy();
         }

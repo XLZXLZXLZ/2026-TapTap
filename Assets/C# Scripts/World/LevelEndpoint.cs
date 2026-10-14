@@ -35,7 +35,7 @@ namespace TapTap
         private void FixedUpdate()
         {
             WorldMapProgression flow = WorldMapProgression.Current;
-            if (flow == null || WorldMapProgression.InputBlocked || RewindManager.Rewinding) return;
+            if (flow == null || !flow.ExitsEnabled || WorldMapProgression.InputBlocked || RewindManager.Rewinding) return;
             // The player uses a custom kinematic motor, so do not rely on Rigidbody trigger callbacks.
             foreach (MovableEntity entity in MovableEntity.ActiveEntities)
             {

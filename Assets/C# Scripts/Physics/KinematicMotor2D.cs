@@ -17,6 +17,8 @@ namespace TapTap
         private Vector2 plannedPosition;
         private float ignoreOneWayRemaining;
         private Collider2D ignoredOneWayPlatform;
+        private readonly List<Collider2D> ignoredOneWayTiles = new List<Collider2D>();
+        private Bounds ignoredOneWayBounds;
         private RigidbodyInterpolation2D normalInterpolation;
         private bool rewinding;
         private readonly List<MotionSegment> motionSegments = new List<MotionSegment>(8);
@@ -145,6 +147,7 @@ namespace TapTap
             plannedPosition = position;
             ignoreOneWayRemaining = 0f;
             ignoredOneWayPlatform = null;
+            ignoredOneWayTiles.Clear();
             motionSegments.Clear();
             contacts.Clear();
             LastMoveResult = default;
@@ -170,6 +173,7 @@ namespace TapTap
             WorldSurface surface = platform != null ? platform.GetComponentInParent<WorldSurface>() : null;
             if (surface == null || surface.Kind != SurfaceKind.OneWay) return;
             ignoredOneWayPlatform = platform;
+            CollectIgnoredOneWayTiles();
             Grounded = false;
             SupportSurface = null;
             SupportCollider = null;
@@ -178,26 +182,63 @@ namespace TapTap
         }
 
         public bool IsIgnoringOneWay(Collider2D platform) =>
-            IgnoringOneWay || (ignoredOneWayPlatform != null && ignoredOneWayPlatform == platform);
+            IgnoringOneWay || (ignoredOneWayPlatform != null && ignoredOneWayTiles.Contains(platform));
+
+        private void CollectIgnoredOneWayTiles()
+        {
+            ignoredOneWayTiles.Clear();
+            if (ignoredOneWayPlatform == null) return;
+            ignoredOneWayTiles.Add(ignoredOneWayPlatform);
+            ignoredOneWayBounds = ignoredOneWayPlatform.bounds;
+            float top = ignoredOneWayBounds.max.y;
+            // Grid tiles on one continuous ledge are one drop target. Other floors remain solid.
+            const float tolerance = 0.001f;
+            bool expanded;
+            do
+            {
+                expanded = false;
+                Vector2 size = ignoredOneWayBounds.size;
+                size += Vector2.one * (tolerance * 2f);
+                foreach (Collider2D tile in Physics2D.OverlapBoxAll(ignoredOneWayBounds.center, size, 0f))
+                {
+                    if (tile.isTrigger || ignoredOneWayTiles.Contains(tile)) continue;
+                    WorldSurface surface = tile.GetComponentInParent<WorldSurface>();
+                    Bounds bounds = tile.bounds;
+                    if (surface == null || surface.Kind != SurfaceKind.OneWay
+                        || Mathf.Abs(bounds.max.y - top) > tolerance
+                        || bounds.min.x > ignoredOneWayBounds.max.x + tolerance
+                        || bounds.max.x < ignoredOneWayBounds.min.x - tolerance
+                        || (Physics2D.GetLayerCollisionMask(gameObject.layer) & (1 << tile.gameObject.layer)) == 0
+                        || Physics2D.GetIgnoreCollision(Collider, tile)) continue;
+                    ignoredOneWayTiles.Add(tile);
+                    ignoredOneWayBounds.Encapsulate(bounds);
+                    expanded = true;
+                }
+            } while (expanded);
+        }
 
         private void UpdateIgnoredPlatform()
         {
             if (ignoredOneWayPlatform == null) return;
             Bounds actor = CollisionBounds;
             if (JoinedPartner != null) actor.Encapsulate(JoinedPartner.PartBounds);
-            Bounds platform = ignoredOneWayPlatform.bounds;
+            Bounds platform = ignoredOneWayBounds;
             // Keep the target until the entire joined shape clears it, even on thick platforms.
             if (!ignoredOneWayPlatform.enabled || !ignoredOneWayPlatform.gameObject.activeInHierarchy
                 || actor.max.y < platform.min.y - skin
                 || actor.min.y > platform.max.y + skin * 2f
                 || actor.max.x < platform.min.x - skin || actor.min.x > platform.max.x + skin)
+            {
                 ignoredOneWayPlatform = null;
+                ignoredOneWayTiles.Clear();
+            }
         }
 
         public void EndDrop()
         {
             ignoreOneWayRemaining = 0f;
             ignoredOneWayPlatform = null;
+            ignoredOneWayTiles.Clear();
         }
 
         public void RestoreState(Vector2 position, float ignoreOneWay, bool collisionsEnabled,
@@ -206,6 +247,7 @@ namespace TapTap
             Teleport(position);
             ignoreOneWayRemaining = ignoreOneWay;
             ignoredOneWayPlatform = ignoredPlatform;
+            CollectIgnoredOneWayTiles();
             SetCollisionsEnabled(collisionsEnabled);
             // Assign the transform too, so an interpolated future pose cannot leak into rewind.
             Vector3 pose = transform.position;
@@ -235,10 +277,10 @@ namespace TapTap
             includeJoinedPartner = includeInBounds;
         }
 
-        public bool CanJoinWith(KinematicMotor2D partner)
+        public bool CanJoinWith(KinematicMotor2D partner, Vector2? partnerPosition = null)
         {
             Initialize();
-            return query.CanOccupyJoinedShape(this, partner);
+            return query.CanOccupyJoinedShape(this, partner, partnerPosition);
         }
 
         public void SetCollisionsEnabled(bool enabled)

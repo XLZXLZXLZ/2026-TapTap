@@ -79,8 +79,8 @@ namespace TapTap
         [Min(0.001f)] public float Skin = 0.01f;
 
         [Header("死亡与复活过程")]
-        [InspectorName("坠落死亡边界（世界 Y）")]
-        [Tooltip("头部或下半身的位置 Y 低于此值时判定坠落死亡。它是世界坐标，不是相对关卡底部的距离，也不乘单格长度。")]
+        [InspectorName("坠落死亡边界（世界单位）")]
+        [Tooltip("独立关卡中是死亡线的世界 Y；大世界中是相对整个世界最低边界的偏移。头部或下半身低于死亡线时判定坠落死亡，不乘单格长度。")]
         public float DeathBoundary = -15f;
         [InspectorName("死亡抖动时长（秒）")]
         [Tooltip("死亡后角色视觉在原处抖动的时间；不控制相机震屏时长。随后角色缩小并化为光点。")]

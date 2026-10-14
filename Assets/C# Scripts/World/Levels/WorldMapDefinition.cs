@@ -11,6 +11,8 @@ namespace TapTap
     public sealed class WorldMapDefinition : ScriptableObject
     {
         public WorldMapTemplateKind Template;
+        [Tooltip("模板仅作参考底图，不限制关卡放置范围。")]
+        public bool ShowTemplate = true;
         [FormerlySerializedAs("HeartSize")]
         public Vector2Int TemplateSize = new Vector2Int(320, 288);
         [Range(0.005f, 0.08f)] public float CharacterGapRatio = 0.022f;
@@ -45,6 +47,30 @@ namespace TapTap
         }
 
         public Vector2Int Size => TemplateSize + Vector2Int.one * (Padding * 2);
+        public RectInt PreviewBounds
+        {
+            get
+            {
+                Vector2Int min = Vector2Int.zero, max = Size;
+                bool any = ShowTemplate;
+                foreach (WorldMapModule module in Modules)
+                {
+                    if (module?.Level == null) continue;
+                    RectInt bounds = module.Bounds;
+                    if (!any) { min = bounds.min; max = bounds.max; any = true; }
+                    else { min = Vector2Int.Min(min, bounds.min); max = Vector2Int.Max(max, bounds.max); }
+                }
+                foreach (WorldMapPassage passage in Passages)
+                {
+                    if (passage == null) continue;
+                    Vector2Int from = passage.Position - Vector2Int.one * 8, to = passage.Position + Vector2Int.one * 9;
+                    if (!any) { min = from; max = to; any = true; }
+                    else { min = Vector2Int.Min(min, from); max = Vector2Int.Max(max, to); }
+                }
+                if (!any) return new RectInt(Vector2Int.zero, Size);
+                return new RectInt(min - Vector2Int.one * 2, max - min + Vector2Int.one * 4);
+            }
+        }
         public string TemplateName => Template == WorldMapTemplateKind.SplitCharacter ? "分体角色" : "爱心";
         public static Vector2Int DefaultSize(WorldMapTemplateKind kind) => kind == WorldMapTemplateKind.SplitCharacter
             ? new Vector2Int(320, 448) : new Vector2Int(320, 288);

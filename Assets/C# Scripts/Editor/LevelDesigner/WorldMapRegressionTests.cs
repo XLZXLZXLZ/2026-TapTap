@@ -30,7 +30,7 @@ namespace TapTap.Editor
                 Test("Changing templates refreshes the mask, preserves module coordinates and supports undo", TemplateSwitch);
                 Test("Module editing supports undo, independent copies, resize and serialization", Editing);
                 Test("Prefab export preserves linked levels, custom objects and world coordinates", Prefab);
-                Test("PNG preview uses the exact heart mask and marks invalid rooms", Preview);
+                Test("PNG preview includes the optional reference template and freely placed rooms", Preview);
                 Test("Automatic footprints preserve L/S concavities, disconnected islands and enclosed interiors", IrregularFootprints);
                 Test("Irregular modules can interlock and leave forbidden cutouts empty", IrregularPlacement);
                 Test("Edge resizing preserves terrain, supports undo and updates shared modules and runtime bounds", BoundaryEditing);
@@ -185,7 +185,7 @@ namespace TapTap.Editor
             map.Modules[1].Position = map.Modules[0].Position;
             Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("重叠")), "Identical whole-room tiles should be compatible.");
             map.Modules[1].Position = Vector2Int.zero;
-            Check(WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("超出爱心")), "Invalid placement not rejected.");
+            Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("超出爱心")), "Reference template still restricts placement.");
         }
 
         private static void Preview()
@@ -205,8 +205,7 @@ namespace TapTap.Editor
             map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(0, 0) });
             texture = WorldMapDrawing.Export(map, mask);
             File.WriteAllBytes(Path.Combine(Application.dataPath, "../heart-modules.png"), texture.EncodeToPNG());
-            Color warning = texture.GetPixel(1, 1);
-            Check(warning.r > warning.g * 1.5f, "Forbidden room should have a red warning.");
+            Check(map.PreviewBounds.Contains(Vector2Int.zero), "Free placement was omitted from export bounds.");
             UnityEngine.Object.DestroyImmediate(texture);
             map.Template = WorldMapTemplateKind.SplitCharacter;
             map.TemplateSize = WorldMapDefinition.DefaultSize(map.Template);
@@ -215,13 +214,14 @@ namespace TapTap.Editor
             texture = WorldMapDrawing.Export(map, mask);
             File.WriteAllBytes(Path.Combine(Application.dataPath, "../character-template.png"), texture.EncodeToPNG());
             int centerX = mask.Size.x / 2, centerY = mask.Size.y / 2;
-            Check(texture.GetPixel(centerX * 3, centerY * 3) == (Color)WorldMapDrawing.Outside, "PNG gap should be gray.");
+            Check(texture.GetPixel((centerX - map.PreviewBounds.xMin) * 3, (centerY - map.PreviewBounds.yMin) * 3)
+                == (Color)WorldMapDrawing.Outside, "PNG reference gap should be gray.");
             UnityEngine.Object.DestroyImmediate(texture);
             map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(centerX - 16, centerY - 9) });
             texture = WorldMapDrawing.Export(map, mask);
             File.WriteAllBytes(Path.Combine(Application.dataPath, "../character-gap-warning.png"), texture.EncodeToPNG());
-            warning = texture.GetPixel(centerX * 3, centerY * 3);
-            Check(warning.r > warning.g * 1.5f, "Cross-gap room should have a red warning in its empty interior.");
+            map.ShowTemplate = false;
+            Check(map.PreviewBounds.Contains(new Vector2Int(centerX, centerY)), "Cross-gap room is outside preview bounds.");
             UnityEngine.Object.DestroyImmediate(texture);
             UnityEngine.Object.DestroyImmediate(map);
             UnityEngine.Object.DestroyImmediate(level);

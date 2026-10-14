@@ -31,6 +31,7 @@ namespace TapTap
         private string savedFeedback;
         private string feedbackTimestamp;
         private BoxCollider2D trigger;
+        private RegionRevealView regionReveal;
         private GUIStyle textStyle;
         private Vector2 scroll;
         public bool IsShowing { get; private set; }
@@ -86,12 +87,12 @@ namespace TapTap
                 if (Input.GetKeyDown(KeyCode.Escape)) CloseFeedback();
                 return;
             }
-            if (IsFeedbackOpen || !Input.GetKeyDown(KeyCode.E)) return;
+            if (IsFeedbackOpen || WorldMapProgression.InputBlocked || !Input.GetKeyDown(KeyCode.E)) return;
             LevelAnnotation nearest = null;
             float nearestDistance = float.PositiveInfinity;
             foreach (LevelAnnotation annotation in annotations)
             {
-                if (annotation.Player == null || !annotation.trigger.enabled ||
+                if (!annotation.RegionVisible || annotation.Player == null || !annotation.trigger.enabled ||
                     !(annotation.Overlaps(annotation.Player.Body) || annotation.Overlaps(annotation.Player.Head))) continue;
                 float distance = (annotation.transform.position - (Vector3)annotation.Player.PresentationPosition).sqrMagnitude;
                 if (distance >= nearestDistance) continue;
@@ -318,7 +319,15 @@ namespace TapTap
             if (feedbackCanvas != null) { feedbackCanvas.SetActive(false); Destroy(feedbackCanvas); }
             if (ownedEventSystem != null) Destroy(ownedEventSystem);
         }
-        private void LateUpdate() => IsShowing = Player != null && trigger.enabled &&
+        private bool RegionVisible
+        {
+            get
+            {
+                if (regionReveal == null) regionReveal = GetComponentInParent<RegionRevealView>();
+                return regionReveal == null || regionReveal.Discovered;
+            }
+        }
+        private void LateUpdate() => IsShowing = RegionVisible && Player != null && trigger.enabled &&
             (Overlaps(Player.Body) || Overlaps(Player.Head));
 
         // The player uses kinematic bodies: query geometry directly, including teleport/respawn.

@@ -31,7 +31,7 @@ namespace TapTap
                 ? "Hold to aim. Blue guide + release: recall."
                 : "Hold to extend. Early release waits for Holding.";
             GUI.Label(new Rect(30f, 81f, 350f, 23f), instruction, textStyle);
-            GUI.Label(new Rect(30f, 103f, 350f, 23f), "Mint: one-way    Purple: belt    Red: lethal", textStyle);
+            GUI.Label(new Rect(30f, 103f, 350f, 23f), "Debug · I: " + GameDebugTime.Speed + "x   (1 / 2 / 4 / 8)", textStyle);
             string rewind = RewindManager.Rewinding ? "Z: rewinding — release to continue" : "Hold Z: undo    R: restart";
             GUI.Label(new Rect(30f, 125f, 350f, 23f), rewind, textStyle);
             GUI.color = Color.white;
@@ -39,7 +39,8 @@ namespace TapTap
             {
                 GUI.Box(new Rect(16f, 162f, 370f, 122f), "");
                 GUI.Label(new Rect(30f, 170f, 340f, 24f), "第 " + flow.CurrentNumber + " 关 · " + flow.CurrentModule.DisplayName, textStyle);
-                GUI.Label(new Rect(30f, 194f, 220f, 22f), "已通过 " + flow.CompletedCount + " / " + flow.LevelCount + " · PageDown 跳关", textStyle);
+                GUI.Label(new Rect(30f, 194f, 337f, 22f), "已通过 " + flow.CompletedCount + " / " + flow.LevelCount
+                    + " · O 出口：" + (flow.ExitsEnabled ? "启用" : "停用") + " · PageDown 跳关", textStyle);
                 jumpNumber = GUI.TextField(new Rect(30f, 220f, 60f, 24f), jumpNumber, 6);
                 if (GUI.Button(new Rect(98f, 220f, 88f, 24f), "跳到序号") && int.TryParse(jumpNumber, out int number))
                     flow.GoToSequence(number);

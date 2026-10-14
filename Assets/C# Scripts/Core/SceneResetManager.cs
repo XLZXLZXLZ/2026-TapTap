@@ -21,7 +21,7 @@ namespace TapTap
 
         public bool ResetCurrentScene()
         {
-            if (IsResetting || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen) return false;
+            if (IsResetting || GameStageProgression.InputBlocked || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen) return false;
             if (WorldMapProgression.Current != null) return WorldMapProgression.Current.RestartCurrent();
             Scene scene = SceneManager.GetActiveScene();
             if (!scene.IsValid() || string.IsNullOrEmpty(scene.path))

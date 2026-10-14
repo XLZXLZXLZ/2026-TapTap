@@ -93,6 +93,8 @@ namespace TapTap
         {
             if (controller == null || body == null || head == null || config == null) return;
             EnsureVisuals();
+            if (captured && !head.IsReturning)
+                head.Visual.localPosition = headPosition + PickupOffset();
             float unit = body.Motor.Size.x / Mathf.Max(0.01f, body.Motor.Collider.size.x);
             bool returning = body.IsReturning || head.IsReturning;
             bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined && !returning;
@@ -127,6 +129,8 @@ namespace TapTap
             RenderGuide(unit, returning, dt, false);
             if (!captured || visualSettings == null)
             {
+                if (captured && !head.IsReturning)
+                    head.Visual.localPosition = headPosition + PickupOffset();
                 if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit);
                 return;
             }
@@ -163,11 +167,21 @@ namespace TapTap
                 Vector3 factor = new Vector3(1f + headSquash - stretch * 0.5f, 1f - headSquash + stretch, 1f);
                 factor = Vector3.Scale(factor, new Vector3(1f - headBreath * 0.5f, 1f + headBreath, 1f));
                 head.Visual.localScale = Vector3.Scale(headScale, factor);
-                head.Visual.localPosition = headPosition + Vector3.right * headLag
+                head.Visual.localPosition = headPosition + PickupOffset() + Vector3.right * headLag
                     + Vector3.up * (headSpringActive ? (factor.y - 1f) * head.Motor.Collider.size.y * 0.5f : 0f);
                 head.Visual.localRotation = headRotation * Quaternion.Euler(0f, 0f, headLean);
             }
             if (magnet != null) magnet.Render(body, head, connected, controller.Phase == PlayerPhase.Pulling, unit);
+        }
+
+        private Vector3 PickupOffset()
+        {
+            if (controller.Phase != PlayerPhase.PickingUp) return Vector3.zero;
+            // Follow the rendered body pose so Rigidbody interpolation cannot add a second head movement.
+            Vector3 target = body.transform.position + Vector3.up * config.ToWorld(config.JoinedOffset)
+                + (Vector3)controller.PickupVisualOffset;
+            Vector3 offset = target - head.transform.position;
+            return head.Visual.parent != null ? head.Visual.parent.InverseTransformVector(offset) : offset;
         }
 
         private void OnContact(PlayerContactFeedback contact)

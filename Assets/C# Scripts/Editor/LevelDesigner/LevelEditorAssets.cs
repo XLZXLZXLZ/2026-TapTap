@@ -15,6 +15,49 @@ namespace TapTap.Editor
         private const string TerrainFolder = "Assets/Prefabs/Terrain/Grid";
         private const string MarkerFolder = "Assets/Prefabs/Interactables/Grid";
 
+        public static LevelBrush EnsureSquarePlatformBrush()
+        {
+            LevelPrefabBuilder.EnsureFolder(BrushFolder);
+            LevelPrefabBuilder.EnsureFolder(TerrainFolder);
+            string path = TerrainFolder + "/GridSquarePlatform.prefab";
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+            {
+                GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Terrain/OneWayPlatform.prefab");
+                if (source == null) throw new InvalidOperationException("方形平台缺少基础平台 Prefab。");
+                Scene preview = EditorSceneManager.NewPreviewScene();
+                try
+                {
+                    GameObject root = (GameObject)PrefabUtility.InstantiatePrefab(source, preview);
+                    root.name = "GridSquarePlatform";
+                    root.GetComponent<WorldSurface>().Configure(SurfaceKind.OneWay);
+                    BoxCollider2D box = root.GetComponent<BoxCollider2D>();
+                    box.size = Vector2.one;
+                    box.offset = Vector2.zero;
+                    root.AddComponent<SquarePlatform>();
+                    foreach (SpriteRenderer renderer in root.GetComponentsInChildren<SpriteRenderer>())
+                        renderer.color = renderer.name == "Top edge" ? new Color(0.40f, 0.48f, 0.54f)
+                            : new Color(0.30f, 0.38f, 0.43f);
+                    LevelPrefabBuilder.RecordInstanceOverrides(root);
+                    prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
+                }
+                finally { EditorSceneManager.ClosePreviewScene(preview); }
+            }
+            return EnsureBrush("SquarePlatform", "方形平台", "default", "geometry", prefab,
+                new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.22f, 0.89f, 0.48f));
+        }
+
+        public static void EnsureSquarePlatformInPalette(LevelPalette palette)
+        {
+            if (palette == null || palette.Brushes != null && palette.Brushes.Exists(item => item != null
+                && item.Prefab != null && item.Prefab.GetComponent<SquarePlatform>() != null)) return;
+            LevelBrush brush = EnsureSquarePlatformBrush();
+            if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
+            palette.Brushes.Add(brush);
+            EditorUtility.SetDirty(palette);
+            AssetDatabase.SaveAssetIfDirty(palette);
+        }
+
         public static LevelBrush EnsureSpringBrush()
         {
             LevelPrefabBuilder.EnsureFolder(BrushFolder);
@@ -163,7 +206,8 @@ namespace TapTap.Editor
                     new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f)),
                 EnsureEndpointBrush(),
                 EnsureAnnotationBrush(),
-                EnsureSpringBrush()
+                EnsureSpringBrush(),
+                EnsureSquarePlatformBrush()
             };
             LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
             if (palette == null)

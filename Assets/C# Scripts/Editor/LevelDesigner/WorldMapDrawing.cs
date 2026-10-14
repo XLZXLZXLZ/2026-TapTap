@@ -52,12 +52,14 @@ namespace TapTap.Editor
 
         public static Texture2D Export(WorldMapDefinition map, WorldMapMask mask)
         {
-            int scale = Mathf.Max(1, Mathf.Min(3, 4096 / Mathf.Max(mask.Size.x, mask.Size.y)));
-            int width = mask.Size.x * scale, height = mask.Size.y * scale;
+            RectInt bounds = map.PreviewBounds;
+            Vector2Int offset = bounds.min;
+            int scale = Mathf.Max(1, Mathf.Min(3, 4096 / Mathf.Max(bounds.width, bounds.height)));
+            int width = bounds.width * scale, height = bounds.height * scale;
             var pixels = new Color32[width * height];
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
-                    pixels[y * width + x] = mask.Contains(new Vector2Int(x / scale, y / scale)) ? Inside : Outside;
+                    pixels[y * width + x] = map.ShowTemplate && mask.Contains(offset + new Vector2Int(x / scale, y / scale)) ? Inside : Outside;
             foreach (WorldMapModule module in map.Modules)
             {
                 if (module?.Level == null) continue;
@@ -65,7 +67,7 @@ namespace TapTap.Editor
                 Color color = ModuleColor(module), tint = color;
                 tint.a = 0.22f;
                 foreach (RectInt run in footprint.Runs)
-                    Fill(pixels, width, height, (run.x + module.Position.x) * scale, (run.y + module.Position.y) * scale, run.width * scale, scale, tint);
+                    Fill(pixels, width, height, (run.x + module.Position.x - offset.x) * scale, (run.y + module.Position.y - offset.y) * scale, run.width * scale, scale, tint);
                 Texture2D level = LevelTexture(module.Level);
                 try
                 {
@@ -73,8 +75,8 @@ namespace TapTap.Editor
                     for (int y = 0; y < module.Level.Size.y * scale; y++)
                         for (int x = 0; x < module.Level.Size.x * scale; x++)
                         {
-                            int tx = (module.Position.x + module.Level.CanvasOrigin.x) * scale + x,
-                                ty = (module.Position.y + module.Level.CanvasOrigin.y) * scale + y;
+                            int tx = (module.Position.x + module.Level.CanvasOrigin.x - offset.x) * scale + x,
+                                ty = (module.Position.y + module.Level.CanvasOrigin.y - offset.y) * scale + y;
                             if (tx < 0 || ty < 0 || tx >= width || ty >= height) continue;
                             Color sample = source[(y * level.height / (module.Level.Size.y * scale)) * level.width +
                                 x * level.width / (module.Level.Size.x * scale)];
@@ -82,30 +84,24 @@ namespace TapTap.Editor
                         }
                 }
                 finally { UnityEngine.Object.DestroyImmediate(level); }
-                foreach (Vector2Int local in footprint.Cells)
-                {
-                    Vector2Int cell = local + module.Position;
-                    if (!mask.Contains(cell)) Fill(pixels, width, height, cell.x * scale, cell.y * scale, scale, scale, new Color(1f, 0.23f, 0.25f, 0.48f));
-                }
-                if (CountOutside(mask, footprint, module.Position) > 0) color = new Color(1f, 0.32f, 0.34f);
                 foreach (LevelBoundaryEdge edge in footprint.Edges)
                 {
-                    Vector2Int a = (edge.Start + module.Position) * scale, b = (edge.End + module.Position) * scale;
+                    Vector2Int a = (edge.Start + module.Position - offset) * scale, b = (edge.End + module.Position - offset) * scale;
                     // Draw on the inside pixel, so neighbouring rooms keep independent borders.
                     Vector2Int inset = edge.Outward.x > 0 ? Vector2Int.left : edge.Outward.y > 0 ? Vector2Int.down : Vector2Int.zero;
                     Vector2Int tangent = edge.Outward.x == 0 ? Vector2Int.right : Vector2Int.up;
                     Line(pixels, width, height, a + inset, b + inset - tangent, color);
                 }
             }
-            foreach (Vector2[] outline in mask.Outlines)
+            foreach (Vector2[] outline in map.ShowTemplate ? mask.Outlines : new Vector2[0][])
                 for (int i = 0; i < outline.Length; i++)
-                    Line(pixels, width, height, Vector2Int.RoundToInt(outline[i] * scale),
-                        Vector2Int.RoundToInt(outline[(i + 1) % outline.Length] * scale), new Color32(255, 143, 168, 255));
+                    Line(pixels, width, height, Vector2Int.RoundToInt((outline[i] - (Vector2)offset) * scale),
+                        Vector2Int.RoundToInt((outline[(i + 1) % outline.Length] - (Vector2)offset) * scale), new Color32(255, 143, 168, 255));
             if (map.Passages != null)
                 for (int i = 0; i < map.Passages.Count; i++)
                 {
                     WorldMapPassage passage = map.Passages[i]; if (passage == null) continue;
-                    Vector2 point = ((Vector2)passage.Position + Vector2.one * 0.5f) * scale;
+                    Vector2 point = ((Vector2)(passage.Position - offset) + Vector2.one * 0.5f) * scale;
                     float halfLength = Mathf.Max(6f, scale * 4f);
                     Vector2 from = point - passage.ArrowDirection * halfLength, to = point + passage.ArrowDirection * halfLength;
                     ClippedLine(pixels, width, height, from, to, PassageColor);

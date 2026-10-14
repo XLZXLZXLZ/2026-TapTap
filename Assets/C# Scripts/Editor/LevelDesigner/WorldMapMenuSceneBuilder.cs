@@ -12,51 +12,9 @@ namespace TapTap.Editor
     {
         public static string Generate(WorldMapDefinition map, bool openScene = true)
         {
-            if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("请先退出 Play Mode。");
             if (map == null || map.OrderedModules().Count == 0) throw new InvalidOperationException("大世界没有可用关卡。");
-            int missing = map.Modules.FindAll(module => module?.Level == null).Count;
-            if (missing > 0) Debug.LogWarning("大世界中有 " + missing + " 个模块缺少来源，未加入选关；请在大世界编辑器补全或移除历史引用。", map);
-            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return null;
-            string mapPath = AssetDatabase.GetAssetPath(map);
-            GameObject resources = LevelTestSceneBuilder.EnsureRuntimePrefab();
-            var runtime = resources.GetComponent<LevelSceneRuntime>();
-            if (runtime.PlayerPrefab == null || runtime.PlayerConfig == null || runtime.CameraRig == null)
-                throw new InvalidOperationException("Runtime 缺少玩家、配置或镜头。");
-            var ids = new HashSet<string>();
-            var numbers = new HashSet<int>();
-            foreach (WorldMapModule module in map.OrderedModules())
-            {
-                if (string.IsNullOrEmpty(module.Id) || !ids.Add(module.Id) || !numbers.Add(map.SequenceNumber(module)))
-                    throw new InvalidOperationException("模块 ID 或关卡序号重复，请先修正。");
-                LevelRegion region = module.Level.OutputPrefab != null ? module.Level.OutputPrefab.GetComponent<LevelRegion>() : null;
-                if (region == null || module.Level.Palette == null) throw new InvalidOperationException(module.DisplayName + " 缺少生成的关卡 Prefab 或 Palette。");
-                PlayerConfig config = module.Level.Palette.Config ?? runtime.PlayerConfig;
-                if (!Mathf.Approximately(module.Level.Palette.UnitSize, config.UnitSize)
-                    || !Mathf.Approximately(module.Level.Palette.UnitSize, region.UnitSize))
-                    throw new InvalidOperationException(module.DisplayName + " 的网格单位与玩家/Prefab 不一致。");
-                if (region.EntryCheckpoint == null && region.GetComponentsInChildren<CheckpointFlag>(true).Length != 1)
-                    throw new InvalidOperationException(module.DisplayName + " 请指定唯一入口复活点。");
-                if (region.GetComponentInChildren<LevelEndpoint>(true) == null)
-                    throw new InvalidOperationException(module.DisplayName + " 缺少终点。");
-                LevelOutlineBuilder.Save(module.Level);
-            }
-            AssetDatabase.SaveAssets();
-            LevelPrefabBuilder.EnsureFolder("Assets/Scenes/WorldMaps");
-            string play = AssetDatabase.GUIDToAssetPath(map.PlaySceneGuid);
-            if (string.IsNullOrEmpty(play))
-            {
-                play = AssetDatabase.GenerateUniqueAssetPath("Assets/Scenes/WorldMaps/" + WorldMapPrefabBuilder.SafeName(map.name) + "_Play.unity");
-                SaveScene(play, scene =>
-                {
-                    var launch = new GameObject("World Gameplay").AddComponent<WorldMapGameplayBootstrap>();
-                    launch.World = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(mapPath);
-                    launch.RuntimePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(LevelTestSceneBuilder.RuntimePrefabPath);
-                });
-            }
-            map = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(mapPath);
-            map.PlaySceneGuid = AssetDatabase.AssetPathToGUID(play);
-            map.PlayScenePath = play;
-            EditorUtility.SetDirty(map); AssetDatabase.SaveAssetIfDirty(map);
+            if (openScene && !Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return null;
+            WorldMapSceneSync.Synchronize(map);
             string selection = SaveSelection(map);
             if (openScene && !Application.isBatchMode) EditorSceneManager.OpenScene(selection, OpenSceneMode.Single);
             return selection;
@@ -100,11 +58,15 @@ namespace TapTap.Editor
         {
             Scene previous = SceneManager.GetActiveScene();
             Scene loaded = SceneManager.GetSceneByPath(path);
-            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,
-                string.IsNullOrEmpty(previous.path) || (loaded.IsValid() && loaded.isLoaded) ? NewSceneMode.Single : NewSceneMode.Additive);
+            bool alreadyOpen = loaded.IsValid() && loaded.isLoaded;
+            Scene scene = alreadyOpen ? loaded : File.Exists(path) ? EditorSceneManager.OpenScene(path, OpenSceneMode.Additive)
+                : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
             try
             {
                 SceneManager.SetActiveScene(scene);
+                foreach (GameObject root in scene.GetRootGameObjects())
+                    if (root.GetComponent<WorldLevelMenu>() != null || (root.name == "Main Camera" && root.GetComponent<Camera>() != null))
+                        UnityEngine.Object.DestroyImmediate(root);
                 populate(scene);
                 if (!EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存场景：" + path);
                 AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
@@ -112,7 +74,7 @@ namespace TapTap.Editor
             finally
             {
                 if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
-                if (scene.IsValid() && scene.isLoaded && SceneManager.sceneCount > 1) EditorSceneManager.CloseScene(scene, true);
+                if (!alreadyOpen && scene.IsValid() && scene.isLoaded && SceneManager.sceneCount > 1) EditorSceneManager.CloseScene(scene, true);
             }
         }
 

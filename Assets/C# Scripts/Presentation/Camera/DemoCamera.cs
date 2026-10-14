@@ -24,6 +24,12 @@ namespace TapTap
         private Vector2 followVelocity;
         private Vector3 shakeOrigin;
         private bool initialized;
+        private bool changingRegion;
+        private float sizeVelocity;
+        private float baseViewSize;
+        private float progressZoom = 1f;
+
+        public void SetProgressZoom(float scale) => progressZoom = Mathf.Clamp(scale, 0.1f, 1f);
 
         public LevelRegion Region => region;
         private LevelCameraSettings Settings => region != null ? region.CameraSettings
@@ -53,10 +59,12 @@ namespace TapTap
             Initialize();
         }
 
-        public void SetRegion(LevelRegion level)
+        public void SetRegion(LevelRegion level, bool snap = true)
         {
+            bool changed = fixedRegion != level;
             fixedRegion = level;
-            SnapToPlayer();
+            if (snap) SnapToPlayer();
+            else if (changed) { changingRegion = true; followVelocity = Vector2.zero; sizeVelocity = 0f; }
         }
 
         // Existing authoring tools can keep their region-binding entry point.
@@ -65,6 +73,8 @@ namespace TapTap
         public void SnapToPlayer()
         {
             Initialize();
+            changingRegion = false;
+            sizeVelocity = 0f;
             if (viewCamera == null) return;
             ResetShake();
             UpdateView();
@@ -115,13 +125,19 @@ namespace TapTap
             if (shakeRoot != null) shakeRoot.localPosition = shakeOrigin;
         }
 
-        private void UpdateView()
+        private void UpdateView(float deltaTime = 0f)
         {
             viewCamera.orthographic = true;
             viewCamera.transform.rotation = Quaternion.identity;
             float size = AutoSize ? Mathf.Min(MapHalfSize, MaximumAutoSize * UnitScale)
                 : Settings.ViewSize * UnitScale;
-            viewCamera.orthographicSize = Mathf.Max(0.1f, size);
+            if (changingRegion && deltaTime <= 0f) return;
+            size = Mathf.Max(0.1f, size);
+            if (baseViewSize <= 0f) baseViewSize = viewCamera.orthographicSize;
+            baseViewSize = changingRegion && deltaTime > 0f
+                ? Mathf.SmoothDamp(baseViewSize, size, ref sizeVelocity, followSmoothTime,
+                    Mathf.Infinity, deltaTime) : size;
+            viewCamera.orthographicSize = baseViewSize * progressZoom;
         }
 
         private void Initialize()
@@ -140,18 +156,21 @@ namespace TapTap
             Initialize();
             if (viewCamera == null || player == null || player.Body == null) return;
             ResetShake();
-            UpdateView();
+            if (rewinding) changingRegion = false;
+            UpdateView(rewinding ? 0f : deltaTime);
             Vector3 current = viewCamera.transform.position;
             Vector3 target = FollowTarget(current);
-            if (!FollowEnabled || rewinding)
+            if ((!FollowEnabled && !changingRegion) || rewinding)
             {
                 MoveCamera(ConstrainToRegion(target));
                 followVelocity = Vector2.zero;
+                changingRegion = false;
+                sizeVelocity = 0f;
             }
             else if (deltaTime <= 0f)
             {
                 // Paused annotations use timeScale = 0; SmoothDamp's velocity divides by deltaTime.
-                MoveCamera(ConstrainToRegion(current));
+                if (!changingRegion) MoveCamera(ConstrainToRegion(current));
                 followVelocity = Vector2.zero;
             }
             else
@@ -159,10 +178,10 @@ namespace TapTap
                 LevelCameraSettings settings = Settings;
                 Vector2 viewport = new Vector2(viewCamera.orthographicSize * 2f * viewCamera.aspect,
                     viewCamera.orthographicSize * 2f);
-                if (FollowHorizontal)
+                if (FollowHorizontal && !changingRegion)
                     target.x = Mathf.Clamp(current.x, target.x - viewport.x * Mathf.Clamp(settings.DeadZone.x, 0f, 0.45f),
                         target.x + viewport.x * Mathf.Clamp(settings.DeadZone.x, 0f, 0.45f));
-                if (FollowVertical)
+                if (FollowVertical && !changingRegion)
                     target.y = Mathf.Clamp(current.y, target.y - viewport.y * Mathf.Clamp(settings.DeadZone.y, 0f, 0.45f),
                         target.y + viewport.y * Mathf.Clamp(settings.DeadZone.y, 0f, 0.45f));
                 target = ConstrainToRegion(target);
@@ -177,10 +196,13 @@ namespace TapTap
                     Mathf.SmoothDamp(current.x, target.x, ref followVelocity.x, horizontalSmooth, Mathf.Infinity, deltaTime),
                     Mathf.SmoothDamp(current.y, target.y, ref followVelocity.y, verticalSmooth, Mathf.Infinity, deltaTime),
                     target.z);
-                Vector3 constrained = ConstrainToRegion(next);
+                // A new room's clamp must not teleport the camera across the shared boundary.
+                Vector3 constrained = changingRegion ? next : ConstrainToRegion(next);
                 if (!Mathf.Approximately(next.x, constrained.x)) followVelocity.x = 0f;
                 if (!Mathf.Approximately(next.y, constrained.y)) followVelocity.y = 0f;
                 MoveCamera(constrained);
+                if (changingRegion && Vector2.Distance(next, target) < UnitScale * 0.01f
+                    && Mathf.Abs(sizeVelocity) < UnitScale * 0.01f) changingRegion = false;
             }
             ApplyCameraEffects();
         }

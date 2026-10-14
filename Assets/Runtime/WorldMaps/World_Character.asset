@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: World_Character
   m_EditorClassIdentifier: 
   Template: 1
+  ShowTemplate: 1
   TemplateSize: {x: 80, y: 120}
   CharacterGapRatio: 0.022
   CharacterCornerRatio: 0.055
@@ -20,27 +21,27 @@ MonoBehaviour:
   Modules:
   - Id: e3d4dc65b67d431cb4a96331e6e6e586
     Level: {fileID: 11400000, guid: d28be2a0c754ecd49a66e45eac456d06, type: 2}
-    Position: {x: 11, y: 110}
+    Position: {x: 11, y: 113}
     Label: 
     Sequence: 1
   - Id: d8b0a52796e04e4bbddd92188c1c4808
     Level: {fileID: 11400000, guid: 7b43a87cc927908419659516eecd81d1, type: 2}
-    Position: {x: 40, y: 119}
+    Position: {x: 40, y: 122}
     Label: 
     Sequence: 4
   - Id: a0cadc7204034720ab7eff930c366903
     Level: {fileID: 11400000, guid: edbe0ee7af4bfbe4ab3b6e3f8316fc5f, type: 2}
-    Position: {x: 11, y: 93}
+    Position: {x: 11, y: 96}
     Label: 
     Sequence: 3
   - Id: 76fbb97aa8144e238fbd9ae00d5f1283
     Level: {fileID: 11400000, guid: 0be07a979d71b3444a96dfd677d65f19, type: 2}
-    Position: {x: 53, y: 103}
+    Position: {x: 53, y: 106}
     Label: 
     Sequence: 5
   - Id: d739a00201634759a77941122e7335c5
     Level: {fileID: 11400000, guid: 91fc236193d9002428e99fd0b82f9a57, type: 2}
-    Position: {x: 22, y: 81}
+    Position: {x: 22, y: 84}
     Label: 
     Sequence: 7
   - Id: 053542e014f14fff885f4627b3f34e75
@@ -50,12 +51,12 @@ MonoBehaviour:
     Sequence: 6
   - Id: 7d2861e155f94be491b6c5437f229f83
     Level: {fileID: 11400000, guid: dc994f9b9342cb04e8aa86e169c9e180, type: 2}
-    Position: {x: 40, y: 92}
+    Position: {x: 40, y: 95}
     Label: 
     Sequence: 2
   - Id: d1f89e7af7a6404299db80c1d30b56cb
     Level: {fileID: 11400000, guid: 2bcadc27f5798e04982c8492385de60b, type: 2}
-    Position: {x: 54, y: 81}
+    Position: {x: 54, y: 84}
     Label: 
     Sequence: 6
   - Id: 704d4109545f4f288c9048b4c8a679a7
@@ -65,12 +66,12 @@ MonoBehaviour:
     Sequence: 10
   - Id: 30a4ad492bd142e8aaf02cc9e42103fc
     Level: {fileID: 11400000, guid: 9f09cbfb9cd7e9145991362929ad80ee, type: 2}
-    Position: {x: 22, y: 73}
+    Position: {x: 22, y: 76}
     Label: 
     Sequence: 9
   - Id: 412005a821984653ab3b0a215fe811ba
     Level: {fileID: 11400000, guid: aff15986e01a91c49a04fc6cf80cd52b, type: 2}
-    Position: {x: 57, y: 70}
+    Position: {x: 57, y: 73}
     Label: 
     Sequence: 8
   - Id: 1249a37049554f77a3bd3cc1c1fbfe4e
@@ -123,30 +124,35 @@ MonoBehaviour:
     Position: {x: 26, y: 4}
     Label: 
     Sequence: 20
+  - Id: 08ac8d6efad7412dbd7487b0fb10f1cf
+    Level: {fileID: 11400000, guid: 6f4b84fa53ef5b24690deb8d021de356, type: 2}
+    Position: {x: 46, y: 70}
+    Label: 
+    Sequence: 21
   Passages:
   - Id: f419bfd551d4499e9ed48651fac724b8
-    Position: {x: 35, y: 110}
+    Position: {x: 38, y: 113}
     FromModuleId: a0cadc7204034720ab7eff930c366903
     ToModuleId: e3d4dc65b67d431cb4a96331e6e6e586
     Angle: 90
     Bidirectional: 0
     Note: 
   - Id: 64897d2540ed45a5bc96b03ecaf3e139
-    Position: {x: 15, y: 93}
+    Position: {x: 20, y: 96}
     FromModuleId: a0cadc7204034720ab7eff930c366903
     ToModuleId: 
     Angle: 90
     Bidirectional: 0
     Note: 
   - Id: 771d5bcd91e044889819d366313050df
-    Position: {x: 24, y: 81}
+    Position: {x: 24, y: 84}
     FromModuleId: 
     ToModuleId: 
     Angle: 270
     Bidirectional: 0
     Note: 
   - Id: 2862404a4c4942b2b23a912f206a3df7
-    Position: {x: 54, y: 81}
+    Position: {x: 55, y: 84}
     FromModuleId: 
     ToModuleId: 
     Angle: 90
@@ -167,14 +173,14 @@ MonoBehaviour:
     Bidirectional: 0
     Note: 
   - Id: 9904dfb424cd48109a9bf6f9013d6460
-    Position: {x: 49, y: 65}
+    Position: {x: 48, y: 65}
     FromModuleId: 
     ToModuleId: 
     Angle: 90
     Bidirectional: 0
     Note: 
   - Id: 4a61eff8739340b99b9e9b1915d7c08e
-    Position: {x: 76, y: 20}
+    Position: {x: 71, y: 20}
     FromModuleId: 
     ToModuleId: 
     Angle: 90
@@ -188,7 +194,7 @@ MonoBehaviour:
     Bidirectional: 0
     Note: 
   - Id: 8e696a56c08c42b58aaec7bc5dfa3c31
-    Position: {x: 51, y: 16}
+    Position: {x: 53, y: 16}
     FromModuleId: 
     ToModuleId: 
     Angle: 90

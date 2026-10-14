@@ -7,8 +7,11 @@ namespace TapTap
 {
     [DisallowMultipleComponent]
     [RequireComponent(typeof(WorldMapRoot))]
-    public sealed class WorldMapProgression : MonoBehaviour
+    public sealed class WorldMapProgression : MonoBehaviour, IRewindable<WorldMapProgression.Snapshot>
     {
+        public struct Snapshot { public int CurrentIndex; }
+        [Tooltip("身体中心离开当前区域超过此格数后才切区，避免边界反复切换。")]
+        [Range(0f, 0.45f)] public float RegionBuffer = 0.12f;
         [Min(0.01f)] public float FadeDuration = 0.25f;
         [Min(0.1f)] public float AssemblyDuration = 1.2f;
         [Min(0f)] public float AssemblyHold = 0.45f;
@@ -19,6 +22,7 @@ namespace TapTap
         private WorldMapAssemblyView assembly;
         private List<WorldMapModule> ordered;
         private readonly HashSet<string> completed = new HashSet<string>();
+        private readonly HashSet<string> discovered = new HashSet<string>();
         private PlayerController.Snapshot initialPlayer;
         private MovableEntity.Snapshot initialBody, initialHead;
         private bool initialPhase;
@@ -27,20 +31,25 @@ namespace TapTap
         private static WorldMapProgression current;
 
         public static WorldMapProgression Current => current;
-        public static bool InputBlocked => WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen
+        public static bool InputBlocked => WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen || GameStageProgression.InputBlocked
             || (current != null && (current.IsTransitioning || current.IsComplete));
         public bool IsTransitioning { get; private set; }
         public bool IsComplete { get; private set; }
+        public bool ExitsEnabled { get; private set; } = true;
         public int CurrentIndex { get; private set; }
         public int LevelCount => ordered?.Count ?? 0;
         public int CompletedCount => completed.Count;
         public WorldMapModule CurrentModule => initialized ? ordered[CurrentIndex] : null;
         public LevelRegion CurrentRegion => CurrentModule != null ? world.FindRegion(CurrentModule) : null;
         public int CurrentNumber => CurrentModule != null ? world.Source.SequenceNumber(CurrentModule) : 0;
+        public float DeathBoundary => world.WorldBounds.min.y + player.Config.DeathBoundary;
         public IReadOnlyList<WorldMapModule> Modules => ordered;
         public bool HasCompleted(WorldMapModule module) => completed.Contains(module.Id);
+        public bool HasDiscovered(WorldMapModule module) => discovered.Contains(module.Id);
         public event Action<WorldMapModule> LevelChanged;
         public event Action WorldCompleted;
+
+        public void SetExitsEnabled(bool enabled) => ExitsEnabled = enabled;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => current = null;
@@ -49,6 +58,13 @@ namespace TapTap
         {
             if (!initialized) Initialize(GetComponent<WorldMapRoot>(), FindObjectOfType<PlayerController>(),
                 FindObjectOfType<LevelSceneRuntime>());
+        }
+
+        private void OnEnable()
+        {
+            if (!initialized) return;
+            current = this;
+            RewindManager.Current?.Register(this, this, 40);
         }
 
         public bool Initialize(WorldMapRoot map, PlayerController character, LevelSceneRuntime shared)
@@ -80,24 +96,63 @@ namespace TapTap
             string requested = WorldMapSceneRouter.ConsumeModule(world.Source);
             int start = ordered.FindIndex(module => module.Id == requested);
             Activate(Mathf.Max(0, start), false);
+            RewindManager.Current?.Register(this, this, 40);
             return true;
+        }
+
+        // Called after movement and before death handling, using logical body geometry rather than render interpolation.
+        public void UpdatePlayerRegion(PlayerController character)
+        {
+            if (!initialized || character != player || IsTransitioning || IsComplete || player.Body.IsReturning) return;
+            Vector2 center = player.Body.Motor.Position + player.Body.Motor.CenterOffset;
+            if (!CurrentRegion.ContainsWorldPoint(center, RegionBuffer))
+            {
+                for (int i = 0; i < ordered.Count; i++)
+                    if (world.FindRegion(ordered[i]).ContainsWorldPoint(center))
+                    {
+                        if (i != CurrentIndex) SelectRegion(i, false, true);
+                        break;
+                    }
+            }
+            player.GetComponent<RespawnService>().SetCheckpoint(CurrentRegion.EntrySpawnPosition);
+        }
+
+        private void SelectRegion(int index, bool snapCamera, bool notify)
+        {
+            CurrentIndex = index;
+            if (discovered.Add(CurrentModule.Id)) WorldMapProgressStore.Unlock(world.Source, CurrentModule);
+            LevelRegion region = CurrentRegion;
+            region.GetComponent<RegionRevealView>()?.SetDiscovered(true);
+            DemoCamera camera = runtime != null ? runtime.CameraRig : FindObjectOfType<DemoCamera>();
+            camera?.SetRegion(region, snapCamera);
+            if (notify) LevelChanged?.Invoke(CurrentModule);
+        }
+
+        public Snapshot CaptureState() => new Snapshot { CurrentIndex = CurrentIndex };
+        public void RestoreState(in Snapshot state)
+        {
+            if (!initialized || state.CurrentIndex < 0 || state.CurrentIndex >= ordered.Count) return;
+            // Discovery lasts for this run and survives rewind; resetting the world clears it.
+            SelectRegion(state.CurrentIndex, true, false);
         }
 
         private void Update()
         {
             if (!initialized || !UseKeyboard || IsTransitioning || LevelAnnotation.IsFeedbackOpen) return;
             if (WorldMapSceneRouter.IsLoading) return;
+            if (Application.isFocused && !WorldLevelMenu.IsOpen && !IsComplete && CanTransition && Input.GetKeyDown(KeyCode.O))
+                ExitsEnabled = !ExitsEnabled;
             if (Input.GetKeyDown(KeyCode.P)) WorldMapProgressStore.UnlockAll(world.Source);
             if (Input.GetKeyDown(KeyCode.Escape)) ReturnToSelection();
             if (Input.GetKeyDown(KeyCode.PageDown)) SkipNext();
         }
 
-        private bool CanTransition => initialized && !IsTransitioning && !WorldMapSceneRouter.IsLoading && !LevelAnnotation.IsFeedbackOpen
+        private bool CanTransition => initialized && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading && !LevelAnnotation.IsFeedbackOpen
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         public bool CompleteCurrent(LevelEndpoint endpoint)
         {
-            if (!CanTransition || IsComplete || endpoint == null
+            if (!ExitsEnabled || !CanTransition || IsComplete || endpoint == null
                 || endpoint.GetComponentInParent<LevelRegion>() != CurrentRegion) return false;
             StartTransition(CurrentIndex + 1, true);
             return true;
@@ -194,6 +249,9 @@ namespace TapTap
         private void Activate(int index, bool refresh)
         {
             if (refresh) world.RefreshLevels();
+            discovered.Clear();
+            discovered.Add(ordered[index].Id);
+            world.PrepareExploration(discovered);
             WorldPhaseState.Instance.RestoreState(in initialPhase);
             player.GetComponent<RespawnService>().CancelAll();
             player.Body.RestoreState(in initialBody); player.Head.RestoreState(in initialHead);
@@ -201,7 +259,6 @@ namespace TapTap
             CurrentIndex = index;
             WorldMapProgressStore.Unlock(world.Source, ordered[index]);
             IsComplete = false;
-            world.ShowOnly(CurrentModule);
             LevelRegion region = CurrentRegion;
             Vector2 spawn = region.EntrySpawnPosition;
             player.TeleportJoined(spawn);
@@ -213,6 +270,8 @@ namespace TapTap
                 DemoCamera camera = FindObjectOfType<DemoCamera>();
                 camera?.BindPlayer(player); camera?.SetRegion(region);
             }
+            SelectRegion(index, true, false);
+            GameStageProgression.ForScene(gameObject.scene).ApplyStage();
             Physics2D.SyncTransforms();
             RewindManager.Current?.ClearHistory();
             LevelChanged?.Invoke(CurrentModule);
@@ -220,6 +279,7 @@ namespace TapTap
 
         private void OnDisable()
         {
+            RewindManager.Current?.Unregister(this);
             StopAllCoroutines();
             if (IsTransitioning)
             {

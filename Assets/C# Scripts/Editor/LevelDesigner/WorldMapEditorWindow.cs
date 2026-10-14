@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace TapTap.Editor
@@ -22,6 +23,7 @@ namespace TapTap.Editor
         private readonly Dictionary<LevelDefinition, Texture2D> thumbnails = new Dictionary<LevelDefinition, Texture2D>();
         private readonly Dictionary<LevelDefinition, int> thumbnailVersions = new Dictionary<LevelDefinition, int>();
         private readonly Dictionary<LevelDefinition, int> observedLevelVersions = new Dictionary<LevelDefinition, int>();
+        private int observedMapVersion = -1;
         private WorldMapMask mask;
         private Texture2D maskTexture;
         private Vector2Int cachedSize;
@@ -42,6 +44,7 @@ namespace TapTap.Editor
 
         private static string PreferenceKey => "TapTap.WorldMap.LastMap." + Application.dataPath;
         private WorldMapModule Selected => map?.Modules?.Find(module => module != null && module.Id == selectedId);
+        public WorldMapDefinition Definition => map;
 
         [MenuItem("TapTap/World Map Designer", false, 101)]
         public static void Open() => GetWindow<WorldMapEditorWindow>("大地图拼装").Show();
@@ -105,6 +108,8 @@ namespace TapTap.Editor
         {
             // Also cover Inspector changes and other tools which do not publish layout edits.
             if (map?.Modules == null) return;
+            int mapVersion = EditorUtility.GetDirtyCount(map);
+            if (mapVersion != observedMapVersion) { observedMapVersion = mapVersion; Repaint(); }
             foreach (WorldMapModule module in map.Modules)
             {
                 LevelDefinition level = module?.Level; if (level == null) continue;
@@ -160,6 +165,7 @@ namespace TapTap.Editor
 
         private void EnsureMask()
         {
+            if (map != null && !map.ShowTemplate) return;
             if (map == null || mask != null && cachedSize == map.TemplateSize && cachedPadding == map.Padding &&
                 cachedTemplate == map.Template && cachedGap == map.CharacterGapRatio && cachedCorners == map.CharacterCornerRatio) return;
             if (maskTexture != null) DestroyImmediate(maskTexture);
@@ -223,7 +229,7 @@ namespace TapTap.Editor
                     using (new EditorGUI.DisabledScope(EditorApplication.isPlayingOrWillChangePlaymode))
                     {
                         if (GUILayout.Button("生成整体 Prefab", EditorStyles.toolbarButton, GUILayout.Width(108f))) ExportPrefab();
-                        if (GUILayout.Button("生成入口与游玩", EditorStyles.toolbarButton, GUILayout.Width(108f))) GeneratePlayScene();
+                        if (GUILayout.Button("保存并打开游玩", EditorStyles.toolbarButton, GUILayout.Width(108f))) GeneratePlayScene();
                         if (GUILayout.Button("生成选关入口", EditorStyles.toolbarButton, GUILayout.Width(100f))) GenerateSelectionScene();
                     }
                 }
@@ -248,9 +254,13 @@ namespace TapTap.Editor
         private void Save()
         {
             if (map == null) return;
-            AssetDatabase.SaveAssetIfDirty(map);
-            foreach (WorldMapModule module in map.Modules) if (module?.Level != null) AssetDatabase.SaveAssetIfDirty(module.Level);
-            ShowNotification(new GUIContent("大地图布局已保存"));
+            try
+            {
+                WorldMapSceneSync.SaveAndSynchronize(map);
+                error = null;
+                ShowNotification(new GUIContent("大地图与游玩场景已保存并同步"));
+            }
+            catch (Exception exception) { error = exception.Message; }
         }
 
         private void ExportPng()
@@ -294,10 +304,23 @@ namespace TapTap.Editor
         {
             try
             {
-                string path = WorldMapSceneBuilder.Generate(map);
+                if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+                string path = WorldMapSceneSync.SaveAndSynchronize(map);
                 if (string.IsNullOrEmpty(path)) return;
+                var scene = UnityEngine.SceneManagement.SceneManager.GetSceneByPath(path);
+                if (scene.IsValid() && scene.isLoaded) EditorSceneManager.SaveScene(scene, path);
+                scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+                UnityEngine.SceneManagement.SceneManager.SetActiveScene(scene);
+                foreach (GameObject root in scene.GetRootGameObjects())
+                {
+                    WorldMapRoot world = root.GetComponent<WorldMapRoot>();
+                    if (world == null) continue;
+                    Selection.activeGameObject = world.gameObject;
+                    if (SceneView.lastActiveSceneView != null) SceneView.lastActiveSceneView.Frame(world.WorldBounds, false);
+                    break;
+                }
                 error = null;
-                ShowNotification(new GUIContent("选关入口、全部关卡和同场景流程已生成"));
+                ShowNotification(new GUIContent("完整游玩场景已保存并更新"));
             }
             catch (Exception exception) { error = exception.Message; }
         }
@@ -322,12 +345,15 @@ namespace TapTap.Editor
             }
             DrawDesignTools();
             EditorGUILayout.LabelField("大地图模板", EditorStyles.boldLabel);
+            bool templateVisible = EditorGUILayout.Toggle("显示参考底图", map.ShowTemplate);
+            if (templateVisible != map.ShowTemplate)
+            { Record("切换参考底图"); map.ShowTemplate = templateVisible; Changed(); }
             var nextTemplate = (WorldMapTemplateKind)EditorGUILayout.Popup("模板", (int)map.Template, new[] { "爱心", "分体角色" });
             if (nextTemplate != map.Template) SetTemplate(nextTemplate);
             bool character = map.Template == WorldMapTemplateKind.SplitCharacter;
             EditorGUILayout.HelpBox(character
-                ? "上下等分，顶底直线，四角圆角，接壤处略微外凸。中缝和外围灰区应留空，整块关卡不能跨缝。"
-                : "对称直边与斜边为主，心瓣和肩部圆滑连接。灰色区域应留空；整块关卡边界必须放在爱心内。", MessageType.None);
+                ? "分体角色轮廓仅作拼装参考；关卡可以跨中缝或放在轮廓外。"
+                : "爱心轮廓仅作拼装参考；关卡可以自由放在轮廓外。", MessageType.None);
             int width = EditorGUILayout.DelayedIntField("模板宽度（格）", map.TemplateSize.x);
             int height = EditorGUILayout.DelayedIntField("模板高度（格）", map.TemplateSize.y);
             int padding = EditorGUILayout.DelayedIntField("外围留边（格）", map.Padding);
@@ -427,7 +453,7 @@ namespace TapTap.Editor
                 if (module == null) continue;
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    bool invalid = module.Level == null || WorldMapDrawing.CountOutside(mask, DisplayFootprint(module), DisplayPosition(module)) > 0 || Overlapping(module, DisplayFootprint(module), DisplayPosition(module));
+                    bool invalid = module.Level == null || Overlapping(module, DisplayFootprint(module), DisplayPosition(module));
                     bool moduleSelected = ModuleSelected(module) && SelectedPassage == null;
                     if (GUILayout.Toggle(moduleSelected, (invalid ? "⚠ " : "") + map.SequenceNumber(module) + ". " + module.DisplayName, "Button") != moduleSelected)
                         SelectModule(module);
@@ -493,21 +519,26 @@ namespace TapTap.Editor
 
         private void DrawProblems()
         {
-            int outside = 0, overlaps = 0, missing = 0;
+            int overlaps = 0, missing = 0;
+            var details = new List<string>();
             for (int i = 0; i < map.Modules.Count; i++)
             {
                 WorldMapModule module = map.Modules[i];
                 if (module?.Level == null) { missing++; continue; }
-                if (WorldMapDrawing.CountOutside(mask, module.Level.Footprint, module.Position) > 0) outside++;
                 for (int j = 0; j < i; j++)
-                    if (map.Modules[j]?.Level != null && WorldMapOverlap.HasConflict(module.Level, DisplayFootprint(module), DisplayPosition(module),
-                        map.Modules[j].Level, DisplayFootprint(map.Modules[j]), DisplayPosition(map.Modules[j]))) overlaps++;
+                    if (map.Modules[j]?.Level != null)
+                    {
+                        var conflicts = WorldMapOverlap.ConflictCells(module.Level, DisplayFootprint(module), DisplayPosition(module),
+                            map.Modules[j].Level, DisplayFootprint(map.Modules[j]), DisplayPosition(map.Modules[j]));
+                        if (conflicts.Count == 0) continue;
+                        overlaps++;
+                        if (details.Count < 3) details.Add(module.DisplayName + " ↔ " + map.Modules[j].DisplayName
+                            + "：" + conflicts.Count + " 格，首处 " + conflicts[0]);
+                    }
             }
-            string message = outside + " 个模块越界 · " + overlaps + " 处重叠格块冲突" + (missing > 0 ? " · " + missing + " 个来源缺失" : "");
-            EditorGUILayout.HelpBox(message, outside + overlaps + missing > 0 ? MessageType.Warning : MessageType.Info);
-            WorldMapModule selected = Selected;
-            if (selected?.Level != null && WorldMapDrawing.CountOutside(mask, DisplayFootprint(selected), selected.Position) > 0)
-                EditorGUILayout.HelpBox("当前模块有 " + WorldMapDrawing.CountOutside(mask, DisplayFootprint(selected), DisplayPosition(selected)) + " 格越界（按实际关卡范围计算）。", MessageType.Warning);
+            string message = overlaps + " 对模块存在重叠图块冲突" + (missing > 0 ? " · " + missing + " 个来源缺失" : "");
+            EditorGUILayout.HelpBox(message, overlaps + missing > 0 ? MessageType.Warning : MessageType.Info);
+            foreach (string detail in details) EditorGUILayout.HelpBox(detail, MessageType.Warning);
         }
 
         private void Record(string action) => Undo.RegisterCompleteObjectUndo(map, action);
@@ -555,8 +586,9 @@ namespace TapTap.Editor
         private void Fit(Rect canvas)
         {
             if (map == null) return;
-            cellPixels = Mathf.Clamp(Mathf.Min((canvas.width - 40f) / map.Size.x, (canvas.height - 40f) / map.Size.y), 0.1f, 48f);
-            pan = new Vector2((canvas.width - map.Size.x * cellPixels) * 0.5f, (canvas.height - map.Size.y * cellPixels) * 0.5f);
+            RectInt bounds = map.PreviewBounds;
+            cellPixels = Mathf.Clamp(Mathf.Min((canvas.width - 40f) / bounds.width, (canvas.height - 40f) / bounds.height), 0.1f, 48f);
+            pan = canvas.size * 0.5f - new Vector2(bounds.center.x, map.Size.y - bounds.center.y) * cellPixels;
         }
 
         private void FocusModule(WorldMapModule module)
@@ -626,7 +658,7 @@ namespace TapTap.Editor
             GUI.BeginGroup(canvas);
             if (map == null) { GUI.Label(new Rect(25f, 25f, canvas.width - 50f, 50f), "创建或选择大地图后，在这里拼装关卡。"); GUI.EndGroup(); return; }
             Rect mapRect = new Rect(pan.x, pan.y, map.Size.x * cellPixels, map.Size.y * cellPixels);
-            GUI.DrawTexture(mapRect, maskTexture, ScaleMode.StretchToFill, false);
+            if (map.ShowTemplate) GUI.DrawTexture(mapRect, maskTexture, ScaleMode.StretchToFill, false);
             Rect view = new Rect(0f, 0f, canvas.width, canvas.height);
             foreach (WorldMapModule module in map.Modules)
             {
@@ -641,26 +673,6 @@ namespace TapTap.Editor
                 tint.a = selected ? 0.30f : 0.16f;
                 DrawFootprint(footprint, origin, tint, Color.clear, 0f);
                 if (showTerrain) GUI.DrawTexture(CellRect(new RectInt(origin + module.Level.CanvasOrigin, module.Level.Size)), Thumbnail(module.Level), ScaleMode.StretchToFill, true);
-                if (WorldMapDrawing.CountOutside(mask, footprint, origin) > 0)
-                {
-                    foreach (RectInt localRun in footprint.Runs)
-                    {
-                        RectInt run = new RectInt(localRun.position + origin, localRun.size);
-                        int start = -1;
-                        bool active = false;
-                        for (int x = run.xMin; x <= run.xMax; x++)
-                        {
-                            bool bad = x < run.xMax && !mask.Contains(new Vector2Int(x, run.y));
-                            if (bad && !active) { start = x; active = true; }
-                            if (!bad && active)
-                            {
-                                EditorGUI.DrawRect(CellRect(new RectInt(start, run.y, x - start, 1)), new Color(1f, 0.18f, 0.22f, 0.36f));
-                                active = false;
-                            }
-                        }
-                    }
-                    color = new Color(1f, 0.35f, 0.37f);
-                }
                 if (Overlapping(module, footprint, origin)) color = new Color(1f, 0.58f, 0.22f);
                 DrawFootprint(footprint, origin, Color.clear, color, selected ? 4f : 1f);
                 if (selected) DrawFootprint(footprint, origin, Color.clear, Color.white, 1f, selectedModuleIds.Count <= 1);
@@ -673,11 +685,20 @@ namespace TapTap.Editor
                     GUI.Label(title, map.SequenceNumber(module) + ". " + module.DisplayName, style);
                 }
             }
+            for (int i = 0; i < map.Modules.Count; i++)
+                for (int j = 0; j < i; j++)
+                {
+                    WorldMapModule a = map.Modules[i], b = map.Modules[j];
+                    if (a?.Level == null || b?.Level == null) continue;
+                    foreach (Vector2Int cell in WorldMapOverlap.ConflictCells(a.Level, DisplayFootprint(a), DisplayPosition(a),
+                        b.Level, DisplayFootprint(b), DisplayPosition(b)))
+                        EditorGUI.DrawRect(CellRect(new RectInt(cell, Vector2Int.one)), new Color(1f, 0.42f, 0.08f, 0.65f));
+                }
             DrawGrid(canvas);
             Handles.BeginGUI();
             Color previous = Handles.color;
             Handles.color = new Color(1f, 0.56f, 0.66f, 0.95f);
-            foreach (Vector2[] contour in mask.Outlines)
+            foreach (Vector2[] contour in map.ShowTemplate ? mask.Outlines : new Vector2[0][])
             {
                 var outline = new Vector3[contour.Length + 1];
                 for (int i = 0; i < contour.Length; i++) outline[i] = CellPoint(contour[i]);
@@ -693,7 +714,7 @@ namespace TapTap.Editor
                 GUI.color = new Color(1f, 1f, 1f, 0.6f);
                 GUI.DrawTexture(CellRect(new RectInt(hover + pendingLevel.CanvasOrigin, pendingLevel.Size)), Thumbnail(pendingLevel), ScaleMode.StretchToFill, true);
                 GUI.color = tint;
-                bool valid = WorldMapDrawing.CountOutside(mask, footprint, hover) == 0 && !Overlapping(null, footprint, hover);
+                bool valid = !Overlapping(null, footprint, hover);
                 DrawFootprint(footprint, hover, valid ? new Color(0.3f, 1f, 0.55f, 0.18f) : new Color(1f, 0.2f, 0.24f, 0.25f),
                     valid ? Color.green : new Color(1f, 0.35f, 0.37f), 2f);
             }
@@ -705,13 +726,12 @@ namespace TapTap.Editor
 
         private void DrawGrid(Rect canvas)
         {
-            if (!new Rect(pan.x, pan.y, map.Size.x * cellPixels, map.Size.y * cellPixels).Overlaps(new Rect(0f, 0f, canvas.width, canvas.height))) return;
             int step = cellPixels >= 7f ? 1 : cellPixels >= 1f ? 8 : 32;
             Color color = new Color(1f, 1f, 1f, step == 1 ? 0.08f : 0.055f);
-            int fromX = Mathf.Max(0, Mathf.FloorToInt(-pan.x / cellPixels / step) * step);
-            int toX = Mathf.Min(map.Size.x, Mathf.CeilToInt((canvas.width - pan.x) / cellPixels));
-            int fromY = Mathf.Max(0, Mathf.FloorToInt((map.Size.y - (canvas.height - pan.y) / cellPixels) / step) * step);
-            int toY = Mathf.Min(map.Size.y, Mathf.CeilToInt(map.Size.y + pan.y / cellPixels));
+            int fromX = Mathf.FloorToInt(-pan.x / cellPixels / step) * step;
+            int toX = Mathf.CeilToInt((canvas.width - pan.x) / cellPixels);
+            int fromY = Mathf.FloorToInt((map.Size.y - (canvas.height - pan.y) / cellPixels) / step) * step;
+            int toY = Mathf.CeilToInt(map.Size.y + pan.y / cellPixels);
             for (int x = fromX; x <= toX; x += step)
                 EditorGUI.DrawRect(new Rect(pan.x + x * cellPixels, Mathf.Max(0f, pan.y), 1f, Mathf.Min(canvas.height, pan.y + map.Size.y * cellPixels) - Mathf.Max(0f, pan.y)), color);
             for (int y = fromY; y <= toY; y += step)
@@ -939,7 +959,7 @@ namespace TapTap.Editor
         private void DrawStatus(Rect bar, Rect canvas)
         {
             EditorGUI.DrawRect(bar, new Color(0.16f, 0.18f, 0.21f));
-            string text = "灰色 = 留空 · 粉色线 = 模板目标轮廓";
+            string text = "橙色 = 重叠图块冲突 · 模板仅作参考";
             if (map != null)
             {
                 text = ToolName + " · " + map.TemplateName + " " + map.TemplateSize.x + "×" + map.TemplateSize.y + " 格 · " + map.Modules.Count + " 个模块 · " + text;
