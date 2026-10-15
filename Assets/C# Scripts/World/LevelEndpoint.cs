@@ -10,7 +10,30 @@ namespace TapTap
         [Tooltip("触及终点后完成当前关，按大世界序号推进。")]
         public string EndpointId = "finish";
         public string Label = "终点";
+        [Header("入门演出（锚点按脚底基准定位）")]
+        [SerializeField] private Transform frontAnchor;
+        [SerializeField] private Transform insideAnchor;
+        [Min(0.1f), Tooltip("自动行走速度，单位为格/秒。")]
+        public float EntryWalkSpeed = 2.5f;
+        [Min(0.02f)] public float EntryRetractDuration = 0.25f;
+        [Min(0.02f)] public float EntryTurnDuration = 0.16f;
+        [Min(0f)] public float EntryHoldDuration = 0.18f;
         private BoxCollider2D trigger;
+
+        public Vector3 FrontFootPosition => frontAnchor != null ? frontAnchor.position : transform.position;
+        public Vector3 InsideFootPosition(float unit) => insideAnchor != null ? insideAnchor.position
+            : FrontFootPosition + transform.forward.normalized * unit;
+        public void ConfigureEntryAnchors(Transform front, Transform inside) { frontAnchor = front; insideAnchor = inside; }
+
+        private void OnDrawGizmosSelected()
+        {
+            float unit = GetComponentInParent<LevelRegion>() != null ? GetComponentInParent<LevelRegion>().UnitSize : 1f;
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(FrontFootPosition, 0.08f * unit);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(InsideFootPosition(unit), 0.08f * unit);
+            Gizmos.DrawLine(FrontFootPosition, InsideFootPosition(unit));
+        }
 
         private void Awake() => EnsureTrigger();
         private void Reset()

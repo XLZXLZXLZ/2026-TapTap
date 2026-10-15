@@ -235,25 +235,38 @@ namespace TapTap.Editor
             var originalHidden = new GameObject("Already hidden").AddComponent<MeshRenderer>(); originalHidden.transform.SetParent(root.transform, false);
             originalHidden.forceRenderingOff = true;
             var reveal = root.AddComponent<RegionRevealView>();
+            var localLight = new GameObject("Local light").AddComponent<Light>(); localLight.transform.SetParent(root.transform, false);
+            var disabledLight = new GameObject("Disabled local light").AddComponent<Light>(); disabledLight.transform.SetParent(root.transform, false);
+            disabledLight.enabled = false;
             try
             {
                 reveal.SetDiscovered(false);
+                reveal.SetDiscovered(false);
+                Check(!localLight.enabled && !disabledLight.enabled, "Undiscovered local light leaked");
                 Check(renderer.forceRenderingOff && sprite.forceRenderingOff && reveal.Opacity == 0, "Undiscovered visuals are visible");
                 Check(cube.GetComponent<Collider>().enabled && root.activeSelf, "Hiding disabled gameplay objects or collision");
                 sprite.enabled = true; sprite.enabled = false;
                 reveal.SetDiscovered(true);
+                Check(localLight.enabled && !disabledLight.enabled, "Local light state was not restored");
+                localLight.enabled = false; reveal.SetDiscovered(true);
+                Check(!localLight.enabled, "Repeated reveal overwrote local light state");
+                localLight.enabled = true;
                 Check(!renderer.forceRenderingOff && !sprite.enabled && originalHidden.forceRenderingOff && reveal.Opacity == 1,
                     "Revealing overwrote an independent visual state");
                 Check(renderer.sharedMaterial == material, "Visibility changed the material");
                 reveal.SetDiscovered(false);
                 var nested = new GameObject("Spawned mesh").AddComponent<MeshRenderer>(); nested.transform.SetParent(cube.transform, false);
+                var spawnedLight = new GameObject("Spawned light").AddComponent<Light>(); spawnedLight.transform.SetParent(cube.transform, false);
                 reveal.RefreshVisuals();
+                Check(!spawnedLight.enabled, "Refresh leaked a newly spawned local light");
                 Check(nested.forceRenderingOff, "Runtime visuals were not registered by refresh");
                 reveal.SetDiscovered(true); Check(!nested.forceRenderingOff, "Registered mesh did not reveal");
+                Check(spawnedLight.enabled, "Registered local light did not reveal");
                 reveal.SetDiscovered(false);
                 // Edit-mode fixtures do not receive runtime MonoBehaviour lifecycle messages.
                 typeof(RegionRevealView).GetMethod("OnDestroy", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(reveal, null);
                 UnityEngine.Object.DestroyImmediate(reveal);
+                Check(localLight.enabled && spawnedLight.enabled && !disabledLight.enabled, "Removing view did not restore local light states");
                 Check(!renderer.forceRenderingOff && originalHidden.forceRenderingOff, "Removing the view did not restore original flags");
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }

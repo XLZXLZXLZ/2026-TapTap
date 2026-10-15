@@ -38,6 +38,7 @@ namespace TapTap.Editor
         public virtual void MirrorSettings(LevelPlacement placement, bool horizontal) { }
         public virtual void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context) { }
         public virtual string ValidatePlacement(LevelPlacement placement) => null;
+        public virtual string ValidateLayoutPlacement(LevelPlacement placement, LevelDefinition layout) => null;
     }
 
     public static class LevelBrushHandlers

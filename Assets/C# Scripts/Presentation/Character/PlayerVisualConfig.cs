@@ -44,12 +44,8 @@ namespace TapTap
         [HideInInspector] [Range(1f, 85f)] public float ParticleConeAngle = 38f;
 
         [Header("接触形变与恢复")]
-        [InspectorName("落地挤压幅度"), Tooltip("接触地面时角色视觉横向变宽、纵向变扁的基础比例；实际幅度随碰撞速度调整，也用于分离和吸附失败的小幅反馈。仅影响视觉，不改变碰撞体。")]
+        [InspectorName("落地挤压幅度"), Tooltip("接触地面时角色视觉横向变宽、纵向变扁的基础比例；实际幅度随碰撞速度调整。仅影响视觉，不改变碰撞体。")]
         [Range(0f, 0.4f)] public float LandingSquash = 0.12f;
-        [InspectorName("合体挤压幅度"), Tooltip("头身接触拼装时下半身视觉挤压的比例，头部采用较小幅度。也作为踩头弹起反馈的强度基准。")]
-        [Range(0f, 0.4f)] public float AssemblySquash = 0.16f;
-        [InspectorName("伸头形变幅度"), Tooltip("伸头开始时身体先压扁再拉伸并恢复，头部轻微拉伸后恢复。仅影响视觉，不改变碰撞体或移动锁定时长。")]
-        [Range(0f, 0.4f)] public float ExtensionSquash = 0.16f;
         [InspectorName("踩头弹簧形变幅度"), Tooltip("散落头部被从上方踩到时，先横向变宽、纵向压扁，再横向变窄、纵向拉长，最后恢复。仅影响视觉，不改变碰撞体。")]
         [Range(0f, 0.4f)] public float SpringSquash = 0.2f;
         [InspectorName("运动拉伸幅度"), Tooltip("下半身随纵向速度拉长、变窄的最大比例；头部在伸头和吸附期间使用此拉伸幅度。仅影响视觉，不改变实际伸头距离或跃起高度。")]
@@ -57,21 +53,15 @@ namespace TapTap
         [InspectorName("形变恢复时长（秒）"), Tooltip("一次挤压或拉伸反馈恢复到原始形状的时间，采用缓出曲线；不控制伸头、收头或吸附动作的时长。")]
         [Min(0.02f)] public float InteractionDuration = 0.22f;
 
-        [Header("呼吸起伏")]
-        [InspectorName("呼吸形变幅度"), Tooltip("呼吸时下半身纵向缩放的基础比例，并伴随较小的横向变化。头部采用较小幅度，水平移动时整体呼吸幅度减弱。")]
-        [Range(0f, 0.03f)] public float BreathingAmplitude = 0.008f;
-        [InspectorName("呼吸频率（次/秒）"), Tooltip("每秒完成的呼吸起伏周期数。设为零时停止呼吸相位推进。")]
-        [Min(0f)] public float BreathingFrequency = 0.6f;
-
-        [Header("磁力连接时的移动姿态")]
-        [InspectorName("移动视觉滞后距离（格）"), Tooltip("头身拉开但仍由磁力连接时，满速水平移动造成的最大视觉滞后距离。头部使用完整幅度，下半身使用百分之二十；不改变实际位置或碰撞。")]
-        [Range(0f, 0.2f)] public float MagneticLagDistance = 0.075f;
-        [InspectorName("姿态跟随平滑时间（秒）"), Tooltip("视觉位移滞后和头部倾斜的平滑时间常数。值越大，跟随越慢；不是固定动画完成时长，也不控制下半身倾斜的平滑速度。")]
-        [Min(0.01f)] public float MagneticLagSmoothTime = 0.1f;
-        [InspectorName("连接移动倾斜角（度）"), Tooltip("头身拉开且保持磁力连接时，下半身满速水平移动的目标倾斜角度。静止时回正，向左和向右的倾斜方向相反。")]
-        [Range(0f, 10f)] public float MagneticLeanAngle = 5f;
-        [InspectorName("头部倾斜倍率"), Tooltip("磁力连接拉开时，头部目标倾斜角相对下半身目标倾斜角的倍率；零表示头部不随水平移动倾斜。")]
-        [Range(0f, 1f)] public float MagneticHeadLeanMultiplier = 0.75f;
+        [Header("三维模型朝向（Y 轴）")]
+        [InspectorName("正面角度（度）"), Tooltip("静止时面向镜头的本地 Y 轴角度。")]
+        public float FrontYaw = 180f;
+        [InspectorName("向右角度（度）")]
+        public float RightYaw = 120f;
+        [InspectorName("向左角度（度）")]
+        public float LeftYaw = 240f;
+        [InspectorName("转向平滑时间（秒）"), Tooltip("指数平滑时间常数，约三倍此值后接近目标角度；随游戏时间推进并支持回溯。")]
+        [Min(0.001f)] public float TurnSmoothTime = 0.05f;
 
         [Header("复活光点与拖尾")]
         [InspectorName("复活光点大小"), Tooltip("生成复活光点预制体时的基础大小；光点飞行及显隐时间由角色控制配置决定。")]

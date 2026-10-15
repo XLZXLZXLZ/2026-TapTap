@@ -16,9 +16,10 @@ MonoBehaviour:
     debugReplacementPS: {fileID: 4800000, guid: cf852408f2e174538bcd9b7fda1c5ae7, type: 3}
   m_RendererFeatures:
   - {fileID: 9026015644201696827}
-  m_RendererFeatureMap: 3bbec21168d9427d
+  - {fileID: 6284593700158837721}
+  m_RendererFeatureMap: 3bbec21168d9427dd913a04fac5c3757
   m_UseNativeRenderPass: 0
-  postProcessData: {fileID: 0}
+  postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   shaders:
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
@@ -66,4 +67,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c04697cb751936c4ab5bed9f8051c9c0, type: 3}
   m_Name: TapTap Screen Effects
   m_EditorClassIdentifier: 
+  m_Active: 1
+--- !u!114 &6284593700158837721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dffdf531f168044cbe67e4e1330dcd2, type: 3}
+  m_Name: Screen Filters
+  m_EditorClassIdentifier:
   m_Active: 1

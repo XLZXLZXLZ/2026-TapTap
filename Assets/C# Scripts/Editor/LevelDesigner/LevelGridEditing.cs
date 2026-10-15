@@ -81,40 +81,65 @@ namespace TapTap.Editor
             if (layout.Placements == null) layout.Placements = new List<LevelPlacement>();
             if (erase)
             {
-                Predicate<LevelPlacement> matches = item => item != null && targets.Contains(item.Cell) &&
+                Predicate<LevelPlacement> matches = item => item != null && targets.Overlaps(LevelPlacementGeometry.Cells(item)) &&
                     (allLayers || item.Brush != null && string.Equals(item.Brush.LayerId, layerId, StringComparison.Ordinal));
                 if (!layout.Placements.Exists(matches)) return false;
                 beforeChange?.Invoke();
                 int removed = layout.Placements.RemoveAll(matches);
                 if (removed > 0 && layout.EntryPlacement == null) layout.EntryPlacementId = null;
+                if (removed > 0) layout.InvalidateFootprint();
                 return removed > 0;
             }
             if (brush == null) return false;
             Dictionary<Vector2Int, LevelPlacement> layer = IndexLayer(layout, brush.LayerId);
+            List<LevelPlacement> blockers = layout.Placements.FindAll(item => item?.Brush != null &&
+                (settings is PistonPlacementSettings ? item.Brush.LayerId == "geometry" : brush.LayerId == "geometry" && item.Settings is PistonPlacementSettings));
             bool checkpoint = LevelBrushHandlers.Get(brush.HandlerId)?.IsCheckpoint == true;
             string settingsJson = settings != null ? JsonUtility.ToJson(settings) : "{}";
             Type settingsType = settings != null ? settings.GetType() : typeof(EmptyPlacementSettings);
             bool changed = false;
             foreach (Vector2Int cell in targets)
             {
-                if (layer.TryGetValue(cell, out LevelPlacement placement))
+                var candidate = new LevelPlacement { Cell = cell, Brush = brush, Settings = settings };
+                if (!LevelPlacementGeometry.Fits(candidate, layout.CanvasBounds) || blockers.Exists(item =>
+                    LevelPlacementGeometry.Bounds(item).Overlaps(LevelPlacementGeometry.Bounds(candidate)))) continue;
+                layer.TryGetValue(cell, out LevelPlacement placement);
+                if (placement != null && placement.Cell != cell) placement = null;
+                if (placement != null && placement.Brush == brush && placement.Settings != null &&
+                    placement.Settings.GetType() == settingsType && JsonUtility.ToJson(placement.Settings) == settingsJson)
+                    continue;
+                if (!changed) beforeChange?.Invoke();
+                var overlaps = new HashSet<LevelPlacement>();
+                foreach (Vector2Int occupied in LevelPlacementGeometry.Cells(candidate))
+                    if (layer.TryGetValue(occupied, out LevelPlacement previous)) overlaps.Add(previous);
+                foreach (LevelPlacement previous in overlaps)
                 {
-                    if (placement.Brush == brush && placement.Settings != null &&
-                        placement.Settings.GetType() == settingsType && JsonUtility.ToJson(placement.Settings) == settingsJson)
-                        continue;
-                    if (!changed) beforeChange?.Invoke();
-                    if (placement.Id == layout.EntryPlacementId && !checkpoint) layout.EntryPlacementId = null;
-                    placement.Brush = brush;
-                    placement.Settings = CloneSettings(settings);
+                    foreach (Vector2Int occupied in LevelPlacementGeometry.Cells(previous)) layer.Remove(occupied);
+                    if (previous != placement) layout.Placements.Remove(previous);
+                    if (previous.Id == layout.EntryPlacementId && (previous != placement || !checkpoint)) layout.EntryPlacementId = null;
                 }
-                else
+                if (placement == null)
                 {
-                    if (!changed) beforeChange?.Invoke();
-                    layout.Placements.Add(new LevelPlacement { Cell = cell, Brush = brush, Settings = CloneSettings(settings) });
+                    placement = new LevelPlacement { Cell = cell };
+                    layout.Placements.Add(placement);
                 }
+                placement.Brush = brush;
+                placement.Settings = CloneSettings(settings);
+                foreach (Vector2Int occupied in LevelPlacementGeometry.Cells(placement)) layer[occupied] = placement;
                 changed = true;
             }
+            if (changed) layout.InvalidateFootprint();
             return changed;
+        }
+
+        public static bool CrossLayerConflict(LevelDefinition layout, LevelPlacement candidate, ISet<LevelPlacement> ignored = null)
+        {
+            bool piston = candidate.Settings is PistonPlacementSettings;
+            if (!piston && candidate.Brush?.LayerId != "geometry") return false;
+            return layout.Placements.Exists(item => item?.Brush != null && item != candidate &&
+                (ignored == null || !ignored.Contains(item)) &&
+                (piston ? item.Brush.LayerId == "geometry" : item.Settings is PistonPlacementSettings) &&
+                LevelPlacementGeometry.Bounds(candidate).Overlaps(LevelPlacementGeometry.Bounds(item)));
         }
 
         public static bool MoveArea(LevelDefinition layout, RectInt area, Vector2Int delta,
@@ -127,16 +152,25 @@ namespace TapTap.Editor
 
             // Capture the whole source before clearing the destination, so overlapping moves keep every item.
             List<LevelPlacement> moving = layout.Placements.FindAll(item => item != null &&
-                included(item) && area.Contains(item.Cell));
+                included(item) && LevelPlacementGeometry.Intersects(item, area));
             var sources = new HashSet<LevelPlacement>(moving);
+            foreach (LevelPlacement item in moving)
+            {
+                var target = new LevelPlacement { Cell = item.Cell + delta, Brush = item.Brush, Settings = item.Settings };
+                if (!LevelPlacementGeometry.Fits(target, layout.CanvasBounds) || CrossLayerConflict(layout, target, sources)) return false;
+            }
             Predicate<LevelPlacement> overwritten = item => item != null && included(item) &&
-                destination.Contains(item.Cell) && !sources.Contains(item);
+                !sources.Contains(item) && (LevelPlacementGeometry.Intersects(item, destination) || moving.Exists(source =>
+                    source.Brush?.LayerId == item.Brush?.LayerId &&
+                    LevelPlacementGeometry.Bounds(new LevelPlacement { Cell = source.Cell + delta, Settings = source.Settings })
+                        .Overlaps(LevelPlacementGeometry.Bounds(item))));
             if (moving.Count == 0 && !layout.Placements.Exists(overwritten)) return false;
 
             beforeChange?.Invoke();
             layout.Placements.RemoveAll(overwritten);
             foreach (LevelPlacement item in moving) item.Cell += delta;
             if (layout.EntryPlacement == null) layout.EntryPlacementId = null;
+            layout.InvalidateFootprint();
             return true;
         }
 
@@ -152,7 +186,8 @@ namespace TapTap.Editor
             if (layout.Placements != null)
                 foreach (LevelPlacement item in layout.Placements)
                     if (item != null && item.Brush != null &&
-                        string.Equals(item.Brush.LayerId, layerId, StringComparison.Ordinal)) result[item.Cell] = item;
+                        string.Equals(item.Brush.LayerId, layerId, StringComparison.Ordinal))
+                        foreach (Vector2Int cell in LevelPlacementGeometry.Cells(item)) result[cell] = item;
             return result;
         }
     }

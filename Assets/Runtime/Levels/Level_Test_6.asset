@@ -17,11 +17,11 @@ MonoBehaviour:
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
   CameraSettings:
     HasPreset: 1
-    LocalPosition: {x: 19.5, y: 9, z: -37.83461}
-    LocalEulerAngles: {x: 0, y: 0, z: 0}
+    LocalPosition: {x: 19.380001, y: 9.32, z: -29.59}
+    LocalEulerAngles: {x: -0, y: 0, z: 0}
     LensMode: 0
     FieldOfView: 38
-    FocalLength: 35
+    FocalLength: 50
     SensorSize: {x: 36, y: 24}
     LensShift: {x: 0, y: 0}
     GateFit: 1
@@ -604,16 +604,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188232924430924
-  - Id: d93f4aabb1a34041918d5f1d4424cf79
-    Cell: {x: 12, y: 11}
-    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
-    Settings:
-      rid: 5387188232924430948
-  - Id: 84f936f8842b46c696091c724b4cfc6b
-    Cell: {x: 11, y: 11}
-    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
-    Settings:
-      rid: 5387188232924430949
   - Id: 8bc5c6c03a4f4e9195ee799294c171ae
     Cell: {x: 10, y: 11}
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
@@ -649,11 +639,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188232924431032
-  - Id: 0f0c0268623246f0a4f6697f381e310b
-    Cell: {x: 2, y: 12}
-    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
-    Settings:
-      rid: 5387188232924430957
   - Id: a5a1317470ed405bbe394b478a90d9d3
     Cell: {x: 3, y: 11}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
@@ -779,21 +764,11 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188232924431014
-  - Id: b93f2db1766b48b2919dc11af046b3c8
-    Cell: {x: 5, y: 14}
-    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
-    Settings:
-      rid: 5387188232924431020
   - Id: 9ba0ba471451496ab9fdfa0b99aeddb3
     Cell: {x: 5, y: 16}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188232924431022
-  - Id: 8aa78847ec6a444d8b288c0ad734f56e
-    Cell: {x: 4, y: 13}
-    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
-    Settings:
-      rid: 5387188232924431023
   - Id: 7c174fa662364d91b703ab7bc4b45878
     Cell: {x: 4, y: 14}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
@@ -819,21 +794,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188232924431028
-  - Id: b134fdc887c6411f9ecbb25f799ecad1
-    Cell: {x: 3, y: 16}
-    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
-    Settings:
-      rid: 5387188232924431029
-  - Id: c0a9aed2858748529af65f63acfa70d1
-    Cell: {x: 3, y: 14}
-    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
-    Settings:
-      rid: 5387188232924431030
-  - Id: d6bd0ebe56d343a29aa6f95a6f5e41fd
-    Cell: {x: 3, y: 13}
-    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
-    Settings:
-      rid: 5387188232924431031
   - Id: 9a099941afbd4dc09afa6465b9d35e87
     Cell: {x: 11, y: 5}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
@@ -1109,6 +1069,16 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: 6b4fc95a643f5c34eb57764a04e056ea, type: 2}
     Settings:
       rid: 5387188383854625377
+  - Id: a0ac7dc7493c4989bc0640eeff75a91c
+    Cell: {x: 5, y: 14}
+    Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+    Settings:
+      rid: 5387188411220885522
+  - Id: 03dbad05057d45d6a14d5fe645304cea
+    Cell: {x: 3, y: 12}
+    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
+    Settings:
+      rid: 5387188411220885523
   EntryPlacementId: 6c8c5a9a97da4a74b145f8a50286cb60
   OutputPrefab: {fileID: 7233534188566855133, guid: 4a682c58963343d428334e2c2676a326, type: 3}
   Outline: {fileID: 11400000, guid: c4016b52415a9594a942fdc7dee5755a, type: 2}
@@ -1326,10 +1296,6 @@ MonoBehaviour:
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924430924
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924430948
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924430949
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924430950
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924430951
@@ -1340,11 +1306,6 @@ MonoBehaviour:
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924430954
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924430957
-      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        EndpointId: finish
-        Label: "\u7EC8\u70B9"
     - rid: 5387188232924430960
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924430961
@@ -1409,11 +1370,7 @@ MonoBehaviour:
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924431014
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924431020
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924431022
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924431023
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924431024
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
@@ -1424,12 +1381,6 @@ MonoBehaviour:
     - rid: 5387188232924431027
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924431028
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924431029
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924431030
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-    - rid: 5387188232924431031
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
     - rid: 5387188232924431032
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
@@ -1593,3 +1544,10 @@ MonoBehaviour:
         RotationDegrees: 180
         Tint: {r: 1, g: 0.88, b: 0.58, a: 0.3}
         GradientPower: 1.5
+    - rid: 5387188411220885522
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+    - rid: 5387188411220885523
+      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        EndpointId: finish
+        Label: "\u7EC8\u70B9"

@@ -65,7 +65,6 @@ namespace TapTap.Editor
                                 {
                                     Vector2 position = (Vector2)world.transform.InverseTransformPoint(tile.position) / region.UnitSize;
                                     Vector2Int cell = Vector2Int.FloorToInt(position);
-                                    if (!cells.Tiles.TryGetValue(cell, out var types)) cells.Tiles[cell] = types = new HashSet<string>();
                                     string type = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(tile.gameObject);
                                     if (string.IsNullOrEmpty(type))
                                         foreach (LevelPlacement placement in region.Source.Placements)
@@ -90,7 +89,20 @@ namespace TapTap.Editor
                                     var light = tile.GetComponent<IndicatorLight>();
                                     if (light != null) type += "|light:" + light.InitiallyOn + ":" + light.ShortWidth + ":" + light.LongWidth
                                         + ":" + light.Length + ":" + light.GradientPower + ":" + light.GridUnit + ":" + JsonUtility.ToJson(light.Tint);
-                                    types.Add(type);
+                                    var platform = tile.GetComponent<PlatformTileVisual>();
+                                    if (platform != null) type += "|platform:" + platform.ConnectionGroup + ":" + platform.Part;
+                                    var conveyor = tile.GetComponent<ConveyorTileVisual>();
+                                    if (conveyor != null) type += "|conveyor:" + conveyor.ConnectionGroup + ":" + conveyor.Part + ":" + conveyor.FacingLeftWhenStopped
+                                        + ":" + conveyor.FlashPeriod + ":" + conveyor.FlashDuration + ":" + AssetDatabase.GetAssetPath(conveyor.ArrowGlowMaterial);
+                                    var piston = tile.GetComponent<PhasePiston>();
+                                    int length = piston != null ? piston.MaxLength : 1;
+                                    Vector2Int direction = piston != null ? new PistonPlacementSettings { QuarterTurns = piston.QuarterTurns }.Direction : Vector2Int.zero;
+                                    for (int index = 0; index < length; index++)
+                                    {
+                                        Vector2Int occupied = cell + direction * index;
+                                        if (!cells.Tiles.TryGetValue(occupied, out var types)) cells.Tiles[occupied] = types = new HashSet<string>();
+                                        types.Add(type + (piston != null ? "|piston:" + piston.QuarterTurns + ":" + length + ":" + index : ""));
+                                    }
                                 }
                         regions.Add(cells);
                     }

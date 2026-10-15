@@ -29,14 +29,11 @@ MonoBehaviour:
   ParticleSpeed: 2.1
   ParticleConeAngle: 38
   LandingSquash: 0.12
-  AssemblySquash: 0.16
   MotionStretch: 0.05
   InteractionDuration: 0.22
-  BreathingAmplitude: 0.008
-  BreathingFrequency: 0.6
-  MagneticLagDistance: 0.075
-  MagneticLagSmoothTime: 0.1
-  MagneticLeanAngle: 5
-  MagneticHeadLeanMultiplier: 0.75
+  FrontYaw: 180
+  RightYaw: 120
+  LeftYaw: 240
+  TurnSmoothTime: 0.05
   RespawnDotSize: 0.13
   RespawnTrailTime: 0.18

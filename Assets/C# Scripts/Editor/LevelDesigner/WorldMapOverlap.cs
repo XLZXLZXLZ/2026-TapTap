@@ -70,15 +70,21 @@ namespace TapTap.Editor
                 foreach (LevelPlacement placement in level.Placements)
                 {
                     if (placement?.Brush == null || placement.Brush.HandlerId == "annotation") continue;
-                    if (!grid.Cells.TryGetValue(placement.Cell, out HashSet<string> brushes))
-                        grid.Cells.Add(placement.Cell, brushes = new HashSet<string>());
                     string prefab = AssetDatabase.GetAssetPath(placement.Brush.Prefab);
                     if (string.IsNullOrEmpty(prefab)) prefab = "instance:" + (placement.Brush.Prefab != null
                         ? placement.Brush.Prefab.GetInstanceID() : placement.Brush.GetInstanceID());
                     string settings = placement.Settings == null || placement.Settings is EmptyPlacementSettings ? "{}"
                         : placement.Settings.GetType().FullName + JsonUtility.ToJson(placement.Settings);
-                    brushes.Add(prefab + "|" + placement.Brush.HandlerId + "|" + placement.Brush.LayerId + "|"
-                        + JsonUtility.ToJson(placement.Brush.Anchor) + "|" + settings);
+                    foreach (Vector2Int cell in LevelPlacementGeometry.Cells(placement))
+                    {
+                        if (!grid.Cells.TryGetValue(cell, out HashSet<string> brushes))
+                            grid.Cells.Add(cell, brushes = new HashSet<string>());
+                        string offset = placement.Settings is PistonPlacementSettings ? "|offset:" + (cell - placement.Cell) : "";
+                        string part = placement.Brush.HandlerId == "smart-platform" ? "|part:" + PlatformLevelBrushHandler.Part(level, placement) : "";
+                        if (placement.Brush.HandlerId == "conveyor") part = "|conveyor:" + ConveyorTileRules.Part(level, placement);
+                        brushes.Add(prefab + "|" + placement.Brush.HandlerId + "|" + placement.Brush.LayerId + "|"
+                            + JsonUtility.ToJson(placement.Brush.Anchor) + "|" + settings + offset + part);
+                    }
                 }
             return grid.Cells;
         }

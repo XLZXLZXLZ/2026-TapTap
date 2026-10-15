@@ -41,6 +41,7 @@ namespace TapTap.Editor
                     if (placement?.Brush == null) continue;
                     Color color = placement.Brush.Color;
                     if (placement.Settings is PhaseBlockPlacementSettings phase && phase.SolidWhenActive) color.a *= 0.3f;
+                    if (placement.Settings is PistonPlacementSettings piston && piston.ExtendedWhenActive) color.a *= 0.3f;
                     Rect shape = LevelBrushHandlers.Get(placement.Brush.HandlerId)?.GetPreviewRect(placement) ?? placement.Brush.PreviewRect;
                     Fill(pixels, width, height, Mathf.FloorToInt((placement.Cell.x - level.CanvasOrigin.x + shape.xMin) * scale),
                         Mathf.FloorToInt((placement.Cell.y - level.CanvasOrigin.y + shape.yMin) * scale),

@@ -19,9 +19,10 @@ namespace TapTap
             get
             {
                 if (box == null) box = GetComponent<BoxCollider2D>();
-                Vector3 scale = transform.lossyScale;
+                Vector3 width = transform.TransformVector(Vector3.right * box.size.x);
+                Vector3 height = transform.TransformVector(Vector3.up * box.size.y);
                 return new Bounds(transform.TransformPoint(box.offset),
-                    new Vector3(box.size.x * Mathf.Abs(scale.x), box.size.y * Mathf.Abs(scale.y), 0.1f));
+                    new Vector3(Mathf.Abs(width.x) + Mathf.Abs(height.x), Mathf.Abs(width.y) + Mathf.Abs(height.y), 0.1f));
             }
         }
 
@@ -31,17 +32,21 @@ namespace TapTap
         {
             if (!Application.isPlaying) return;
             box = GetComponent<BoxCollider2D>();
-            if (fill == null) fill = GetComponentInChildren<SpriteRenderer>();
+            if (fill == null && GetComponent<PhasePiston>() == null) fill = GetComponentInChildren<SpriteRenderer>();
             state = WorldPhaseState.Instance;
             state.Changed += Apply;
-            Apply(state.Active);
+            Apply(state.Active, true);
             state.Register(this);
         }
 
-        private void Apply(bool active)
+        private void Apply(bool active) => Apply(active, false);
+
+        private void Apply(bool active, bool immediate)
         {
             IsSolid = active == solidWhenActive;
             box.enabled = IsSolid;
+            PhasePiston piston = GetComponent<PhasePiston>();
+            if (piston != null) piston.SetExtended(IsSolid, immediate);
             if (fill != null)
             {
                 Color color = solidColor;
@@ -50,7 +55,7 @@ namespace TapTap
             }
         }
 
-        internal void ApplyRestoredState(bool active) => Apply(active);
+        internal void ApplyRestoredState(bool active) => Apply(active, true);
 
         private void OnDisable()
         {

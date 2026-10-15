@@ -105,6 +105,7 @@ namespace TapTap.Editor
                 {
                     scene = File.Exists(path) ? EditorSceneManager.OpenScene(path, OpenSceneMode.Additive)
                         : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+                    if (!File.Exists(path)) GameplayLightingDefaults.Apply(scene);
                     opened = true;
                 }
                 Populate(scene, map, resources, levels, changedLevels);

@@ -1,4 +1,5 @@
 using ArtStyleTest;
+using ScreenFilters;
 using TapTap;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -22,6 +23,9 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
         if (rewind == null || !rewind.isActiveAndEnabled || !rewind.HasActiveEffect) rewind = null;
         var pixelation = camera.GetComponent<CrispPixelation>();
         if (pixelation == null || !pixelation.isActiveAndEnabled || pixelation.PixelSize <= 1) pixelation = null;
+        // A camera migrated to the shared profile must not run pixelation twice.
+        var filters = camera.GetComponent<ScreenFilterCamera>();
+        if (filters != null && filters.HasPixelation) pixelation = null;
         if (rewind == null && pixelation == null) return;
         pass.Setup(renderer.cameraColorTarget, rewind, pixelation);
         renderer.EnqueuePass(pass);

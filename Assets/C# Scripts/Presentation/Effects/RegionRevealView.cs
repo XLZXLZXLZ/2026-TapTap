@@ -11,6 +11,7 @@ namespace TapTap
     {
         private readonly List<Renderer> renderers = new List<Renderer>();
         private readonly Dictionary<Renderer, bool> originalHidden = new Dictionary<Renderer, bool>();
+        private readonly Dictionary<Light, bool> hiddenLights = new Dictionary<Light, bool>();
         protected IReadOnlyList<Renderer> Renderers => renderers;
         public bool Discovered { get; private set; }
         public float Opacity { get; protected set; } = 1f;
@@ -44,6 +45,19 @@ namespace TapTap
             Opacity = visible ? 1f : 0f;
             foreach (Renderer renderer in renderers)
                 if (renderer != null) renderer.forceRenderingOff = !visible || originalHidden[renderer];
+            foreach (Light light in GetComponentsInChildren<Light>(true))
+            {
+                if (!visible)
+                {
+                    if (!hiddenLights.ContainsKey(light)) hiddenLights.Add(light, light.enabled);
+                    light.enabled = false;
+                }
+                else if (hiddenLights.TryGetValue(light, out bool wasEnabled))
+                {
+                    light.enabled = wasEnabled;
+                    hiddenLights.Remove(light);
+                }
+            }
             WorldPhaseState.Existing?.RefreshOutline();
         }
 
@@ -51,6 +65,9 @@ namespace TapTap
         {
             foreach (Renderer renderer in renderers)
                 if (renderer != null) renderer.forceRenderingOff = originalHidden[renderer];
+            foreach (var entry in hiddenLights)
+                if (entry.Key != null) entry.Key.enabled = entry.Value;
+            hiddenLights.Clear();
         }
     }
 }

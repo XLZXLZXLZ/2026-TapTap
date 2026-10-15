@@ -18,6 +18,8 @@ namespace TapTap.Editor
         private static int sceneHandle;
         private static LevelRegion firstRegion;
         private static bool capturedPreview;
+        private static bool sawEntryWalk, sawEntryHold, capturedEntryPose, entryHoldValidated;
+        private static Vector2 entryBodyPosition, detachedHeadPosition;
         private static double deadline;
         private static readonly List<string> results = new List<string>();
 
@@ -38,6 +40,8 @@ namespace TapTap.Editor
                 TestContours();
                 if (AssetDatabase.IsValidFolder(Folder)) AssetDatabase.DeleteAsset(Folder);
                 LevelPrefabBuilder.EnsureFolder(Folder);
+                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), Folder + "/Bootstrap.unity");
                 LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(LevelEditorAssets.DefaultPalettePath);
                 LevelBrush terrain = palette.Brushes.Find(brush => brush.HandlerId == "terrain");
                 if (terrain == null) terrain = palette.Brushes.Find(brush => brush.Prefab.GetComponent<WorldSurface>() != null && brush.HandlerId != "spring");
@@ -146,6 +150,36 @@ namespace TapTap.Editor
                 if (flow.IsTransitioning)
                 {
                     Check(!RewindManager.Current.BeginRewind(), "Rewind was allowed during a transition.");
+                    PlayerExitView exit = player.GetComponent<PlayerExitView>();
+                    if (exit != null && player.GetComponent<PlayerView>().ExitPresentation)
+                    {
+                        if (!capturedEntryPose) { entryBodyPosition = player.Body.Motor.Position; capturedEntryPose = true; }
+                        Check(!flow.CompleteCurrent(flow.CurrentRegion.GetComponentInChildren<LevelEndpoint>()), "Endpoint triggered twice.");
+                        player.GetComponent<PlayerInput>().SetExternalInput(1f, true);
+                        player.SimulateStep(0.02f);
+                        Check(Vector2.Distance(player.Body.Motor.Position, entryBodyPosition) < 0.001f, "Input moved the player during entry.");
+                        if (stage == 6)
+                        {
+                            Check(!exit.IncludesHead && !exit.RecallsHead, "Detached completion recalled the head.");
+                            Check(Vector2.Distance(player.Head.Visual.position, detachedHeadPosition) < 0.01f, "Detached head moved during entry.");
+                        }
+                        if (exit.Stage == PlayerExitStage.Entering)
+                        {
+                            Animator animator = player.Body.Visual.GetComponentInChildren<Animator>();
+                            Check(animator.speed == 1f && animator.GetBool("Moving"), "Transition lock paused the cinematic animator.");
+                            if (!sawEntryWalk) SaveEntryPreview(player, flow, "endpoint-entry-walk.png");
+                            sawEntryWalk = true;
+                        }
+                        if (exit.Stage == PlayerExitStage.Holding || exit.Stage == PlayerExitStage.Complete)
+                        {
+                            Check(Mathf.Abs(Mathf.DeltaAngle(player.GetComponent<PlayerView>().CaptureFacing().BodyYaw, 180f)) < 0.01f,
+                                "Entry does not finish facing camera.");
+                            if (!entryHoldValidated)
+                                Check(flow.CompletedCount == (stage == 6 ? 1 : 0), "Completion was recorded before entry finished.");
+                            if (!sawEntryHold) SaveEntryPreview(player, flow, "endpoint-entry-finish.png");
+                            sawEntryHold = true; entryHoldValidated = true;
+                        }
+                    }
                     var view = flow.GetComponent<WorldMapAssemblyView>();
                     var texture = (RenderTexture)typeof(WorldMapAssemblyView).GetField("texture",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(view);
@@ -181,6 +215,8 @@ namespace TapTap.Editor
                         Check(UnityEngine.Object.FindObjectOfType<DemoCamera>().Region == flow.CurrentRegion, "Camera still follows the old room.");
                         Check(Vector2.Distance(player.Body.Motor.Position, flow.CurrentRegion.EntrySpawnPosition) < 1f, "Player was not teleported.");
                         Check(UnityEngine.Object.FindObjectsOfType<LevelRegion>().Length == 3, "Refreshed regions are not resident.");
+                        Check(sawEntryWalk && sawEntryHold && !player.GetComponent<PlayerView>().ExitPresentation, "Entry did not finish and release before next room.");
+                        Pass("Door entry walks and faces camera before completion, blocks input/rewind/repeated triggers, then releases for next room");
                         Pass("Endpoint advances, resets mechanisms/Custom/player and respawn, keeps regions resident, preserves scene identity");
                         Check(flow.SkipNext(), "Skip failed."); stage = 2;
                         break;
@@ -196,7 +232,13 @@ namespace TapTap.Editor
                         Check(flow.GoToSequence(30), "Jump to final room failed."); stage = 5;
                         break;
                     case 5:
-                        Check(flow.CurrentNumber == 30, "Wrong final room."); TouchEndpoint(player, flow); stage = 6;
+                        Check(flow.CurrentNumber == 30, "Wrong final room.");
+                        capturedEntryPose = false; entryHoldValidated = false;
+                        TouchEndpoint(player, flow);
+                        var detached = player.CaptureState(); detached.Phase = PlayerPhase.Detached; player.RestoreState(in detached);
+                        detachedHeadPosition = player.Body.Motor.Position + new Vector2(-3f, 2f);
+                        player.Head.Motor.Teleport(detachedHeadPosition); player.Head.transform.position = detachedHeadPosition;
+                        Physics2D.SyncTransforms(); stage = 6;
                         break;
                     case 6:
                         if (!flow.IsComplete) return;
@@ -211,6 +253,9 @@ namespace TapTap.Editor
                         break;
                     case 7:
                         Check(!flow.IsComplete && flow.CurrentNumber == 10 && flow.CompletedCount == 2, "Replay lost progress.");
+                        Check(!player.GetComponent<PlayerView>().ExitPresentation && player.Head.Visual.localPosition == Vector3.zero,
+                            "Replay retained the final entry pose.");
+                        Pass("Body-only completion keeps detached head in place; replay restores ordinary character presentation");
                         Pass("Skip and explicit jumps, restart retains progress, final completion and replay, rendered assembly preview");
                         SessionState.SetBool(Key, false);
                         EditorApplication.update -= Tick;
@@ -227,6 +272,26 @@ namespace TapTap.Editor
             LevelEndpoint endpoint = flow.CurrentRegion.GetComponentInChildren<LevelEndpoint>();
             player.TeleportJoined((Vector2)endpoint.transform.position + Vector2.up * 0.5f);
             Physics2D.SyncTransforms();
+        }
+
+        private static void SaveEntryPreview(PlayerController player, WorldMapProgression flow, string name)
+        {
+            var cameraObject = new GameObject("Entry Verification Camera");
+            Camera camera = cameraObject.AddComponent<Camera>();
+            Vector3 door = flow.CurrentRegion.GetComponentInChildren<LevelEndpoint>().FrontFootPosition;
+            camera.transform.position = door + new Vector3(2.8f, 2.4f, -6f);
+            camera.transform.LookAt(door + new Vector3(0f, 0.8f, 0.5f));
+            camera.orthographic = true; camera.orthographicSize = 1.8f;
+            camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = new Color(0.12f, 0.16f, 0.22f);
+            var target = new RenderTexture(900, 700, 24); camera.targetTexture = target;
+            try
+            {
+                camera.Render(); SavePreview(target, name);
+                foreach (Renderer renderer in flow.CurrentRegion.GetComponentInChildren<LevelEndpoint>().GetComponentsInChildren<Renderer>())
+                    if (renderer.enabled && renderer.gameObject.activeInHierarchy)
+                        Debug.Log("ENTRY DOOR BOUNDS: " + renderer.name + " " + renderer.bounds);
+            }
+            finally { camera.targetTexture = null; target.Release(); UnityEngine.Object.Destroy(target); UnityEngine.Object.Destroy(cameraObject); }
         }
         private static void SavePreview(RenderTexture texture, string name)
         {

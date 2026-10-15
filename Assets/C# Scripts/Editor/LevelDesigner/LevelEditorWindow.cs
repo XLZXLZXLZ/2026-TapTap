@@ -112,6 +112,7 @@ namespace TapTap.Editor
             LevelEditorAssets.EnsureAnnotationInPalette(palette);
             LevelEditorAssets.EnsureSpringInPalette(palette);
             LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+            SmartTileAssets.EnsureInPalette(palette);
             ProgressionEditorAssets.EnsureInPalette(palette);
             cacheDirty = true;
             fitPending = true;
@@ -156,6 +157,8 @@ namespace TapTap.Editor
             CancelCanvasExpansion();
             if (painting || panning || selecting || movingSelection) GUIUtility.hotControl = 0;
             painting = false;
+            pistonDraft = null;
+            resizingPiston = null;
             panning = false;
             selecting = false;
             movingSelection = false;
@@ -172,7 +175,7 @@ namespace TapTap.Editor
             if (selected != null)
             {
                 selectedCell = selected.Cell;
-                selectionArea = new RectInt(selected.Cell, Vector2Int.one);
+                selectionArea = LevelPlacementGeometry.Bounds(selected);
                 hasAreaSelection = true;
             }
             else hasAreaSelection = false;
@@ -198,6 +201,7 @@ namespace TapTap.Editor
             LevelEditorAssets.EnsureAnnotationInPalette(palette);
             LevelEditorAssets.EnsureSpringInPalette(palette);
             LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+            SmartTileAssets.EnsureInPalette(palette);
             ProgressionEditorAssets.EnsureInPalette(palette);
             sampledBrush = null;
             settingsBrush = null;
@@ -332,6 +336,7 @@ namespace TapTap.Editor
                 LevelEditorAssets.EnsureAnnotationInPalette(palette);
                 LevelEditorAssets.EnsureSpringInPalette(palette);
                 LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+                SmartTileAssets.EnsureInPalette(palette);
                 ProgressionEditorAssets.EnsureInPalette(palette);
                 sampledBrush = null;
                 brushIndex = 0;
@@ -436,7 +441,8 @@ namespace TapTap.Editor
             EditorGUILayout.LabelField("物体", EditorStyles.boldLabel);
             brushSearch = EditorGUILayout.TextField(brushSearch, EditorStyles.toolbarSearchField);
             isolateLayer = EditorGUILayout.ToggleLeft("仅显示当前图层（" + (Brush != null ? Brush.LayerId : "geometry") + "）", isolateLayer);
-            if (palette != null && palette.Brushes != null && palette.Brushes.Exists(item => item != null && item.HandlerId == "phase-block"))
+            if (palette != null && palette.Brushes != null && palette.Brushes.Exists(item => item != null &&
+                (item.HandlerId == "phase-block" || item.HandlerId == "phase-piston")))
                 previewPhaseActive = EditorGUILayout.ToggleLeft("预览：全局开关亮起", previewPhaseActive);
             if (palette == null || palette.Brushes == null || !palette.Brushes.Exists(brush => brush != null))
             {
@@ -553,6 +559,8 @@ namespace TapTap.Editor
 
         private string ToolHelp()
         {
+            if (Brush?.HandlerId == "phase-piston" && tool != GridTool.Select && tool != GridTool.Eraser && tool != GridTool.Stamp)
+                return "活塞使用笔刷工具：点击起点并拖出长度；点固定格块表面可自动贴面。选择后拖动末端黄点调整长度。";
             switch (tool)
             {
                 case GridTool.Eraser: return "左键擦当前层 · Shift + 左键擦整格";
@@ -605,8 +613,22 @@ namespace TapTap.Editor
                 targets.RemoveAll(item => RotationHandler(item) == null);
                 if (targets.Count == 0)
                 { ShowNotification(new GUIContent("选中的物体不支持转向")); return; }
+                var drafts = new List<LevelPlacement>();
+                var ignored = new HashSet<LevelPlacement>(targets);
+                foreach (LevelPlacement target in targets)
+                {
+                    var draft = new LevelPlacement { Cell = target.Cell, Brush = target.Brush, Settings = CloneSettings(target.Settings) };
+                    RotationHandler(draft).Rotate(draft);
+                    if (!LevelPlacementGeometry.Fits(draft, layout.CanvasBounds) || LevelGridEditing.CrossLayerConflict(layout, draft, ignored) ||
+                        layout.Placements.Exists(item => item != null && !ignored.Contains(item) && item.Brush?.LayerId == draft.Brush.LayerId &&
+                            LevelPlacementGeometry.Bounds(item).Overlaps(LevelPlacementGeometry.Bounds(draft))) ||
+                        drafts.Exists(item => item.Brush.LayerId == draft.Brush.LayerId && LevelPlacementGeometry.Bounds(item).Overlaps(LevelPlacementGeometry.Bounds(draft))))
+                    { ShowNotification(new GUIContent("转向后的范围越界或与其他物体重叠")); return; }
+                    drafts.Add(draft);
+                }
                 RecordLayoutUndo("转向关卡物体");
-                foreach (LevelPlacement target in targets) RotationHandler(target).Rotate(target);
+                for (int i = 0; i < targets.Count; i++) targets[i].Settings = drafts[i].Settings;
+                if (targets.Count == 1) selectionArea = LevelPlacementGeometry.Bounds(targets[0]);
                 Changed();
                 return;
             }
@@ -657,13 +679,13 @@ namespace TapTap.Editor
             if (EditorGUI.EndChangeCheck())
             {
                 Vector2Int destination = new Vector2Int(x, y);
-                var occupied = layout.Find(destination, placement.Brush != null ? placement.Brush.LayerId : "geometry");
-                if (layout.Contains(destination) && (occupied == null || occupied == placement))
+                var target = new LevelPlacement { Cell = destination, Brush = placement.Brush, Settings = placement.Settings };
+                if (CanEditPlacement(placement, target))
                 {
                     RecordLayoutUndo("移动关卡物体");
                     placement.Cell = destination;
                     selectedCell = destination;
-                    selectionArea = new RectInt(destination, Vector2Int.one);
+                    selectionArea = LevelPlacementGeometry.Bounds(placement);
                     hasAreaSelection = true;
                     Changed();
                 }
@@ -686,9 +708,9 @@ namespace TapTap.Editor
                 handler.DrawSettings(draft);
                 if (EditorGUI.EndChangeCheck())
                 {
-                    RecordLayoutUndo("配置关卡物体");
-                    placement.Settings = draft.Settings;
-                    Changed();
+                    if (CanEditPlacement(placement, draft))
+                    { RecordLayoutUndo("配置关卡物体"); placement.Settings = draft.Settings; selectionArea = LevelPlacementGeometry.Bounds(placement); Changed(); }
+                    else ShowNotification(new GUIContent("物体范围越界或与其他物体重叠"));
                 }
                 if (handler is ILevelBrushRotation rotation && rotation.CanRotate(placement) &&
                     GUILayout.Button($"转向 [T] · {rotation.RotationStepDegrees}°")) RotateCurrentTarget();
@@ -738,42 +760,49 @@ namespace TapTap.Editor
             EditorGUI.DrawRect(bounds, new Color(0.17f, 0.2f, 0.24f));
             // Render lighting after the map, so a wide beam is not covered by later grid cells.
             for (int pass = 0; pass < 2; pass++)
-            foreach (var pair in cells)
+            foreach (LevelPlacement item in layout.Placements)
             {
-                if (!layout.Contains(pair.Key)) continue;
-                Rect cell = CellRect(pair.Key);
-                if (cell.xMax < 0 || cell.yMax < 0 || cell.x > canvas.width || cell.y > canvas.height) continue;
-                foreach (LevelPlacement item in pair.Value)
-                {
-                    if (!Visible(item)) continue;
-                    bool light = item.Brush != null && item.Brush.HandlerId == "indicator-light";
-                    if (light != (pass == 1)) continue;
-                    if (movingSelection && selectionMoveDelta != Vector2Int.zero &&
-                        (selectionArea.Contains(item.Cell) || MovePreviewArea().Contains(item.Cell))) continue;
-                    DrawPlacement(item, cell, false);
-                }
+                if (!Visible(item)) continue;
+                Rect cell = CellRect(item.Cell);
+                bool light = item.Brush != null && item.Brush.HandlerId == "indicator-light";
+                if (light != (pass == 1)) continue;
+                if (movingSelection && selectionMoveDelta != Vector2Int.zero &&
+                    (LevelPlacementGeometry.Intersects(item, selectionArea) || LevelPlacementGeometry.Intersects(item, MovePreviewArea()))) continue;
+                if (!light && !PlacementRect(item).Overlaps(new Rect(Vector2.zero, canvas.size))) continue;
+                DrawPlacement(item, cell, false);
             }
             DrawGrid(canvas, bounds);
             DrawLevelBoundary();
             DrawCanvasExpansion(canvas, bounds);
             if (movingSelection && selectionMoveDelta != Vector2Int.zero)
                 foreach (LevelPlacement item in AreaContents())
-                    DrawPlacement(item, CellRect(item.Cell + selectionMoveDelta), true);
+                {
+                    var preview = new LevelPlacement { Cell = item.Cell + selectionMoveDelta, Brush = item.Brush, Settings = item.Settings };
+                    DrawPlacement(preview, CellRect(preview.Cell), true);
+                }
             if (hoveringCanvas && layout.Contains(hover))
             {
                 Rect cell = CellRect(hover);
                 if (tool == GridTool.Stamp)
                 {
                     foreach (LevelPlacement item in clipboard)
-                        if (layout.Contains(hover + item.Cell)) DrawPlacement(item, CellRect(hover + item.Cell), true);
+                    {
+                        var preview = new LevelPlacement { Cell = hover + item.Cell, Brush = item.Brush, Settings = item.Settings };
+                        if (layout.Contains(preview.Cell)) DrawPlacement(preview, CellRect(preview.Cell), true);
+                    }
                 }
                 else if (!SelectionMode && tool != GridTool.Eraser && !RectangleStroke && Brush != null)
-                    DrawPlacement(new LevelPlacement { Cell = hover, Brush = Brush, Settings = paintSettings }, cell, true);
+                {
+                    LevelPlacement preview = Brush.HandlerId == "phase-piston" ? PistonAtMouse(hover, mouse)
+                        : new LevelPlacement { Cell = hover, Brush = Brush, Settings = paintSettings };
+                    if (pistonDraft == null) DrawPlacement(preview, CellRect(preview.Cell), true);
+                }
                 Outline(cell, new Color(1f, 1f, 1f, 0.8f), 1f);
             }
             LevelPlacement selected = SelectedPlacement();
             if (selected != null && layout.Contains(selected.Cell) && !movingSelection)
-                Outline(CellRect(selected.Cell), new Color(1f, 0.82f, 0.24f), 2f);
+                Outline(PlacementRect(selected), new Color(1f, 0.82f, 0.24f), 2f);
+            DrawPistonOverlay(canvas);
             if (hasAreaSelection && SelectionMode)
             {
                 RectInt preview = movingSelection ? MovePreviewArea() : selectionArea;
@@ -844,6 +873,8 @@ namespace TapTap.Editor
         {
             LevelBrush brush = placement.Brush;
             if (brush == null) return;
+            if (placement.Settings is PistonPlacementSettings piston)
+            { DrawPiston(placement, cell, piston, ghost); return; }
             var handler = LevelBrushHandlers.Get(brush.HandlerId);
             Rect preview = handler != null ? handler.GetPreviewRect(placement) : brush.PreviewRect;
             Rect shape = new Rect(cell.x + preview.x * cell.width,
@@ -930,11 +961,10 @@ namespace TapTap.Editor
             {
                 EditorGUI.DrawRect(shape, color);
                 if (shape.height > 5f) Outline(shape, new Color(0f, 0f, 0f, ghost ? 0.12f : 0.28f), 1f);
+                if (brush.HandlerId == "smart-platform") DrawPlatformCaps(placement, shape, ghost);
             }
-            if (placement.Settings is ConveyorPlacementSettings conveyor && cell.width >= 14f)
-            {
-                GUI.Label(shape, conveyor.FacingLeft ? "←" : "→", CenterStyle());
-            }
+            if (placement.Settings is ConveyorPlacementSettings conveyor)
+                DrawConveyorCaps(placement, shape, conveyor, ghost);
             else if (brush.HandlerId == "spikes" && cell.width >= 14f)
             {
                 int turns = (placement.Settings as SpikePlacementSettings)?.QuarterTurns ?? 0;
@@ -968,6 +998,7 @@ namespace TapTap.Editor
                 }
             }
             if (HandleCanvasExpansion(canvas)) return;
+            if (HandlePistonInput(canvas)) return;
             int control = gridControlId;
             bool inside = canvas.Contains(e.mousePosition);
             Vector2 local = e.mousePosition - canvas.position;
@@ -1018,7 +1049,7 @@ namespace TapTap.Editor
                         SelectCell(cell);
                         selecting = true;
                         selectionAnchor = cell;
-                        selectionArea = new RectInt(cell, Vector2Int.one);
+                        selectionArea = SelectedPlacement() != null ? LevelPlacementGeometry.Bounds(SelectedPlacement()) : new RectInt(cell, Vector2Int.one);
                         hasAreaSelection = true;
                     }
                     GUIUtility.hotControl = control;
@@ -1127,7 +1158,8 @@ namespace TapTap.Editor
 
         private bool CanPaint()
         {
-            return Brush != null && LevelBrushHandlers.Get(Brush.HandlerId) != null;
+            return Brush != null && LevelBrushHandlers.Get(Brush.HandlerId) != null &&
+                (Brush.HandlerId != "phase-piston" || tool == GridTool.Brush);
         }
 
         private void BeginStroke(int button)
@@ -1145,6 +1177,8 @@ namespace TapTap.Editor
 
         private void EndStroke()
         {
+            pistonDraft = null;
+            resizingPiston = null;
             if (undoGroup >= 0 && strokeUndoRecorded)
             {
                 Undo.FlushUndoRecordObjects();
@@ -1303,12 +1337,15 @@ namespace TapTap.Editor
                 foreach (LevelPlacement item in layout.Placements)
                 {
                     if (item == null) continue;
-                    if (!cells.TryGetValue(item.Cell, out var contents))
+                    foreach (Vector2Int cell in LevelPlacementGeometry.Cells(item))
                     {
-                        contents = new List<LevelPlacement>();
-                        cells.Add(item.Cell, contents);
+                        if (!cells.TryGetValue(cell, out var contents))
+                        {
+                            contents = new List<LevelPlacement>();
+                            cells.Add(cell, contents);
+                        }
+                        contents.Add(item);
                     }
-                    contents.Add(item);
                 }
             }
             cacheDirty = false;
@@ -1317,13 +1354,13 @@ namespace TapTap.Editor
         private int OutsideCount()
         {
             return layout.Placements == null ? 0 : layout.Placements.FindAll(item =>
-                item != null && !layout.Contains(item.Cell)).Count;
+                item != null && !LevelPlacementGeometry.Fits(item, layout.CanvasBounds)).Count;
         }
 
         private void RemoveOutside()
         {
             RecordLayoutUndo("删除越界物体");
-            layout.Placements.RemoveAll(item => item != null && !layout.Contains(item.Cell));
+            layout.Placements.RemoveAll(item => item != null && !LevelPlacementGeometry.Fits(item, layout.CanvasBounds));
             if (layout.EntryPlacement == null) layout.EntryPlacementId = null;
             Changed();
         }
@@ -1388,7 +1425,7 @@ namespace TapTap.Editor
         private List<LevelPlacement> AreaContents()
         {
             if (layout == null || !hasAreaSelection) return new List<LevelPlacement>();
-            return layout.Placements.FindAll(item => Visible(item) && selectionArea.Contains(item.Cell));
+            return layout.Placements.FindAll(item => Visible(item) && LevelPlacementGeometry.Intersects(item, selectionArea));
         }
 
         private bool CopyArea()
@@ -1396,6 +1433,12 @@ namespace TapTap.Editor
             List<LevelPlacement> items = AreaContents();
             items.RemoveAll(item => item.Brush == null);
             if (items.Count == 0) { ShowNotification(new GUIContent("选择区域中没有物体")); return false; }
+            foreach (LevelPlacement item in items)
+            {
+                RectInt occupied = LevelPlacementGeometry.Bounds(item);
+                Vector2Int min = Vector2Int.Min(selectionArea.min, occupied.min);
+                selectionArea = new RectInt(min, Vector2Int.Max(selectionArea.max, occupied.max) - min);
+            }
             clipboard.Clear();
             clipboardEntryIndex = -1;
             clipboardIsCut = false;
@@ -1412,7 +1455,11 @@ namespace TapTap.Editor
         {
             if (layout == null || clipboard.Count == 0) return;
             foreach (LevelPlacement item in clipboard)
-                if (item.Brush == null || !layout.Contains(origin + item.Cell)) { ShowNotification(new GUIContent("粘贴区域越界或笔刷已删除")); return; }
+            {
+                var target = new LevelPlacement { Cell = origin + item.Cell, Brush = item.Brush, Settings = item.Settings };
+                if (item.Brush == null || !LevelPlacementGeometry.Fits(target, layout.CanvasBounds) || LevelGridEditing.CrossLayerConflict(layout, target))
+                { ShowNotification(new GUIContent("粘贴范围越界、与地形重叠或笔刷已删除")); return; }
+            }
             bool recorded = false;
             bool changed = false;
             void RecordPasteUndo()
@@ -1460,6 +1507,7 @@ namespace TapTap.Editor
             }
             bool changed = LevelGridEditing.MoveArea(layout, selectionArea, delta, Visible,
                 () => RecordLayoutUndo("移动选择区域"));
+            if (!changed && AreaContents().Count > 0) { ShowNotification(new GUIContent("完整物体范围越界或与其他图层重叠")); return; }
             selectionArea.position += delta;
             if (selectedCell.HasValue) selectedCell += delta;
             if (SelectedPlacement() == null) selectedPlacementId = null;
