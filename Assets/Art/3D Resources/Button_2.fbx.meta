@@ -3,7 +3,32 @@ guid: 5e80ed736f2a58641854dc0448fe1872
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 1
+    second: {fileID: 2100000, guid: a25b203461bed644aa6b0e9ac1e5cd73, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 2
+    second: {fileID: 2100000, guid: 3275ae206ead8364f9edb9e2a58b4efb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material.003
+    second: {fileID: 2100000, guid: e9cede78f6f204246a24fcff5625bbd3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nail.001
+    second: {fileID: 2100000, guid: 0211c59ffb0b9be4f8a1a494dd25b636, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: nail.002
+    second: {fileID: 2100000, guid: 0211c59ffb0b9be4f8a1a494dd25b636, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

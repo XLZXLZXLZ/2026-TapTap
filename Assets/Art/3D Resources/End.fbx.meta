@@ -3,7 +3,37 @@ guid: c7067cd90cbb64d4a91d6520e131cc93
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Base_green
+    second: {fileID: 2100000, guid: a7e1e989a38097d479a91b52884ceb7c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light
+    second: {fileID: 2100000, guid: ef02d07a054816549b58f52f1111f6fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: base
+    second: {fileID: 2100000, guid: a25b203461bed644aa6b0e9ac1e5cd73, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: light_base
+    second: {fileID: 2100000, guid: 3275ae206ead8364f9edb9e2a58b4efb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: light_inside
+    second: {fileID: 2100000, guid: ef02d07a054816549b58f52f1111f6fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: light_top
+    second: {fileID: 2100000, guid: 2889aa6852634b04fb5279e13037955d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
