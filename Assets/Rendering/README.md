@@ -9,9 +9,9 @@ URP 试验提交 `0c69c0b` 已合入 `C:\GitHub\2026-TapTap` 的本地 `main`；
 直接打开 `C:\GitHub\2026-TapTap`，用上述版本等待 Unity 完成包、脚本和 Shader 导入。渲染管线配置和转换后的材质已经保存，正常打开不需要运行迁移命令。
 
 - 游戏入口：`Assets/Scenes/WorldMaps/World_Character_Select.unity`。
-- 游戏表现：`Assets/Scenes/WorldMaps/World_Character_Play.unity`、`Assets/Scenes/Demo/TapTapDemo.unity`。
-- 美术观察：`Assets/ArtStyleTest/Scenes/` 中的三个工厂场景。
-- 像素化：方块工厂 Main Camera 上勾选 Crisp Pixelation，Pixel Size 1 为原始分辨率，4/8 可观察方形像素块。场景保留原来的默认关闭状态。
+- 游戏表现：`Assets/Scenes/WorldMaps/World_Character_Play.unity`。
+- 独立保留示例：`Assets/Scenes/Test/Demo_Hanging_Test.unity`。
+- 未用于大地图的旧 Demo、SampleScene 和三个独立美术测试场景已清理；美术模型、材质、预览图片及历史说明继续保留。像素化组件仍可使用，原方块工厂专用验证在场景不存在时明确跳过。
 
 ## 迁移内容
 
@@ -30,7 +30,7 @@ Unity 默认 SpriteRenderer 材质保持引擎默认引用，在 Universal Rende
 旧 LowPoly 场景仍引用历史提交中已删除的 11 个材质；本分支按原 GUID 补回这些被引用的资源，并转换需要转换的材质。
 区域渐显与窗光使用 URP Shader；渐显同时映射 URP 的 BaseMap / BaseColor。
 
-`Tools > TapTap > URP Trial > Apply Pipeline and Convert Materials` 是显式迁移工具；不会在项目打开时自动执行。
+URP 一次性迁移脚本及材质转换菜单已清理。项目直接使用已保存的管线配置和材质；渲染与构建验证入口保留。
 
 ## 验证
 

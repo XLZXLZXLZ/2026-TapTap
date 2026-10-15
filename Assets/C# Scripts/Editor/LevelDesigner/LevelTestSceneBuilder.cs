@@ -70,8 +70,8 @@ namespace TapTap.Editor
                 cameraObject.tag = "MainCamera";
                 Camera camera = cameraObject.AddComponent<Camera>();
                 cameraObject.AddComponent<RewindScreenEffect>();
-                camera.orthographic = true;
-                camera.orthographicSize = SceneCameraDefaults.Size;
+                camera.orthographic = false;
+                camera.fieldOfView = 38f;
                 camera.clearFlags = CameraClearFlags.SolidColor;
                 camera.backgroundColor = new Color(0.045f, 0.075f, 0.12f);
                 camera.nearClipPlane = 0.1f;
@@ -213,43 +213,6 @@ namespace TapTap.Editor
             }
         }
 
-        public static void UpdateTestSceneCameras()
-        {
-            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
-            Scene previous = SceneManager.GetActiveScene();
-            int updated = 0;
-            foreach (string guid in AssetDatabase.FindAssets("t:Scene", new[] { TestSceneFolder }))
-            {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-                Scene scene = SceneManager.GetSceneByPath(path);
-                bool loaded = scene.IsValid() && scene.isLoaded;
-                if (loaded && scene.isDirty) continue;
-                if (!loaded) scene = EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
-                try
-                {
-                    LevelRegion region = null;
-                    LevelSceneRuntime runtime = null;
-                    foreach (GameObject root in scene.GetRootGameObjects())
-                    {
-                        if (region == null) region = root.GetComponentInChildren<LevelRegion>(true);
-                        if (runtime == null) runtime = root.GetComponentInChildren<LevelSceneRuntime>(true);
-                    }
-                    if (region == null || runtime == null || runtime.CameraRig == null) continue;
-                    SceneCameraDefaults.Apply(runtime.gameObject);
-                    runtime.CameraRig.SetRegion(region);
-                    LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
-                    if (!EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存测试场景：" + path);
-                    updated++;
-                }
-                finally
-                {
-                    if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
-                    if (!loaded && scene.IsValid() && scene.isLoaded) EditorSceneManager.CloseScene(scene, true);
-                }
-            }
-            Debug.Log("Following test scene cameras updated: " + updated);
-        }
-
         private static Vector2 FindSpawn(LevelRegion region, PlayerController player, PlayerConfig config)
         {
             if (region.EntryCheckpoint != null) return region.EntrySpawnPosition;
@@ -311,64 +274,5 @@ namespace TapTap.Editor
 
         [MenuItem("Assets/TapTap/Create Level Test Scene")]
         private static void CreateFromSelection() => Generate((GameObject)Selection.activeObject);
-
-        public static void CreateExampleTestScene()
-        {
-            LevelEditorAssets.CreateStarterAssets();
-            Generate(AssetDatabase.LoadAssetAtPath<GameObject>(LevelEditorAssets.ExamplePrefabPath), null, false);
-            AdoptRuntimeInDemo();
-        }
-
-        public static void AdoptRuntimeInDemo()
-        {
-            if (!File.Exists(PrototypeBuilder.DemoScenePath)) return;
-            Scene previous = SceneManager.GetActiveScene();
-            Scene demo = SceneManager.GetSceneByPath(PrototypeBuilder.DemoScenePath);
-            bool alreadyLoaded = demo.IsValid() && demo.isLoaded;
-            if (alreadyLoaded && demo.isDirty) return;
-            if (!alreadyLoaded) demo = EditorSceneManager.OpenScene(PrototypeBuilder.DemoScenePath, OpenSceneMode.Additive);
-            try
-            {
-                GameObject[] roots = demo.GetRootGameObjects();
-                PlayerController player = null;
-                DemoCamera oldCamera = null;
-                PrototypeHUD oldHud = null;
-                EffectManager oldEffects = null;
-                foreach (GameObject root in roots)
-                {
-                    if (root.GetComponentInChildren<LevelSceneRuntime>(true) != null) return;
-                    if (player == null) player = root.GetComponentInChildren<PlayerController>();
-                    if (oldCamera == null) oldCamera = root.GetComponentInChildren<DemoCamera>();
-                    if (oldHud == null) oldHud = root.GetComponentInChildren<PrototypeHUD>();
-                    if (oldEffects == null) oldEffects = root.GetComponentInChildren<EffectManager>();
-                }
-                if (player == null) return;
-                var runtimeObject = (GameObject)PrefabUtility.InstantiatePrefab(EnsureRuntimePrefab(), demo);
-                LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
-                if (oldCamera != null)
-                {
-                    Camera previousCamera = oldCamera.GetComponentInChildren<Camera>();
-                    Camera nextCamera = runtime.CameraRig.GetComponentInChildren<Camera>();
-                    if (previousCamera != null) EditorUtility.CopySerialized(previousCamera, nextCamera);
-                    runtime.CameraRig.transform.position = oldCamera.transform.position;
-                }
-                if (oldEffects != null)
-                    EditorUtility.CopySerialized(oldEffects, runtimeObject.GetComponentInChildren<EffectManager>());
-                runtime.Configure(player, null, player.Config, player.Body.transform.position);
-                SceneCameraDefaults.Apply(runtimeObject);
-                if (oldCamera != null) UnityEngine.Object.DestroyImmediate(oldCamera.gameObject);
-                if (oldHud != null) UnityEngine.Object.DestroyImmediate(oldHud.gameObject);
-                if (oldEffects != null) UnityEngine.Object.DestroyImmediate(oldEffects);
-                LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
-                if (!EditorSceneManager.SaveScene(demo, PrototypeBuilder.DemoScenePath))
-                    throw new IOException("无法保存 Demo 的 Runtime Prefab 引用。");
-                Debug.Log("Demo now references GameplayRuntime.prefab.");
-            }
-            finally
-            {
-                if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
-                if (!alreadyLoaded && demo.IsValid() && demo.isLoaded) EditorSceneManager.CloseScene(demo, true);
-            }
-        }
     }
 }

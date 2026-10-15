@@ -9,8 +9,6 @@ namespace TapTap.Editor
     public static class LevelEditorAssets
     {
         public const string DefaultPalettePath = "Assets/Runtime/Config/LevelPalette.asset";
-        public const string ExampleLayoutPath = "Assets/Runtime/Levels/Level_Example.asset";
-        public const string ExamplePrefabPath = "Assets/Prefabs/Levels/Level_Example.prefab";
         private const string BrushFolder = "Assets/Runtime/LevelDesigner/Brushes";
         private const string TerrainFolder = "Assets/Prefabs/Terrain/Grid";
         private const string MarkerFolder = "Assets/Prefabs/Interactables/Grid";
@@ -150,25 +148,6 @@ namespace TapTap.Editor
                 new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.92f), new Color(0.45f, 0.95f, 0.65f));
         }
 
-        public static void CreateEndpointAssets()
-        {
-            LevelBrush brush = EnsureEndpointBrush();
-            LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
-            if (palette != null)
-            {
-                if (palette.Brushes == null || !palette.Brushes.Contains(brush))
-                {
-                    Undo.RecordObject(palette, "添加终点笔刷");
-                    if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
-                    palette.Brushes.Add(brush);
-                    EditorUtility.SetDirty(palette);
-                    AssetDatabase.SaveAssetIfDirty(palette);
-                }
-            }
-            AssetDatabase.SaveAssets();
-            if (!Application.isBatchMode) { Selection.activeObject = brush; EditorGUIUtility.PingObject(brush); }
-        }
-
         public static LevelPalette EnsureDefaults()
         {
             GameplayVisualAssets.EnsureMechanismPrefabs();
@@ -235,53 +214,6 @@ namespace TapTap.Editor
             EnsureSpringInPalette(palette);
             return palette;
         }
-
-        public static void CreateStarterAssets()
-        {
-            LevelPalette palette = EnsureDefaults();
-            LevelDefinition layout = AssetDatabase.LoadAssetAtPath<LevelDefinition>(ExampleLayoutPath);
-            if (layout == null)
-            {
-                LevelPrefabBuilder.EnsureFolder("Assets/Runtime/Levels");
-                layout = ScriptableObject.CreateInstance<LevelDefinition>();
-                layout.Palette = palette;
-                layout.Size = new Vector2Int(32, 18);
-                LevelBrush terrain = LoadBrush("Terrain");
-                LevelBrush platform = LoadBrush("Platform");
-                LevelBrush conveyor = LoadBrush("Conveyor");
-                LevelBrush spikes = LoadBrush("Spikes");
-                LevelBrush checkpoint = LoadBrush("Checkpoint");
-                for (int x = 0; x < layout.Size.x; x++)
-                    Put(layout, new Vector2Int(x, 0), terrain);
-                Put(layout, new Vector2Int(2, 1), checkpoint);
-                layout.EntryPlacementId = layout.Find(new Vector2Int(2, 1), "markers").Id;
-                for (int x = 6; x <= 10; x++)
-                    Put(layout, new Vector2Int(x, 3), platform);
-                for (int x = 14; x <= 17; x++)
-                    Put(layout, new Vector2Int(x, 2), conveyor);
-                for (int x = 22; x <= 24; x++)
-                    Put(layout, new Vector2Int(x, 1), spikes);
-                for (int x = 21; x <= 25; x++)
-                    Put(layout, new Vector2Int(x, 4), platform);
-                AssetDatabase.CreateAsset(layout, ExampleLayoutPath);
-                AssetDatabase.SaveAssetIfDirty(layout);
-            }
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(ExamplePrefabPath) == null)
-                LevelPrefabBuilder.Save(layout, ExamplePrefabPath);
-            if (!Application.isBatchMode)
-            {
-                Selection.activeObject = layout;
-                EditorGUIUtility.PingObject(layout);
-            }
-            Debug.Log("Level Designer example saved: " + ExampleLayoutPath + " / " + ExamplePrefabPath);
-        }
-
-        private static void Put(LevelDefinition layout, Vector2Int cell, LevelBrush brush)
-        {
-            layout.Put(cell, brush, LevelBrushHandlers.Get(brush.HandlerId).CreateSettings(brush));
-        }
-
-        private static LevelBrush LoadBrush(string name) => AssetDatabase.LoadAssetAtPath<LevelBrush>(BrushFolder + "/" + name + ".asset");
 
         private static LevelBrush EnsureBrush(string name, string displayName, string handlerId, string layerId,
             GameObject prefab, Vector2 anchor, Rect previewRect, Color color)

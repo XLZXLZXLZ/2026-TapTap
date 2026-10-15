@@ -407,6 +407,7 @@ namespace TapTap.Editor
 
         private void DrawSidebar()
         {
+            DrawCameraSidebar();
             DrawMapMirrorSidebar();
             DrawCanvasExpansionSidebar();
             EditorGUILayout.Space(4f);
@@ -414,7 +415,13 @@ namespace TapTap.Editor
                 if (GUILayout.Button("一键生成测试场景", GUILayout.Height(28f))) GenerateTestScene();
             if (GUILayout.Button("定位 Runtime 配置", EditorStyles.miniButton))
             {
-                try { Selection.activeObject = LevelTestSceneBuilder.EnsureRuntimePrefab(); EditorGUIUtility.PingObject(Selection.activeObject); }
+                try
+                {
+                    GameObject runtime = AssetDatabase.LoadAssetAtPath<GameObject>(LevelTestSceneBuilder.RuntimePrefabPath);
+                    if (runtime == null) throw new InvalidOperationException("未找到 Runtime 配置，请通过生成测试场景或同步大地图创建。");
+                    Selection.activeObject = runtime;
+                    EditorGUIUtility.PingObject(runtime);
+                }
                 catch (Exception exception) { saveError = exception.Message; }
             }
             EditorGUILayout.Space(6f);

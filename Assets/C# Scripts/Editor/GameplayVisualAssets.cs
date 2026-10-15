@@ -14,7 +14,6 @@ namespace TapTap.Editor
         public const string SwitchPrefabPath = "Assets/Prefabs/Interactables/Grid/GridMechanismSwitch.prefab";
         public const string EndpointPrefabPath = "Assets/Prefabs/Interactables/Grid/GridEndpoint.prefab";
         public const string SpringPrefabPath = "Assets/Prefabs/Terrain/Grid/GridSpring.prefab";
-        public const string ShowcaseLayoutPath = "Assets/Runtime/Levels/Level_Mechanisms.asset";
 
         public static PlayerVisualConfig EnsureVisualSettings()
         {
@@ -206,93 +205,6 @@ namespace TapTap.Editor
             var renderer = child.AddComponent<SpriteRenderer>();
             renderer.sprite = sprite; renderer.color = color; renderer.sortingOrder = 2;
             return renderer;
-        }
-
-        public static void PrepareAssets()
-        {
-            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
-            PlayerConfig config = AssetDatabase.LoadAssetAtPath<PlayerConfig>("Assets/Runtime/Config/PrototypePlayer.asset");
-            if (config != null && Mathf.Approximately(config.JoinedOffset, 0.9f))
-            { config.JoinedOffset = 0.75f; EditorUtility.SetDirty(config); }
-            foreach (string path in new[] { "Assets/Prefabs/Characters/Player.prefab", "Assets/Prefabs/Characters/LooseHead.prefab" })
-            {
-                GameObject root = PrefabUtility.LoadPrefabContents(path);
-                try
-                {
-                    foreach (MovableEntity entity in root.GetComponentsInChildren<MovableEntity>(true))
-                    {
-                        float height = entity.Part == EntityPart.Head ? 0.6f : 0.9f;
-                        var box = entity.GetComponent<BoxCollider2D>();
-                        box.size = new Vector2(box.size.x, height);
-                        if (entity.Visual != null)
-                        {
-                            Vector3 scale = entity.Visual.localScale; scale.y = height;
-                            entity.Visual.localScale = scale;
-                        }
-                    }
-                    PlayerController player = root.GetComponent<PlayerController>();
-                    if (player != null)
-                    {
-                        player.Body.transform.localPosition = new Vector3(0f, 0.45f, 0f);
-                        player.Head.transform.localPosition = new Vector3(0f, 0.45f + player.Config.JoinedOffset, 0f);
-                        ConfigurePlayerVisuals(root);
-                    }
-                    PrefabUtility.SaveAsPrefabAsset(root, path);
-                }
-                finally { PrefabUtility.UnloadPrefabContents(root); }
-            }
-            foreach (string path in new[] { "Assets/Prefabs/Interactables/Checkpoint.prefab", "Assets/Prefabs/Interactables/Grid/GridCheckpoint.prefab" })
-            {
-                var root = PrefabUtility.LoadPrefabContents(path);
-                try
-                {
-                    var flag = root.GetComponent<CheckpointFlag>();
-                    if (Mathf.Approximately(flag.SpawnOffset.y, 0.4f))
-                    { flag.SpawnOffset.y = 0.45f; LevelPrefabBuilder.RecordInstanceOverrides(root); PrefabUtility.SaveAsPrefabAsset(root, path); }
-                }
-                finally { PrefabUtility.UnloadPrefabContents(root); }
-            }
-            LevelPalette palette = LevelEditorAssets.EnsureDefaults();
-            LevelTestSceneBuilder.EnsureRuntimePrefab();
-            foreach (string guid in AssetDatabase.FindAssets("t:LevelDefinition", new[] { "Assets/Runtime/Levels" }))
-            {
-                var layout = AssetDatabase.LoadAssetAtPath<LevelDefinition>(AssetDatabase.GUIDToAssetPath(guid));
-                bool changed = false;
-                foreach (LevelPlacement item in layout.Placements)
-                    if (item.Settings is CheckpointPlacementSettings settings && Mathf.Approximately(settings.SpawnOffset.y, 0.4f))
-                    { settings.SpawnOffset.y = 0.45f; changed = true; }
-                if (!changed) continue;
-                EditorUtility.SetDirty(layout);
-                if (layout.OutputPrefab != null) LevelPrefabBuilder.Save(layout, AssetDatabase.GetAssetPath(layout.OutputPrefab));
-            }
-            AssetDatabase.SaveAssets();
-            CreateShowcase(palette);
-            Debug.Log("Gameplay visuals and mechanisms prepared successfully.");
-        }
-
-        private static void CreateShowcase(LevelPalette palette)
-        {
-            var layout = AssetDatabase.LoadAssetAtPath<LevelDefinition>(ShowcaseLayoutPath);
-            if (layout != null) return;
-            layout = ScriptableObject.CreateInstance<LevelDefinition>();
-            layout.Palette = palette;
-            LevelBrush Find(string name) => AssetDatabase.LoadAssetAtPath<LevelBrush>("Assets/Runtime/LevelDesigner/Brushes/" + name + ".asset");
-            void Put(int x, int y, string name)
-            {
-                LevelBrush brush = Find(name);
-                layout.Put(new Vector2Int(x, y), brush, LevelBrushHandlers.Get(brush.HandlerId).CreateSettings(brush));
-            }
-            for (int x = 0; x < 32; x++) Put(x, 0, "Terrain");
-            Put(2, 1, "Checkpoint"); layout.EntryPlacementId = layout.Find(new Vector2Int(2, 1), "markers").Id;
-            Put(5, 1, "MechanismSwitch"); Put(24, 1, "MechanismSwitch");
-            for (int x = 8; x <= 12; x++) Put(x, 3, "PhaseBlock");
-            for (int y = 1; y <= 2; y++) Put(12, y, "PhaseBlock");
-            for (int x = 16; x <= 20; x++) Put(x, 4, "InversePhaseBlock");
-            for (int x = 21; x <= 24; x++) Put(x, 3, "Platform");
-            Put(28, 1, "Spikes"); Put(29, 1, "Spikes");
-            AssetDatabase.CreateAsset(layout, ShowcaseLayoutPath);
-            LevelTestSceneBuilder.Generate(layout, false);
-            AssetDatabase.SaveAssets();
         }
     }
 }

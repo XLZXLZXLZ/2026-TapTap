@@ -24,7 +24,6 @@ namespace TapTap.Editor
                 WorldMapRoot world = null;
                 foreach (GameObject root in scene.GetRootGameObjects())
                 {
-                    if (root.GetComponent<WorldMapGameplayBootstrap>() != null) throw new Exception("Dynamic bootstrap survived conversion");
                     if (root.GetComponent<WorldMapRoot>() != null) world = root.GetComponent<WorldMapRoot>();
                 }
                 Check(world != null && world.GetComponentsInChildren<LevelRegion>().Length == map.OrderedModules().Count,

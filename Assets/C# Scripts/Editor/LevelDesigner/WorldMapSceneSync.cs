@@ -211,8 +211,6 @@ namespace TapTap.Editor
                 }
             LevelPrefabBuilder.RecordInstanceOverrides(player.gameObject);
             LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
-            WorldMapGameplayBootstrap bootstrap = Find<WorldMapGameplayBootstrap>(scene);
-            if (bootstrap != null) UnityEngine.Object.DestroyImmediate(bootstrap.gameObject);
         }
 
         public static void GenerateDefaultBatch()

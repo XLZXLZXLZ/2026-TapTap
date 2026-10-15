@@ -45,13 +45,6 @@ namespace TapTap.Editor
         private static void ForgetScene(Scene scene) => conflicts.RemoveAll(conflict => conflict.World == null
             || conflict.World.gameObject.scene == scene);
 
-        private static void Refresh()
-        {
-            conflicts.Clear();
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-                CollectScene(SceneManager.GetSceneAt(i));
-        }
-
         private static void CollectScene(Scene scene)
         {
                 foreach (GameObject root in scene.GetRootGameObjects())

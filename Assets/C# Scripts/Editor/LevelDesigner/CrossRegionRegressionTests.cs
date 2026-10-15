@@ -26,7 +26,7 @@ namespace TapTap.Editor
                 Test("Cross-region rewind retains discovery and restores checkpoint", Rewind);
                 Test("Death returns keep their region and flag collisions do not select checkpoints", DeathAndFlags);
                 Test("Camera moves between rooms without snapping; pause and rewind remain valid", CameraTransition);
-                Test("Fade preserves live sprite colors and reveals real rendered pixels", Fade);
+                Test("Instant reveal preserves live sprite colors and materials in real rendered pixels", Visibility);
                 Test("Square platform geometry, one-way collision and animation notification interfaces", Square);
                 LevelEditorAssets.EnsureSquarePlatformInPalette(AssetDatabase.LoadAssetAtPath<LevelPalette>(LevelEditorAssets.DefaultPalettePath));
                 AssetDatabase.SaveAssets();
@@ -59,7 +59,6 @@ namespace TapTap.Editor
                 Check(f.Flow.HasDiscovered(a) && !f.Flow.HasDiscovered(b) && f.A.GetComponent<RegionRevealView>().Opacity == 1f,
                     "Initial entry was not immediately visible, or neighbors were discovered");
                 f.Player.TeleportJoined(new Vector2(5, 2)); f.Flow.UpdatePlayerRegion(f.Player);
-                Call(f.B.GetComponent<RegionRevealView>(), "UpdateFade", 1f);
                 f.Player.TeleportJoined(new Vector2(2, 2)); f.Flow.UpdatePlayerRegion(f.Player);
                 Check(f.Flow.HasDiscovered(b) && !f.B.GetComponentInChildren<SpriteRenderer>().forceRenderingOff,
                     "Leaving a visited region hid it");
@@ -206,7 +205,7 @@ namespace TapTap.Editor
                 Check(f.Flow.HasDiscovered(f.Definition.Modules[1]) && WorldMapProgressStore.IsUnlocked(f.Definition, f.Definition.Modules[1]),
                     "Run discovery or selection unlock missing");
                 Check(f.Flow.CompletedCount == 0, "Discovery counted as completion");
-                Call(f.B.GetComponent<RegionRevealView>(), "UpdateFade", 1f); Call(outline, "LateUpdate");
+                Call(outline, "LateUpdate");
                 Check(mesh.sharedMesh.vertexCount > 0, "Discovered ghost outline stayed hidden");
                 f.Player.Body.Motor.Teleport(new Vector2(3.95f, 2)); f.Flow.UpdatePlayerRegion(f.Player);
                 Check(f.Flow.CurrentRegion == f.B, "Reverse boundary buffer was ignored");
@@ -273,14 +272,14 @@ namespace TapTap.Editor
             }
         }
 
-        private static void Fade()
+        private static void Visibility()
         {
             using (var f = new Fixture())
             {
                 RegionRevealView reveal = f.B.GetComponent<RegionRevealView>();
                 SpriteRenderer sprite = f.B.GetComponentInChildren<SpriteRenderer>();
                 f.Camera.transform.position = new Vector3(6, 2, -10); f.Camera.backgroundColor = Color.black;
-                f.Camera.clearFlags = CameraClearFlags.SolidColor; f.Camera.orthographicSize = 1;
+                f.Camera.clearFlags = CameraClearFlags.SolidColor; f.Camera.fieldOfView = 12f;
                 var target = new RenderTexture(64, 64, 0); target.Create(); f.Camera.targetTexture = target;
                 RenderTexture previous = RenderTexture.active;
                 var pixels = new Texture2D(64, 64, TextureFormat.RGB24, false);
@@ -292,13 +291,14 @@ namespace TapTap.Editor
                         pixels.ReadPixels(new Rect(0, 0, 64, 64), 0, 0); pixels.Apply(); return pixels.GetPixel(32, 32);
                     }
                     Check(Read().maxColorComponent < 0.05f, "Unvisited region leaked into render");
-                    reveal.SetDiscovered(true); Call(reveal, "UpdateFade", 0.225f);
+                    Material original = sprite.sharedMaterial;
+                    reveal.SetDiscovered(true);
                     sprite.color = new Color(0, 1, 0, 0.4f); // Simulates an offscreen phase change during discovery.
-                    Color halfway = Read();
-                    Check(halfway.g > 0.1f && halfway.g < 0.8f && halfway.r < 0.05f, "Fade ignored live colors/opacity");
-                    Call(reveal, "UpdateFade", 1f);
-                    Check(!sprite.forceRenderingOff && sprite.color.a == 0.4f && Read().g > halfway.g, "Fade damaged mechanism tint");
-                    reveal.SetDiscovered(true); Near(reveal.Opacity, 1f, "Repeated entry restarted fade");
+                    Color visible = Read();
+                    Check(visible.g > 0.1f && visible.r < 0.05f, "Reveal ignored live colors/opacity");
+                    Check(!sprite.forceRenderingOff && sprite.color.a == 0.4f && sprite.sharedMaterial == original,
+                        "Reveal damaged mechanism tint or materials");
+                    reveal.SetDiscovered(true); Near(reveal.Opacity, 1f, "Repeated entry changed visibility");
                 }
                 finally
                 {

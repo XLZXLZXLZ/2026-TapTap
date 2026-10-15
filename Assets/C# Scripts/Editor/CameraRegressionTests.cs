@@ -15,31 +15,9 @@ namespace TapTap.Editor
         private static readonly List<string> results = new List<string>();
         private static readonly MethodInfo Tick = typeof(DemoCamera).GetMethod("UpdateFollow", BindingFlags.Instance | BindingFlags.NonPublic);
 
-        public static void RunBatch()
-        {
-            if (!Application.isBatchMode) throw new InvalidOperationException("Use an isolated batch-mode project.");
-            int exit = 0;
-            try
-            {
-                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-                Test("Automatic sizing centers small maps and follows above the twelve-unit cap", DefaultViewSize);
-                Test("Small movements remain in the dead zone; large movements follow smoothly", DeadZone);
-                Test("The viewport is clamped on all edges of an offset map", Edges);
-                Test("Long horizontal and vertical rooms center only their smaller axis", Corridors);
-                Test("Changing the aspect ratio reclamps the whole viewport", AspectRatio);
-                Test("Per-level size, offset and independent axes are honored", Settings);
-                Test("Scaled levels and authored camera child offsets remain correct", ScaledHierarchy);
-                Test("Rewind follows immediately and clears forward smoothing velocity", Rewind);
-                Test("Pausing and resuming keep the camera finite and responsive", Pause);
-                Test("Respawn motion catches up faster than ordinary movement", Return);
-                Test("Irregular cutouts remain visible inside the enclosing rectangle", Irregular);
-                Test("Old test scenes retain region overrides and follow without regeneration", ExistingScenes);
-                Test("Newly generated scenes bind the player and use the level view size", GeneratedScene);
-            }
-            catch (Exception exception) { results.Add("FAIL: " + exception); Debug.LogException(exception); exit = 1; }
-            File.WriteAllLines(Path.Combine(Application.dataPath, "../camera-regression-results.txt"), results);
-            EditorApplication.Exit(exit);
-        }
+        // The orthographic assertions below are retained as historical reference.
+        // The public batch entry now validates the perspective controller.
+        public static void RunBatch() => PerspectiveCameraRegressionTests.RunBatch();
 
         private static void Test(string name, Action run) { run(); results.Add("PASS: " + name); Debug.Log("CAMERA PASS: " + name); }
         private static void Check(bool condition, string message) { if (!condition) throw new Exception(message); }

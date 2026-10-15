@@ -115,10 +115,7 @@ public static class UrpTrialValidation
             foreach (string path in new[]
             {
                 "Assets/Scenes/WorldMaps/World_Character_Play.unity",
-                "Assets/Scenes/Demo/TapTapDemo.unity",
-                "Assets/ArtStyleTest/Scenes/LowPoly_ArtStyle_Test.unity",
-                "Assets/ArtStyleTest/Scenes/Factory_Reference_Study.unity",
-                "Assets/ArtStyleTest/Scenes/CubeFactory_Design_Study.unity"
+                "Assets/Scenes/Test/Demo_Hanging_Test.unity"
             })
             {
                 var scene = EditorSceneManager.OpenScene(path);
@@ -196,17 +193,15 @@ public static class UrpTrialValidation
             reveal.SetDiscovered(false, true);
             Color hidden = Sample();
             reveal.SetDiscovered(true);
-            typeof(RegionRevealView).GetMethod("UpdateFade", BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(reveal, new object[] { 0.225f });
-            Color fading = Sample();
+            Color visible = Sample();
             Require(full.r > 0.8f && full.r > full.g && full.g > full.b, "Sprite tint lost");
             Require(hidden.r < 0.02f, "Undiscovered region still visible");
-            Require(fading.r > 0.2f && fading.r < full.r * 0.95f && fading.r > fading.g && fading.g > fading.b,
-                "Fade lost opacity/texture/tint: " + fading);
+            Require(Mathf.Abs(visible.r - full.r) < 0.01f && visible.r > visible.g && visible.g > visible.b,
+                "Reveal lost opacity/texture/tint: " + visible);
             reveal.SetDiscovered(true, true);
             Color restored = Sample();
             Require(Mathf.Abs(restored.r - full.r) < 0.01f && renderer.sharedMaterial == material, "Original material not restored");
-            results.Add("PASS: Region fade preserves sprite tint and texture, hides undiscovered sprites, restores original material.");
+            results.Add("PASS: Instant region reveal preserves sprite tint, texture and material; undiscovered sprites are hidden.");
         }
         finally
         {

@@ -160,19 +160,5 @@ namespace TapTap.Editor
             }
             LevelPrefabBuilder.RecordInstanceOverrides(root);
         }
-
-        public static void PrepareAssets()
-        {
-            var root = PrefabUtility.LoadPrefabContents("Assets/Prefabs/Characters/Player.prefab");
-            try
-            {
-                GameplayVisualAssets.ConfigurePlayerVisuals(root);
-                PrefabUtility.SaveAsPrefabAsset(root, "Assets/Prefabs/Characters/Player.prefab");
-            }
-            finally { PrefabUtility.UnloadPrefabContents(root); }
-            LevelTestSceneBuilder.EnsureRuntimePrefab();
-            AssetDatabase.SaveAssets();
-            Debug.Log("Effect prefabs saved and bound to Player and GameplayRuntime.");
-        }
     }
 }

@@ -11,13 +11,6 @@ namespace TapTap.Editor
         public const string KeyPath = "Assets/Prefabs/Interactables/ProgressKey.prefab";
         private const string BrushPath = "Assets/Runtime/LevelDesigner/Brushes/IndicatorLight.asset";
 
-        [MenuItem("TapTap/创建灯光与钥匙配置", false, 130)]
-        public static void CreateAssets()
-        {
-            EnsureInPalette(AssetDatabase.LoadAssetAtPath<LevelPalette>(LevelEditorAssets.DefaultPalettePath));
-            EnsurePrefab<ProgressKey>(KeyPath);
-        }
-
         public static void EnsureInPalette(LevelPalette palette)
         {
             if (palette == null) return;
