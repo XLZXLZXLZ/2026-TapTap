@@ -28,6 +28,7 @@ namespace TapTap
             public Vector2 PullBodyTarget, PickupStartOffset;
             public bool BodyGroundContact, HeadGroundContact, SpaceHeld;
             public RespawnService.Snapshot Respawn;
+            public PlayerView.FacingState Facing;
         }
 
         private enum Outcome { None, HeadLanded, Join, Detach, DownwardJoin, Pickup }
@@ -185,6 +186,7 @@ namespace TapTap
 
             CollectWorldInteractions();
             ResolveOutcomes();
+            if (view != null) view.AdvanceFacing(dt);
             foreach (PlayerEffect effect in effects) Effect?.Invoke(effect);
             foreach (PlayerContactFeedback contact in contacts) ContactFeedback?.Invoke(contact);
         }
@@ -198,7 +200,8 @@ namespace TapTap
             PendingLaunchHeight = pendingLaunchHeight, PullBodyTarget = pullBodyTarget,
             PickupStartOffset = pickupStartOffset, BodyGroundContact = bodyGroundContact,
             HeadGroundContact = headGroundContact, SpaceHeld = input.ConsumedSpaceHeld,
-            Respawn = respawn.CaptureState()
+            Respawn = respawn.CaptureState(),
+            Facing = view != null ? view.CaptureFacing() : default
         };
 
         public void RestoreState(in Snapshot state)
@@ -228,6 +231,7 @@ namespace TapTap
             contacts.Clear();
             input.RestoreHeldState(state.SpaceHeld);
             respawn.RestoreState(in state.Respawn);
+            if (view != null) view.RestoreFacing(in state.Facing);
             UpdateJoinedCollision();
         }
 
@@ -693,6 +697,7 @@ namespace TapTap
             bodyGroundContact = headGroundContact = false;
             head.SpringEnabled = false;
             SetPhase(PlayerPhase.Joined);
+            if (view != null) view.ResetFacing();
         }
     }
 }

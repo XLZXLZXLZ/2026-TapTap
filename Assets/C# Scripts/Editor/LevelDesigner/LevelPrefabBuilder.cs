@@ -42,7 +42,7 @@ namespace TapTap.Editor
                     continue;
                 }
                 string location = "格子 " + placement.Cell + "：";
-                if (!layout.Contains(placement.Cell))
+                if (!LevelPlacementGeometry.Fits(placement, layout.CanvasBounds))
                     errors.Add(location + "位于区域边界外；请先移除或扩大区域。");
                 if (string.IsNullOrEmpty(placement.Id) || !ids.Add(placement.Id))
                     errors.Add(location + "放置 ID 为空或重复。");
@@ -53,8 +53,11 @@ namespace TapTap.Editor
                 }
                 if (string.IsNullOrWhiteSpace(placement.Brush.LayerId))
                     errors.Add(location + "画笔图层 ID 为空。");
-                if (!cells.Add(placement.Cell.x + ":" + placement.Cell.y + ":" + placement.Brush.LayerId))
-                    errors.Add(location + "同一图层存在重复内容。");
+                foreach (Vector2Int cell in LevelPlacementGeometry.Cells(placement))
+                    if (!cells.Add(cell.x + ":" + cell.y + ":" + placement.Brush.LayerId))
+                    { errors.Add(location + "同一图层存在重复内容。"); break; }
+                if (placement.Settings is PistonPlacementSettings && LevelGridEditing.CrossLayerConflict(layout, placement))
+                    errors.Add(location + "活塞最大伸出范围与地形或平台重叠。");
                 LevelBrushHandler handler = LevelBrushHandlers.Get(placement.Brush.HandlerId);
                 if (handler == null)
                     errors.Add(location + "找不到处理器 " + placement.Brush.HandlerId + "。");
@@ -70,6 +73,8 @@ namespace TapTap.Editor
                     string detail = handler.ValidatePlacement(placement);
                     if (!string.IsNullOrEmpty(detail))
                         errors.Add(location + detail);
+                    string layoutDetail = handler.ValidateLayoutPlacement(placement, layout);
+                    if (!string.IsNullOrEmpty(layoutDetail)) errors.Add(location + layoutDetail);
                     if (placement.Id == layout.EntryPlacementId)
                     {
                         entryFound = true;

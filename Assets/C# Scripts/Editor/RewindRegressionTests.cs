@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ScreenFilters;
 
 namespace TapTap.Editor
 {
@@ -53,6 +54,13 @@ namespace TapTap.Editor
                 Test("Downward head contact drops through only its supporting platform and rewinds", SinglePlatformDrop);
                 Test("Extension replays identically and a historical hold can release", ExtensionAndInput);
                 Test("Pulling and pickup continue from restored action progress", PullAndPickup);
+                Test("3D facing restores intermediate yaw and replays the same turn", ModelFacingRewind);
+                Test("Detached heads keep their facing and locked steering does not turn", ModelFacingDetachedAndLocked);
+                Test("3D visuals retain landing, spring squash and vertical stretch without changing colliders", ModelSquashFeedback);
+                Test("Skinned walking synchronizes halves, detaches independently, idles and pauses for rewind", PlayerWalkingAnimation);
+                Test("Door entry recalls only extended heads and leaves detached heads in place", ExitHeadRules);
+                Test("Door entry follows foot anchors, turns, settles, and restores on cancel", ExitTimeline);
+                Test("Door entry animates independently while ordinary presentation is blocked", ExitAnimation);
                 Test("Switch undo restores phase and position without events or ejection", SwitchAndPhase);
                 Test("Detached death restores tasks and can complete twice", DetachedDeath);
                 Test("Grouped death, independent head death, and checkpoint undo", OtherReturnsAndCheckpoint);
@@ -62,6 +70,7 @@ namespace TapTap.Editor
                 Test("Apex gravity only softens early descent, restores after rewind and ends on time", ApexGravityFeel);
                 Test("Ceiling contact grants a short descent grace to the joined player and detached head", CeilingGravityFeel);
                 Test("Bullet time toggles, fades blue, composes with effects and respects pause/scene changes", BulletTimeFeel);
+                Test("Assembly zoom follows its amount and launching joins extend feedback without leaking time scale", AssemblyFeedbackFeel);
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(LevelTestSceneBuilder.RuntimePrefabPath) != null)
                     Test("Runtime prefab exposes rewind settings and binds the camera and shader", RuntimePrefabWiring);
                 if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)
@@ -766,8 +775,10 @@ namespace TapTap.Editor
                     camera.backgroundColor = new Color(0.06f, 0.09f, 0.14f);
                     camera.clearFlags = CameraClearFlags.SolidColor;
                     camera.targetTexture = target;
+                    // Match GameplayRuntime: screen effects are explicitly wired on the camera.
+                    cameraObject.AddComponent<RewindScreenEffect>();
                     cameraObject.AddComponent<DemoCamera>().Configure(null, camera, null);
-                    Check(cameraObject.GetComponent<RewindScreenEffect>() != null, "Runtime camera did not attach the image effect");
+                    Check(cameraObject.GetComponent<RewindScreenEffect>() != null, "Rewind camera effect is not configured");
                     Color[] Capture(string filename)
                     {
                         camera.Render();
@@ -852,6 +863,27 @@ namespace TapTap.Editor
                         .GetField("recentFrame", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(screen);
                     Check(history != null && history.width == 320 && history.height == 180,
                         "Changing resolution did not reallocate half-resolution history");
+                    var style = ScriptableObject.CreateInstance<ScreenFilterProfile>();
+                    var styleCamera = cameraObject.AddComponent<ScreenFilterCamera>();
+                    try
+                    {
+                        style.Pixelation.Enabled = true;
+                        style.Pixelation.Size = 4;
+                        styleCamera.SetProfile(style);
+                        Color[] combined = Capture("rewind-with-pixel-filter.png");
+                        for (int y = 0; y < target.height; y++)
+                        for (int x = 0; x < target.width; x++)
+                        {
+                            Color anchor = combined[(y / 4 * 4) * target.width + x / 4 * 4];
+                            Check(combined[y * target.width + x] == anchor,
+                                "Shared pixel filter did not run after the rewind shader");
+                        }
+                    }
+                    finally
+                    {
+                        styleCamera.SetProfile(null);
+                        UnityEngine.Object.DestroyImmediate(style);
+                    }
                     foreach (var message in ShaderUtil.GetShaderMessages(shader))
                         Check(message.severity.ToString() != "Error", "Shader compilation failed: " + message.message);
                 }

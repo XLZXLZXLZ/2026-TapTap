@@ -13,7 +13,51 @@ MonoBehaviour:
   m_Name: Level_Test_11
   m_EditorClassIdentifier: 
   Size: {x: 32, y: 18}
+  CanvasOrigin: {x: 0, y: 0}
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
+  CameraSettings:
+    HasPreset: 0
+    LocalPosition: {x: 16, y: 9, z: -30}
+    LocalEulerAngles: {x: 0, y: 0, z: 0}
+    LensMode: 0
+    FieldOfView: 38
+    FocalLength: 35
+    SensorSize: {x: 36, y: 24}
+    LensShift: {x: 0, y: 0}
+    GateFit: 1
+    NearClip: 0.1
+    FarClip: 1000
+    BlendDuration: 0.6
+    BlendCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    AutoSize: 1
+    ViewSize: 9
+    FollowHorizontal: 1
+    FollowVertical: 1
+    Offset: {x: 0, y: 1.5}
+    DeadZone: {x: 0.1, y: 0.15}
   Placements:
   - Id: 4c2a8940005f4fc98bf4003b4839c937
     Cell: {x: 0, y: 0}
@@ -695,26 +739,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: 0a93abfe797e9c94098921fc2d198f11, type: 2}
     Settings:
       rid: 5387188246021669723
-  - Id: bf27de250c57439c998a2c475f0490d0
-    Cell: {x: 14, y: 6}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188246021669732
-  - Id: 5bca383c55734001857fc6b31997d7ac
-    Cell: {x: 15, y: 6}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188246021669733
-  - Id: bb7250d509444e45beea47f956c16ae0
-    Cell: {x: 16, y: 6}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188246021669734
-  - Id: 656b364733f349acab41716f9c8b7bed
-    Cell: {x: 17, y: 6}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188246021669735
   - Id: e913039c81664bef84f5fb0cae139330
     Cell: {x: 12, y: 8}
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
@@ -755,413 +779,288 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
     Settings:
       rid: 5387188246021669747
+  - Id: bf27de250c57439c998a2c475f0490d0
+    Cell: {x: 14, y: 6}
+    Brush: {fileID: 11400000, guid: 18a11d680581b1a4197d93ce07b03c6c, type: 2}
+    Settings:
+      rid: 5387188416097550356
   EntryPlacementId: 
   OutputPrefab: {fileID: 0}
+  Outline: {fileID: 0}
+  TestSceneGuid: 
+  UseCustomBoundary: 0
+  BoundaryCells: []
   references:
     version: 2
     RefIds:
     - rid: 5387188246021669546
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669547
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669548
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669549
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669550
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669551
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669552
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669553
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669554
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669555
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669556
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669557
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669558
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669559
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669560
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669561
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669562
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669563
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669564
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669565
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669566
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669567
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669568
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669569
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669570
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669571
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669572
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669573
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669574
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669575
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669576
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669577
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669578
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669579
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669580
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669581
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669582
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669583
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669584
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669585
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669586
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669587
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669588
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669589
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669590
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669591
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669592
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669593
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669594
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669595
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669596
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669597
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669598
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669599
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669600
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669601
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669602
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669603
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669604
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669605
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669606
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669607
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669608
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669609
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669610
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669611
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669612
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669613
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669614
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669615
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669616
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669617
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669618
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669619
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669620
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669621
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669622
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669623
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669624
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669625
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669626
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669627
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669628
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669629
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669630
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669631
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669632
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669633
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669634
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669635
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669636
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669637
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669638
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669639
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669640
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669641
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669684
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669685
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669686
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669687
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669688
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669689
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669690
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669691
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669692
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669693
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669694
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669695
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669696
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669697
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669698
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669699
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669700
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669701
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669702
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669703
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669704
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669705
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669706
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669707
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669708
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669709
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669710
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669711
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669712
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669713
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669714
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669715
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669716
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669717
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669718
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669719
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669720
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669721
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669722
       type: {class: SpringPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data:
@@ -1172,43 +1071,25 @@ MonoBehaviour:
       data:
         Height: 4.5
         AnimationDuration: 0.28
-    - rid: 5387188246021669732
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188246021669733
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188246021669734
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188246021669735
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
     - rid: 5387188246021669740
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669741
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669742
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669743
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669744
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669745
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669746
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188246021669747
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
+    - rid: 5387188416097550356
+      type: {class: PistonPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        QuarterTurns: 0
+        MaxLength: 4
+        ExtendedWhenActive: 0

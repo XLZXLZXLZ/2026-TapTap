@@ -72,7 +72,7 @@ namespace TapTap
             float unit = 1f;
             foreach (PhaseBlock block in state.Blocks)
             {
-                if (block == null || block.IsSolid) continue;
+                if (block == null || block.IsSolid || block.GetComponent<PhasePiston>() != null) continue;
                 RegionRevealView reveal = block.GetComponentInParent<RegionRevealView>();
                 float opacity = reveal != null ? reveal.Opacity : 1f;
                 if (opacity <= 0f) continue;

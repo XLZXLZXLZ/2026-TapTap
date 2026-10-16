@@ -212,6 +212,7 @@ namespace TapTap.Editor
             }
             EnsureAnnotationInPalette(palette);
             EnsureSpringInPalette(palette);
+            SmartTileAssets.EnsureInPalette(palette);
             return palette;
         }
 

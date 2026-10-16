@@ -28,6 +28,7 @@ namespace TapTap
         private bool initialPhase;
         private bool initialized;
         private float resumeTimeScale = 1f;
+        private PlayerExitView playerExit;
         private static WorldMapProgression current;
 
         public static WorldMapProgression Current => current;
@@ -153,8 +154,8 @@ namespace TapTap
         public bool CompleteCurrent(LevelEndpoint endpoint)
         {
             if (!ExitsEnabled || !CanTransition || IsComplete || endpoint == null
-                || endpoint.GetComponentInParent<LevelRegion>() != CurrentRegion) return false;
-            StartTransition(CurrentIndex + 1, true);
+                || endpoint.GetComponentInParent<LevelRegion>() != CurrentRegion || player.Body.IsReturning) return false;
+            StartTransition(CurrentIndex + 1, true, endpoint);
             return true;
         }
 
@@ -187,25 +188,36 @@ namespace TapTap
             return WorldMapSceneRouter.Instance.Load(world.Source.SelectionScenePath);
         }
 
-        private void StartTransition(int nextIndex, bool passed)
+        private void StartTransition(int nextIndex, bool passed, LevelEndpoint endpoint = null)
         {
+            CancelPlayerExit();
             IsTransitioning = true;
             RewindManager.Current?.ClearHistory();
             player.BeginRewind();
             player.GetComponent<RespawnService>().CancelAll();
             EffectManager.Instance.ClearTransientEffects();
             resumeTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
             player.GetComponent<PlayerInput>().ResetForTransition();
-            StartCoroutine(Transition(nextIndex, passed));
+            StartCoroutine(Transition(nextIndex, passed, endpoint));
         }
 
-        private IEnumerator Transition(int nextIndex, bool passed)
+        private IEnumerator Transition(int nextIndex, bool passed, LevelEndpoint endpoint)
         {
             ScreenFadeOverlay fade = ScreenFadeOverlay.Instance;
             bool success = false;
             try
             {
+                if (passed && endpoint != null)
+                {
+                    // Let the fixed step finish before taking over presentation. InputBlocked
+                    // freezes gameplay; the entry walk uses unscaled animation independently.
+                    yield return null;
+                    playerExit = player.GetComponent<PlayerExitView>();
+                    if (playerExit == null) playerExit = player.gameObject.AddComponent<PlayerExitView>();
+                    if (playerExit.Begin(endpoint))
+                        while (playerExit != null && playerExit.IsPlaying) yield return null;
+                }
+                Time.timeScale = 0f;
                 yield return fade.FadeTo(1f, FadeDuration);
                 yield return null;
                 WorldMapModule finished = CurrentModule;
@@ -229,6 +241,7 @@ namespace TapTap
                 {
                     if (showBoard) yield return fade.FadeTo(1f, FadeDuration);
                     assembly.Hide();
+                    CancelPlayerExit();
                     Activate(nextIndex, true);
                     // Start/OnEnable callbacks initialize the refreshed room while simulation is paused.
                     yield return null;
@@ -238,12 +251,18 @@ namespace TapTap
             }
             finally
             {
-                if (!success) assembly.Hide();
+                if (!success) { assembly.Hide(); CancelPlayerExit(); }
                 fade.SetOpacity(0f);
                 Time.timeScale = resumeTimeScale;
                 player.GetComponent<PlayerInput>().ResetForTransition();
                 IsTransitioning = false;
             }
+        }
+
+        private void CancelPlayerExit()
+        {
+            if (playerExit != null) playerExit.Cancel();
+            playerExit = null;
         }
 
         private void Activate(int index, bool refresh)
@@ -279,6 +298,7 @@ namespace TapTap
 
         private void OnDisable()
         {
+            CancelPlayerExit();
             RewindManager.Current?.Unregister(this);
             StopAllCoroutines();
             if (IsTransitioning)

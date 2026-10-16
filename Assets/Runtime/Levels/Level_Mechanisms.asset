@@ -13,7 +13,51 @@ MonoBehaviour:
   m_Name: Level_Mechanisms
   m_EditorClassIdentifier: 
   Size: {x: 32, y: 18}
+  CanvasOrigin: {x: 0, y: 0}
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
+  CameraSettings:
+    HasPreset: 0
+    LocalPosition: {x: 16, y: 9, z: -30}
+    LocalEulerAngles: {x: 0, y: 0, z: 0}
+    LensMode: 0
+    FieldOfView: 38
+    FocalLength: 35
+    SensorSize: {x: 36, y: 24}
+    LensShift: {x: 0, y: 0}
+    GateFit: 1
+    NearClip: 0.1
+    FarClip: 1000
+    BlendDuration: 0.6
+    BlendCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    AutoSize: 1
+    ViewSize: 9
+    FollowHorizontal: 1
+    FollowVertical: 1
+    Offset: {x: 0, y: 1.5}
+    DeadZone: {x: 0.1, y: 0.15}
   Placements:
   - Id: a4d3ff8b6a884fb0986f8c23c9656960
     Cell: {x: 0, y: 0}
@@ -190,66 +234,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: bd58590b7b53ac64fb70fac2ba243cea, type: 2}
     Settings:
       rid: 5387188209748279330
-  - Id: cc3f958e4d5a4227b7487cc22eb5b615
-    Cell: {x: 8, y: 3}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279331
-  - Id: febc0e66998e4be995a550f6f1c50d41
-    Cell: {x: 9, y: 3}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279332
-  - Id: 6adb99fff1004155becb7794992349f8
-    Cell: {x: 10, y: 3}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279333
-  - Id: 3668137aec45411f87501fc5b8c5bfc4
-    Cell: {x: 11, y: 3}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279334
-  - Id: 128add45a7574ed9b410f863e0f267eb
-    Cell: {x: 12, y: 3}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279335
-  - Id: b5698c788ef24eb486c787513fc82a36
-    Cell: {x: 12, y: 1}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279336
-  - Id: 5155897551c54120897773fde4e5ac94
-    Cell: {x: 12, y: 2}
-    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
-    Settings:
-      rid: 5387188209748279337
-  - Id: 84a2d4c7749c427487bebba0e10466e1
-    Cell: {x: 16, y: 4}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188209748279338
-  - Id: d36a27f7e55c4a11ba31f40eaec4d709
-    Cell: {x: 17, y: 4}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188209748279339
-  - Id: 237c3e2eee684c1c92618e29ad2f350a
-    Cell: {x: 18, y: 4}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188209748279340
-  - Id: c7403dd8aee54d75919c7569e1522660
-    Cell: {x: 19, y: 4}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188209748279341
-  - Id: ae74cb02339945b198e918a907953801
-    Cell: {x: 20, y: 4}
-    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
-    Settings:
-      rid: 5387188209748279342
   - Id: aaea8a4b3e974aceb39856054f377d33
     Cell: {x: 21, y: 3}
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
@@ -280,180 +264,129 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: b98a9f3e4675ff540a782fda9d5f7c11, type: 2}
     Settings:
       rid: 5387188209748279348
+  - Id: b5698c788ef24eb486c787513fc82a36
+    Cell: {x: 12, y: 1}
+    Brush: {fileID: 11400000, guid: 18a11d680581b1a4197d93ce07b03c6c, type: 2}
+    Settings:
+      rid: 5387188416097550347
+  - Id: 3668137aec45411f87501fc5b8c5bfc4
+    Cell: {x: 11, y: 3}
+    Brush: {fileID: 11400000, guid: 18a11d680581b1a4197d93ce07b03c6c, type: 2}
+    Settings:
+      rid: 5387188416097550348
+  - Id: 84a2d4c7749c427487bebba0e10466e1
+    Cell: {x: 16, y: 4}
+    Brush: {fileID: 11400000, guid: 18a11d680581b1a4197d93ce07b03c6c, type: 2}
+    Settings:
+      rid: 5387188416097550349
   EntryPlacementId: 7dd6138945e747ba869e845c4f37212d
   OutputPrefab: {fileID: 223736448463725311, guid: 8a55c6164a2b5c441b03b9b774a750b6, type: 3}
+  Outline: {fileID: 0}
+  TestSceneGuid: 
+  UseCustomBoundary: 0
+  BoundaryCells: []
   references:
     version: 2
     RefIds:
     - rid: 5387188209748279296
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279297
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279298
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279299
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279300
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279301
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279302
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279303
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279304
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279305
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279306
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279307
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279308
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279309
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279310
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279311
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279312
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279313
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279314
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279315
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279316
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279317
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279318
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279319
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279320
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279321
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279322
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279323
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279324
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279325
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279326
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279327
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279328
       type: {class: CheckpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data:
         SpawnOffset: {x: 0, y: 0.45}
     - rid: 5387188209748279329
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279330
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
-    - rid: 5387188209748279331
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279332
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279333
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279334
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279335
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279336
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279337
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 1
-    - rid: 5387188209748279338
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188209748279339
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188209748279340
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188209748279341
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
-    - rid: 5387188209748279342
-      type: {class: PhaseBlockPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        SolidWhenActive: 0
     - rid: 5387188209748279343
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279344
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279345
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279346
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279347
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188209748279348
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
+    - rid: 5387188416097550347
+      type: {class: PistonPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        QuarterTurns: 3
+        MaxLength: 3
+        ExtendedWhenActive: 1
+    - rid: 5387188416097550348
+      type: {class: PistonPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        QuarterTurns: 2
+        MaxLength: 4
+        ExtendedWhenActive: 1
+    - rid: 5387188416097550349
+      type: {class: PistonPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        QuarterTurns: 0
+        MaxLength: 5
+        ExtendedWhenActive: 0

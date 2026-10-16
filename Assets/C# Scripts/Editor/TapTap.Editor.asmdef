@@ -1,7 +1,7 @@
 {
   "name": "TapTap.Editor",
   "rootNamespace": "TapTap.Editor",
-  "references": ["TapTap.Runtime"],
+  "references": ["TapTap.Runtime", "ScreenFilters.Runtime", "Unity.RenderPipelines.Core.Runtime"],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

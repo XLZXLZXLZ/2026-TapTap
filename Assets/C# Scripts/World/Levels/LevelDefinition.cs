@@ -69,13 +69,14 @@ namespace TapTap
             if (Placements == null)
                 Placements = new List<LevelPlacement>();
 
-            Erase(cell, brush.LayerId);
             var placement = new LevelPlacement
             {
                 Cell = cell,
                 Brush = brush,
                 Settings = settings ?? new EmptyPlacementSettings()
             };
+            if (!LevelPlacementGeometry.Fits(placement, CanvasBounds)) return null;
+            foreach (Vector2Int occupied in LevelPlacementGeometry.Cells(placement)) Erase(occupied, brush.LayerId);
             Placements.Add(placement);
             InvalidateFootprint();
             return placement;
@@ -90,7 +91,7 @@ namespace TapTap
             for (int i = Placements.Count - 1; i >= 0; i--)
             {
                 LevelPlacement placement = Placements[i];
-                if (placement == null || placement.Cell != cell ||
+                if (placement == null || !LevelPlacementGeometry.Contains(placement, cell) ||
                     (!allLayers && !Matches(placement, cell, layerId)))
                     continue;
 
@@ -105,7 +106,7 @@ namespace TapTap
 
         private static bool Matches(LevelPlacement placement, Vector2Int cell, string layerId)
         {
-            return placement != null && placement.Cell == cell && placement.Brush != null &&
+            return placement != null && LevelPlacementGeometry.Contains(placement, cell) && placement.Brush != null &&
                 string.Equals(placement.Brush.LayerId, layerId, StringComparison.Ordinal);
         }
 

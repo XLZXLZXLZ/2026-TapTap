@@ -1,5 +1,8 @@
 # URP 渲染配置
 
+通用像素、笔刷、撕裂、色散和显像管滤镜见 [屏幕滤镜说明](ScreenFilters/README.md)。
+入口：**Tools → Rendering → 屏幕滤镜工作台**；公共配置为 `ScreenFilters/Profiles/DefaultScreenFilters.asset`。
+
 迁移前基准：`main` 的 `a88199f`。试验分支：`codex/urp-trial`。
 URP 试验提交 `0c69c0b` 已合入 `C:\GitHub\2026-TapTap` 的本地 `main`；最近的手感优化和关卡编辑改动一并保留。
 编辑器保持 Unity 2021.3.24f1c1，URP / Core RP / Shader Graph 使用 12.1.11。
@@ -21,7 +24,7 @@ URP 试验提交 `0c69c0b` 已合入 `C:\GitHub\2026-TapTap` 的本地 `main`；
 组件停用、效果结束、分辨率变化及新倒带会话会释放或重建历史帧。
 
 Graphics 默认使用 TapTapHigh。Very Low / Low 使用 TapTapLow（无阴影）；Medium 使用 TapTapMedium（硬阴影）；High / Very High / Ultra 使用 TapTapHigh（软阴影，2x MSAA）。像素化相机自行关闭 MSAA。
-本版关闭管线 HDR，不增加 Bloom、色调映射、2D 灯光或额外后处理。
+各画质档位均开启管线 HDR；TapTapRenderer 已配置 URP 默认 PostProcessData，以支持相机和 Volume 中启用的 Bloom 等内置后处理。具体效果仍由相机的 Post Processing 开关与场景 Volume 配置控制。
 关闭 URP 新增的运行时调试菜单，避免它轮询项目中没有配置的 Debug 输入按钮；保留现有玩法输入映射。编辑器 Rendering Debugger 仍可使用。
 
 Standard 转为 URP Lit，旧 Unlit 转为 URP Unlit；显式精灵材质转为 URP Sprite Unlit。

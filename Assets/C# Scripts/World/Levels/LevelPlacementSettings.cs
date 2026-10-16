@@ -59,6 +59,18 @@ namespace TapTap
     }
 
     [Serializable]
+    public sealed class PistonPlacementSettings : LevelPlacementSettings
+    {
+        public const int MaximumLength = 2048;
+        // Clockwise from right. Cell is the first extended cell; the base lies on its back edge.
+        public int QuarterTurns;
+        public int MaxLength = 3;
+        public bool ExtendedWhenActive = true;
+        public Vector2Int Direction => (QuarterTurns & 3) == 0 ? Vector2Int.right : (QuarterTurns & 3) == 1 ? Vector2Int.down
+            : (QuarterTurns & 3) == 2 ? Vector2Int.left : Vector2Int.up;
+    }
+
+    [Serializable]
     public sealed class EndpointPlacementSettings : LevelPlacementSettings
     {
         public string EndpointId = "finish";

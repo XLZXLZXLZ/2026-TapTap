@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Platform
   m_EditorClassIdentifier: 
   DisplayName: "\u5E73\u53F0"
-  HandlerId: default
+  HandlerId: smart-platform
   LayerId: geometry
   Prefab: {fileID: 6688958717030703200, guid: 97b7c7a5561804b46818ad597c490397, type: 3}
+  Thumbnail: {fileID: 0}
   Anchor: {x: 0.5, y: 0.5}
   PreviewRect:
     serializedVersion: 2

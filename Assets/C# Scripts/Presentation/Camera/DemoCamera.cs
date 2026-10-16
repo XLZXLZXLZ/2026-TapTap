@@ -131,7 +131,7 @@ namespace TapTap
         {
             ResetShake();
             EffectManager effects = Application.isPlaying ? EffectManager.Existing : null;
-            float viewScale = progressZoom * (effects != null ? 1f - effects.ZoomProgress * 0.035f : 1f);
+            float viewScale = progressZoom * (effects != null ? 1f - effects.ZoomPulse : 1f);
             currentShot.ApplyLens(viewCamera, viewScale);
             // Rotate and translate the rig while retaining authored child offsets.
             Quaternion delta = currentShot.Rotation * Quaternion.Inverse(viewCamera.transform.rotation);

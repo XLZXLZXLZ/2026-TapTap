@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ScreenFilters;
 
 namespace TapTap.Editor
 {
@@ -25,7 +26,8 @@ namespace TapTap.Editor
                 if (existing.GetComponentInChildren<WorldPhaseState>(true) == null || existingOutline == null
                     || existingOutline.GetComponent<MeshFilter>() == null
                     || existing.GetComponentInChildren<RewindManager>(true) == null
-                    || existing.GetComponentInChildren<RewindScreenEffect>(true) == null)
+                    || existing.GetComponentInChildren<RewindScreenEffect>(true) == null
+                    || existing.GetComponentInChildren<ScreenFilterCamera>(true) == null)
                 {
                     GameObject root = PrefabUtility.LoadPrefabContents(RuntimePrefabPath);
                     try
@@ -37,6 +39,7 @@ namespace TapTap.Editor
                         Camera viewCamera = root.GetComponentInChildren<Camera>(true);
                         if (viewCamera != null && viewCamera.GetComponent<RewindScreenEffect>() == null)
                             viewCamera.gameObject.AddComponent<RewindScreenEffect>();
+                        if (viewCamera != null) BindScreenFilters(viewCamera);
                         PlayerEffectsPrefabs.BindRuntime(root, GameplayVisualAssets.EnsureVisualSettings());
                         PrefabUtility.SaveAsPrefabAsset(root, RuntimePrefabPath);
                     }
@@ -70,6 +73,7 @@ namespace TapTap.Editor
                 cameraObject.tag = "MainCamera";
                 Camera camera = cameraObject.AddComponent<Camera>();
                 cameraObject.AddComponent<RewindScreenEffect>();
+                BindScreenFilters(camera);
                 camera.orthographic = false;
                 camera.fieldOfView = 38f;
                 camera.clearFlags = CameraClearFlags.SolidColor;
@@ -90,6 +94,14 @@ namespace TapTap.Editor
                 return result;
             }
             finally { EditorSceneManager.ClosePreviewScene(preview); }
+        }
+
+        private static void BindScreenFilters(Camera camera)
+        {
+            var binding = camera.GetComponent<ScreenFilterCamera>();
+            if (binding == null) binding = camera.gameObject.AddComponent<ScreenFilterCamera>();
+            if (binding.Profile == null) binding.SetProfile(AssetDatabase.LoadAssetAtPath<ScreenFilterProfile>(
+                "Assets/Rendering/ScreenFilters/Profiles/DefaultScreenFilters.asset"));
         }
 
         public static string Generate(LevelDefinition layout, bool openScene = true)
@@ -134,13 +146,14 @@ namespace TapTap.Editor
             try
             {
                 SceneManager.SetActiveScene(scene);
+                GameplayLightingDefaults.Apply(scene);
                 var regionObject = (GameObject)PrefabUtility.InstantiatePrefab(levelPrefab, scene);
                 LevelRegion region = regionObject.GetComponent<LevelRegion>();
                 regionObject.transform.position = Vector3.zero;
                 var playerObject = (GameObject)PrefabUtility.InstantiatePrefab(shared.PlayerPrefab, scene);
                 PlayerController player = playerObject.GetComponent<PlayerController>();
                 Vector3 scale = playerObject.transform.localScale;
-                playerObject.transform.localScale = new Vector3(scale.x * config.UnitSize, scale.y * config.UnitSize, scale.z);
+                playerObject.transform.localScale = scale * config.UnitSize;
                 SetConfig(player, config);
                 SetConfig(player.GetComponent<RespawnService>(), config);
                 SetConfig(player.GetComponent<PlayerView>(), config);

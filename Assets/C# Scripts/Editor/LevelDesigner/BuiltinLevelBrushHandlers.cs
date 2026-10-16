@@ -80,6 +80,11 @@ namespace TapTap.Editor
             endpoint.EndpointId = settings.EndpointId;
             endpoint.Label = settings.Label;
             endpoint.EnsureTrigger();
+            // Endpoint anchors use all three axes: walking one grid unit into the door
+            // must also scale in Z when the palette uses a non-unit cell size.
+            Vector3 scale = instance.transform.localScale;
+            scale.z = context.UnitSize;
+            instance.transform.localScale = scale;
         }
     }
 
@@ -237,6 +242,7 @@ namespace TapTap.Editor
             }
             settings.Speed = EditorGUILayout.FloatField("速度（格/秒）", settings.Speed);
             EditorGUILayout.LabelField("正值向右，负值向左，零为停止。", EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.HelpBox("同排且速度、方向一致的传送带自动拼接，至少连续两格。中段随方向翻转，箭头按世界 X 坐标错相闪亮。闪光材质与周期在 GridConveyor 的 ConveyorTileVisual 配置。", MessageType.None);
         }
 
         public override string ValidatePlacement(LevelPlacement placement)
@@ -245,17 +251,27 @@ namespace TapTap.Editor
                 return "传送带缺少速度配置。";
             if (float.IsNaN(settings.Speed) || float.IsInfinity(settings.Speed))
                 return "传送带速度必须是有限数值。";
-            return placement.Brush.Prefab.GetComponentInChildren<WorldSurface>() == null
-                ? "传送带 Prefab 缺少 WorldSurface。" : null;
+            if (placement.Brush.Prefab.GetComponent<WorldSurface>() == null) return "传送带 Prefab 缺少 WorldSurface。";
+            var view = placement.Brush.Prefab.GetComponent<ConveyorTileVisual>();
+            if (view == null || view.LeftModel == null || view.MiddleModel == null || view.RightModel == null)
+                return "传送带需要 ConveyorTileVisual 及左端、中段、右端模型。";
+            if (view.ArrowGlowMaterial == null) return "传送带缺少箭头发光材质。";
+            if (float.IsNaN(view.FlashPeriod) || float.IsInfinity(view.FlashPeriod) || view.FlashPeriod <= 0f ||
+                float.IsNaN(view.FlashDuration) || float.IsInfinity(view.FlashDuration) || view.FlashDuration < 0f || view.FlashDuration > view.FlashPeriod)
+                return "闪光周期必须大于零，亮起时长须在零到一个周期之间。";
+            return null;
         }
+
+        public override string ValidateLayoutPlacement(LevelPlacement placement, LevelDefinition layout) =>
+            ConveyorTileRules.Part(layout, placement).HasValue ? null : "传送带至少连续两格，且相邻格的速度和方向需一致。";
 
         public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context)
         {
             var settings = (ConveyorPlacementSettings)placement.Settings;
             instance.GetComponentInChildren<WorldSurface>().ConveyorSpeed = settings.Speed * context.UnitSize;
-            foreach (Transform child in instance.GetComponentsInChildren<Transform>(true))
-                if (child.name.StartsWith("Belt arrow ", System.StringComparison.Ordinal))
-                    child.localRotation = Quaternion.Euler(0f, 0f, settings.FacingLeft ? 90f : -90f);
+            var view = instance.GetComponent<ConveyorTileVisual>();
+            view.FacingLeftWhenStopped = settings.FacingLeftWhenStopped;
+            view.ApplyPart(ConveyorTileRules.Part(context.Definition, placement).Value);
         }
     }
 

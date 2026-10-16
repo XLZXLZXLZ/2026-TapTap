@@ -17,16 +17,16 @@ MonoBehaviour:
   Palette: {fileID: 11400000, guid: 13a6239d6f5c24342b226a8a3041d52a, type: 2}
   CameraSettings:
     HasPreset: 1
-    LocalPosition: {x: 15, y: 5.05, z: -13.74}
+    LocalPosition: {x: 15, y: 4.4, z: -24.4}
     LocalEulerAngles: {x: -0, y: 0, z: 0}
     LensMode: 0
-    FieldOfView: 60
+    FieldOfView: 38
     FocalLength: 50
     SensorSize: {x: 36, y: 24}
     LensShift: {x: 0, y: 0}
-    GateFit: 2
+    GateFit: 1
     NearClip: 0.1
-    FarClip: 100
+    FarClip: 1000
     BlendDuration: 0.6
     BlendCurve:
       serializedVersion: 2
