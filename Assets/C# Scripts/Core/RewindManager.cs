@@ -84,9 +84,9 @@ namespace TapTap
         [Header("回溯速度")]
         [Tooltip("每次开始按住 Z 时的回溯倍速。")]
         [FormerlySerializedAs("rewindSpeed")]
-        [SerializeField, Min(0.1f)] private float startSpeed = 1.5f;
-        [SerializeField, Min(0.1f)] private float maxSpeed = 3f;
-        [Tooltip("从起始速度线性提升到最大速度的真实时间（秒）；0 表示立即达到最大速度。")]
+        [SerializeField, Min(0.1f)] private float startSpeed = 2f;
+        [SerializeField, Min(0.1f)] private float maxSpeed = 5f;
+        [Tooltip("从起始速度按二次曲线提升到最大速度的真实时间（秒），先缓后快；0 表示立即达到最大速度。")]
         [SerializeField, Min(0f)] private float accelerationDuration = 5f;
         public bool UseKeyboard = true;
         private static RewindManager current;
@@ -114,8 +114,15 @@ namespace TapTap
         public float AvailableSeconds => hasHistory ? currentTick * stepDuration : 0f;
         public bool AtOldestHistory => hasHistory && currentTick == 0;
         public double RewindHeldSeconds => rewindHeldSeconds;
-        public float RewindSpeedProgress => accelerationDuration > 0f
-            ? Mathf.Clamp01((float)(rewindHeldSeconds / accelerationDuration)) : 1f;
+        public float RewindSpeedProgress
+        {
+            get
+            {
+                float t = accelerationDuration > 0f
+                    ? Mathf.Clamp01((float)(rewindHeldSeconds / accelerationDuration)) : 1f;
+                return t * t;
+            }
+        }
         public float CurrentRewindSpeed => Mathf.Lerp(Mathf.Max(0.1f, startSpeed),
             Mathf.Max(0.1f, startSpeed, maxSpeed), RewindSpeedProgress);
 
@@ -234,10 +241,11 @@ namespace TapTap
             if (accelerationDuration <= 0f) distance = maximum * unscaledDt;
             else
             {
-                // Integrate the linear ramp exactly, including a frame that crosses the speed cap.
+                // Integrate the quadratic ramp exactly, including a frame that crosses the speed cap.
                 double rampStart = Math.Min(start, accelerationDuration);
                 double rampEnd = Math.Min(rewindHeldSeconds, accelerationDuration);
-                double rampIntegral = (rampEnd * rampEnd - rampStart * rampStart) / (2d * accelerationDuration);
+                double rampIntegral = (rampEnd * rampEnd * rampEnd - rampStart * rampStart * rampStart)
+                    / (3d * accelerationDuration * accelerationDuration);
                 double cappedTime = Math.Max(0d, rewindHeldSeconds - accelerationDuration)
                     - Math.Max(0d, start - accelerationDuration);
                 distance = initial * unscaledDt + (maximum - initial) * (rampIntegral + cappedTime);

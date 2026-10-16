@@ -1,5 +1,7 @@
 # 大场景自由观察
 
+`DebugRegionOutlines` 在 Unity 编辑器中自动绘制各子关卡的彩色区域线框，未运行时也显示，无需按 U。按真实 Footprint 轮廓向内缩 0.5 格，沿边缘方块中心连线，包含凹形轮廓；线框固定在世界 Z = -0.1，透过场景模型可见，不受未探索区域隐藏影响。调试对象不保存到场景。仅编译于 `UNITY_EDITOR`，所有打包版本（包括 Development Build）均不启用。线宽和 Z 坐标可在 `Debug Region Outlines (Editor Only)` 对象上调整。
+
 `DebugWorldCamera` 在 Unity 编辑器和 Development Build 中自动创建，无需挂载到场景。正式发布构建不会自动启用。删除本目录即可移除此功能，现有脚本和场景不依赖它。
 
 - U：进入 / 退出。仅在正常大世界游玩时可进入，菜单、过场、回溯、反馈界面和重置期间不可进入。
