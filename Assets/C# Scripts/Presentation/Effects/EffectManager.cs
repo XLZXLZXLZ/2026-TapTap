@@ -21,9 +21,17 @@ namespace TapTap
         [SerializeField] private Vector2 shakeAxisWeight = Vector2.one;
         [SerializeField, Range(0.1f, 4f)] private float shakeDecayPower = 1f;
         [Header("Assembly zoom")]
-        [SerializeField, Min(0f)] private float zoomAmount = 0.3f;
+        [Tooltip("合体时视野缩小的比例；0.035 对应原有默认幅度，0 可关闭缩放。")]
+        [SerializeField, Range(0f, 0.9f)] private float zoomAmount = 0.035f;
         [SerializeField, Min(0.001f)] private float zoomInDuration = 0.07f;
         [SerializeField, Min(0.001f)] private float zoomOutDuration = 0.18f;
+        [Header("合体顿帧（真实秒数）")]
+        [SerializeField, Range(0.01f, 1f)] private float joinTimeScale = 0.25f;
+        [SerializeField, Min(0f)] private float joinHitDuration = 0.09f;
+        [Tooltip("会起跳的吸附合体使用更强、更长的顿帧。")]
+        [SerializeField, Range(0.01f, 1f)] private float launchJoinTimeScale = 0.15f;
+        [SerializeField, Min(0f)] private float launchJoinHitDuration = 0.16f;
+        [SerializeField, Min(1f)] private float launchJoinZoomDurationMultiplier = 1.8f;
         [Header("黑屏与画面淡入淡出")]
         [Tooltip("画面变为全黑所需的时间（秒）。不受游戏慢动作或暂停影响。")]
         [SerializeField, Min(0f)] private float fadeOutDuration = 0.2f;
@@ -71,8 +79,10 @@ namespace TapTap
         private float zoomPulse;
         private float zoomStart;
         private float zoomElapsed;
+        private float activeZoomDurationMultiplier = 1f;
         private bool zoomActive;
         private float slowRemaining;
+        private float activeJoinTimeScale = 1f;
         private float previousTimeScale = 1f;
         private bool progressEmphasisActive;
         private float progressSlowScale = 1f;
@@ -108,8 +118,8 @@ namespace TapTap
         private static readonly int TimeParamsId = Shader.PropertyToID("_TimeParams");
         private static readonly int FlowParamsId = Shader.PropertyToID("_FlowParams");
         public float ZoomPulse => zoomPulse;
-        public float ZoomAmount => Mathf.Max(0f, zoomAmount);
-        public float ZoomProgress => zoomAmount > 0f ? Mathf.Clamp01(zoomPulse / zoomAmount) : 0f;
+        public float ZoomAmount => Mathf.Clamp(zoomAmount, 0f, 0.9f);
+        public float ZoomProgress => ZoomAmount > 0f ? Mathf.Clamp01(zoomPulse / ZoomAmount) : 0f;
         public void BlackScreen() => ScreenFadeOverlay.Instance.SetOpacity(1f);
         public void ClearBlackScreen() => ScreenFadeOverlay.Instance.SetOpacity(0f);
         public IEnumerator FadeToBlack() => ScreenFadeOverlay.Instance.FadeTo(1f, fadeOutDuration);
@@ -131,12 +141,17 @@ namespace TapTap
             if (effect == PlayerEffect.Death) Shake(deathShakeStrength);
             if (effect == PlayerEffect.Joined || effect == PlayerEffect.DownwardJoined)
             {
+                // Joined is emitted by upward-launching pulls; ordinary head returns only shake.
+                bool launching = effect == PlayerEffect.Joined;
                 zoomStart = zoomPulse;
                 zoomElapsed = 0f;
+                activeZoomDurationMultiplier = launching ? Mathf.Max(1f, launchJoinZoomDurationMultiplier) : 1f;
                 zoomActive = true;
                 if (slowRemaining <= 0f) previousTimeScale = Time.timeScale;
-                slowRemaining = 0.07f;
-                Time.timeScale = previousTimeScale * 0.75f;
+                float relativeSpeed = Mathf.Clamp(launching ? launchJoinTimeScale : joinTimeScale, 0.01f, 1f);
+                activeJoinTimeScale = slowRemaining > 0f ? Mathf.Min(activeJoinTimeScale, relativeSpeed) : relativeSpeed;
+                slowRemaining = Mathf.Max(slowRemaining, Mathf.Max(0f, launching ? launchJoinHitDuration : joinHitDuration));
+                Time.timeScale = slowRemaining > 0f ? previousTimeScale * activeJoinTimeScale : previousTimeScale;
             }
         }
 
@@ -165,11 +180,11 @@ namespace TapTap
             if (zoomActive)
             {
                 zoomElapsed += unscaledDt;
-                float attack = Mathf.Max(0.001f, zoomInDuration);
-                float recovery = Mathf.Max(0.001f, zoomOutDuration);
+                float attack = Mathf.Max(0.001f, zoomInDuration) * activeZoomDurationMultiplier;
+                float recovery = Mathf.Max(0.001f, zoomOutDuration) * activeZoomDurationMultiplier;
                 zoomPulse = zoomElapsed <= attack
-                    ? Mathf.SmoothStep(zoomStart, zoomAmount, zoomElapsed / attack)
-                    : Mathf.SmoothStep(zoomAmount, 0f, (zoomElapsed - attack) / recovery);
+                    ? Mathf.SmoothStep(zoomStart, ZoomAmount, zoomElapsed / attack)
+                    : Mathf.SmoothStep(ZoomAmount, 0f, (zoomElapsed - attack) / recovery);
                 if (zoomElapsed >= attack + recovery)
                 {
                     zoomPulse = 0f;
@@ -227,6 +242,7 @@ namespace TapTap
             EndProgressEmphasis();
             if (slowRemaining > 0f) Time.timeScale = previousTimeScale;
             slowRemaining = shakeRemaining = shakeStrength = zoomPulse = zoomElapsed = 0f;
+            activeJoinTimeScale = activeZoomDurationMultiplier = 1f;
             zoomActive = false;
         }
 
@@ -242,7 +258,7 @@ namespace TapTap
             if (slowRemaining > 0f)
             {
                 previousTimeScale = speed;
-                Time.timeScale = speed * 0.75f;
+                Time.timeScale = speed * activeJoinTimeScale;
             }
             else Time.timeScale = speed;
         }

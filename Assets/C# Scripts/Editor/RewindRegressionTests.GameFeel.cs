@@ -114,6 +114,67 @@ namespace TapTap.Editor
             }
         }
 
+        private static void AssemblyFeedbackFeel()
+        {
+            using (var f = new Fixture())
+            {
+                EffectManager effects = EffectManager.Instance;
+                float originalAmount = effects.ZoomAmount;
+                float originalSpeed = Time.timeScale;
+                var camera = f.NewObject("Assembly camera", Vector2.zero).AddComponent<Camera>();
+                var rig = camera.gameObject.AddComponent<DemoCamera>();
+                rig.Configure(null, camera, null);
+                var region = f.NewObject("Assembly region", Vector2.zero).AddComponent<LevelRegion>();
+                rig.SetRegion(region);
+                float baseFov = camera.fieldOfView;
+                try
+                {
+                    foreach (float amount in new[] { 0f, 0.02f, 0.035f, 0.08f })
+                    {
+                        effects.ClearTransientEffects();
+                        SetField(effects, "zoomAmount", amount);
+                        Time.timeScale = 1f;
+                        effects.Play(PlayerEffect.DownwardJoined, null);
+                        Check(Mathf.Abs(Time.timeScale - 0.25f) < 0.0001f, "Ordinary join did not strengthen hit stop");
+                        effects.Simulate(0.07f);
+                        rig.SnapToPlayer();
+                        float ratio = Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * 0.5f)
+                            / Mathf.Tan(baseFov * Mathf.Deg2Rad * 0.5f);
+                        Check(Mathf.Abs(ratio - (1f - amount)) < 0.0001f, "Camera ignored assembly zoom amount");
+                        effects.Simulate(0.03f);
+                        Check(Time.timeScale == 1f, "Ordinary join did not restore speed");
+                        effects.Simulate(0.2f);
+                        rig.SnapToPlayer();
+                        Check(effects.ZoomPulse == 0f && Mathf.Abs(camera.fieldOfView - baseFov) < 0.0001f,
+                            "Assembly zoom did not restore its base lens");
+                    }
+                    SetField(effects, "zoomAmount", 0.02f);
+                    effects.Play(PlayerEffect.Joined, null);
+                    effects.Simulate(0.1f);
+                    Check(Mathf.Abs(Time.timeScale - 0.15f) < 0.0001f, "Launching join did not retain stronger hit stop");
+                    effects.SetGameplayTimeScale(2f);
+                    Check(Mathf.Abs(Time.timeScale - 0.3f) < 0.0001f, "Speed change lost active join slowdown");
+                    effects.Simulate(0.07f);
+                    Check(Time.timeScale == 2f, "Launching join restored the wrong speed");
+                    effects.Simulate(0.1f);
+                    Check(effects.ZoomPulse > 0f, "Launching zoom ended as early as an ordinary join");
+                    effects.Simulate(0.2f);
+                    Check(effects.ZoomPulse == 0f, "Launching zoom did not finish");
+                    effects.Play(PlayerEffect.Joined, null);
+                    effects.Play(PlayerEffect.DownwardJoined, null);
+                    Check(Mathf.Abs(Time.timeScale - 0.3f) < 0.0001f, "Repeated joins compounded or weakened slowdown");
+                    effects.ClearTransientEffects();
+                    Check(Time.timeScale == 2f && effects.ZoomPulse == 0f, "Clearing feedback leaked slowdown or zoom");
+                }
+                finally
+                {
+                    effects.ClearTransientEffects();
+                    SetField(effects, "zoomAmount", originalAmount);
+                    Time.timeScale = originalSpeed;
+                }
+            }
+        }
+
         private static void BulletTimeFeel()
         {
             using (var f = new Fixture())
@@ -137,8 +198,8 @@ namespace TapTap.Editor
                     overlay.AdvanceBulletTint(0.1f, true);
                     Check(Mathf.Abs(overlay.BulletOpacity - 0.1f) < 0.0001f, "Blue overlay did not finish fading in");
                     EffectManager.Instance.Play(PlayerEffect.Joined, null);
-                    Check(Time.timeScale == 0.375f, "Assembly slow motion replaced bullet time");
-                    EffectManager.Instance.Simulate(0.1f);
+                    Check(Mathf.Abs(Time.timeScale - 0.075f) < 0.0001f, "Assembly slow motion replaced bullet time");
+                    EffectManager.Instance.Simulate(0.2f);
                     Check(Time.timeScale == 0.5f, "Assembly effect did not restore bullet speed");
                     timer.ToggleBulletTime(); overlay.AdvanceBulletTint(0.2f, false);
                     Check(Time.timeScale == 1f && overlay.BulletOpacity == 0f, "Second toggle did not clear speed/tint");

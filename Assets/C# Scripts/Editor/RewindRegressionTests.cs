@@ -70,6 +70,7 @@ namespace TapTap.Editor
                 Test("Apex gravity only softens early descent, restores after rewind and ends on time", ApexGravityFeel);
                 Test("Ceiling contact grants a short descent grace to the joined player and detached head", CeilingGravityFeel);
                 Test("Bullet time toggles, fades blue, composes with effects and respects pause/scene changes", BulletTimeFeel);
+                Test("Assembly zoom follows its amount and launching joins extend feedback without leaking time scale", AssemblyFeedbackFeel);
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(LevelTestSceneBuilder.RuntimePrefabPath) != null)
                     Test("Runtime prefab exposes rewind settings and binds the camera and shader", RuntimePrefabWiring);
                 if (SystemInfo.graphicsDeviceType != UnityEngine.Rendering.GraphicsDeviceType.Null)

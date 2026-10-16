@@ -5215,9 +5215,14 @@ MonoBehaviour:
   shakeFrequency: {x: 14.16, y: 18.62}
   shakeAxisWeight: {x: 1, y: 1}
   shakeDecayPower: 1
-  zoomAmount: 0.3
+  zoomAmount: 0.02
   zoomInDuration: 0.07
   zoomOutDuration: 0.18
+  joinTimeScale: 0.25
+  joinHitDuration: 0.09
+  launchJoinTimeScale: 0.15
+  launchJoinHitDuration: 0.16
+  launchJoinZoomDurationMultiplier: 1.8
   rewindVisualEnabled: 1
   rewindShader: {fileID: 4800000, guid: f3d268e3d2af438591d105563b9fcd19, type: 3}
   rewindFadeIn: 0.15
