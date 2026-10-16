@@ -9,7 +9,6 @@ namespace TapTap
         [SerializeField] private GameObject playerPrefab;
         [SerializeField] private PlayerConfig playerConfig;
         [SerializeField] private DemoCamera cameraRig;
-        [SerializeField] private PrototypeHUD hud;
         [SerializeField] private PlayerController player;
         [SerializeField] private LevelRegion region;
         [SerializeField] private Vector2 fallbackSpawnLocal;
@@ -19,12 +18,11 @@ namespace TapTap
         public PlayerConfig PlayerConfig => playerConfig;
         public DemoCamera CameraRig => cameraRig;
 
-        public void ConfigureResources(GameObject character, PlayerConfig settings, DemoCamera camera, PrototypeHUD overlay)
+        public void ConfigureResources(GameObject character, PlayerConfig settings, DemoCamera camera)
         {
             playerPrefab = character;
             playerConfig = settings;
             cameraRig = camera;
-            hud = overlay;
         }
 
         public void Configure(PlayerController character, LevelRegion level, PlayerConfig settings, Vector2 spawn)
@@ -38,7 +36,6 @@ namespace TapTap
                 cameraRig.BindPlayer(player);
                 cameraRig.SetRegion(region);
             }
-            if (hud != null) hud.Configure(player, playerConfig);
         }
 
         private void Start()
@@ -59,7 +56,6 @@ namespace TapTap
                 cameraRig.BindPlayer(player);
                 cameraRig.SetRegion(region);
             }
-            if (hud != null) hud.Configure(player, playerConfig);
         }
     }
 }

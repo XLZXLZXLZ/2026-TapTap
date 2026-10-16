@@ -122,7 +122,7 @@ namespace TapTap.Editor
                 Camera.enabled = false; Camera.aspect = 2f;
                 Rig = rig.AddComponent<DemoCamera>(); Rig.Configure(Player, Camera, null);
                 LevelSceneRuntime runtime = Child("Runtime", Root.transform).AddComponent<LevelSceneRuntime>();
-                runtime.ConfigureResources(null, Config, Rig, null);
+                runtime.ConfigureResources(null, Config, Rig);
                 Rewind = Child("Rewind", Root.transform).AddComponent<RewindManager>();
                 Rewind.UseKeyboard = false; Call(Rewind, "Awake");
                 Flow = World.gameObject.AddComponent<WorldMapProgression>(); Flow.UseKeyboard = false;

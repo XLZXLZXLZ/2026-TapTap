@@ -84,11 +84,7 @@ namespace TapTap.Editor
                 cameraObject.AddComponent<AudioListener>();
                 DemoCamera rig = follow.AddComponent<DemoCamera>();
                 rig.Configure(null, camera, shake.transform);
-                var overlay = new GameObject("HUD");
-                overlay.transform.SetParent(root.transform, false);
-                PrototypeHUD hud = overlay.AddComponent<PrototypeHUD>();
-                hud.Configure(null, config);
-                root.AddComponent<LevelSceneRuntime>().ConfigureResources(character, config, rig, hud);
+                root.AddComponent<LevelSceneRuntime>().ConfigureResources(character, config, rig);
                 PlayerEffectsPrefabs.BindRuntime(root, GameplayVisualAssets.EnsureVisualSettings());
                 GameObject result = PrefabUtility.SaveAsPrefabAsset(root, RuntimePrefabPath, out bool success);
                 if (!success || result == null) throw new IOException("无法保存 Runtime Prefab。");
