@@ -56,7 +56,7 @@ namespace TapTap
 
         public bool EnterSelected()
         {
-            if (selected == null || WorldMapSceneRouter.IsLoading) return false;
+            if (selected == null || WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return false;
             if (!WorldMapProgressStore.IsUnlocked(World, selected))
             { notice = "先通过前一关，或按 P 解锁全部关卡"; return false; }
             bool result = WorldMapSceneRouter.Instance.Enter(World, selected);
@@ -66,7 +66,7 @@ namespace TapTap
 
         private void Update()
         {
-            if (modules == null || WorldMapSceneRouter.IsLoading) return;
+            if (modules == null || WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return;
             if (Input.GetKeyDown(KeyCode.P)) UnlockAll();
             int direction = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D) ? 1
                 : Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A) ? -1 : 0;
@@ -85,6 +85,7 @@ namespace TapTap
 
         private void OnGUI()
         {
+            if (PauseMenu.BlocksInput) return;
             if (detailStyle == null) detailStyle = new GUIStyle(GUI.skin.label)
                 { fontSize = 16, alignment = TextAnchor.MiddleCenter, normal = { textColor = new Color(0.7f, 0.83f, 0.88f) } };
             GUI.Label(new Rect(0f, 70f, Screen.width, 28f), "点击拼图进入关卡 · ← / → 选关 · Enter 进入 · P 解锁全部", detailStyle);

@@ -32,7 +32,7 @@ namespace TapTap
         private static WorldMapProgression current;
 
         public static WorldMapProgression Current => current;
-        public static bool InputBlocked => WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen || GameStageProgression.InputBlocked
+        public static bool InputBlocked => PauseMenu.BlocksInput || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen || GameStageProgression.InputBlocked
             || (current != null && (current.IsTransitioning || current.IsComplete));
         public bool IsTransitioning { get; private set; }
         public bool IsComplete { get; private set; }
@@ -140,15 +140,15 @@ namespace TapTap
         private void Update()
         {
             if (!initialized || !UseKeyboard || IsTransitioning || LevelAnnotation.IsFeedbackOpen) return;
-            if (WorldMapSceneRouter.IsLoading) return;
+            if (WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return;
             if (Application.isFocused && !WorldLevelMenu.IsOpen && !IsComplete && CanTransition && Input.GetKeyDown(KeyCode.O))
                 ExitsEnabled = !ExitsEnabled;
             if (Input.GetKeyDown(KeyCode.P)) WorldMapProgressStore.UnlockAll(world.Source);
-            if (Input.GetKeyDown(KeyCode.Escape)) ReturnToSelection();
+            if (!PauseMenu.HandlesEscape && Input.GetKeyDown(KeyCode.Escape)) ReturnToSelection();
             if (Input.GetKeyDown(KeyCode.PageDown)) SkipNext();
         }
 
-        private bool CanTransition => initialized && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading && !LevelAnnotation.IsFeedbackOpen
+        private bool CanTransition => initialized && !PauseMenu.IsOpen && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading && !LevelAnnotation.IsFeedbackOpen
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         public bool CompleteCurrent(LevelEndpoint endpoint)

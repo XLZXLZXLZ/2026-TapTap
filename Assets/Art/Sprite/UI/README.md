@@ -1,0 +1,27 @@
+# Fqh 暂停菜单
+
+## 使用
+
+- 打开 `Fqh.unity`，运行后按 **Esc** 打开菜单，再按 **Esc** 或点击“继续游戏”关闭。
+- “主菜单”优先进入当前大世界配置的选关场景；普通场景使用 `PauseMenu.MainMenuScenePath`，默认是 `World_Character_Select`。发布时将目标场景加入 Build Settings。
+- 音乐和音效滑条分别控制 BGM 与菜单音效。调整音效时播放试听声；音量会保存在 PlayerPrefs 中。BGM 在菜单关闭、游戏暂停和切换场景时继续播放。
+
+## 移植
+
+把 `Assets/Prefabs/UI/PauseMenu.prefab` 拖入目标场景即可，每个场景保留一个激活实例。无需拖入 Fqh 的相机或灯光，也无需手动绑定控件。已有 EventSystem 时直接复用，没有时在打开菜单时自动创建。
+
+根节点保持启用，脚本只隐藏 `MenuContent`，因此关闭界面后仍能接收 Esc。编辑模式下内容保持可见，便于调整美术。Canvas 使用 1920×1080 参考尺寸并完整适配屏幕；按钮仅在实际美术区域响应点击。
+
+菜单打开后暂停游戏并屏蔽移动、分离、回溯、重置和选关操作；关闭或移除菜单恢复此前速度及鼠标状态。已有批注窗口或场景过渡优先处理，避免两个暂停窗口抢占时间。带此 Prefab 的场景中，Esc 用于暂停菜单，“主菜单”按钮负责返回选关。
+
+## 音频
+
+`Assets/Audio/QuietWorkshop.wav` 是为本项目生成的原创测试配乐，72 BPM，约 26.67 秒，柔和分解和弦循环；`SoftClick.wav` 是原创轻提示音，无第三方素材授权依赖。替换 Prefab 上的 `BackgroundMusic` / `ClickSound` 即可更换。
+
+`MenuAudio` 跨场景保持单实例，两路音量独立，不修改全局 AudioListener 音量。后续通过 `MenuAudio.Current.PlayEffect(clip)` 播放的音效也遵循音效滑条；独立 AudioSource 需要自行接入。
+
+## 维护与验证
+
+`Tools > TapTap > UI > Build Fqh Pause Menu Prefab` 可从 Fqh 中的 01–05 美术层重新整理并保存 Prefab。该命令会重新生成控件布局，应在需要重建时使用，不会在打开 Unity 时自动执行。
+
+`TapTap.Editor.PauseMenuRegressionTests.RunBatch` 用于隔离项目的 Unity batchmode 回归，覆盖暂停/恢复、输入屏蔽、按钮命中、音量与保存、无 EventSystem 移植、重复实例、实际场景切换，并输出 16:9 和 5:4 预览图到 `Logs/PauseMenu`。

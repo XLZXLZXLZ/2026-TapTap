@@ -16,12 +16,12 @@ namespace TapTap
 
         private void Update()
         {
-            if (!LevelAnnotation.IsFeedbackOpen && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
+            if (!PauseMenu.BlocksInput && !LevelAnnotation.IsFeedbackOpen && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
         }
 
         public bool ResetCurrentScene()
         {
-            if (IsResetting || GameStageProgression.InputBlocked || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen) return false;
+            if (PauseMenu.BlocksInput || IsResetting || GameStageProgression.InputBlocked || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen) return false;
             if (WorldMapProgression.Current != null) return WorldMapProgression.Current.RestartCurrent();
             Scene scene = SceneManager.GetActiveScene();
             if (!scene.IsValid() || string.IsNullOrEmpty(scene.path))
