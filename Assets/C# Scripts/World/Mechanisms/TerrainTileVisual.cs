@@ -17,11 +17,11 @@ namespace TapTap
             ApplyModel(region != null && region.Source != null ? region.Source.Style?.TerrainModel : DefaultModel);
         }
 
-        public void ApplyModel(GameObject model)
+        public void ApplyModel(GameObject model, bool forceRefresh = false)
         {
             if (!gameObject.scene.IsValid()) return;
             if (LegacyVisual != null) LegacyVisual.SetActive(model == null);
-            if (visual != null && appliedModel == model) { visual.SetActive(true); return; }
+            if (!forceRefresh && visual != null && appliedModel == model) { visual.SetActive(true); return; }
             ReleaseVisual();
             appliedModel = model;
             if (model == null) return;

@@ -27,6 +27,11 @@ namespace TapTap
 
         public void Refresh()
         {
+            Refresh(false);
+        }
+
+        public void Refresh(bool forceModels)
+        {
             if (!gameObject.scene.IsValid()) return;
             if (region == null) region = GetComponent<LevelRegion>();
             LevelStyle style = region.Source != null ? region.Source.Style : null;
@@ -38,7 +43,7 @@ namespace TapTap
 #endif
             if (generated == null) return;
             foreach (TerrainTileVisual tile in generated.GetComponentsInChildren<TerrainTileVisual>(true))
-                tile.ApplyModel(style != null ? style.TerrainModel : null);
+                tile.ApplyModel(style != null ? style.TerrainModel : null, forceModels);
             bool modelOverrides = style != null && style.HasModelOverrides;
             if (modelOverrides || hadModelOverrides)
             {
