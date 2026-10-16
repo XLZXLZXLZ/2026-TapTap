@@ -18,16 +18,16 @@ MonoBehaviour:
   Pixelation:
     Enabled: 0
     Strength: 1
-    Size: 4
+    Size: 3
   Brush:
-    Enabled: 0
+    Enabled: 1
     Strength: 1
-    BlockSize: 8
-    ColorLevels: 16
-    EdgePreservation: 0.85
-    EdgeThreshold: 0.15
-    Disturbance: 0.65
-    MotionSpeed: 0.2
+    BlockSize: 2
+    ColorLevels: 31
+    EdgePreservation: 0.62
+    EdgeThreshold: 0.6
+    Disturbance: 0.75
+    MotionSpeed: 0.6
   Tear:
     Enabled: 0
     Strength: 1
