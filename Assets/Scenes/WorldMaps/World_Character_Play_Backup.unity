@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.16560432, g: 0.19461133, b: 0.22235136, a: 1}
+  m_IndirectSpecularColor: {r: 0.1656026, g: 0.1946082, b: 0.2223452, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5031,10 +5031,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u4F53\u79EF\u96FE"
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -5130,10 +5126,6 @@ PrefabInstance:
     - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: raySteps
       value: 47
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: protectedForeground.Array.size
@@ -9493,10 +9485,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u4F53\u79EF\u96FE "
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -9592,10 +9580,6 @@ PrefabInstance:
     - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: raySteps
       value: 47
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: protectedForeground.Array.size
@@ -21412,10 +21396,6 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 8435607958570293508, guid: 3135b00574fb6554ba910259632694f6, type: 3}
-      propertyPath: m_Shadows.m_Type
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3135b00574fb6554ba910259632694f6, type: 3}
 --- !u!4 &1166852157 stripped
@@ -26458,10 +26438,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: "\u4F53\u79EF\u96FE"
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -26557,10 +26533,6 @@ PrefabInstance:
     - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: raySteps
       value: 47
-      objectReference: {fileID: 0}
-    - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: protectedForeground.Array.size
@@ -30157,10 +30129,6 @@ PrefabInstance:
     - target: {fileID: 4465118449252649319, guid: c433a50715a74c74abaf3a3650eeae13, type: 3}
       propertyPath: SequenceNumber
       value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8963729798305030179, guid: c433a50715a74c74abaf3a3650eeae13, type: 3}
-      propertyPath: m_Shadows.m_Type
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c433a50715a74c74abaf3a3650eeae13, type: 3}
