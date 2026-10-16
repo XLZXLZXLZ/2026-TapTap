@@ -19,7 +19,7 @@ namespace ScreenFilters
             if (camera.cameraType != CameraType.Game || renderingData.cameraData.renderType != CameraRenderType.Base) return;
             var binding = camera.GetComponent<ScreenFilterCamera>();
             if (binding == null || !binding.isActiveAndEnabled || binding.Profile == null || !binding.Profile.HasActiveFilters) return;
-            pass.Setup(renderer.cameraColorTarget, binding.Profile);
+            pass.Setup(binding.Profile);
             renderer.EnqueuePass(pass);
         }
 
@@ -28,15 +28,17 @@ namespace ScreenFilters
         private sealed class FilterPass : ScriptableRenderPass
         {
             private readonly ScreenFilterRenderer filters = new ScreenFilterRenderer();
-            private RenderTargetIdentifier target;
             private ScreenFilterProfile profile;
-            public void Setup(RenderTargetIdentifier color, ScreenFilterProfile settings) { target = color; profile = settings; }
+            public void Setup(ScreenFilterProfile settings) => profile = settings;
 
             public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
             {
                 var commands = CommandBufferPool.Get("Screen filter stack");
                 try
                 {
+                    // URP post-processing swaps color buffers. Resolve the active target here,
+                    // after Bloom and the other post effects, rather than during pass enqueue.
+                    RenderTargetIdentifier target = renderingData.cameraData.renderer.cameraColorTarget;
                     filters.Record(commands, target, target, renderingData.cameraData.cameraTargetDescriptor,
                         profile, Time.unscaledTime);
                     context.ExecuteCommandBuffer(commands);

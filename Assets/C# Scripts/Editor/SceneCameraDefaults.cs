@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
 
 namespace TapTap.Editor
 {
@@ -26,10 +27,21 @@ namespace TapTap.Editor
             foreach (Camera camera in root.GetComponentsInChildren<Camera>(true))
             {
                 camera.orthographicSize = Size;
+                EnablePostProcessing(camera);
                 EditorUtility.SetDirty(camera);
                 if (PrefabUtility.IsPartOfPrefabInstance(camera))
                     PrefabUtility.RecordPrefabInstancePropertyModifications(camera);
             }
+        }
+
+        public static void EnablePostProcessing(Camera camera)
+        {
+            if (camera == null) return;
+            var data = camera.GetUniversalAdditionalCameraData();
+            data.renderPostProcessing = true;
+            EditorUtility.SetDirty(data);
+            if (PrefabUtility.IsPartOfPrefabInstance(data))
+                PrefabUtility.RecordPrefabInstancePropertyModifications(data);
         }
     }
 }

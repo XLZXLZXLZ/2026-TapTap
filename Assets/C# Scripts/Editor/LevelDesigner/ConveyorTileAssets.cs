@@ -18,8 +18,8 @@ namespace TapTap.Editor
             if (prefab == null) return;
             if (prefab.GetComponent<ConveyorTileVisual>() != null) { EnsureGlowPreset(); return; }
             LevelPrefabBuilder.EnsureFolder(ModelsFolder);
-            Material normal = Material("ConveyorArrow", new Color(0.35f, 0.27f, 0.1f), Color.black);
-            Material glow = Material("ConveyorArrowGlow", new Color(0.02f, 1f, 0.65f), new Color(0.16f, 8f, 5.2f));
+            Material normal = Material("ConveyorArrow", new Color(0.025f, 0.03f, 0.03f), Color.black);
+            Material glow = Material("ConveyorArrowGlow", new Color(1f, 0.95f, 0.55f), new Color(16f, 15.2f, 8.8f));
             Mesh arrowMesh = ArrowMesh();
             GameObject left = Model("ConveyorLeft", true, false, null, null);
             GameObject middle = Model("ConveyorMiddle", false, false, arrowMesh, normal);
@@ -63,11 +63,20 @@ namespace TapTap.Editor
             string path = ModelsFolder + "/" + name + ".mat";
             Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null) return material;
-            Shader shader = Shader.Find("TapTap/ConveyorArrow");
+            Shader shader = Shader.Find(emission.maxColorComponent > 0f
+                ? "TapTap/ConveyorArrow" : "Universal Render Pipeline/Lit");
             if (shader == null) throw new System.InvalidOperationException("缺少 ConveyorArrow Shader。");
             material = new Material(shader) { name = name };
             material.SetColor("_BaseColor", color);
             material.SetColor("_EmissionColor", emission);
+            if (emission.maxColorComponent <= 0f)
+            {
+                material.SetFloat("_Smoothness", 0f);
+                material.SetFloat("_SpecularHighlights", 0f);
+                material.SetFloat("_EnvironmentReflections", 0f);
+                material.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+                material.EnableKeyword("_ENVIRONMENTREFLECTIONS_OFF");
+            }
             material.globalIlluminationFlags = emission.maxColorComponent > 0f
                 ? MaterialGlobalIlluminationFlags.RealtimeEmissive : MaterialGlobalIlluminationFlags.EmissiveIsBlack;
             if (emission.maxColorComponent > 0f) material.EnableKeyword("_EMISSION");

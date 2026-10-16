@@ -214,6 +214,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 177108058090018061, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 603464883394735082, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -223,6 +227,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 803667208404157157, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 960185853146895157, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -282,7 +290,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: Demo_PickHead
       objectReference: {fileID: 0}
+    - target: {fileID: 3204995481758443519, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3290936627558458753, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3836643188480507498, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5787982675005217211, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6335130486053269251, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -331,12 +355,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 312070320304211498, guid: 30209a9f1b8c560499407dbb454f9912, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 312070320304211498, guid: 30209a9f1b8c560499407dbb454f9912, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.94
+      value: -1.1
       objectReference: {fileID: 0}
     - target: {fileID: 312070320304211498, guid: 30209a9f1b8c560499407dbb454f9912, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -38.9
+      value: -45.3
       objectReference: {fileID: 0}
     - target: {fileID: 608191121175882228, guid: 30209a9f1b8c560499407dbb454f9912, type: 3}
       propertyPath: m_Name
@@ -465,7 +493,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0

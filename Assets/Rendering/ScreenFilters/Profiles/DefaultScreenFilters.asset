@@ -20,27 +20,27 @@ MonoBehaviour:
     Strength: 1
     Size: 3
   Brush:
-    Enabled: 0
-    Strength: 0.76
+    Enabled: 1
+    Strength: 0.5
     BlockSize: 2
     ColorLevels: 31
     EdgePreservation: 0.62
     EdgeThreshold: 0.6
-    Disturbance: 0.75
-    MotionSpeed: 0.6
+    Disturbance: 0.8
+    MotionSpeed: 0.9
   Tear:
     Enabled: 0
-    Strength: 1
+    Strength: 0.49
     Offset: 24
     BandHeight: 0.045
     BandCount: 3
-    Frequency: 3
-    Duty: 0.35
+    Frequency: 15.4
+    Duty: 0.08
   Chromatic:
     Enabled: 0
     Strength: 1
-    Offset: 3
-    Angle: 0
+    Offset: 5.4
+    Angle: 5
     EdgeOnly: 0.6
     Jitter: 0.25
     Frequency: 8

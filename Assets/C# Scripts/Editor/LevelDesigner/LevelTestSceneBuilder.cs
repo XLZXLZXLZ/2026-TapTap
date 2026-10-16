@@ -72,6 +72,7 @@ namespace TapTap.Editor
                 cameraObject.transform.SetParent(shake.transform, false);
                 cameraObject.tag = "MainCamera";
                 Camera camera = cameraObject.AddComponent<Camera>();
+                SceneCameraDefaults.EnablePostProcessing(camera);
                 cameraObject.AddComponent<RewindScreenEffect>();
                 BindScreenFilters(camera);
                 camera.orthographic = false;

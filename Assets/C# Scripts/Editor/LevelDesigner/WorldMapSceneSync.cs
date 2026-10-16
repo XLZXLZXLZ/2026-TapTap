@@ -183,6 +183,8 @@ namespace TapTap.Editor
             world.InvalidateRegions();
             LevelSceneRuntime runtime = Find<LevelSceneRuntime>(scene);
             if (runtime == null) runtime = ((GameObject)PrefabUtility.InstantiatePrefab(resources, scene)).GetComponent<LevelSceneRuntime>();
+            foreach (Camera camera in runtime.GetComponentsInChildren<Camera>(true))
+                SceneCameraDefaults.EnablePostProcessing(camera);
             PlayerController player = Find<PlayerController>(scene);
             bool newPlayer = player == null;
             if (newPlayer) player = ((GameObject)PrefabUtility.InstantiatePrefab(runtime.PlayerPrefab, scene)).GetComponent<PlayerController>();

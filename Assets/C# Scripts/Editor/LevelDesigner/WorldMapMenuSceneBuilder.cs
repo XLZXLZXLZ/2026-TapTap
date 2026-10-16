@@ -32,6 +32,7 @@ namespace TapTap.Editor
                 cameraObject.tag = "MainCamera";
                 cameraObject.transform.position = new Vector3(0f, 0f, -10f);
                 Camera camera = cameraObject.AddComponent<Camera>();
+                SceneCameraDefaults.EnablePostProcessing(camera);
                 camera.clearFlags = CameraClearFlags.SolidColor;
                 camera.backgroundColor = new Color(0.018f, 0.03f, 0.055f);
                 cameraObject.AddComponent<AudioListener>();
