@@ -26,10 +26,10 @@ namespace TapTap
         [SerializeField, Min(0.001f)] private float zoomInDuration = 0.07f;
         [SerializeField, Min(0.001f)] private float zoomOutDuration = 0.18f;
         [Header("合体顿帧（真实秒数）")]
-        [SerializeField, Range(0.01f, 1f)] private float joinTimeScale = 0.25f;
+        [SerializeField, Range(0.01f, 1f)] private float joinTimeScale = 0.5f;
         [SerializeField, Min(0f)] private float joinHitDuration = 0.09f;
         [Tooltip("会起跳的吸附合体使用更强、更长的顿帧。")]
-        [SerializeField, Range(0.01f, 1f)] private float launchJoinTimeScale = 0.15f;
+        [SerializeField, Range(0.01f, 1f)] private float launchJoinTimeScale = 0.25f;
         [SerializeField, Min(0f)] private float launchJoinHitDuration = 0.16f;
         [SerializeField, Min(1f)] private float launchJoinZoomDurationMultiplier = 1.8f;
         [Header("黑屏与画面淡入淡出")]

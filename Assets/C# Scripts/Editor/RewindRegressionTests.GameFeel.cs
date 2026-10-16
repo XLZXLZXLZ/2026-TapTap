@@ -135,7 +135,7 @@ namespace TapTap.Editor
                         SetField(effects, "zoomAmount", amount);
                         Time.timeScale = 1f;
                         effects.Play(PlayerEffect.DownwardJoined, null);
-                        Check(Mathf.Abs(Time.timeScale - 0.25f) < 0.0001f, "Ordinary join did not strengthen hit stop");
+                        Check(Mathf.Abs(Time.timeScale - 0.5f) < 0.0001f, "Ordinary join did not apply configured hit stop");
                         effects.Simulate(0.07f);
                         rig.SnapToPlayer();
                         float ratio = Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad * 0.5f)
@@ -151,9 +151,9 @@ namespace TapTap.Editor
                     SetField(effects, "zoomAmount", 0.02f);
                     effects.Play(PlayerEffect.Joined, null);
                     effects.Simulate(0.1f);
-                    Check(Mathf.Abs(Time.timeScale - 0.15f) < 0.0001f, "Launching join did not retain stronger hit stop");
+                    Check(Mathf.Abs(Time.timeScale - 0.25f) < 0.0001f, "Launching join did not retain stronger hit stop");
                     effects.SetGameplayTimeScale(2f);
-                    Check(Mathf.Abs(Time.timeScale - 0.3f) < 0.0001f, "Speed change lost active join slowdown");
+                    Check(Mathf.Abs(Time.timeScale - 0.5f) < 0.0001f, "Speed change lost active join slowdown");
                     effects.Simulate(0.07f);
                     Check(Time.timeScale == 2f, "Launching join restored the wrong speed");
                     effects.Simulate(0.1f);
@@ -162,7 +162,7 @@ namespace TapTap.Editor
                     Check(effects.ZoomPulse == 0f, "Launching zoom did not finish");
                     effects.Play(PlayerEffect.Joined, null);
                     effects.Play(PlayerEffect.DownwardJoined, null);
-                    Check(Mathf.Abs(Time.timeScale - 0.3f) < 0.0001f, "Repeated joins compounded or weakened slowdown");
+                    Check(Mathf.Abs(Time.timeScale - 0.5f) < 0.0001f, "Repeated joins compounded or weakened slowdown");
                     effects.ClearTransientEffects();
                     Check(Time.timeScale == 2f && effects.ZoomPulse == 0f, "Clearing feedback leaked slowdown or zoom");
                 }
@@ -198,7 +198,7 @@ namespace TapTap.Editor
                     overlay.AdvanceBulletTint(0.1f, true);
                     Check(Mathf.Abs(overlay.BulletOpacity - 0.1f) < 0.0001f, "Blue overlay did not finish fading in");
                     EffectManager.Instance.Play(PlayerEffect.Joined, null);
-                    Check(Mathf.Abs(Time.timeScale - 0.075f) < 0.0001f, "Assembly slow motion replaced bullet time");
+                    Check(Mathf.Abs(Time.timeScale - 0.125f) < 0.0001f, "Assembly slow motion replaced bullet time");
                     EffectManager.Instance.Simulate(0.2f);
                     Check(Time.timeScale == 0.5f, "Assembly effect did not restore bullet speed");
                     timer.ToggleBulletTime(); overlay.AdvanceBulletTint(0.2f, false);

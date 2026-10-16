@@ -350,6 +350,20 @@ namespace TapTap.Editor
             }
             if (GUILayout.Button("适应窗口", EditorStyles.toolbarButton, GUILayout.Width(72f))) fitPending = true;
             EditorGUILayout.EndHorizontal();
+            if (layout != null)
+            {
+                EditorGUILayout.BeginHorizontal();
+                var nextStyle = (LevelStyle)EditorGUILayout.ObjectField("关卡风格", layout.Style, typeof(LevelStyle), false);
+                if (nextStyle != layout.Style)
+                {
+                    RecordLayoutUndo("修改关卡风格");
+                    layout.Style = nextStyle;
+                    Changed();
+                }
+                using (new EditorGUI.DisabledScope(layout.Style == null))
+                    if (GUILayout.Button("查看风格配置", GUILayout.Width(105f))) Selection.activeObject = layout.Style;
+                EditorGUILayout.EndHorizontal();
+            }
             EditorGUILayout.EndVertical();
             EditorGUIUtility.labelWidth = previousLabelWidth;
         }
@@ -361,6 +375,7 @@ namespace TapTap.Editor
             if (string.IsNullOrEmpty(path)) return;
             var definition = CreateInstance<LevelDefinition>();
             definition.Palette = palette != null ? palette : LevelEditorAssets.EnsureDefaults();
+            definition.Style = AssetDatabase.LoadAssetAtPath<LevelStyle>(LevelStyleAssets.OtherStylePath);
             AssetDatabase.CreateAsset(definition, path);
             AssetDatabase.SaveAssets();
             UseLayout(definition);
@@ -880,7 +895,7 @@ namespace TapTap.Editor
             Rect shape = new Rect(cell.x + preview.x * cell.width,
                 cell.y + (1f - preview.yMax) * cell.height,
                 preview.width * cell.width, preview.height * cell.height);
-            Color color = brush.Color;
+            Color color = layout != null && layout.Style != null ? layout.Style.BrushColor(brush) : brush.Color;
             if (ghost) color.a *= 0.45f;
             if (brush.HandlerId == "annotation")
             {

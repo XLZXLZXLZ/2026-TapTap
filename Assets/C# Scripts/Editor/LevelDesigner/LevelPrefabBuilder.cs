@@ -20,6 +20,11 @@ namespace TapTap.Editor
             }
             if (layout.Size.x < 1 || layout.Size.y < 1)
                 errors.Add("区域长宽必须至少为 1 格。");
+            if (layout.Style != null && layout.Style.TerrainPrefab != null
+                && (layout.Style.TerrainPrefab.GetComponent<TerrainTileVisual>() == null
+                    || layout.Style.TerrainPrefab.GetComponent<BoxCollider2D>() == null
+                    || layout.Style.TerrainPrefab.GetComponent<WorldSurface>() == null))
+                errors.Add("风格的砖块 Prefab 需要 TerrainTileVisual、BoxCollider2D 和 WorldSurface。");
             if (layout.Palette == null)
                 errors.Add("布局缺少画笔目录。");
             else if (layout.Palette.UnitSize <= 0f || float.IsNaN(layout.Palette.UnitSize)
@@ -123,6 +128,7 @@ namespace TapTap.Editor
                 region.Size = layout.Size;
                 region.UnitSize = layout.Palette.UnitSize;
                 region.Source = layout;
+                if (root.GetComponent<LevelStyleView>() == null) root.AddComponent<LevelStyleView>();
                 region.EntryCheckpoint = null;
                 LevelOutlineBuilder.Save(layout);
 
@@ -153,7 +159,8 @@ namespace TapTap.Editor
                         layer = Child(generated, "Layer " + layerId.Replace('/', '_').Replace('\\', '_'));
                         layers.Add(layerId, layer);
                     }
-                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(placement.Brush.Prefab, root.scene);
+                    GameObject prefab = layout.Style != null ? layout.Style.ResolvePrefab(placement.Brush) : placement.Brush.Prefab;
+                    GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, root.scene);
                     instance.transform.SetParent(layer, false);
                     instance.name = placement.Brush.DisplayName + " [" + placement.Cell.x + "," + placement.Cell.y
                         + "] " + placement.Id;
@@ -164,6 +171,8 @@ namespace TapTap.Editor
                     LevelBrushHandlers.Get(placement.Brush.HandlerId).ConfigureInstance(instance, placement, context);
                     RecordInstanceOverrides(instance);
                 }
+
+                root.GetComponent<LevelStyleView>().Refresh();
 
                 result = PrefabUtility.SaveAsPrefabAsset(root, path, out bool success);
                 if (!success || result == null)

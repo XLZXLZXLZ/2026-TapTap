@@ -27,6 +27,7 @@ namespace TapTap
         public void ApplyPart(ConveyorPart value)
         {
             GameObject model = value == ConveyorPart.Left ? LeftModel : value == ConveyorPart.Right ? RightModel : MiddleModel;
+            model = LevelStyle.ModelFor(transform, model);
             if (model == null) return;
             part = value;
             if (visual != null) TileModelUtility.Release(visual);

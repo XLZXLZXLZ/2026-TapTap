@@ -17,6 +17,7 @@ namespace TapTap.Editor
 
         public static Color ModuleColor(WorldMapModule module)
         {
+            if (module.Level != null && module.Level.Style != null) return module.Level.Style.PreviewColor;
             uint hash = 0;
             foreach (char c in module.Id ?? "") hash = hash * 31 + c;
             return ModuleColors[hash % ModuleColors.Length];
@@ -39,7 +40,7 @@ namespace TapTap.Editor
                 foreach (LevelPlacement placement in level.Placements)
                 {
                     if (placement?.Brush == null) continue;
-                    Color color = placement.Brush.Color;
+                    Color color = level.Style != null ? level.Style.BrushColor(placement.Brush) : placement.Brush.Color;
                     if (placement.Settings is PhaseBlockPlacementSettings phase && phase.SolidWhenActive) color.a *= 0.3f;
                     if (placement.Settings is PistonPlacementSettings piston && piston.ExtendedWhenActive) color.a *= 0.3f;
                     Rect shape = LevelBrushHandlers.Get(placement.Brush.HandlerId)?.GetPreviewRect(placement) ?? placement.Brush.PreviewRect;

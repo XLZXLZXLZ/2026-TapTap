@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3274095778071238773}
   - component: {fileID: 8399552442200969672}
   - component: {fileID: 6304120610415415201}
+  - component: {fileID: 1748801396858068240}
   m_Layer: 0
   m_Name: SolidBlock
   m_TagString: Untagged
@@ -74,6 +75,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Kind: 0
   ConveyorSpeed: 0
+--- !u!114 &1748801396858068240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3770810304538575895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 871fb60a51b72bc46a600fb3224aa9ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DefaultModel: {fileID: 0}
+  LegacyVisual: {fileID: 5635671168084833217}
 --- !u!1001 &1582643409028842642
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -134,5 +149,10 @@ PrefabInstance:
 --- !u!4 &3210884330108042921 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4141613473814690363, guid: 1cb4d633dd546e547bf8aeeb32a42ca8, type: 3}
+  m_PrefabInstance: {fileID: 1582643409028842642}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5635671168084833217 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6612199986813499219, guid: 1cb4d633dd546e547bf8aeeb32a42ca8, type: 3}
   m_PrefabInstance: {fileID: 1582643409028842642}
   m_PrefabAsset: {fileID: 0}

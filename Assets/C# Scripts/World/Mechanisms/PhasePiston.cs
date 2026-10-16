@@ -63,6 +63,7 @@ namespace TapTap
         {
             var segment = new GameObject(label);
             segment.transform.SetParent(parent, false);
+            model = LevelStyle.ModelFor(parent, model);
             if (model != null) Instantiate(model, segment.transform, false);
             return segment.transform;
         }

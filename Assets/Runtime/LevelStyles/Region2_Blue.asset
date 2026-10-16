@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17bef85bc2c7dee4685f5dd098ba157b, type: 3}
+  m_Name: Region2_Blue
+  m_EditorClassIdentifier: 
+  DisplayName: "\u4E8C\u533A \xB7 6\u201312 \xB7 \u84DD"
+  PreviewColor: {r: 0.3, g: 0.54, b: 0.83, a: 1}
+  TerrainBrush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
+  TerrainPrefab: {fileID: 5340439178080817359, guid: f2b6c02bc0a19de4880ad1e839be4e17, type: 3}
+  Prefabs:
+  - Label: "\u5E73\u53F0"
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Prefab: {fileID: 6688958717030703200, guid: 97b7c7a5561804b46818ad597c490397, type: 3}
+  - Label: "\u4F20\u9001\u5E26"
+    Brush: {fileID: 11400000, guid: 5108c8fa28a67e94aa046d6f2ad95014, type: 2}
+    Prefab: {fileID: 1998385857392574927, guid: 318f4471ef76a994b8257540c70005e3, type: 3}
+  - Label: "\u5C16\u523A"
+    Brush: {fileID: 11400000, guid: b98a9f3e4675ff540a782fda9d5f7c11, type: 2}
+    Prefab: {fileID: 1264968669551236274, guid: fc635ab5b62af0349b605957882f7732, type: 3}
+  - Label: "\u590D\u6D3B\u70B9"
+    Brush: {fileID: 11400000, guid: 6f73250888787e648860cdc75ee6831d, type: 2}
+    Prefab: {fileID: 8167005551510386182, guid: abcec81038fbb55438efe258c7687acb, type: 3}
+  - Label: "\u865A\u5B9E\u65B9\u5757\uFF08\u4EAE\u65F6\u5B9E\uFF09"
+    Brush: {fileID: 11400000, guid: b9ada0fc2c94d924fad11a9a67dd383c, type: 2}
+    Prefab: {fileID: 6015591415640323260, guid: 0a3c713df6fce7c4baf144fc9459679c, type: 3}
+  - Label: "\u865A\u5B9E\u65B9\u5757\uFF08\u4EAE\u65F6\u865A\uFF09"
+    Brush: {fileID: 11400000, guid: a57bcd128e4bae84e8c0e1d885dff6c5, type: 2}
+    Prefab: {fileID: 4050609282114917054, guid: 1a32bc3c66f59b74fa8dc91c0558f82f, type: 3}
+  - Label: "\u673A\u5173\u6309\u94AE"
+    Brush: {fileID: 11400000, guid: bd58590b7b53ac64fb70fac2ba243cea, type: 2}
+    Prefab: {fileID: 8495813154410224601, guid: 1d6828c4ff4ffc74fa6248bae1116ea1, type: 3}
+  - Label: "\u7EC8\u70B9\u5360\u4F4D"
+    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
+    Prefab: {fileID: 4269860809106255897, guid: 94d8da63f2fd82744b487bf85ae3c30f, type: 3}
+  - Label: "\u6D4B\u8BD5\u6279\u6CE8 [N]"
+    Brush: {fileID: 11400000, guid: 769019c704f5cdc44a88fbb3723bcedd, type: 2}
+    Prefab: {fileID: 4943007243893777474, guid: 8c70b9776d8ed864bb2238c23f0a857d, type: 3}
+  - Label: "\u5F39\u7C27"
+    Brush: {fileID: 11400000, guid: 0a93abfe797e9c94098921fc2d198f11, type: 2}
+    Prefab: {fileID: 8716496952963948415, guid: f22081993a54a134192e321fa1c9d300, type: 3}
+  - Label: "\u65B9\u5F62\u5E73\u53F0"
+    Brush: {fileID: 11400000, guid: b554fa7a62514794e8bbbbe4e1a9f4a9, type: 2}
+    Prefab: {fileID: 8235154406282877870, guid: 66a3f9f36fc17cd44a0f54f06c111562, type: 3}
+  - Label: "\u6307\u793A\u706F\u5149"
+    Brush: {fileID: 11400000, guid: 6b4fc95a643f5c34eb57764a04e056ea, type: 2}
+    Prefab: {fileID: 4402856213466564699, guid: 8f3d5729a1c6e7549bfc05ac234add4e, type: 3}
+  - Label: "\u5F00\u5173\u6D3B\u585E"
+    Brush: {fileID: 11400000, guid: 18a11d680581b1a4197d93ce07b03c6c, type: 2}
+    Prefab: {fileID: 4595414902558726291, guid: ac6ce2fac2af20c4c893d9e4e3d074c9, type: 3}
+  Models:
+  - Label: "Platform / \u5355\u683C"
+    SourceModel: {fileID: 7962056359064034467, guid: 2798e39df410e1243903585ab8a53279, type: 3}
+    Model: {fileID: 7962056359064034467, guid: 2798e39df410e1243903585ab8a53279, type: 3}
+  - Label: "Platform / \u5DE6\u7AEF"
+    SourceModel: {fileID: 4104552123788087720, guid: edc8f407c5ffa974c9034925a5dccf65, type: 3}
+    Model: {fileID: 4104552123788087720, guid: edc8f407c5ffa974c9034925a5dccf65, type: 3}
+  - Label: "Platform / \u4E2D\u6BB5"
+    SourceModel: {fileID: 1588042633319513536, guid: 67da283613e9b35409a8d0d61824c066, type: 3}
+    Model: {fileID: 1588042633319513536, guid: 67da283613e9b35409a8d0d61824c066, type: 3}
+  - Label: "Platform / \u53F3\u7AEF"
+    SourceModel: {fileID: 2971096761506870934, guid: 2ea6b625fe86e7c4081b9f8bd31b121a, type: 3}
+    Model: {fileID: 2971096761506870934, guid: 2ea6b625fe86e7c4081b9f8bd31b121a, type: 3}
+  - Label: "SquarePlatform / \u5355\u683C"
+    SourceModel: {fileID: 7639420030032387913, guid: 0511a64b4991fb04a8c085da61b43dce, type: 3}
+    Model: {fileID: 7639420030032387913, guid: 0511a64b4991fb04a8c085da61b43dce, type: 3}
+  - Label: "SquarePlatform / \u5DE6\u7AEF"
+    SourceModel: {fileID: 2235291540265191882, guid: 4ff25fcec0b1a8245beb5c5066463ba3, type: 3}
+    Model: {fileID: 2235291540265191882, guid: 4ff25fcec0b1a8245beb5c5066463ba3, type: 3}
+  - Label: "SquarePlatform / \u4E2D\u6BB5"
+    SourceModel: {fileID: 4186238287613433479, guid: 0d7afa573075d6b45a64272a45c795ec, type: 3}
+    Model: {fileID: 4186238287613433479, guid: 0d7afa573075d6b45a64272a45c795ec, type: 3}
+  - Label: "SquarePlatform / \u53F3\u7AEF"
+    SourceModel: {fileID: 5796758589266052709, guid: d0bf9bdccdea18f45aef19dceb00d524, type: 3}
+    Model: {fileID: 5796758589266052709, guid: d0bf9bdccdea18f45aef19dceb00d524, type: 3}
+  - Label: "\u4F20\u9001\u5E26 / \u5DE6\u7AEF"
+    SourceModel: {fileID: 6161035109632275968, guid: 06caf8ce5f1d71542814b52b77164015, type: 3}
+    Model: {fileID: 6161035109632275968, guid: 06caf8ce5f1d71542814b52b77164015, type: 3}
+  - Label: "\u4F20\u9001\u5E26 / \u4E2D\u6BB5"
+    SourceModel: {fileID: 4725199944204426266, guid: 7999a38c41623fa48b7be7086b629c36, type: 3}
+    Model: {fileID: 4725199944204426266, guid: 7999a38c41623fa48b7be7086b629c36, type: 3}
+  - Label: "\u4F20\u9001\u5E26 / \u53F3\u7AEF"
+    SourceModel: {fileID: 2755064668280034665, guid: 38d946461a8606d418b5d26ea0b14574, type: 3}
+    Model: {fileID: 2755064668280034665, guid: 38d946461a8606d418b5d26ea0b14574, type: 3}
+  - Label: "\u6D3B\u585E / \u57FA\u5EA7"
+    SourceModel: {fileID: 493750941341190697, guid: fd969fa00ee720140a909cc1d7b72c08, type: 3}
+    Model: {fileID: 493750941341190697, guid: fd969fa00ee720140a909cc1d7b72c08, type: 3}
+  - Label: "\u6D3B\u585E / \u4E3B\u4F53"
+    SourceModel: {fileID: 7678507522571830791, guid: 7c138dc2b131c1c438b422ac61a07fd5, type: 3}
+    Model: {fileID: 7678507522571830791, guid: 7c138dc2b131c1c438b422ac61a07fd5, type: 3}
+  - Label: "\u6D3B\u585E / \u8584\u76D6"
+    SourceModel: {fileID: 6577811907066015481, guid: 5571388006722a041bd39d0f94b6e59c, type: 3}
+    Model: {fileID: 6577811907066015481, guid: 5571388006722a041bd39d0f94b6e59c, type: 3}

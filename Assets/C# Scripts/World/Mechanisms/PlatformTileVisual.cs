@@ -22,6 +22,7 @@ namespace TapTap
             part = value;
             GameObject model = value == PlatformPart.Single ? SingleModel : value == PlatformPart.Left ? LeftModel
                 : value == PlatformPart.Right ? RightModel : MiddleModel;
+            model = LevelStyle.ModelFor(transform, model);
             if (model == null) return;
             if (visual != null)
                 TileModelUtility.Release(visual);

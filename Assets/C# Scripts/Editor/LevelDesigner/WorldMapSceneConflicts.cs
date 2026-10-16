@@ -66,6 +66,10 @@ namespace TapTap.Editor
                                     Vector2 position = (Vector2)world.transform.InverseTransformPoint(tile.position) / region.UnitSize;
                                     Vector2Int cell = Vector2Int.FloorToInt(position);
                                     string type = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(tile.gameObject);
+                                    // Styles change appearance only. A colored terrain variant has
+                                    // the same gameplay identity as the common terrain brush.
+                                    if (tile.GetComponent<TerrainTileVisual>() != null && region.Source.Style?.TerrainBrush != null)
+                                        type = AssetDatabase.GetAssetPath(region.Source.Style.TerrainBrush.Prefab);
                                     if (string.IsNullOrEmpty(type))
                                         foreach (LevelPlacement placement in region.Source.Placements)
                                             if (placement?.Brush != null && tile.name.EndsWith(placement.Id, System.StringComparison.Ordinal))
