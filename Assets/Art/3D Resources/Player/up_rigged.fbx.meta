@@ -3,7 +3,42 @@ guid: 8b9ac0c3caf2432eba75e7cb466c8f3f
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eye glow
+    second: {fileID: 2100000, guid: 1239f540854a7bf49b0624f092be4d53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Imported light stem silver
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light bulb - warm emission
+    second: {fileID: 2100000, guid: 1239f540854a7bf49b0624f092be4d53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Limb rubber
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnet black
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnetic core
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Red skin
+    second: {fileID: 2100000, guid: 6b6744cb10843ff42b046792b45c31ed, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
