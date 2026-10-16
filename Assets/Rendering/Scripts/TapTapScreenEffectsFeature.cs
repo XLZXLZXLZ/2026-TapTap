@@ -27,20 +27,18 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
         var filters = camera.GetComponent<ScreenFilterCamera>();
         if (filters != null && filters.HasPixelation) pixelation = null;
         if (rewind == null && pixelation == null) return;
-        pass.Setup(renderer.cameraColorTarget, rewind, pixelation);
+        pass.Setup(rewind, pixelation);
         renderer.EnqueuePass(pass);
     }
 
     private sealed class ScreenEffectsPass : ScriptableRenderPass
     {
         private static readonly int SourceId = Shader.PropertyToID("_TapTapScreenEffectsSource");
-        private RenderTargetIdentifier cameraColor;
         private RewindScreenEffect rewind;
         private CrispPixelation pixelation;
 
-        public void Setup(RenderTargetIdentifier target, RewindScreenEffect rewindEffect, CrispPixelation pixelEffect)
+        public void Setup(RewindScreenEffect rewindEffect, CrispPixelation pixelEffect)
         {
-            cameraColor = target;
             rewind = rewindEffect;
             pixelation = pixelEffect;
         }
@@ -59,6 +57,9 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
             var commands = CommandBufferPool.Get("TapTap screen effects");
             try
             {
+                // URP post-processing swaps color buffers. Read the current target only
+                // when this pass executes, so rewind/pixelation reach the final image.
+                RenderTargetIdentifier cameraColor = renderingData.cameraData.renderer.cameraColorTarget;
                 var source = new RenderTargetIdentifier(SourceId);
                 if (rewind != null)
                 {

@@ -3,6 +3,20 @@
 通用像素、笔刷、撕裂、色散和显像管滤镜见 [屏幕滤镜说明](ScreenFilters/README.md)。
 入口：**Tools → Rendering → 屏幕滤镜工作台**；公共配置为 `ScreenFilters/Profiles/DefaultScreenFilters.asset`。
 
+## 本次运行的探索遮罩
+
+大世界游玩时自动启用 `World Exploration Mask` Renderer Feature。`WorldMapRoot.PrepareExploration` 创建并刷新 `WorldExplorationMask`，只揭开 `RegionRevealView.Discovered` 为真的区域；倒带保留探索，重新开始按现有流程重置。地图选择、拼图预览、Scene 视图和独立单关不应用这张遮罩。
+
+可见窗口取已探索区域的内部范围与实际模型投影的并集：内部按 `LevelFootprint` 填充，保留凹口；模型通过独立的纯色绘制补上超出逻辑边界的 3D 外轮廓。遮罩按当前透视相机每帧投影，在 Bloom、倒带和屏幕滤镜后盖住窗口外的全部画面，因此背景放在更远的 Z 位置也不会漏出。场景材质、碰撞与机关逻辑不变，UI 随后正常绘制。
+
+目前使用不透明硬边遮罩。`GameplayRuntime/Environment/EnvironmentParticle` 使用专用 `EnvironmentBackground` Layer，单独渲染到没有关卡深度遮挡的背景纹理；遮罩外显示相机背景底色与这套粒子，遮罩内保留正常场景画面。使用同一套粒子模拟和原材质，粒子在已探索区域内仍正常受模型遮挡。没有启用粒子背景时回退到 `Mask Color`（默认黑色）。Play 中可在大世界根节点停用 `WorldExplorationMask` 对比。
+
+`EnvironmentParticle` 的 `WorldEnvironmentParticles` 组件在运行时按整个 World 的包围范围自动居中并扩大发射区域，每边默认额外覆盖 16 单位。它只修改 Shape 范围，保持粒子大小、寿命、运动和颜色设置；发射率与最大粒子数按新旧面积比同步增加，以保留原始密度。重复进入、倒带和重开使用最初捕获的参数，不叠加倍数，也不会重置一个范围未变化的粒子场。
+
+粒子、线条和 TextMesh 标签不参与探索轮廓；模型轮廓按网格几何绘制，不读取原材质的透明裁切。普通背景应放在区域模型层级之外，避免被当作区域外轮廓。环境粒子背景在独立纹理中直接合成，不经过主场景的 Bloom 和屏幕滤镜；其位置与主相机保持一致。
+
+图形验证需在独立副本中使用 Unity 2021.3.24f1c1：`-batchmode -executeMethod WorldExplorationMaskValidation.RunBatch` 检查模型轮廓、凹口、背景深度、物理镜头偏移、探索重置与现有倒带逻辑；`WorldExplorationMaskValidation.RunPlayBatch` 进一步检查实际大世界运行、跨区、倒带及模型重建。截图与结果写入 `Logs/ExplorationMask/`。
+
 迁移前基准：`main` 的 `a88199f`。试验分支：`codex/urp-trial`。
 URP 试验提交 `0c69c0b` 已合入 `C:\GitHub\2026-TapTap` 的本地 `main`；最近的手感优化和关卡编辑改动一并保留。
 编辑器保持 Unity 2021.3.24f1c1，URP / Core RP / Shader Graph 使用 12.1.11。

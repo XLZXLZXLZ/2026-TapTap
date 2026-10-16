@@ -89,7 +89,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 96db213c7930134409b5b0b0193e11cb, type: 2}
+  - {fileID: 2100000, guid: d8b6812763ed5f44fbc11b5d399e8756, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -123,9 +123,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62a2f66d90a44ee41a95ccc709483248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ZoomAmount: 0.2
-  ZoomInDuration: 0.18
-  ZoomHoldDuration: 0.1
-  ZoomOutDuration: 0.42
-  SlowMotionScale: 0.15
-  Tint: {r: 1, g: 0.82, b: 0.3, a: 1}
+  ZoomAmount: 0.35
+  ZoomInDuration: 0.28
+  ZoomHoldDuration: 0.4
+  ZoomOutDuration: 0.75
+  HitStopDuration: 0.16
+  SlowMotionScale: 0.06
+  Tint: {r: 1, g: 1, b: 1, a: 1}
+  FloatAmplitude: 0.06
+  FloatPeriod: 2.4
+  GlowParticleMaterial: {fileID: 2100000, guid: 9d838e8c6ecc40c40b803da79952849d, type: 2}
+  PickupBurstPrefab: {fileID: 759337362608597402, guid: 7702a3e91aa3e7b4fa68333d8c2f163e, type: 3}
+  GlowParticleRate: 12

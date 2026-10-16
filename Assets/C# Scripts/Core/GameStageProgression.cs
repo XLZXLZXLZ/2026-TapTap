@@ -63,7 +63,7 @@ namespace TapTap
         public bool Collect(ProgressKey key, PlayerController character)
         {
             if (key == null || character == null || key.gameObject.scene != gameObject.scene || HasProgressed
-                || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen || RewindManager.Rewinding
+                || InputBlocked || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen || RewindManager.Rewinding
                 || Time.timeScale <= 0f || character.Body.IsReturning || character.Head.IsReturning
                 || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting)) return false;
             pendingKey = key;
@@ -83,7 +83,7 @@ namespace TapTap
             effects.ClearTransientEffects();
             RewindManager.Current?.ClearHistory();
             cameraRig = FindCamera();
-            effects.BeginProgressEmphasis(pendingKey.SlowMotionScale);
+            effects.BeginProgressEmphasis(pendingKey.HitStopDuration > 0f ? 0f : pendingKey.SlowMotionScale);
             float closeSize = 1f - pendingKey.ZoomAmount;
             emphasis = DOTween.Sequence().SetUpdate(true);
             emphasis.Append(DOVirtual.Float(1f, closeSize, pendingKey.ZoomInDuration,
@@ -91,6 +91,12 @@ namespace TapTap
             emphasis.AppendInterval(pendingKey.ZoomHoldDuration);
             emphasis.Append(DOVirtual.Float(closeSize, 1f, pendingKey.ZoomOutDuration,
                 value => cameraRig?.SetProgressZoom(value)).SetEase(Ease.InOutSine));
+            emphasis.InsertCallback(pendingKey.HitStopDuration, () =>
+            {
+                effects.EndProgressEmphasis();
+                effects.BeginProgressEmphasis(pendingKey.SlowMotionScale);
+                pendingKey.PlayPickupBurst();
+            });
             yield return emphasis.WaitForCompletion();
             emphasis = null;
             effects.EndProgressEmphasis();

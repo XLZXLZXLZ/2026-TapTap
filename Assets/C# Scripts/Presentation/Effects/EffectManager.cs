@@ -267,7 +267,7 @@ namespace TapTap
         {
             ClearTransientEffects();
             previousTimeScale = Time.timeScale;
-            progressSlowScale = Mathf.Clamp(relativeSpeed, 0.01f, 1f);
+            progressSlowScale = Mathf.Clamp01(relativeSpeed);
             progressEmphasisActive = true;
             Time.timeScale = previousTimeScale * progressSlowScale;
         }

@@ -212,7 +212,8 @@ GameObject:
   - component: {fileID: 4435994629043555713}
   - component: {fileID: 7045642147675830504}
   - component: {fileID: 8213664201268495657}
-  m_Layer: 0
+  - component: {fileID: 202610160000001}
+  m_Layer: 7
   m_Name: EnvironmentParticle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,6 +235,19 @@ Transform:
   m_Father: {fileID: 3328870042801865127}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &202610160000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3719240526016809502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36771d3a1c9042ada18f9bac702d49dd, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  WorldPadding: 16
 --- !u!198 &7045642147675830504
 ParticleSystem:
   m_ObjectHideFlags: 0

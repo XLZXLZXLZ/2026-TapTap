@@ -15,6 +15,10 @@ namespace TapTap
         private static DebugWorldCamera current;
         private readonly Dictionary<RegionRevealView, bool> reveals = new Dictionary<RegionRevealView, bool>();
         private readonly Dictionary<Transform, Pose> poses = new Dictionary<Transform, Pose>();
+        private readonly List<WorldMapModule> previewModules = new List<WorldMapModule>();
+        private int previewIndex = -1;
+        private bool hasPreviewLens;
+        private LevelCameraShot previewLens;
         private PlayerInput controls;
         private DemoCamera rig;
         private Camera view;
@@ -26,6 +30,10 @@ namespace TapTap
         private bool occlusion;
         private float fieldOfView, orthographicSize, nearClip, farClip;
         private bool orthographic;
+        private bool physical;
+        private float focalLength;
+        private Vector2 sensorSize, lensShift;
+        private Camera.GateFitMode gateFit;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => current = null;
@@ -61,6 +69,8 @@ namespace TapTap
                 else if (!Blocked) Enter();
             }
             if (!active) return;
+            if (Input.GetKeyDown(KeyCode.UpArrow)) SwitchPreset(-1);
+            if (Input.GetKeyDown(KeyCode.DownArrow)) SwitchPreset(1);
             float x = (Input.GetKey(KeyCode.D) ? 1f : 0f) - (Input.GetKey(KeyCode.A) ? 1f : 0f);
             float z = (Input.GetKey(KeyCode.E) ? 1f : 0f) - (Input.GetKey(KeyCode.Q) ? 1f : 0f);
             float y = (Input.GetKey(KeyCode.W) ? 1f : 0f) - (Input.GetKey(KeyCode.S) ? 1f : 0f);
@@ -101,8 +111,36 @@ namespace TapTap
             orthographic = view.orthographic;
             nearClip = view.nearClipPlane;
             farClip = view.farClipPlane;
+            physical = view.usePhysicalProperties;
+            focalLength = view.focalLength;
+            sensorSize = view.sensorSize;
+            lensShift = view.lensShift;
+            gateFit = view.gateFit;
+            hasPreviewLens = false;
+            previewModules.Clear();
+            if (world.Source != null) previewModules.AddRange(world.Source.OrderedModules());
+            previewIndex = previewModules.FindIndex(module => world.FindRegion(module) == rig.Region);
             view.useOcclusionCulling = false;
             RevealWorld();
+        }
+
+        private void SwitchPreset(int direction)
+        {
+            if (world == null || view == null || previewModules.Count == 0) return;
+            int index = previewIndex < 0 ? (direction > 0 ? 0 : previewModules.Count - 1)
+                : previewIndex + direction;
+            for (; index >= 0 && index < previewModules.Count; index += direction)
+            {
+                LevelRegion region = world.FindRegion(previewModules[index]);
+                if (region == null || !region.gameObject.activeInHierarchy) continue;
+                // Evaluate only; do not call SetRegion/GoToSequence or change player progression.
+                previewLens = LevelCameraShot.Evaluate(region, null, view.aspect);
+                position = previewLens.Position;
+                rotation = previewLens.Rotation;
+                previewIndex = index;
+                hasPreviewLens = true;
+                break;
+            }
         }
 
         private void LateUpdate()
@@ -110,6 +148,7 @@ namespace TapTap
             if (!active || view == null) return;
             // SetRegion/SnapToPlayer can also be called directly by gameplay while the rig is disabled.
             view.transform.SetPositionAndRotation(position, rotation);
+            if (hasPreviewLens) previewLens.ApplyLens(view);
             foreach (var entry in reveals)
                 if (entry.Key != null && !entry.Key.Discovered) entry.Key.SetDiscovered(true, true);
         }
@@ -153,7 +192,13 @@ namespace TapTap
             if (view != null)
             {
                 view.useOcclusionCulling = occlusion;
+                view.usePhysicalProperties = physical;
+                view.sensorSize = sensorSize;
+                view.lensShift = lensShift;
+                view.gateFit = gateFit;
+                view.focalLength = focalLength;
                 view.fieldOfView = fieldOfView;
+                if (physical) view.focalLength = focalLength;
                 view.orthographicSize = orthographicSize;
                 view.orthographic = orthographic;
                 view.nearClipPlane = nearClip;
@@ -170,11 +215,21 @@ namespace TapTap
             view = null;
             world = null;
             rewind = null;
+            previewModules.Clear();
+            previewIndex = -1;
+            hasPreviewLens = false;
         }
 
         private void OnGUI()
         {
             if (active) GUI.Box(new Rect(12f, 12f, 620f, 28f), "DEBUG | U: Return | W/S: Up/Down | A/D: Left/Right | Q/E: Back/Forward | Shift: Fast");
+            if (active)
+            {
+                string selected = previewIndex >= 0 && previewIndex < previewModules.Count
+                    ? " | " + world.Source.SequenceNumber(previewModules[previewIndex]) + ": "
+                        + previewModules[previewIndex].DisplayName : "";
+                GUI.Box(new Rect(12f, 44f, 620f, 28f), "Up/Down: Previous/Next camera preset" + selected);
+            }
         }
 
         private void SceneLoaded(Scene scene, LoadSceneMode mode) => Exit();

@@ -76,6 +76,9 @@ namespace TapTap
                 view.SetDiscovered(discovered.Contains(item.Id), true);
                 region.gameObject.SetActive(true);
             }
+            WorldExplorationMask mask = GetComponent<WorldExplorationMask>();
+            if (mask == null) mask = gameObject.AddComponent<WorldExplorationMask>();
+            mask.RefreshRegions(this);
             Physics2D.SyncTransforms();
         }
 

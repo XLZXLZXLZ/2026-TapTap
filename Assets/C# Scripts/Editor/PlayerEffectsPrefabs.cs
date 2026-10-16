@@ -138,6 +138,11 @@ namespace TapTap.Editor
             var contact = root.GetComponent<ContactParticles>();
             if (contact == null) contact = root.AddComponent<ContactParticles>();
             contact.Configure(landing, assembly);
+            var joinParticles = root.GetComponent<MagneticJoinParticles>();
+            if (joinParticles == null) joinParticles = root.AddComponent<MagneticJoinParticles>();
+            joinParticles.Configure(
+                AssetDatabase.LoadAssetAtPath<ParticleSystem>(Path("MagConnectParticle")),
+                AssetDatabase.LoadAssetAtPath<ParticleSystem>(Path("MagConnectParticleHeavy")));
             root.GetComponent<PlayerView>().ConfigureEffects(magnet, contact, guide);
             var returns = root.GetComponent<RespawnView>();
             if (returns == null) returns = root.AddComponent<RespawnView>();

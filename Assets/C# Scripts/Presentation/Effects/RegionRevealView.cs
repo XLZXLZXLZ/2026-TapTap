@@ -13,6 +13,8 @@ namespace TapTap
         private readonly Dictionary<Renderer, bool> originalHidden = new Dictionary<Renderer, bool>();
         private readonly Dictionary<Light, bool> hiddenLights = new Dictionary<Light, bool>();
         protected IReadOnlyList<Renderer> Renderers => renderers;
+        // Shared with the exploration mask; these are the live styled models, not copies.
+        public IReadOnlyList<Renderer> SceneRenderers => renderers;
         public bool Discovered { get; private set; }
         public float Opacity { get; protected set; } = 1f;
 
