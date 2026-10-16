@@ -3,7 +3,32 @@ guid: 385db99ec21c40f39e9ed26597c05587
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Blue skin
+    second: {fileID: 2100000, guid: b75f62feb3f738449a9203955ec88de8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Eye glow
+    second: {fileID: 2100000, guid: 1239f540854a7bf49b0624f092be4d53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Limb rubber
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnet black
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnetic core
+    second: {fileID: 2100000, guid: 65901e3184f0d6746a97d3c1b8269521, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
