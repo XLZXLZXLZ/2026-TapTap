@@ -11,18 +11,20 @@ Shader "Hidden/TapTap/World Exploration Mask"
         Pass
         {
             Name "Region silhouette"
-            Blend Off
             ColorMask R
+            Blend One One
+            BlendOp Max
             HLSLPROGRAM
             #pragma vertex Vert
             #pragma fragment Frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             float4x4 _WorldExplorationViewProjection;
+            half _WorldExplorationRegionOpacity;
             float4 Vert(float3 positionOS : POSITION) : SV_POSITION
             {
                 return mul(_WorldExplorationViewProjection, float4(TransformObjectToWorld(positionOS), 1));
             }
-            half4 Frag() : SV_Target { return half4(1, 1, 1, 1); }
+            half4 Frag() : SV_Target { return half4(_WorldExplorationRegionOpacity, 0, 0, 1); }
             ENDHLSL
         }
 

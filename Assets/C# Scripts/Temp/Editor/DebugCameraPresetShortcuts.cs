@@ -13,11 +13,11 @@ namespace TapTap.Editor
         private static LevelRegion currentRegion;
         private static GameObject lastSelection;
 
-        [Shortcut("TapTap/Debug Camera/Previous Preset", KeyCode.UpArrow, ShortcutModifiers.Action | ShortcutModifiers.Alt)]
+        [Shortcut("TapTap/Debug Camera/Previous Preset", KeyCode.LeftBracket)]
         [MenuItem("Tools/TapTap/调试镜头/上一子关卡预设")]
         private static void Previous() => Navigate(-1);
 
-        [Shortcut("TapTap/Debug Camera/Next Preset", KeyCode.DownArrow, ShortcutModifiers.Action | ShortcutModifiers.Alt)]
+        [Shortcut("TapTap/Debug Camera/Next Preset", KeyCode.RightBracket)]
         [MenuItem("Tools/TapTap/调试镜头/下一子关卡预设")]
         private static void Next() => Navigate(1);
 

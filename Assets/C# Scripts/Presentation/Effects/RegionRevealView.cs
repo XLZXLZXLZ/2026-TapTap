@@ -12,6 +12,27 @@ namespace TapTap
         private readonly List<Renderer> renderers = new List<Renderer>();
         private readonly Dictionary<Renderer, bool> originalHidden = new Dictionary<Renderer, bool>();
         private readonly Dictionary<Light, bool> hiddenLights = new Dictionary<Light, bool>();
+        private readonly Dictionary<Object, float> visibilityOverrides = new Dictionary<Object, float>();
+        public float VisibleOpacity
+        {
+            get
+            {
+                float value = Discovered ? 1f : 0f;
+                foreach (var entry in visibilityOverrides)
+                    if (entry.Key != null) value = Mathf.Max(value, entry.Value);
+                return value;
+            }
+        }
+
+        public void SetVisibilityOverride(Object owner, float opacity)
+        {
+            if (owner == null) return;
+            bool wasVisible = VisibleOpacity > 0f;
+            if (opacity <= 0f) visibilityOverrides.Remove(owner);
+            else visibilityOverrides[owner] = Mathf.Clamp01(opacity);
+            bool visible = VisibleOpacity > 0f;
+            if (visible != wasVisible) { DiscoverRenderers(); ApplyVisibility(visible, true); }
+        }
         protected IReadOnlyList<Renderer> Renderers => renderers;
         // Shared with the exploration mask; these are the live styled models, not copies.
         public IReadOnlyList<Renderer> SceneRenderers => renderers;
@@ -22,14 +43,14 @@ namespace TapTap
         {
             DiscoverRenderers();
             Discovered = value;
-            ApplyVisibility(value, immediate);
+            ApplyVisibility(VisibleOpacity > 0f, immediate);
         }
 
         // Call after spawning visuals inside an already initialized region.
         public void RefreshVisuals()
         {
             DiscoverRenderers();
-            ApplyVisibility(Discovered, true);
+            ApplyVisibility(VisibleOpacity > 0f, true);
         }
 
         private void DiscoverRenderers()

@@ -53,6 +53,20 @@ namespace TapTap
         [InspectorName("形变恢复时长（秒）"), Tooltip("一次挤压或拉伸反馈恢复到原始形状的时间，采用缓出曲线；不控制伸头、收头或吸附动作的时长。")]
         [Min(0.02f)] public float InteractionDuration = 0.22f;
 
+        [Header("磁吸与到位形变")]
+        [InspectorName("起吸压缩幅度")]
+        [Range(0f, 0.15f)] public float PullStartSquash = 0.05f;
+        [InspectorName("磁吸合体压缩幅度")]
+        [Range(0f, 0.15f)] public float MagneticJoinSquash = 0.08f;
+        [InspectorName("伸收头到位回弹幅度")]
+        [Range(0f, 0.1f)] public float HeadStopSquash = 0.04f;
+        [InspectorName("受阻与失败压缩幅度")]
+        [Range(0f, 0.1f)] public float FailureSquash = 0.04f;
+        [InspectorName("磁吸合体形变时长（秒）")]
+        [Min(0.02f)] public float MagneticReactionDuration = 0.22f;
+        [InspectorName("轻微形变时长（秒）"), Tooltip("起吸、伸收头到位及失败反馈的视觉时长，不影响实际运动。")]
+        [Min(0.02f)] public float SmallReactionDuration = 0.15f;
+
         [Header("三维模型朝向（Y 轴）")]
         [InspectorName("正面角度（度）"), Tooltip("静止时面向镜头的本地 Y 轴角度。")]
         public float FrontYaw = 180f;

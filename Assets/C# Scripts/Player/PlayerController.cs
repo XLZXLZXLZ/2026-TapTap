@@ -27,6 +27,7 @@ namespace TapTap
             public float RetractStartExtra, PullStartX, PendingLaunchHeight;
             public Vector2 PullBodyTarget, PickupStartOffset;
             public bool BodyGroundContact, HeadGroundContact, SpaceHeld;
+            public bool DistantPull;
             public RespawnService.Snapshot Respawn;
             public PlayerView.FacingState Facing;
         }
@@ -53,6 +54,7 @@ namespace TapTap
         private float pullStartX;
         private Vector2 pullBodyTarget;
         private float pendingLaunchHeight;
+        private bool distantPull;
         private float headFallSpeed;
         private Vector2 pickupStartOffset;
         private Outcome outcome;
@@ -84,6 +86,7 @@ namespace TapTap
         public Vector2 PresentationPosition => respawn != null && body != null
             ? respawn.FollowPosition(body) : body != null ? (Vector2)body.transform.position : (Vector2)transform.position;
         public bool HasMagneticConnection => phase != PlayerPhase.Detached;
+        public bool IsDistantPull => phase == PlayerPhase.Pulling && distantPull;
         public bool GuideVisible => guideActive || clock < failedGuideUntil;
         public bool CanRecall => !body.IsReturning && !head.IsReturning
             && Mathf.Abs(body.Motor.Position.x - head.Motor.Position.x) <= config.ToWorld(config.AlignmentTolerance)
@@ -91,6 +94,7 @@ namespace TapTap
         public event Action<PlayerEffect> Effect;
         public event Action<PlayerPhase> PhaseChanged;
         public event Action<PlayerContactFeedback> ContactFeedback;
+        public event Action MagneticJoined;
 
         public void Configure(PlayerInput controls, PlayerConfig settings, MovableEntity lower,
             MovableEntity upper, RespawnService returns, PlayerView presentation)
@@ -200,6 +204,7 @@ namespace TapTap
             PendingLaunchHeight = pendingLaunchHeight, PullBodyTarget = pullBodyTarget,
             PickupStartOffset = pickupStartOffset, BodyGroundContact = bodyGroundContact,
             HeadGroundContact = headGroundContact, SpaceHeld = input.ConsumedSpaceHeld,
+            DistantPull = distantPull,
             Respawn = respawn.CaptureState(),
             Facing = view != null ? view.CaptureFacing() : default
         };
@@ -218,6 +223,7 @@ namespace TapTap
             retractStartExtra = state.RetractStartExtra;
             pullStartX = state.PullStartX;
             pendingLaunchHeight = state.PendingLaunchHeight;
+            distantPull = state.DistantPull;
             pullBodyTarget = state.PullBodyTarget;
             pickupStartOffset = state.PickupStartOffset;
             bodyGroundContact = state.BodyGroundContact;
@@ -400,6 +406,7 @@ namespace TapTap
 
         private void BeginPull(bool distant)
         {
+            distantPull = distant;
             body.ClearApexGrace();
             head.ClearApexGrace();
             actionTime = 0f;
@@ -622,6 +629,7 @@ namespace TapTap
 
         private void ApplyJoin(float height, bool downward)
         {
+            bool magneticPull = phase == PlayerPhase.Pulling;
             Vector2 target = body.Motor.Position + Vector2.up * config.ToWorld(config.JoinedOffset);
             MoveResult correction = head.Motor.Move(target - head.Motor.Position, body);
             if (correction.Blocked || !body.Motor.CanJoinWith(head.Motor))
@@ -656,10 +664,12 @@ namespace TapTap
             });
             if (downward || height > 0f) effects.Add(downward ? PlayerEffect.DownwardJoined : PlayerEffect.Joined);
             else effects.Add(PlayerEffect.HeadReturned);
+            if (magneticPull) MagneticJoined?.Invoke();
         }
 
         private void CancelAction()
         {
+            distantPull = false;
             actionTime = 0f;
             retractPending = recallBuffered = bufferedRelease = guideActive = false;
             failedGuideUntil = 0f;

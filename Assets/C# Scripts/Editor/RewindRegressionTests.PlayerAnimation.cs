@@ -62,6 +62,9 @@ namespace TapTap.Editor
             Check(walk.length > 0.9f && walk.length < 1.05f && Mathf.Abs(walk.frameRate - 24f) < 0.01f,
                 "Walk must contain only the authored 1-24 frame cycle at 24 fps");
             Check(AnimationUtility.GetAnimationClipSettings(walk).loopTime, "Walk does not loop");
+            Check(idle.length > 1.2f && idle.length < 1.4f && Mathf.Abs(idle.frameRate - 24f) < 0.01f,
+                "Idle must contain stand.blend's authored 1-32 frame motion at 24 fps");
+            Check(AnimationUtility.GetAnimationClipSettings(idle).loopTime, "Idle does not loop");
             GameObject playerObject = PrefabUtility.LoadPrefabContents(PlayerModelAssets.PlayerPath);
             try
             {
@@ -76,6 +79,9 @@ namespace TapTap.Editor
                     foreach (EditorCurveBinding binding in AnimationUtility.GetCurveBindings(walk))
                         Check(string.IsNullOrEmpty(binding.path) || animator.transform.Find(binding.path) != null,
                             entity.name + " cannot resolve animation bone: " + binding.path);
+                    foreach (EditorCurveBinding binding in AnimationUtility.GetCurveBindings(idle))
+                        Check(string.IsNullOrEmpty(binding.path) || animator.transform.Find(binding.path) != null,
+                            entity.name + " cannot resolve Idle bone: " + binding.path);
                     idle.SampleAnimation(animator.gameObject, 0f);
                     Vector3[] rest = SkinVertices(animator.gameObject);
                     Vector3 rootPosition = animator.transform.localPosition;
@@ -87,8 +93,14 @@ namespace TapTap.Editor
                     Check(Vector3.Distance(rootPosition, animator.transform.localPosition) < 0.001f, "Walk translates the visual root");
                     idle.SampleAnimation(animator.gameObject, 0f);
                     Check(VertexDifference(rest, SkinVertices(animator.gameObject)) < 0.001f, "Idle does not restore the rest pose");
-                    messages.Add("PASS: " + entity.name + " skins=" + skins.Length + " animated vertex movement=" + movement);
+                    idle.SampleAnimation(animator.gameObject, idle.length * 0.5f);
+                    float idleMovement = VertexDifference(rest, SkinVertices(animator.gameObject));
+                    Check(idleMovement > 0.01f, entity.name + " Idle is a static reset instead of the stand animation");
+                    Check(Vector3.Distance(rootPosition, animator.transform.localPosition) < 0.001f, "Idle translates the visual root");
+                    messages.Add("PASS: " + entity.name + " skins=" + skins.Length + " Walk vertex movement=" + movement
+                        + "; Idle vertex movement=" + idleMovement);
                 }
+                messages.Add("PASS: Shared Idle: " + idle.length + "s at 24fps; loop enabled; all bone paths resolve");
                 messages.Add("PASS: Shared Walk: " + walk.length + "s at " + walk.frameRate + "fps; loop enabled; all bone paths resolve");
                 File.WriteAllLines(Path.Combine(Application.dataPath, "../player-animation-results.txt"), messages);
             }
@@ -158,9 +170,13 @@ namespace TapTap.Editor
                 f.Input.SetExternalInput(0f, false); f.Step(); Animate(0.12f);
                 Check(lower.speed == 1f && upper.speed == 1f && !lower.GetBool("Moving") && !upper.GetBool("Moving"),
                     "Animation did not resume and idle after rewind");
-                float stoppedDifference = VertexDifference(rest, SkinVertices(lower.gameObject));
+                Vector3[] stopped = SkinVertices(lower.gameObject);
+                AnimationClip idle = PlayerModelAssets.AnimationClipAt(PlayerModelAssets.IdlePath);
+                float idleTime = Mathf.Repeat(lower.GetCurrentAnimatorStateInfo(0).normalizedTime, 1f) * idle.length;
+                idle.SampleAnimation(lower.gameObject, idleTime);
+                float stoppedDifference = VertexDifference(stopped, SkinVertices(lower.gameObject));
                 // This fixture lives 10,000 units from the origin; allow two millimetres for float precision after moving.
-                Check(stoppedDifference < 0.002f, "Stopping did not return the legs to rest; vertex delta=" + stoppedDifference
+                Check(stoppedDifference < 0.002f, "Stopping did not blend into the authored Idle pose; vertex delta=" + stoppedDifference
                     + " idle=" + lower.GetCurrentAnimatorStateInfo(0).IsName("Idle") + " blending=" + lower.IsInTransition(0));
             }
         }

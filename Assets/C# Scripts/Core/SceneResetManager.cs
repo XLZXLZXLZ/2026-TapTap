@@ -16,12 +16,15 @@ namespace TapTap
 
         private void Update()
         {
-            if (!PauseMenu.BlocksInput && !LevelAnnotation.IsFeedbackOpen && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
+            // Key progression is session-persistent; disable only the R shortcut after pickup.
+            if (!PauseMenu.BlocksInput && !LevelAnnotation.IsFeedbackOpen && !GameStageProgression.HasProgressedIn(SceneManager.GetActiveScene())
+                && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
         }
 
         public bool ResetCurrentScene()
         {
-            if (PauseMenu.BlocksInput || IsResetting || GameStageProgression.InputBlocked || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen) return false;
+            if (PauseMenu.BlocksInput || IsResetting || GameStageProgression.InputBlocked || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen
+                || GameplayActionLocks.IsLocked(GameplayAction.Input, SceneManager.GetActiveScene())) return false;
             if (WorldMapProgression.Current != null) return WorldMapProgression.Current.RestartCurrent();
             Scene scene = SceneManager.GetActiveScene();
             if (!scene.IsValid() || string.IsNullOrEmpty(scene.path))

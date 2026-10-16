@@ -39,6 +39,9 @@ namespace TapTap
         private bool captured;
         private float bodySquash, headSquash;
         private Tween bodyTween, headTween;
+        private Sequence bodyReactionTween, headReactionTween;
+        private float bodyReaction, headReaction, bodyReactionTime, headReactionTime;
+        private PlayerPhase visualPhase;
         private bool headSpringActive;
         public bool ExitPresentation { get; private set; }
         private AnimatorUpdateMode bodyAnimationMode, headAnimationMode;
@@ -106,6 +109,7 @@ namespace TapTap
         public void RestoreFacing(in FacingState state)
         {
             facing = previousFacing = state;
+            if (controller != null) visualPhase = controller.Phase;
             RenderFacing(true);
         }
 
@@ -212,6 +216,9 @@ namespace TapTap
                 {
                     controller.Effect += OnEffect;
                     controller.ContactFeedback += OnContact;
+                    controller.PhaseChanged += OnPhaseChanged;
+                    controller.MagneticJoined += OnMagneticJoined;
+                    visualPhase = controller.Phase;
                 }
             }
             if (subscribedHead != head)
@@ -297,6 +304,11 @@ namespace TapTap
             EnsureVisuals();
             RenderFacing(false);
             RenderMovementAnimations(false);
+            if (!WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen)
+            {
+                AdvanceReaction(true, dt);
+                AdvanceReaction(false, dt);
+            }
             float unit = body.Motor.Size.x / Mathf.Max(0.01f, body.Motor.Collider.size.x);
             bool returning = body.IsReturning || head.IsReturning;
             bool connected = controller.HasMagneticConnection && controller.Phase != PlayerPhase.Joined && !returning;
@@ -311,7 +323,8 @@ namespace TapTap
             if (!body.IsReturning)
             {
                 float stretch = Mathf.Clamp(Mathf.Abs(body.Velocity.y) / (12f * unit), 0f, 1f) * visualSettings.MotionStretch;
-                Vector3 factor = new Vector3(1f + bodySquash - stretch * 0.5f, 1f - bodySquash + stretch, 1f);
+                float squash = bodySquash + bodyReaction;
+                Vector3 factor = new Vector3(1f + squash - stretch * 0.5f, 1f - squash + stretch, 1f);
                 body.Visual.localScale = Vector3.Scale(bodyScale, factor);
                 body.Visual.localPosition = bodyPosition
                     + Vector3.up * ((factor.y - 1f) * body.Motor.Collider.size.y * 0.5f);
@@ -320,7 +333,8 @@ namespace TapTap
             if (!head.IsReturning)
             {
                 float stretch = controller.Phase == PlayerPhase.Extending || controller.Phase == PlayerPhase.Pulling ? visualSettings.MotionStretch : 0f;
-                Vector3 factor = new Vector3(1f + headSquash - stretch * 0.5f, 1f - headSquash + stretch, 1f);
+                float squash = headSquash + headReaction;
+                Vector3 factor = new Vector3(1f + squash - stretch * 0.5f, 1f - squash + stretch, 1f);
                 head.Visual.localScale = Vector3.Scale(headScale, factor);
                 head.Visual.localPosition = headPosition + PickupOffset()
                     + Vector3.up * (headSpringActive ? (factor.y - 1f) * head.Motor.Collider.size.y * 0.5f : 0f);
@@ -352,6 +366,84 @@ namespace TapTap
         private void OnEffect(PlayerEffect effect)
         {
             EffectManager.Instance.Play(effect, body.Visual);
+            if (!CanReact()) return;
+            if (effect == PlayerEffect.PullBlocked || effect == PlayerEffect.RecallFailed)
+            {
+                React(body, visualSettings.FailureSquash, visualSettings.SmallReactionDuration);
+                React(head, visualSettings.FailureSquash, visualSettings.SmallReactionDuration);
+            }
+            else if (effect == PlayerEffect.ExtensionBlocked)
+                React(head, visualSettings.FailureSquash, visualSettings.SmallReactionDuration);
+        }
+
+        private bool CanReact() => visualSettings != null && !ExitPresentation && !RewindManager.Rewinding
+            && !WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen;
+
+        private void OnPhaseChanged(PlayerPhase next)
+        {
+            PlayerPhase previous = visualPhase;
+            visualPhase = next;
+            if (!CanReact()) return;
+            if (next == PlayerPhase.Pulling)
+                React(body, visualSettings.PullStartSquash, visualSettings.SmallReactionDuration);
+            else if (next == PlayerPhase.Holding && previous == PlayerPhase.Extending)
+                React(head, -visualSettings.HeadStopSquash, visualSettings.SmallReactionDuration);
+            else if (next == PlayerPhase.Joined && previous == PlayerPhase.Retracting)
+                React(head, visualSettings.HeadStopSquash, visualSettings.SmallReactionDuration);
+        }
+
+        private void OnMagneticJoined()
+        {
+            if (!CanReact()) return;
+            React(body, visualSettings.MagneticJoinSquash, visualSettings.MagneticReactionDuration);
+            React(head, visualSettings.MagneticJoinSquash, visualSettings.MagneticReactionDuration);
+        }
+
+        private void React(MovableEntity entity, float amount, float duration)
+        {
+            if (entity == null || entity.IsReturning) return;
+            EnsureVisuals();
+            if (!captured) return;
+            bool lower = entity == body;
+            float from = lower ? bodyReaction : headReaction;
+            if (lower) bodyReactionTween?.Kill();
+            else headReactionTween?.Kill();
+            duration = Mathf.Max(0.02f, duration);
+            TweenCallback<float> set = value => { if (lower) bodyReaction = value; else headReaction = value; };
+            // Add a small pulse to the existing squash values instead of letting
+            // another tween write the visual Transform or its authored base scale.
+            Sequence reaction = DOTween.Sequence().SetAutoKill(false).Pause()
+                .Append(DOVirtual.Float(from, amount, duration * 0.25f, set).SetEase(Ease.OutQuad))
+                .Append(DOVirtual.Float(amount, -amount * 0.35f, duration * 0.35f, set).SetEase(Ease.InOutSine))
+                .Append(DOVirtual.Float(-amount * 0.35f, 0f, duration * 0.4f, set).SetEase(Ease.OutSine));
+            if (lower) { bodyReactionTween = reaction; bodyReactionTime = 0f; }
+            else { headReactionTween = reaction; headReactionTime = 0f; }
+        }
+
+        private void AdvanceReaction(bool lower, float dt)
+        {
+            Sequence reaction = lower ? bodyReactionTween : headReactionTween;
+            if (reaction == null) return;
+            MovableEntity entity = lower ? body : head;
+            if (entity == null || entity.IsReturning) { ClearReaction(lower); return; }
+            float time = Mathf.Min((lower ? bodyReactionTime : headReactionTime) + dt, reaction.Duration());
+            if (lower) bodyReactionTime = time; else headReactionTime = time;
+            reaction.Goto(time, false);
+            if (time >= reaction.Duration()) ClearReaction(lower);
+        }
+
+        private void ClearReaction(bool lower)
+        {
+            if (lower)
+            {
+                bodyReactionTween?.Kill(); bodyReactionTween = null;
+                bodyReaction = bodyReactionTime = 0f;
+            }
+            else
+            {
+                headReactionTween?.Kill(); headReactionTween = null;
+                headReaction = headReactionTime = 0f;
+            }
         }
 
         private void Pulse(MovableEntity entity, float amount)
@@ -387,6 +479,7 @@ namespace TapTap
 
         public void ResetVisual(MovableEntity entity)
         {
+            if (entity != null) ClearReaction(entity == body);
             if (!captured || entity == null || entity.Visual == null) return;
             bool lower = entity == body;
             if (lower) { bodyTween?.Kill(); bodySquash = 0f; }
@@ -403,12 +496,15 @@ namespace TapTap
             if (subscribedController == null) return;
             subscribedController.Effect -= OnEffect;
             subscribedController.ContactFeedback -= OnContact;
+                subscribedController.PhaseChanged -= OnPhaseChanged;
+                subscribedController.MagneticJoined -= OnMagneticJoined;
             subscribedController = null;
         }
 
         private void OnDisable()
         {
             EndExitPresentation();
+            ClearReaction(true); ClearReaction(false);
             Unsubscribe(); ResetVisual(body); ResetVisual(head);
             bodyWalking = headWalking = false;
             if (bodyAnimator != null) bodyAnimator.speed = 1f;

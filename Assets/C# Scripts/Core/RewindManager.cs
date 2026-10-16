@@ -218,7 +218,7 @@ namespace TapTap
 
         private void ReadControls()
         {
-            if (Blocked) { EndRewind(); return; }
+            if (Blocked || GameplayActionLocks.IsLocked(GameplayAction.Rewind, gameObject.scene)) { EndRewind(); return; }
             if (!UseKeyboard) return;
             if (Application.isFocused && Input.GetKey(KeyCode.Z)) BeginRewind();
             else EndRewind();
@@ -288,6 +288,7 @@ namespace TapTap
 
         public bool BeginRewind()
         {
+            if (GameplayActionLocks.IsLocked(GameplayAction.Rewind, gameObject.scene)) return false;
             if (IsRewinding) return true;
             if (Blocked || !PrepareHistory()) return false;
             IsRewinding = true;
@@ -304,6 +305,7 @@ namespace TapTap
 
         public void RewindBy(float seconds)
         {
+            if (GameplayActionLocks.IsLocked(GameplayAction.Rewind, gameObject.scene)) { EndRewind(); return; }
             if (!IsRewinding || seconds <= 0f || Blocked) return;
             rewindRemainder += seconds / stepDuration;
             long steps = (long)Math.Floor(rewindRemainder + 0.00001d);

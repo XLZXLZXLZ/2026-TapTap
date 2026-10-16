@@ -55,6 +55,7 @@ namespace TapTap
         }
 
         private static bool Blocked => WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen
+            || GameplayActionLocks.IsLocked(GameplayAction.DebugCamera, SceneManager.GetActiveScene())
             || RewindManager.Rewinding
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
@@ -88,7 +89,7 @@ namespace TapTap
             controls = player != null ? player.GetComponent<PlayerInput>() : null;
             view = rig != null ? rig.ViewCamera : null;
             if (controls == null || !controls.isActiveAndEnabled || view == null
-                || !view.isActiveAndEnabled || world == null) return;
+                || !view.isActiveAndEnabled || world == null || !rig.TryAcquireControl(this)) return;
 
             active = true;
             // Keep simulation and rewind registration intact; only stop input sampling.
@@ -204,6 +205,7 @@ namespace TapTap
                 view.nearClipPlane = nearClip;
                 view.farClipPlane = farClip;
             }
+            if (rig != null) rig.ReleaseControl(this);
             if (controls != null)
             {
                 controls.ResumeAfterRewind(); // Reconcile Space presses/releases made while input was suspended.

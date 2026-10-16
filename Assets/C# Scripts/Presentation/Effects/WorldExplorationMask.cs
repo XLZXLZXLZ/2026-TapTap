@@ -52,7 +52,8 @@ namespace TapTap
             foreach (RegionShape shape in regions)
             {
                 if (shape.Region == null || !shape.Region.gameObject.activeInHierarchy
-                    || shape.Reveal == null || !shape.Reveal.Discovered) continue;
+                    || shape.Reveal == null || shape.Reveal.VisibleOpacity <= 0f) continue;
+                commands.SetGlobalFloat("_WorldExplorationRegionOpacity", shape.Reveal.VisibleOpacity);
 
                 // Fill the playable air between the outer models as well as the
                 // models themselves. Runs preserve concavities and disconnected rooms.

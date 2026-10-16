@@ -21,6 +21,23 @@ namespace TapTap
         private Vector3 shakeOrigin;
         private bool hasShot, blending;
         private float blendElapsed, progressZoom = 1f;
+        private Object externalController;
+        public bool HasExternalControl => externalController != null;
+
+        public bool TryAcquireControl(Object owner)
+        {
+            if (owner == null || (HasExternalControl && externalController != owner)) return false;
+            externalController = owner;
+            ResetShake();
+            return true;
+        }
+
+        public void ReleaseControl(Object owner)
+        {
+            if (externalController != owner) return;
+            externalController = null;
+            if (isActiveAndEnabled) SnapToPlayer();
+        }
 
         public LevelRegion Region => fixedRegion;
         public Camera ViewCamera { get { Initialize(); return viewCamera; } }
@@ -99,6 +116,7 @@ namespace TapTap
 
         private void UpdateFollow(float deltaTime, bool rewinding)
         {
+            if (HasExternalControl) return;
             Initialize();
             if (viewCamera == null || fixedRegion == null) return;
             LevelCameraShot target = EvaluateTarget();
@@ -129,6 +147,7 @@ namespace TapTap
 
         private void RenderCurrent()
         {
+            if (HasExternalControl) return;
             ResetShake();
             EffectManager effects = Application.isPlaying ? EffectManager.Existing : null;
             float viewScale = progressZoom * (effects != null ? 1f - effects.ZoomPulse : 1f);

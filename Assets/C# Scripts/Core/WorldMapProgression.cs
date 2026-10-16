@@ -32,7 +32,8 @@ namespace TapTap
         private static WorldMapProgression current;
 
         public static WorldMapProgression Current => current;
-        public static bool InputBlocked => PauseMenu.BlocksInput || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen || GameStageProgression.InputBlocked
+        public static bool InputBlocked => PauseMenu.BlocksInput || GameplayActionLocks.IsLocked(GameplayAction.Input, UnityEngine.SceneManagement.SceneManager.GetActiveScene())
+            || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen || GameStageProgression.InputBlocked
             || (current != null && (current.IsTransitioning || current.IsComplete));
         public bool IsTransitioning { get; private set; }
         public bool IsComplete { get; private set; }

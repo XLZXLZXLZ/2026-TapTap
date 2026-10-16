@@ -1,5 +1,13 @@
 # LocalFog — Unity 2021.3 / Built-in + URP 12.1
 
+## 前景保护性能
+
+- URP 只为当前摄像机视锥内、有实际浓度的雾生成保护遮罩；遮罩只提交视锥内启用的 MeshRenderer/SkinnedMeshRenderer。
+- 多个雾保护同一个父对象时，共用 Renderer 列表和本摄像机的可见性筛选结果。保护对象集合与遮罩 Shader 相同的雾，在该摄像机本次渲染中复用同一张遮罩；不同集合保持独立。
+- 编辑模式缓存层级中的 Renderer 引用，创建、删除、重挂父节点、Undo/Redo、资源更新及 Inspector 修改保护配置时刷新。物体的位置、激活状态、Renderer 开关、Layer 和材质槽在摄像机渲染时读取。
+- 运行模式每次摄像机渲染重新收集根对象下的 Renderer，多个雾在本次渲染中共享收集结果，动态生成对象无需额外注册。编辑器工具若以代码修改层级并立即自行渲染，可调用雾组件的 `RefreshForegroundCache()`。
+- 不修改现有保护列表、颜色、浓度、采样步数、场景或管线资产。仍可通过 `Protected Foreground` 调整保护范围。
+
 ## 本次修复
 原来组件会在 URP 下关闭 MeshRenderer；现在已移除该逻辑，并增加 URP 专用 SubShader。材质、脚本和预制体 GUID 均保持不变，已有实例不需要换材质。
 当前项目 URP 质量资产默认关闭深度纹理。雾组件在 beginCameraRendering 中临时请求摄像机已有 UniversalAdditionalCameraData 的深度，在 endCameraRendering 中恢复原 requiresDepthOption。多雾共用协调器，避免恢复顺序冲突。没有自动新增摄像机组件，没有修改场景或管线资产。URP Scene View 使用管线生成的深度。

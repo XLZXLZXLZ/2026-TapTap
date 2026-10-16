@@ -26,22 +26,127 @@ namespace TapTap.Art.LocalFog
         [SerializeField, HideInInspector] Shader opaqueDepthShader;
         Material foregroundMaskMaterial;
         RenderTexture foregroundMask;
-        readonly List<Renderer> foregroundRenderers = new List<Renderer>();
         readonly HashSet<Renderer> uniqueForeground = new HashSet<Renderer>();
         static readonly int maskVP = Shader.PropertyToID("_LocalFogMaskVP");
 
-        void RenderForegroundMask(ScriptableRenderContext context, Camera cam)
+        // Lists are shared by roots, not by volumes: several fogs can protect the same world.
+        // Cache references only. Bounds, activation, layers and material slots remain live.
+        sealed class ForegroundRoot
+        {
+            public readonly List<Renderer> Renderers = new List<Renderer>();
+            public readonly List<ForegroundDraw> Visible = new List<ForegroundDraw>();
+            public readonly List<Material> Materials = new List<Material>();
+            public int Version = -1;
+            public int Pass = -1;
+            public int VisiblePass = -1;
+        }
+        struct ForegroundDraw { public Renderer Renderer; public int MaterialCount; }
+        static readonly Dictionary<Transform, ForegroundRoot> foregroundRoots = new Dictionary<Transform, ForegroundRoot>();
+        static readonly Plane[] cameraPlanes = new Plane[6];
+        static readonly List<LocalFogVolume> cameraFogs = new List<LocalFogVolume>();
+        static readonly List<LocalFogVolume> renderedMasks = new List<LocalFogVolume>();
+        static int foregroundVersion, foregroundPass;
+
+        // Call after a procedural edit if its renderers must be refreshed immediately in edit mode.
+        public void RefreshForegroundCache() => InvalidateForegroundCaches();
+        static void InvalidateForegroundCaches() { foregroundVersion++; foregroundRoots.Clear(); }
+#if UNITY_EDITOR
+        static void ObjectsChanged(ref UnityEditor.ObjectChangeEventStream changes)
+        {
+            for (int i = 0; i < changes.length; i++)
+            {
+                // Transform/material values are read at render time. Structural changes can add renderers.
+                var kind = changes.GetEventType(i);
+                if (kind == UnityEditor.ObjectChangeKind.ChangeGameObjectOrComponentProperties
+                    || kind == UnityEditor.ObjectChangeKind.ChangeAssetObjectProperties) continue;
+                InvalidateForegroundCaches();
+                break;
+            }
+        }
+#endif
+        static List<ForegroundDraw> ForegroundRenderers(Transform root, Camera cam)
+        {
+            if (!foregroundRoots.TryGetValue(root, out ForegroundRoot cached))
+                foregroundRoots.Add(root, cached = new ForegroundRoot());
+            // Runtime spawning needs no registration. Reuse a traversal across fogs in this camera
+            // pass, but refresh on the next pass so newly spawned/reparented renderers are included.
+            if (cached.Version != foregroundVersion || (Application.isPlaying && cached.Pass != foregroundPass))
+            {
+                root.GetComponentsInChildren<Renderer>(true, cached.Renderers);
+                cached.Renderers.RemoveAll(NotMeshRenderer);
+                cached.Version = foregroundVersion;
+                cached.Pass = foregroundPass;
+                cached.VisiblePass = -1;
+            }
+            // Different protection sets often share Generated. Cull and inspect that root only
+            // once for this camera, even when it contributes to several different masks.
+            if (cached.VisiblePass != foregroundPass)
+            {
+                cached.Visible.Clear();
+                foreach (Renderer renderer in cached.Renderers)
+                {
+                    if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy
+                        || renderer.forceRenderingOff || (cam.cullingMask & (1 << renderer.gameObject.layer)) == 0
+                        || !GeometryUtility.TestPlanesAABB(cameraPlanes, renderer.bounds)
+                        || renderer.GetComponent<LocalFogVolume>() != null) continue;
+                    renderer.GetSharedMaterials(cached.Materials);
+                    cached.Visible.Add(new ForegroundDraw { Renderer = renderer, MaterialCount = cached.Materials.Count });
+                }
+                cached.VisiblePass = foregroundPass;
+            }
+            return cached.Visible;
+        }
+        static bool NotMeshRenderer(Renderer renderer) => !(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer);
+        bool VisibleTo(Camera cam)
+        {
+            return isActiveAndEnabled && volumeRenderer != null && volumeRenderer.enabled
+                && !volumeRenderer.forceRenderingOff && density > 0 && color.a > 0
+                && (cam.cullingMask & (1 << gameObject.layer)) != 0
+                && GeometryUtility.TestPlanesAABB(cameraPlanes, volumeRenderer.bounds);
+        }
+        static bool SameForeground(LocalFogVolume first, LocalFogVolume second)
+        {
+            if (first.foregroundMaskShader != second.foregroundMaskShader) return false;
+            // Root order and duplicates do not change a silhouette union. Never merge different sets.
+            return ContainsRoots(first.protectedForeground, second.protectedForeground)
+                && ContainsRoots(second.protectedForeground, first.protectedForeground);
+        }
+        static bool ContainsRoots(Transform[] source, Transform[] destination)
+        {
+            if (source == null) return true;
+            foreach (Transform root in source)
+            {
+                if (root == null) continue;
+                bool found = false;
+                if (destination != null)
+                    foreach (Transform other in destination)
+                        if (root == other) { found = true; break; }
+                if (!found) return false;
+            }
+            return true;
+        }
+        void SetForegroundMask(RenderTexture texture, Matrix4x4 vp)
         {
             if (properties == null || volumeRenderer == null) return;
             volumeRenderer.GetPropertyBlock(properties);
-            properties.SetFloat("_LocalFogHasForegroundMask", 0);
+            properties.SetFloat("_LocalFogHasForegroundMask", texture != null ? 1 : 0);
+            if (texture != null) properties.SetTexture("_LocalFogForegroundMask", texture);
+            properties.SetMatrix(maskVP, vp);
+            volumeRenderer.SetPropertyBlock(properties);
+        }
+        bool RenderForegroundMask(ScriptableRenderContext context, Camera cam, Matrix4x4 vp)
+        {
             if (protectedForeground == null || protectedForeground.Length == 0)
             {
-                volumeRenderer.SetPropertyBlock(properties);
-                return;
+                SetForegroundMask(null, vp);
+                return false;
             }
             if (foregroundMaskShader == null) foregroundMaskShader = Shader.Find("Hidden/TapTap/LocalFog/ForegroundMask");
-            if (foregroundMaskShader == null || !foregroundMaskShader.isSupported) return;
+            if (foregroundMaskShader == null || !foregroundMaskShader.isSupported)
+            {
+                SetForegroundMask(null, vp);
+                return false;
+            }
             if (foregroundMaskMaterial == null)
                 foregroundMaskMaterial = new Material(foregroundMaskShader) { hideFlags = HideFlags.HideAndDontSave };
             int width = Mathf.Max(1, cam.scaledPixelWidth), height = Mathf.Max(1, cam.scaledPixelHeight);
@@ -52,38 +157,32 @@ namespace TapTap.Art.LocalFog
                 { name = "LocalFog Foreground Protection", hideFlags = HideFlags.HideAndDontSave, filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Clamp };
                 foregroundMask.Create();
             }
-            Matrix4x4 vp = GL.GetGPUProjectionMatrix(cam.projectionMatrix, true) * cam.worldToCameraMatrix;
             CommandBuffer cmd = CommandBufferPool.Get("LocalFog Foreground Protection");
-            cmd.SetRenderTarget(foregroundMask);
-            cmd.SetViewport(new Rect(0, 0, width, height));
-            cmd.ClearRenderTarget(false, true, Color.clear);
-            cmd.SetGlobalMatrix(maskVP, vp);
-            uniqueForeground.Clear();
-            foreach (Transform root in protectedForeground)
+            try
             {
-                if (root == null) continue;
-                foregroundRenderers.Clear();
-                root.GetComponentsInChildren<Renderer>(false, foregroundRenderers);
-                foreach (Renderer renderer in foregroundRenderers)
+                cmd.SetRenderTarget(foregroundMask);
+                cmd.SetViewport(new Rect(0, 0, width, height));
+                cmd.ClearRenderTarget(false, true, Color.clear);
+                cmd.SetGlobalMatrix(maskVP, vp);
+                uniqueForeground.Clear();
+                foreach (Transform root in protectedForeground)
                 {
-                    if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy || renderer == volumeRenderer
-                        || renderer.GetComponent<LocalFogVolume>() != null || !uniqueForeground.Add(renderer)
-                        || (cam.cullingMask & (1 << renderer.gameObject.layer)) == 0) continue;
-                    // This silhouette pass is for opaque foreground geometry, not particles or alpha sprites.
-                    if (!(renderer is MeshRenderer) && !(renderer is SkinnedMeshRenderer)) continue;
-                    var materials = renderer.sharedMaterials;
-                    for (int submesh = 0; submesh < materials.Length; ++submesh)
-                        cmd.DrawRenderer(renderer, foregroundMaskMaterial, submesh, 0);
+                    if (root == null) continue;
+                    foreach (ForegroundDraw draw in ForegroundRenderers(root, cam))
+                    {
+                        Renderer renderer = draw.Renderer;
+                        if (!uniqueForeground.Add(renderer)) continue;
+                        for (int submesh = 0; submesh < draw.MaterialCount; ++submesh)
+                            cmd.DrawRenderer(renderer, foregroundMaskMaterial, submesh, 0);
+                    }
                 }
+                // Restore the destination; URP will establish its own attachments before drawing the camera.
+                cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
+                context.ExecuteCommandBuffer(cmd);
             }
-            // Restore the destination; URP will establish its own attachments before drawing the camera.
-            cmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
-            context.ExecuteCommandBuffer(cmd);
-            CommandBufferPool.Release(cmd);
-            properties.SetTexture("_LocalFogForegroundMask", foregroundMask);
-            properties.SetMatrix(maskVP, vp);
-            properties.SetFloat("_LocalFogHasForegroundMask", 1);
-            volumeRenderer.SetPropertyBlock(properties);
+            finally { CommandBufferPool.Release(cmd); }
+            SetForegroundMask(foregroundMask, vp);
+            return true;
         }
         void ReleaseMaskTexture()
         {
@@ -109,15 +208,25 @@ namespace TapTap.Art.LocalFog
         static void BeginURP(ScriptableRenderContext context, Camera cam)
         {
             if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset)) return;
-            bool visible = false;
+            GeometryUtility.CalculateFrustumPlanes(cam, cameraPlanes);
+            cameraFogs.Clear();
+            renderedMasks.Clear();
+            foregroundPass++;
             foreach (var fog in active)
-                if (fog != null && fog.isActiveAndEnabled && (cam.cullingMask & (1 << fog.gameObject.layer)) != 0)
-                { visible = true; break; }
+                if (fog != null && fog.VisibleTo(cam)) cameraFogs.Add(fog);
             Shader.SetGlobalFloat(depthAvailable, 0);
-            if (!visible) return;
-            foreach (var fog in active)
-                if (fog != null && fog.isActiveAndEnabled && (cam.cullingMask & (1 << fog.gameObject.layer)) != 0)
-                    fog.RenderForegroundMask(context, cam);
+            if (cameraFogs.Count == 0) return;
+            Matrix4x4 vp = GL.GetGPUProjectionMatrix(cam.projectionMatrix, true) * cam.worldToCameraMatrix;
+            foreach (var fog in cameraFogs)
+            {
+                LocalFogVolume shared = null;
+                foreach (var owner in renderedMasks)
+                    if (SameForeground(owner, fog)) { shared = owner; break; }
+                if (shared != null)
+                    fog.SetForegroundMask(shared.foregroundMask, vp);
+                else if (fog.RenderForegroundMask(context, cam, vp))
+                    renderedMasks.Add(fog);
+            }
             if (cam.cameraType == CameraType.SceneView)
             {
                 // URP 12 always requests Scene View depth.
@@ -161,6 +270,12 @@ namespace TapTap.Art.LocalFog
             {
                 RenderPipelineManager.beginCameraRendering += BeginURP;
                 RenderPipelineManager.endCameraRendering += EndURP;
+#if UNITY_EDITOR
+                UnityEditor.EditorApplication.hierarchyChanged += InvalidateForegroundCaches;
+                UnityEditor.EditorApplication.projectChanged += InvalidateForegroundCaches;
+                UnityEditor.Undo.undoRedoPerformed += InvalidateForegroundCaches;
+                UnityEditor.ObjectChangeEvents.changesPublished += ObjectsChanged;
+#endif
             }
             active.Add(fog);
         }
@@ -170,6 +285,15 @@ namespace TapTap.Art.LocalFog
             if (active.Count != 0) return;
             RenderPipelineManager.beginCameraRendering -= BeginURP;
             RenderPipelineManager.endCameraRendering -= EndURP;
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.hierarchyChanged -= InvalidateForegroundCaches;
+            UnityEditor.EditorApplication.projectChanged -= InvalidateForegroundCaches;
+            UnityEditor.Undo.undoRedoPerformed -= InvalidateForegroundCaches;
+            UnityEditor.ObjectChangeEvents.changesPublished -= ObjectsChanged;
+#endif
+            InvalidateForegroundCaches();
+            cameraFogs.Clear();
+            renderedMasks.Clear();
             foreach (var pair in savedDepth)
                 if (pair.Key != null) pair.Key.requiresDepthOption = pair.Value;
             savedDepth.Clear();
@@ -187,7 +311,7 @@ namespace TapTap.Art.LocalFog
             Apply();
         }
         void OnDisable() { Camera.onPreCull -= PrepareCamera; Unregister(this); ReleaseForegroundMask(); }
-        void OnValidate() { Apply(); }
+        void OnValidate() { InvalidateForegroundCaches(); Apply(); }
         void Update() { Apply(); }
         void PrepareCamera(Camera cam)
         {
