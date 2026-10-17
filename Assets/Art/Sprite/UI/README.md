@@ -18,7 +18,7 @@
 
 - DOTween 使用独立时间更新，暂停后仍能播放。左图从上方滑入，退出时向左滑出；右侧标题、继续、主菜单、音量区按从上到下的顺序从右侧滑入/滑出。点击区域和滑条随所属行一起移动。
 - `PauseMenu` 的 `SlideDuration`（默认 0.48 秒）、`RowStagger`（0.065 秒）和 `FadeDuration`（0.4 秒）可在 Inspector 调整。退场期间再次按 Esc，会从当前动画位置平滑重新打开。
-- Panel 使用 `Assets/Art/UI/Panel.jpg`，材质把原图白边转换为透明度，与暗色遮罩一起淡入/淡出。已移除“ESC 返回游戏”文字。
+- Panel 使用纯色半透明底，与暗色遮罩一起淡入/淡出，不引用 `Assets/Art/UI/Panel.jpg`。已移除“ESC 返回游戏”文字。
 - `TapTapRenderer` 上的 `Pause Menu Blur` 在场景后处理完成后执行双向高斯模糊，Overlay 菜单保持清晰；强度跟随打开/关闭动画变化，关闭后跳过模糊渲染。如移植到不同 URP Renderer，需为该 Renderer 添加 `PauseBlurFeature` 并指定 `Hidden/TapTap/Pause Blur` shader。
 
 ## 音频

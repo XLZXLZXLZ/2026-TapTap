@@ -31,7 +31,6 @@ namespace TapTap.Editor
             ConfigureAudio(MusicPath);
             ConfigureAudio(ClickPath);
             ConfigureSprite("Assets/Art/UI/PauseButton.png");
-            ConfigureSprite("Assets/Art/UI/Panel.jpg");
             ConfigureBlur();
             var scene = EditorSceneManager.OpenScene(ScenePath);
             Canvas canvas = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<Canvas>(true)).First();
@@ -70,17 +69,8 @@ namespace TapTap.Editor
             backdrop.color = new Color(0.025f, 0.035f, 0.07f, 0.25f);
             CanvasGroup backdropGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
             Image panel = Rect("Panel Strip", content, Vector2.zero, new Vector2(2400, 1060)).gameObject.AddComponent<Image>();
-            panel.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Panel.jpg");
             panel.color = new Color(0.025f, 0.035f, 0.07f, 0.75f);
             panel.raycastTarget = false;
-            const string panelMaterialPath = "Assets/Art/Materials/UI/PausePanel.mat";
-            Material panelMaterial = AssetDatabase.LoadAssetAtPath<Material>(panelMaterialPath);
-            if (panelMaterial == null)
-            {
-                panelMaterial = new Material(Shader.Find("TapTap/UI/Pause Panel"));
-                AssetDatabase.CreateAsset(panelMaterial, panelMaterialPath);
-            }
-            panel.material = panelMaterial;
             CanvasGroup panelGroup = panel.gameObject.AddComponent<CanvasGroup>();
             RectTransform[] groups = new[] { "Left Instructions", "Title Row", "Resume Row", "Main Menu Row", "Audio Row" }
                 .Select(name => Rect(name, content, Vector2.zero, new Vector2(1920, 1080))).ToArray();
@@ -111,10 +101,11 @@ namespace TapTap.Editor
             Image icon = Rect("PauseButton", canvas.transform, new Vector2(-70, -76), new Vector2(72, 80)).gameObject.AddComponent<Image>();
             icon.rectTransform.anchorMin = icon.rectTransform.anchorMax = Vector2.one;
             icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/PauseButton.png");
+            icon.material = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Materials/UI/PauseIconOutline.mat");
             icon.preserveAspect = true;
-            Outline outline = icon.gameObject.AddComponent<Outline>();
-            outline.effectColor = new Color(0.85f, 0.93f, 1f, 0f);
-            outline.effectDistance = new Vector2(2f, -2f);
+            Outline outline = icon.gameObject.AddComponent<PauseIconOutline>();
+            outline.effectColor = new Color(1f, 1f, 1f, 0f);
+            outline.effectDistance = new Vector2(3f, -3f);
             icon.gameObject.AddComponent<PauseIconHover>();
             menu.OpenButton = icon.gameObject.AddComponent<Button>();
             menu.OpenButton.targetGraphic = icon;

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace TapTap
 {
-    [RequireComponent(typeof(Outline))]
+    [RequireComponent(typeof(PauseIconOutline))]
     public sealed class PauseIconHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
     {
         private Outline outline;
@@ -18,9 +18,9 @@ namespace TapTap
         private void Highlight(bool highlighted)
         {
             fade?.Kill();
-            fade = DOTween.To(() => outline.effectColor.a, SetAlpha, highlighted ? 0.95f : 0f, 0.13f).SetUpdate(true);
+            fade = DOTween.To(() => outline.effectColor.a, SetAlpha, highlighted ? 1f : 0f, 0.13f).SetUpdate(true);
         }
-        private void SetAlpha(float alpha) => outline.effectColor = new Color(0.85f, 0.93f, 1f, alpha);
+        private void SetAlpha(float alpha) => outline.effectColor = new Color(1f, 1f, 1f, alpha);
         private void OnDisable() { fade?.Kill(); if (outline != null) SetAlpha(0f); }
     }
 }
