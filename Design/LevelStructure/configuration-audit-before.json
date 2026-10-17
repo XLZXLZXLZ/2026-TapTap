@@ -1,0 +1,1645 @@
+{
+  "scope": "静态配置检查；不等同于 Unity 运行、碰撞或完整通关验证",
+  "level_count": 33,
+  "worlds": [
+    {
+      "name": "World_Character",
+      "issues": [],
+      "modules": [
+        {
+          "id": "e3d4dc65b67d431cb4a96331e6e6e586",
+          "sequence": 1,
+          "origin": {
+            "x": 11,
+            "y": 113
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_1.asset"
+        },
+        {
+          "id": "d8b0a52796e04e4bbddd92188c1c4808",
+          "sequence": 4,
+          "origin": {
+            "x": 40,
+            "y": 122
+          },
+          "source": "Assets/Runtime/Levels/Demo_LowerHead.asset"
+        },
+        {
+          "id": "a0cadc7204034720ab7eff930c366903",
+          "sequence": 3,
+          "origin": {
+            "x": 11,
+            "y": 96
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_2.asset"
+        },
+        {
+          "id": "76fbb97aa8144e238fbd9ae00d5f1283",
+          "sequence": 5,
+          "origin": {
+            "x": 53,
+            "y": 106
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_3.asset"
+        },
+        {
+          "id": "d739a00201634759a77941122e7335c5",
+          "sequence": 7,
+          "origin": {
+            "x": 22,
+            "y": 84
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_5Maybe.asset"
+        },
+        {
+          "id": "7d2861e155f94be491b6c5437f229f83",
+          "sequence": 2,
+          "origin": {
+            "x": 40,
+            "y": 95
+          },
+          "source": "Assets/Runtime/Levels/Demo_GroundConnect 1.asset"
+        },
+        {
+          "id": "d1f89e7af7a6404299db80c1d30b56cb",
+          "sequence": 6,
+          "origin": {
+            "x": 54,
+            "y": 84
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_4.asset"
+        },
+        {
+          "id": "704d4109545f4f288c9048b4c8a679a7",
+          "sequence": 10,
+          "origin": {
+            "x": 53,
+            "y": 48
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_6.asset"
+        },
+        {
+          "id": "30a4ad492bd142e8aaf02cc9e42103fc",
+          "sequence": 9,
+          "origin": {
+            "x": 22,
+            "y": 76
+          },
+          "source": "Assets/Runtime/Levels/Demo_PickHead.asset"
+        },
+        {
+          "id": "412005a821984653ab3b0a215fe811ba",
+          "sequence": 8,
+          "origin": {
+            "x": 57,
+            "y": 73
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_7.asset"
+        },
+        {
+          "id": "1249a37049554f77a3bd3cc1c1fbfe4e",
+          "sequence": 11,
+          "origin": {
+            "x": 5,
+            "y": 50
+          },
+          "source": "Assets/Runtime/Levels/Demo_DownPlatformOfHead.asset"
+        },
+        {
+          "id": "c56ef1126bb941f5aa90ad28f3b62dcd",
+          "sequence": 13,
+          "origin": {
+            "x": 40,
+            "y": 38
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_10.asset"
+        },
+        {
+          "id": "83f81c461527499dbef1314c6a6086a3",
+          "sequence": 15,
+          "origin": {
+            "x": 38,
+            "y": 26
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_13.asset"
+        },
+        {
+          "id": "8e53708b328042ad8235f2eac0808179",
+          "sequence": 12,
+          "origin": {
+            "x": 25,
+            "y": 38
+          },
+          "source": "Assets/Runtime/Levels/Demo_HighJump.asset"
+        },
+        {
+          "id": "58d3f3cac75f407a8c2b193aecebc6b9",
+          "sequence": 14,
+          "origin": {
+            "x": 10,
+            "y": 25
+          },
+          "source": "Assets/Runtime/Levels/Demo_HeadSpring.asset"
+        },
+        {
+          "id": "0d82da05cf0149f3a34b263f051f9da6",
+          "sequence": 17,
+          "origin": {
+            "x": 69,
+            "y": 26
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_14 1.asset"
+        },
+        {
+          "id": "16e4d0ba687846938cc39173dbe4c164",
+          "sequence": 18,
+          "origin": {
+            "x": 55,
+            "y": 8
+          },
+          "source": "Assets/Runtime/Levels/Level_New_15.asset"
+        },
+        {
+          "id": "debbcc0b7b4047a1baff7945de02234e",
+          "sequence": 19,
+          "origin": {
+            "x": 25,
+            "y": 17
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_16.asset"
+        },
+        {
+          "id": "1aa84240b1db41b4a30440c429a675a4",
+          "sequence": 16,
+          "origin": {
+            "x": 11,
+            "y": 8
+          },
+          "source": "Assets/Runtime/Levels/Level_New_17.asset"
+        },
+        {
+          "id": "58a00ac9703d478badf56eefbfbfe6d1",
+          "sequence": 20,
+          "origin": {
+            "x": 26,
+            "y": 4
+          },
+          "source": "Assets/Runtime/Levels/Level_New_18.asset"
+        },
+        {
+          "id": "08ac8d6efad7412dbd7487b0fb10f1cf",
+          "sequence": 21,
+          "origin": {
+            "x": 46,
+            "y": 70
+          },
+          "source": "Assets/Runtime/Levels/Level_Connect.asset"
+        },
+        {
+          "id": "ab62f0d55e154b5dbecafd8bfa6af962",
+          "sequence": 22,
+          "origin": {
+            "x": 5,
+            "y": 128
+          },
+          "source": "Assets/Runtime/Levels/Level_OutWay.asset"
+        }
+      ],
+      "scenes": [
+        {
+          "path": "Assets/Scenes/WorldMaps/World_Character_Play.unity",
+          "active": true,
+          "modules": [
+            {
+              "sequence": 1,
+              "issues": []
+            },
+            {
+              "sequence": 4,
+              "issues": []
+            },
+            {
+              "sequence": 3,
+              "issues": []
+            },
+            {
+              "sequence": 5,
+              "issues": []
+            },
+            {
+              "sequence": 7,
+              "issues": []
+            },
+            {
+              "sequence": 2,
+              "issues": []
+            },
+            {
+              "sequence": 6,
+              "issues": [
+                "场景显式覆盖为空/失效入口"
+              ]
+            },
+            {
+              "sequence": 10,
+              "issues": []
+            },
+            {
+              "sequence": 9,
+              "issues": []
+            },
+            {
+              "sequence": 8,
+              "issues": []
+            },
+            {
+              "sequence": 11,
+              "issues": []
+            },
+            {
+              "sequence": 13,
+              "issues": []
+            },
+            {
+              "sequence": 15,
+              "issues": []
+            },
+            {
+              "sequence": 12,
+              "issues": []
+            },
+            {
+              "sequence": 14,
+              "issues": []
+            },
+            {
+              "sequence": 17,
+              "issues": []
+            },
+            {
+              "sequence": 18,
+              "issues": []
+            },
+            {
+              "sequence": 19,
+              "issues": []
+            },
+            {
+              "sequence": 16,
+              "issues": []
+            },
+            {
+              "sequence": 20,
+              "issues": []
+            },
+            {
+              "sequence": 21,
+              "issues": []
+            },
+            {
+              "sequence": 22,
+              "issues": []
+            }
+          ]
+        },
+        {
+          "path": "Assets/Scenes/WorldMaps/World_Character_Play_Backup.unity",
+          "active": false,
+          "modules": [
+            {
+              "sequence": 1,
+              "issues": [
+                "m_LocalPosition.y 与大地图不一致"
+              ]
+            },
+            {
+              "sequence": 4,
+              "issues": []
+            },
+            {
+              "sequence": 3,
+              "issues": []
+            },
+            {
+              "sequence": 5,
+              "issues": []
+            },
+            {
+              "sequence": 7,
+              "issues": []
+            },
+            {
+              "sequence": 2,
+              "issues": []
+            },
+            {
+              "sequence": 6,
+              "issues": [
+                "场景显式覆盖为空/失效入口"
+              ]
+            },
+            {
+              "sequence": 10,
+              "issues": []
+            },
+            {
+              "sequence": 9,
+              "issues": []
+            },
+            {
+              "sequence": 8,
+              "issues": []
+            },
+            {
+              "sequence": 11,
+              "issues": []
+            },
+            {
+              "sequence": 13,
+              "issues": []
+            },
+            {
+              "sequence": 15,
+              "issues": []
+            },
+            {
+              "sequence": 12,
+              "issues": []
+            },
+            {
+              "sequence": 14,
+              "issues": []
+            },
+            {
+              "sequence": 17,
+              "issues": []
+            },
+            {
+              "sequence": 18,
+              "issues": []
+            },
+            {
+              "sequence": 19,
+              "issues": []
+            },
+            {
+              "sequence": 16,
+              "issues": []
+            },
+            {
+              "sequence": 20,
+              "issues": []
+            },
+            {
+              "sequence": 21,
+              "issues": []
+            },
+            {
+              "sequence": 22,
+              "issues": [
+                "关卡实例数量 0，应为 1"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "Assets/Scenes/WorldMaps/World_Character_Play_BackupFqh.unity",
+          "active": false,
+          "modules": [
+            {
+              "sequence": 1,
+              "issues": [
+                "m_LocalPosition.y 与大地图不一致"
+              ]
+            },
+            {
+              "sequence": 4,
+              "issues": []
+            },
+            {
+              "sequence": 3,
+              "issues": []
+            },
+            {
+              "sequence": 5,
+              "issues": []
+            },
+            {
+              "sequence": 7,
+              "issues": []
+            },
+            {
+              "sequence": 2,
+              "issues": []
+            },
+            {
+              "sequence": 6,
+              "issues": [
+                "场景显式覆盖为空/失效入口"
+              ]
+            },
+            {
+              "sequence": 10,
+              "issues": []
+            },
+            {
+              "sequence": 9,
+              "issues": []
+            },
+            {
+              "sequence": 8,
+              "issues": []
+            },
+            {
+              "sequence": 11,
+              "issues": []
+            },
+            {
+              "sequence": 13,
+              "issues": []
+            },
+            {
+              "sequence": 15,
+              "issues": []
+            },
+            {
+              "sequence": 12,
+              "issues": []
+            },
+            {
+              "sequence": 14,
+              "issues": []
+            },
+            {
+              "sequence": 17,
+              "issues": []
+            },
+            {
+              "sequence": 18,
+              "issues": []
+            },
+            {
+              "sequence": 19,
+              "issues": []
+            },
+            {
+              "sequence": 16,
+              "issues": []
+            },
+            {
+              "sequence": 20,
+              "issues": []
+            },
+            {
+              "sequence": 21,
+              "issues": []
+            },
+            {
+              "sequence": 22,
+              "issues": [
+                "关卡实例数量 0，应为 1"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "Assets/Scenes/WorldMaps/World_Character_Play_BackupHYY.unity",
+          "active": false,
+          "modules": [
+            {
+              "sequence": 1,
+              "issues": [
+                "m_LocalPosition.y 与大地图不一致"
+              ]
+            },
+            {
+              "sequence": 4,
+              "issues": []
+            },
+            {
+              "sequence": 3,
+              "issues": []
+            },
+            {
+              "sequence": 5,
+              "issues": []
+            },
+            {
+              "sequence": 7,
+              "issues": []
+            },
+            {
+              "sequence": 2,
+              "issues": []
+            },
+            {
+              "sequence": 6,
+              "issues": [
+                "场景显式覆盖为空/失效入口"
+              ]
+            },
+            {
+              "sequence": 10,
+              "issues": []
+            },
+            {
+              "sequence": 9,
+              "issues": []
+            },
+            {
+              "sequence": 8,
+              "issues": []
+            },
+            {
+              "sequence": 11,
+              "issues": []
+            },
+            {
+              "sequence": 13,
+              "issues": []
+            },
+            {
+              "sequence": 15,
+              "issues": []
+            },
+            {
+              "sequence": 12,
+              "issues": []
+            },
+            {
+              "sequence": 14,
+              "issues": []
+            },
+            {
+              "sequence": 17,
+              "issues": []
+            },
+            {
+              "sequence": 18,
+              "issues": []
+            },
+            {
+              "sequence": 19,
+              "issues": []
+            },
+            {
+              "sequence": 16,
+              "issues": []
+            },
+            {
+              "sequence": 20,
+              "issues": []
+            },
+            {
+              "sequence": 21,
+              "issues": []
+            },
+            {
+              "sequence": 22,
+              "issues": [
+                "关卡实例数量 0，应为 1"
+              ]
+            }
+          ]
+        },
+        {
+          "path": "Assets/Scenes/WorldMaps/World_Character_Play_CLX.unity",
+          "active": false,
+          "modules": [
+            {
+              "sequence": 1,
+              "issues": [
+                "m_LocalPosition.y 与大地图不一致"
+              ]
+            },
+            {
+              "sequence": 4,
+              "issues": []
+            },
+            {
+              "sequence": 3,
+              "issues": []
+            },
+            {
+              "sequence": 5,
+              "issues": []
+            },
+            {
+              "sequence": 7,
+              "issues": []
+            },
+            {
+              "sequence": 2,
+              "issues": []
+            },
+            {
+              "sequence": 6,
+              "issues": [
+                "场景显式覆盖为空/失效入口"
+              ]
+            },
+            {
+              "sequence": 10,
+              "issues": []
+            },
+            {
+              "sequence": 9,
+              "issues": []
+            },
+            {
+              "sequence": 8,
+              "issues": []
+            },
+            {
+              "sequence": 11,
+              "issues": []
+            },
+            {
+              "sequence": 13,
+              "issues": []
+            },
+            {
+              "sequence": 15,
+              "issues": []
+            },
+            {
+              "sequence": 12,
+              "issues": []
+            },
+            {
+              "sequence": 14,
+              "issues": []
+            },
+            {
+              "sequence": 17,
+              "issues": []
+            },
+            {
+              "sequence": 18,
+              "issues": []
+            },
+            {
+              "sequence": 19,
+              "issues": []
+            },
+            {
+              "sequence": 16,
+              "issues": []
+            },
+            {
+              "sequence": 20,
+              "issues": []
+            },
+            {
+              "sequence": 21,
+              "issues": []
+            },
+            {
+              "sequence": 22,
+              "issues": [
+                "关卡实例数量 0，应为 1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "World_Heart",
+      "issues": [
+        "未配置或丢失游玩场景"
+      ],
+      "modules": [
+        {
+          "id": "b1836cc3b9244c3d992460fe381d24c4",
+          "sequence": 1,
+          "origin": {
+            "x": 22,
+            "y": 71
+          },
+          "source": "Assets/Runtime/Levels/Demo_DownPlatformOfHead.asset"
+        },
+        {
+          "id": "c1fddcffbfaf4f2aa19ef6440fcc81d3",
+          "sequence": 2,
+          "origin": {
+            "x": 38,
+            "y": 128
+          },
+          "source": "Assets/Runtime/Levels/Demo_Hanging.asset"
+        },
+        {
+          "id": "90c40e05e0b5430e9caca6b9231171ed",
+          "sequence": 3,
+          "origin": {
+            "x": 118,
+            "y": 128
+          },
+          "source": "Assets/Runtime/Levels/Demo_Hanging.asset"
+        },
+        {
+          "id": "cb409c8c99544199807c55cf7ce37930",
+          "sequence": 4,
+          "origin": {
+            "x": 68,
+            "y": 84
+          },
+          "source": "Assets/Runtime/Levels/Level_Test_10.asset"
+        }
+      ],
+      "scenes": []
+    }
+  ],
+  "levels": [
+    {
+      "name": "Demo_DownPlatformOfHead",
+      "source": "Assets/Runtime/Levels/Demo_DownPlatformOfHead.asset",
+      "checkpoints": [
+        {
+          "id": "9be95f5693034a5bb1a213cdd73022f3",
+          "cell": {
+            "x": 2,
+            "y": 11
+          }
+        }
+      ],
+      "entry_id": "9be95f5693034a5bb1a213cdd73022f3",
+      "spawn_local": [
+        2.5,
+        11.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_DownPlatformOfHead.prefab",
+      "prefab_entry": 6151494958745092613,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 11
+        },
+        {
+          "world": "World_Heart",
+          "sequence": 1
+        }
+      ]
+    },
+    {
+      "name": "Demo_GroundConnect 1",
+      "source": "Assets/Runtime/Levels/Demo_GroundConnect 1.asset",
+      "checkpoints": [
+        {
+          "id": "86cc11524f3f4cf69b259f36c9d8e599",
+          "cell": {
+            "x": 3,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "86cc11524f3f4cf69b259f36c9d8e599",
+      "spawn_local": [
+        3.5,
+        1.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_GroundConnect.prefab",
+      "prefab_entry": 5425411950979558449,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 2
+        }
+      ]
+    },
+    {
+      "name": "Demo_Hanging",
+      "source": "Assets/Runtime/Levels/Demo_Hanging.asset",
+      "checkpoints": [
+        {
+          "id": "4df3bcb7819d4f5a9fcdd84473b11456",
+          "cell": {
+            "x": 2,
+            "y": 17
+          }
+        }
+      ],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_Hanging.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Heart",
+          "sequence": 2
+        },
+        {
+          "world": "World_Heart",
+          "sequence": 3
+        }
+      ]
+    },
+    {
+      "name": "Demo_HeadOnGround",
+      "source": "Assets/Runtime/Levels/Demo_HeadOnGround.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 0,
+      "prefab": null,
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "未生成或丢失输出 Prefab"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": []
+    },
+    {
+      "name": "Demo_HeadSpring",
+      "source": "Assets/Runtime/Levels/Demo_HeadSpring.asset",
+      "checkpoints": [
+        {
+          "id": "13dd8338f3aa4879b7810f81c470a2c4",
+          "cell": {
+            "x": 2,
+            "y": 2
+          }
+        }
+      ],
+      "entry_id": "13dd8338f3aa4879b7810f81c470a2c4",
+      "spawn_local": [
+        2.5,
+        2.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_HeadSpring.prefab",
+      "prefab_entry": 3419540579437086948,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 14
+        }
+      ]
+    },
+    {
+      "name": "Demo_HighJump",
+      "source": "Assets/Runtime/Levels/Demo_HighJump.asset",
+      "checkpoints": [
+        {
+          "id": "7ccd419793dc41bab9ec4adb37d3904b",
+          "cell": {
+            "x": 2,
+            "y": 8
+          }
+        }
+      ],
+      "entry_id": "7ccd419793dc41bab9ec4adb37d3904b",
+      "spawn_local": [
+        2.5,
+        8.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_HighJump.prefab",
+      "prefab_entry": 7403223184862799170,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 12
+        }
+      ]
+    },
+    {
+      "name": "Demo_LowerHead",
+      "source": "Assets/Runtime/Levels/Demo_LowerHead.asset",
+      "checkpoints": [
+        {
+          "id": "bd65203c3b0840e78b7966a007da98d0",
+          "cell": {
+            "x": 3,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "bd65203c3b0840e78b7966a007da98d0",
+      "spawn_local": [
+        3.5,
+        1.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_LowerHead.prefab",
+      "prefab_entry": 3861778016716408975,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 4
+        }
+      ]
+    },
+    {
+      "name": "Demo_PickHead",
+      "source": "Assets/Runtime/Levels/Demo_PickHead.asset",
+      "checkpoints": [
+        {
+          "id": "d7aedefbfc4845ae8ab07890a16f8d6b",
+          "cell": {
+            "x": 30,
+            "y": 5
+          }
+        }
+      ],
+      "entry_id": "d7aedefbfc4845ae8ab07890a16f8d6b",
+      "spawn_local": [
+        30.5,
+        5.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Demo_PickHead.prefab",
+      "prefab_entry": 7987304962573673678,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 9
+        }
+      ]
+    },
+    {
+      "name": "Level_Connect",
+      "source": "Assets/Runtime/Levels/Level_Connect.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 0,
+      "prefab": "Assets/Prefabs/Levels/Level_Connect.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 21
+        }
+      ]
+    },
+    {
+      "name": "Level_DEMO",
+      "source": "Assets/Runtime/Levels/Level_DEMO.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 0,
+      "prefab": null,
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "未生成或丢失输出 Prefab"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": []
+    },
+    {
+      "name": "Level_Example",
+      "source": "Assets/Runtime/Levels/Level_Example.asset",
+      "checkpoints": [
+        {
+          "id": "1df63e4c4f9c4057994638b7f9c8dcfb",
+          "cell": {
+            "x": 2,
+            "y": 4
+          }
+        }
+      ],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Example.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "放置 ID 为空或重复",
+        "画笔引用缺失",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [],
+      "worlds": []
+    },
+    {
+      "name": "Level_Mechanisms",
+      "source": "Assets/Runtime/Levels/Level_Mechanisms.asset",
+      "checkpoints": [
+        {
+          "id": "7dd6138945e747ba869e845c4f37212d",
+          "cell": {
+            "x": 2,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "7dd6138945e747ba869e845c4f37212d",
+      "spawn_local": [
+        2.5,
+        1.45
+      ],
+      "endpoints": 0,
+      "prefab": "Assets/Prefabs/Levels/Level_Mechanisms.prefab",
+      "prefab_entry": 7802633434235225731,
+      "issues": [],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": []
+    },
+    {
+      "name": "Level_New_15",
+      "source": "Assets/Runtime/Levels/Level_New_15.asset",
+      "checkpoints": [
+        {
+          "id": "ecae39f057e14efebe61e2c1c0e3fb92",
+          "cell": {
+            "x": 13,
+            "y": 2
+          }
+        }
+      ],
+      "entry_id": "ecae39f057e14efebe61e2c1c0e3fb92",
+      "spawn_local": [
+        13.5,
+        2.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_New_15.prefab",
+      "prefab_entry": 3044831930314427454,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 18
+        }
+      ]
+    },
+    {
+      "name": "Level_New_17",
+      "source": "Assets/Runtime/Levels/Level_New_17.asset",
+      "checkpoints": [
+        {
+          "id": "6cc0838f17f94e5ba615e9ac10081a9a",
+          "cell": {
+            "x": 3,
+            "y": 14
+          }
+        }
+      ],
+      "entry_id": "6cc0838f17f94e5ba615e9ac10081a9a",
+      "spawn_local": [
+        3.5,
+        14.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_New_17.prefab",
+      "prefab_entry": 7873137168279894730,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 16
+        }
+      ]
+    },
+    {
+      "name": "Level_New_18",
+      "source": "Assets/Runtime/Levels/Level_New_18.asset",
+      "checkpoints": [
+        {
+          "id": "68f6497e6097460e8e68c1758e3b3fe1",
+          "cell": {
+            "x": 4,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "68f6497e6097460e8e68c1758e3b3fe1",
+      "spawn_local": [
+        4.5,
+        1.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_New_18.prefab",
+      "prefab_entry": 608507467238528589,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 20
+        }
+      ]
+    },
+    {
+      "name": "Level_New——xxx",
+      "source": "Assets/Runtime/Levels/Level_New——xxx.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 1,
+      "prefab": null,
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "未生成或丢失输出 Prefab"
+      ],
+      "warnings": [],
+      "worlds": []
+    },
+    {
+      "name": "Level_OutWay",
+      "source": "Assets/Runtime/Levels/Level_OutWay.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 0,
+      "prefab": "Assets/Prefabs/Levels/Level_OutWay.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 22
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_1",
+      "source": "Assets/Runtime/Levels/Level_Test_1.asset",
+      "checkpoints": [
+        {
+          "id": "6e6acc225f8340c9992e86009a187762",
+          "cell": {
+            "x": 2,
+            "y": 4
+          }
+        }
+      ],
+      "entry_id": "6e6acc225f8340c9992e86009a187762",
+      "spawn_local": [
+        2.5,
+        4.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_1.prefab",
+      "prefab_entry": 546888244798576747,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 1
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_10",
+      "source": "Assets/Runtime/Levels/Level_Test_10.asset",
+      "checkpoints": [
+        {
+          "id": "f585509b34304137b03d3b41e71ba3d2",
+          "cell": {
+            "x": 26,
+            "y": 2
+          }
+        }
+      ],
+      "entry_id": "f585509b34304137b03d3b41e71ba3d2",
+      "spawn_local": [
+        26.5,
+        2.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_10.prefab",
+      "prefab_entry": 8960449604842368853,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 13
+        },
+        {
+          "world": "World_Heart",
+          "sequence": 4
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_11",
+      "source": "Assets/Runtime/Levels/Level_Test_11.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 0,
+      "prefab": null,
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "未生成或丢失输出 Prefab"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": []
+    },
+    {
+      "name": "Level_Test_13",
+      "source": "Assets/Runtime/Levels/Level_Test_13.asset",
+      "checkpoints": [
+        {
+          "id": "c6c7872aa6314ac2aab566e32e0f701b",
+          "cell": {
+            "x": 6,
+            "y": 9
+          }
+        }
+      ],
+      "entry_id": "c6c7872aa6314ac2aab566e32e0f701b",
+      "spawn_local": [
+        6.5,
+        9.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_13.prefab",
+      "prefab_entry": 2251590679649643688,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 15
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_14 1",
+      "source": "Assets/Runtime/Levels/Level_Test_14 1.asset",
+      "checkpoints": [
+        {
+          "id": "17970f065a204dbea1cf617e678117b9",
+          "cell": {
+            "x": 3,
+            "y": 19
+          }
+        }
+      ],
+      "entry_id": "17970f065a204dbea1cf617e678117b9",
+      "spawn_local": [
+        3.5,
+        19.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_14 1.prefab",
+      "prefab_entry": 7048114529600345552,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 17
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_14",
+      "source": "Assets/Runtime/Levels/Level_Test_14.asset",
+      "checkpoints": [
+        {
+          "id": "e4a84476445543b6a4cc6f46c2f97207",
+          "cell": {
+            "x": 20,
+            "y": 6
+          }
+        },
+        {
+          "id": "8383285db51b476db4d7aaab0ce35b21",
+          "cell": {
+            "x": 3,
+            "y": 3
+          }
+        }
+      ],
+      "entry_id": "8383285db51b476db4d7aaab0ce35b21",
+      "spawn_local": [
+        3.5,
+        3.45
+      ],
+      "endpoints": 0,
+      "prefab": null,
+      "prefab_entry": 0,
+      "issues": [
+        "未生成或丢失输出 Prefab"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": []
+    },
+    {
+      "name": "Level_Test_16",
+      "source": "Assets/Runtime/Levels/Level_Test_16.asset",
+      "checkpoints": [
+        {
+          "id": "1b5ca89e2f5246ac85687d2d67a63ebc",
+          "cell": {
+            "x": 18,
+            "y": 0
+          }
+        }
+      ],
+      "entry_id": "1b5ca89e2f5246ac85687d2d67a63ebc",
+      "spawn_local": [
+        18.5,
+        0.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_16.prefab",
+      "prefab_entry": 2835188440437527568,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 19
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_2",
+      "source": "Assets/Runtime/Levels/Level_Test_2.asset",
+      "checkpoints": [
+        {
+          "id": "fb09e9cbd6834e61ac885637123b23fb",
+          "cell": {
+            "x": 2,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "fb09e9cbd6834e61ac885637123b23fb",
+      "spawn_local": [
+        2.5,
+        1.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_2 1.prefab",
+      "prefab_entry": 6827367966950165416,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 3
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_3",
+      "source": "Assets/Runtime/Levels/Level_Test_3.asset",
+      "checkpoints": [
+        {
+          "id": "4e3d35f02a4747ba93fc517e7beed6a7",
+          "cell": {
+            "x": 2,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "4e3d35f02a4747ba93fc517e7beed6a7",
+      "spawn_local": [
+        2.5,
+        1.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_3.prefab",
+      "prefab_entry": 4036495479285554967,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 5
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_4",
+      "source": "Assets/Runtime/Levels/Level_Test_4.asset",
+      "checkpoints": [
+        {
+          "id": "91c71c1d571e4e368ce3210ddb97a6f4",
+          "cell": {
+            "x": 22,
+            "y": 2
+          }
+        }
+      ],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test-4.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 6
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_5Maybe",
+      "source": "Assets/Runtime/Levels/Level_Test_5Maybe.asset",
+      "checkpoints": [
+        {
+          "id": "67300bbd2e8249c885369cb8837fa98b",
+          "cell": {
+            "x": 49,
+            "y": 4
+          }
+        }
+      ],
+      "entry_id": "67300bbd2e8249c885369cb8837fa98b",
+      "spawn_local": [
+        49.5,
+        4.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_5.prefab",
+      "prefab_entry": 6796091635784131469,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 7
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_6",
+      "source": "Assets/Runtime/Levels/Level_Test_6.asset",
+      "checkpoints": [
+        {
+          "id": "6c8c5a9a97da4a74b145f8a50286cb60",
+          "cell": {
+            "x": 29,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": "6c8c5a9a97da4a74b145f8a50286cb60",
+      "spawn_local": [
+        29.5,
+        1.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_6.prefab",
+      "prefab_entry": 3512666598718689961,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 10
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_7",
+      "source": "Assets/Runtime/Levels/Level_Test_7.asset",
+      "checkpoints": [
+        {
+          "id": "4c7f08e245244413a905228522a7eea1",
+          "cell": {
+            "x": 2,
+            "y": 3
+          }
+        }
+      ],
+      "entry_id": "4c7f08e245244413a905228522a7eea1",
+      "spawn_local": [
+        2.5,
+        3.45
+      ],
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_7.prefab",
+      "prefab_entry": 2536463914653833086,
+      "issues": [],
+      "warnings": [],
+      "worlds": [
+        {
+          "world": "World_Character",
+          "sequence": 8
+        }
+      ]
+    },
+    {
+      "name": "Level_Test_8",
+      "source": "Assets/Runtime/Levels/Level_Test_8.asset",
+      "checkpoints": [
+        {
+          "id": "5f534beed1e44d54814318b8b0736472",
+          "cell": {
+            "x": 13,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_8.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [],
+      "worlds": []
+    },
+    {
+      "name": "Level_Test_9",
+      "source": "Assets/Runtime/Levels/Level_Test_9.asset",
+      "checkpoints": [
+        {
+          "id": "10d5c3dbe17940f2aa7d03310d3555f9",
+          "cell": {
+            "x": 4,
+            "y": 1
+          }
+        }
+      ],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 1,
+      "prefab": "Assets/Prefabs/Levels/Level_Test_9.prefab",
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "生成 Prefab 未绑定入口"
+      ],
+      "warnings": [],
+      "worlds": []
+    },
+    {
+      "name": "Test_Level_13",
+      "source": "Assets/Runtime/Levels/Test_Level_13.asset",
+      "checkpoints": [],
+      "entry_id": null,
+      "spawn_local": null,
+      "endpoints": 0,
+      "prefab": null,
+      "prefab_entry": 0,
+      "issues": [
+        "未指定入口",
+        "未生成或丢失输出 Prefab"
+      ],
+      "warnings": [
+        "无终点标记，需确认是否为连接/演示关"
+      ],
+      "worlds": []
+    }
+  ]
+}

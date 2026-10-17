@@ -52,7 +52,7 @@ MonoBehaviour:
   Source: {fileID: 11400000, guid: 2bcadc27f5798e04982c8492385de60b, type: 2}
   WorldModuleId: 
   SequenceNumber: 0
-  EntryCheckpoint: {fileID: 0}
+  EntryCheckpoint: {fileID: 900000000000000006}
   cameraSettings:
     HasPreset: 0
     LocalPosition: {x: 16, y: 9, z: -30}
@@ -53301,3 +53301,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5991610623865867437, guid: f2b6c02bc0a19de4880ad1e839be4e17, type: 3}
   m_PrefabInstance: {fileID: 9207636930862040615}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &900000000000000006 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3995675685379159427, guid: abcec81038fbb55438efe258c7687acb, type: 3}
+  m_PrefabInstance: {fileID: 4569400601902668963}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a41ffc517044924096617ed7585b3bf, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
