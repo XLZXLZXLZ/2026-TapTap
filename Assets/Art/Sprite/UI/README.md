@@ -2,7 +2,8 @@
 
 ## 使用
 
-- `World_Character_Play.unity` 已放入 `Assets/Prefabs/UI/PauseMenu.prefab` 的关联实例。运行后点击右上角纸张图标或按 **Esc** 打开菜单，再按 **Esc** 或点击“继续游戏”关闭。图标悬停时淡入浅色描边。
+- `World_Character_Play.unity` 已放入 `Assets/Prefabs/UI/PauseMenu.prefab` 的关联实例。运行后点击右上角纸张图标或按 **Esc** 打开菜单，再按 **Esc** 或点击“继续游戏”关闭。
+- 按钮、入口图标及滑条手柄使用 `UIInteractionScale`：悬停放大至 105%，按下缩小至 95%，0.1 秒平滑过渡；暂停时也能播放。所有控件关闭颜色过渡，自动选中“继续游戏”和退场禁用交互均保持原色。按钮美术以实际按钮中心缩放，点击区域保持固定；滑条只缩放手柄，拖动范围不变。
 - “主菜单”优先进入当前大世界配置的选关场景；普通场景使用 `PauseMenu.MainMenuScenePath`，默认是 `World_Character_Select`。发布时将目标场景加入 Build Settings。
 - 音乐和音效滑条分别控制 BGM 与菜单音效。调整音效时播放试听声；音量会保存在 PlayerPrefs 中。BGM 在菜单关闭、游戏暂停和切换场景时继续播放。
 
@@ -32,3 +33,5 @@
 `Tools > TapTap > UI > Build Fqh Pause Menu Prefab` 可从 Fqh 中的 01–05 美术层重新整理并保存 Prefab，并确保目标场景已放入实例、Renderer 已接入模糊。该命令会重新生成控件布局，应在需要重建时使用，不会在打开 Unity 时自动执行。
 
 `TapTap.Editor.PauseMenuRegressionTests.RunBatch` 用于隔离项目的 Unity batchmode 回归，覆盖暂停/恢复、输入屏蔽、按钮命中、音量与保存、无 EventSystem 移植、重复实例、实际场景切换，并输出 16:9 和 5:4 预览图到 `Logs/PauseMenu`。
+
+`TapTap.Editor.PauseMenuRegressionTests.RunInteractionBatch` 在空场景加载当前 Prefab，专项检查选中、悬停、按压、移出、禁用、隐藏及重新打开的颜色与缩放，验证暂停时的独立时间动画、实际退场和中断退场；不依赖场景或模糊渲染配置。

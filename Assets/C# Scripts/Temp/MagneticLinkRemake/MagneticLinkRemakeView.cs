@@ -10,12 +10,13 @@ namespace TapTap.MagneticLinkRemake
         [SerializeField] private float forwardOffset = -0.08f;
         [SerializeField, Min(0.01f)] private float fadeInDuration = 0.1f;
         [SerializeField, Min(0.01f)] private float fadeOutDuration = 0.28f;
+        [SerializeField, Min(0.01f)] private float stateBlendDuration = 0.15f;
         private PlayerController player;
         private PlayerView playerView;
         private MagneticConnectionView previous;
         private bool previousActive;
         private FoldedMagneticLink effect;
-        private float alpha, tension;
+        private float alpha, tension, activation, distant;
         private double lastClock;
         private bool hasClock;
         private Vector3 lastFrom, lastTo;
@@ -57,22 +58,41 @@ namespace TapTap.MagneticLinkRemake
                 previousActive = previous.gameObject.activeSelf;
                 previous.gameObject.SetActive(false);
             }
-            alpha = tension = 0f;
+            alpha = tension = activation = distant = 0f;
             hasClock = false;
             hasEndpoints = false;
         }
 
         private void LateUpdate()
         {
-            if (effect == null || !effect.Ready || player == null || player.Body == null || player.Head == null) return;
-            MovableEntity body = player.Body, head = player.Head;
             double clock = RewindManager.DrivesSimulation ? RewindManager.Current.SimulationTime : Time.timeAsDouble;
+            RefreshPresentation(clock, RewindManager.Rewinding);
+        }
+
+        public void RefreshPresentation(double clock, bool rewinding)
+        {
+            if (effect == null || !effect.Ready || player == null || player.Config == null
+                || player.Body == null || player.Head == null) return;
+            MovableEntity body = player.Body, head = player.Head;
             float dt = hasClock ? Mathf.Min(0.1f, (float)System.Math.Abs(clock - lastClock)) : 0f;
             lastClock = clock;
             hasClock = true;
-            bool visible = player.isActiveAndEnabled && player.HasMagneticConnection
-                && player.Phase != PlayerPhase.Joined && !body.IsReturning && !head.IsReturning
-                && (playerView == null || !playerView.ExitPresentation);
+            WorldMapProgression world = WorldMapProgression.Current;
+            bool transitioning = world != null && world.gameObject.scene == gameObject.scene
+                && (world.IsTransitioning || world.IsComplete);
+            if (transitioning || (playerView != null && playerView.ExitPresentation))
+            {
+                // Completion freezes simulation time before the exit walk starts. A simulation-
+                // timed fade would retain the cached world-space span throughout the cinematic.
+                alpha = tension = activation = distant = 0f;
+                hasEndpoints = false;
+                effect.Clear();
+                return;
+            }
+            bool connected = player.HasMagneticConnection;
+            bool preview = player.Phase == PlayerPhase.Detached && player.CanRecall;
+            bool visible = player.isActiveAndEnabled && (connected || preview)
+                && player.Phase != PlayerPhase.Joined && !body.IsReturning && !head.IsReturning;
             float unit = body.Motor.Size.x / Mathf.Max(0.01f, body.Motor.Collider.size.x);
             Transform lower = body.Visual != null ? body.Visual : body.transform;
             Transform upper = head.Visual != null ? head.Visual : head.transform;
@@ -87,7 +107,7 @@ namespace TapTap.MagneticLinkRemake
                 lastTo = to;
                 hasEndpoints = true;
             }
-            else if (hasEndpoints && !RewindManager.Rewinding)
+            else if (hasEndpoints && !rewinding)
             {
                 // Joining/respawning can collapse or teleport the endpoints before fading finishes.
                 // Let the last valid span dissipate instead of hitting the renderer's short-span cutoff.
@@ -95,18 +115,31 @@ namespace TapTap.MagneticLinkRemake
                 to = lastTo;
             }
             bool pulling = player.Phase == PlayerPhase.Pulling;
-            if (RewindManager.Rewinding)
+            // Pulling retains the classification captured by gameplay at activation.
+            bool distantTarget = pulling ? player.IsDistantPull
+                : head.Motor.Position.y - body.Motor.Position.y > player.Config.ToWorld(player.Config.DistantThreshold);
+            if (rewinding)
             {
                 alpha = visible ? 1f : 0f;
                 tension = pulling ? 1f : 0f;
+                activation = connected ? 1f : 0f;
+                distant = distantTarget ? 1f : 0f;
             }
             else
             {
                 float duration = visible ? fadeInDuration : fadeOutDuration;
                 alpha = Mathf.MoveTowards(alpha, visible ? 1f : 0f, dt / Mathf.Max(0.01f, duration));
-                tension = Mathf.MoveTowards(tension, pulling ? 1f : 0f, dt * 7f);
+                if (visible)
+                {
+                    float blend = dt / Mathf.Max(0.01f, stateBlendDuration);
+                    activation = Mathf.MoveTowards(activation, connected ? 1f : 0f, blend);
+                    distant = Mathf.MoveTowards(distant, distantTarget ? 1f : 0f, blend);
+                    tension = Mathf.MoveTowards(tension, pulling ? 1f : 0f, dt * 7f);
+                }
+                // Preserve the last style while a disconnected/dead span dissipates.
             }
-            effect.Render(from, to, Mathf.SmoothStep(0f, 1f, alpha), tension, clock, unit);
+            effect.Render(from, to, Mathf.SmoothStep(0f, 1f, alpha), tension, clock, unit,
+                Mathf.SmoothStep(0f, 1f, activation), Mathf.SmoothStep(0f, 1f, distant));
         }
 
         private void OnDisable()

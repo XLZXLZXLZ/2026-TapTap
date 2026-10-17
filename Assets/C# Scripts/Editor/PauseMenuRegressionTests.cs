@@ -20,8 +20,9 @@ namespace TapTap.Editor
     public static class PauseMenuRegressionTests
     {
         private const string Pending = "TapTap.PauseMenuRegression.Pending";
+        private const string InteractionOnly = Pending + ".InteractionOnly";
         private static int stage, lastFrame, captureFrame;
-        private static double deadline;
+        private static double deadline, hoverStarted;
         private static string Results => Path.Combine(Application.dataPath, "../Logs/PauseMenu/results.txt");
 
         static PauseMenuRegressionTests()
@@ -32,8 +33,84 @@ namespace TapTap.Editor
                 stage = 0;
                 lastFrame = -1;
                 deadline = EditorApplication.timeSinceStartup + 90;
-                EditorApplication.update += Tick;
+                if (SessionState.GetBool(InteractionOnly, false)) EditorApplication.update += TickInteraction;
+                else EditorApplication.update += Tick;
             };
+        }
+
+        public static void RunInteractionBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("Run in an isolated batch project.");
+            Directory.CreateDirectory(Path.GetDirectoryName(Results));
+            File.WriteAllText(Results, "");
+            SavePreference(MenuAudio.MusicPreference, "Music");
+            SavePreference(MenuAudio.EffectsPreference, "Effects");
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuAssets.PrefabPath));
+            SessionState.SetBool(InteractionOnly, true);
+            SessionState.SetBool(Pending, true);
+            EditorApplication.isPlaying = true;
+        }
+
+        private static void TickInteraction()
+        {
+            try
+            {
+                if (EditorApplication.timeSinceStartup > deadline) throw new TimeoutException("Interaction regression timed out");
+                if (!EditorApplication.isPlaying || EditorApplication.isCompiling || Time.frameCount == lastFrame) return;
+                lastFrame = Time.frameCount;
+                PauseMenu menu = PauseMenu.Current;
+                if (menu == null) return;
+                if (stage == 0)
+                {
+                    CheckInteraction(menu.OpenButton, null);
+                    Time.timeScale = 2f;
+                    Check(menu.Open(), "Menu failed to open");
+                    Advance(menu, 99f);
+                    Check(EventSystem.current.currentSelectedGameObject == menu.ResumeButton.gameObject, "Keyboard selection lost");
+                    foreach (Selectable control in menu.Content.GetComponentsInChildren<Selectable>())
+                    {
+                        Check(control.transition == Selectable.Transition.None, control.name + " has color transitions");
+                        Near(control.GetComponent<UIInteractionScale>().Target.localScale.x, 1f, control.name + " initial scale");
+                        CheckInteraction(control, menu.ContentGroup);
+                    }
+                    menu.ResumeButton.GetComponent<UIInteractionScale>().OnPointerEnter(new PointerEventData(EventSystem.current));
+                    hoverStarted = EditorApplication.timeSinceStartup;
+                    stage = 1;
+                }
+                else if (EditorApplication.timeSinceStartup > hoverStarted + 0.2)
+                {
+                    Near(Time.timeScale, 0f, "Game must remain paused during feedback");
+                    Near(menu.ResumeButton.GetComponent<UIInteractionScale>().Target.localScale.x, 1.05f, "Hover tween did not run while paused");
+                    Capture(menu, 1920, 1080, "interaction-hover");
+                    menu.Resume();
+                    foreach (Selectable control in menu.Content.GetComponentsInChildren<Selectable>())
+                    {
+                        Check(!control.IsInteractable(), control.name + " remains interactive during exit");
+                        Check(control.targetGraphic.canvasRenderer.GetColor() == Color.white, control.name + " tinted during exit");
+                        var feedback = control.GetComponent<UIInteractionScale>();
+                        feedback.SendMessage("LateUpdate");
+                        SettleScale(feedback);
+                        Near(feedback.Target.localScale.x, 1f, control.name + " exit scale");
+                    }
+                    Advance(menu, 0.15f);
+                    menu.Toggle();
+                    Advance(menu, 99f);
+                    Check(menu.ContentGroup.interactable && !menu.IsClosing, "Interrupted exit did not restore interaction");
+                    menu.Resume();
+                    Advance(menu, 99f);
+                    Near(Time.timeScale, 2f, "Resume time scale");
+                    Check(menu.Open(), "Reopen failed");
+                    Advance(menu, 99f);
+                    Near(menu.ResumeButton.GetComponent<UIInteractionScale>().Target.localScale.x, 1f, "Reopen retained hover/press scale");
+                    Capture(menu, 1920, 1080, "interaction-normal");
+                    menu.Resume();
+                    Advance(menu, 99f);
+                    Pass("Five prefab controls: neutral colors; hover/press/release/drag/disable/reset; unscaled paused tween; actual exit, interrupted exit, reopen and time restoration");
+                    Finish(null);
+                }
+            }
+            catch (Exception exception) { Finish(exception); }
         }
 
         public static void BuildAndRunBatch()
@@ -46,6 +123,7 @@ namespace TapTap.Editor
         public static void RunBatch()
         {
             if (!Application.isBatchMode) throw new InvalidOperationException("Run in an isolated batch project.");
+            SessionState.SetBool(InteractionOnly, false);
             Directory.CreateDirectory(Path.GetDirectoryName(Results));
             File.WriteAllText(Results, "");
             try
@@ -61,6 +139,16 @@ namespace TapTap.Editor
                     && prefab.GetComponentsInChildren<EventSystem>(true).Length == 0, "Prefab contains duplicate scene services");
                 Check(menu.OpenButton != null && menu.LeftArt != null && menu.RightRows.Length == 4
                     && menu.ContentGroup != null && menu.PanelGroup != null && menu.BackdropGroup != null, "Animation references missing");
+                foreach (Selectable control in prefab.GetComponentsInChildren<Selectable>(true))
+                {
+                    Check(control.transition == Selectable.Transition.None, control.name + " still uses a color transition");
+                    ColorBlock colors = control.colors;
+                    Check(colors.normalColor == Color.white && colors.highlightedColor == Color.white
+                        && colors.pressedColor == Color.white && colors.selectedColor == Color.white
+                        && colors.disabledColor == Color.white, control.name + " still has a state tint");
+                    Check(control.GetComponent<UIInteractionScale>()?.Target != null, control.name + " has no scale target");
+                }
+                Check(menu.OpenButton.GetComponent<PauseIconHover>() == null, "HUD still uses color/outline hover feedback");
                 Check(!prefab.GetComponentsInChildren<Text>(true).Any(label => label.text.Contains("ESC")), "Escape hint remains");
                 var renderer = AssetDatabase.LoadAssetAtPath<UniversalRendererData>("Assets/Rendering/Settings/TapTapRenderer.asset");
                 var blur = renderer.rendererFeatures.OfType<PauseBlurFeature>().Single();
@@ -112,6 +200,15 @@ namespace TapTap.Editor
                         && PauseBlurFeature.Amount > 0f && PauseBlurFeature.Amount < 1f, "Fades do not interpolate while paused");
                     Advance(menu, 99f);
                     Check(menu.LeftArt.anchoredPosition == Vector2.zero && menu.RightRows.All(row => row.anchoredPosition == Vector2.zero), "Entrance did not settle");
+                    Check(EventSystem.current.currentSelectedGameObject == menu.ResumeButton.gameObject,
+                        "Initial keyboard selection was removed");
+                    Near(menu.ResumeButton.GetComponent<UIInteractionScale>().Target.localScale.x, 1f,
+                        "Automatic selection must not enlarge the resume artwork");
+                    CheckInteraction(menu.ResumeButton, menu.ContentGroup);
+                    CheckInteraction(menu.MainMenuButton, menu.ContentGroup);
+                    CheckInteraction(menu.MusicSlider, menu.ContentGroup);
+                    CheckInteraction(menu.EffectsSlider, menu.ContentGroup);
+                    Pass("Auto-selection preserves color/scale; hover, press, release, pointer exit, group disable and reopen preserve artwork colors and hit areas");
                     EffectManager.Instance.Simulate(2f);
                     Check(Time.timeScale == 0f, "Hit-stop effect overrode pause");
                     var input = new GameObject("Pause Input Test").AddComponent<PlayerInput>();
@@ -250,7 +347,8 @@ namespace TapTap.Editor
                 }
                 else if (stage == 10 && Time.frameCount > captureFrame + 12)
                 {
-                    Check(menu.OpenButton.GetComponent<Outline>().effectColor.a > 0f, "Hover outline failed");
+                    Near(menu.OpenButton.transform.localScale.x, 1.05f, "HUD hover scale while unscaled");
+                    CheckInteraction(menu.OpenButton, null);
                     CaptureWorld(menu, "world-hud-hover", true);
                     captureFrame = Time.frameCount; stage = 11;
                 }
@@ -274,6 +372,64 @@ namespace TapTap.Editor
                 + ", point=" + point + ", screen=" + Screen.width + "x" + Screen.height
                 + ", canvas=" + rect.GetComponentInParent<Canvas>().pixelRect
                 + ", culled=" + expected.GetComponent<CanvasRenderer>().cull);
+        }
+
+        private static void CheckInteraction(Selectable control, CanvasGroup group)
+        {
+            var feedback = control.GetComponent<UIInteractionScale>();
+            var hit = (RectTransform)control.transform;
+            Vector2 size = hit.sizeDelta, position = hit.anchoredPosition;
+            Vector3 center = feedback.Target.position;
+            Color color = control.targetGraphic.canvasRenderer.GetColor();
+            var pointer = new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left };
+            feedback.OnPointerEnter(pointer);
+            SettleScale(feedback);
+            Near(feedback.Target.localScale.x, 1.05f, control.name + " hover");
+            Check(feedback.Target.position == center, control.name + " scale moved its visual center");
+            feedback.OnPointerDown(pointer);
+            SettleScale(feedback);
+            Near(feedback.Target.localScale.x, 0.95f, control.name + " press");
+            feedback.OnPointerExit(pointer);
+            SettleScale(feedback);
+            Near(feedback.Target.localScale.x, control is Slider ? 0.95f : 1f, control.name + " drag outside");
+            feedback.OnPointerUp(pointer);
+            SettleScale(feedback);
+            Near(feedback.Target.localScale.x, 1f, control.name + " release outside");
+            feedback.OnPointerEnter(pointer);
+            feedback.OnPointerDown(pointer);
+            feedback.OnPointerUp(pointer);
+            SettleScale(feedback);
+            Near(feedback.Target.localScale.x, 1.05f, control.name + " release inside");
+            if (group != null)
+            {
+                group.interactable = false;
+                feedback.SendMessage("LateUpdate");
+                SettleScale(feedback);
+                Near(feedback.Target.localScale.x, 1f, control.name + " disabled reset");
+                feedback.OnPointerEnter(pointer);
+                feedback.OnPointerDown(pointer);
+                SettleScale(feedback);
+                Near(feedback.Target.localScale.x, 1f, control.name + " disabled input");
+                group.interactable = true;
+                feedback.SendMessage("LateUpdate");
+                SettleScale(feedback);
+                Near(feedback.Target.localScale.x, 1f, control.name + " reopened reset");
+            }
+            feedback.OnPointerExit(pointer);
+            SettleScale(feedback);
+            Check(hit.sizeDelta == size && hit.anchoredPosition == position, control.name + " changed its hit area");
+            Check(control.targetGraphic.canvasRenderer.GetColor() == color, control.name + " changed its artwork tint");
+            feedback.OnPointerEnter(pointer);
+            SettleScale(feedback);
+            control.gameObject.SetActive(false);
+            Near(feedback.Target.localScale.x, 1f, control.name + " hidden reset");
+            control.gameObject.SetActive(true);
+        }
+
+        private static void SettleScale(UIInteractionScale feedback)
+        {
+            var tween = (Tween)typeof(UIInteractionScale).GetField("tween", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(feedback);
+            if (tween != null && tween.IsActive()) tween.Complete();
         }
 
         private static void Advance(PauseMenu menu, float time)
@@ -396,7 +552,9 @@ namespace TapTap.Editor
                 PlayerPrefs.Save();
             }
             SessionState.SetBool(Pending, false);
+            SessionState.SetBool(InteractionOnly, false);
             EditorApplication.update -= Tick;
+            EditorApplication.update -= TickInteraction;
             if (exception != null) { File.AppendAllText(Results, "FAIL: " + exception + "\n"); Debug.LogException(exception); }
             EditorApplication.Exit(exception == null ? 0 : 1);
         }

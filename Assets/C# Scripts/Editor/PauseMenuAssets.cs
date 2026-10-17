@@ -106,10 +106,9 @@ namespace TapTap.Editor
             Outline outline = icon.gameObject.AddComponent<PauseIconOutline>();
             outline.effectColor = new Color(1f, 1f, 1f, 0f);
             outline.effectDistance = new Vector2(3f, -3f);
-            icon.gameObject.AddComponent<PauseIconHover>();
             menu.OpenButton = icon.gameObject.AddComponent<Button>();
             menu.OpenButton.targetGraphic = icon;
-            menu.OpenButton.transition = Selectable.Transition.None;
+            ConfigureInteraction(menu.OpenButton, icon.rectTransform);
             menu.OpenButton.navigation = new Navigation { mode = UnityEngine.UI.Navigation.Mode.None };
             menu.BackgroundMusic = AssetDatabase.LoadAssetAtPath<AudioClip>(MusicPath);
             menu.ClickSound = AssetDatabase.LoadAssetAtPath<AudioClip>(ClickPath);
@@ -199,12 +198,21 @@ namespace TapTap.Editor
             hit.color = Color.clear;
             Button button = hit.gameObject.AddComponent<Button>();
             button.targetGraphic = art;
-            ColorBlock colors = button.colors;
-            colors.highlightedColor = new Color(0.75f, 0.9f, 1f);
-            colors.selectedColor = new Color(0.85f, 0.94f, 1f);
-            colors.pressedColor = new Color(0.55f, 0.72f, 0.9f);
-            button.colors = colors;
+            // The artwork has full-frame transparent bounds. Scale around the visible button,
+            // keeping the original image placement and the raycast hotspot fixed.
+            art.rectTransform.pivot = Vector2.one * 0.5f + position / art.rectTransform.sizeDelta;
+            art.rectTransform.anchoredPosition = position;
+            ConfigureInteraction(button, art.rectTransform);
             return button;
+        }
+
+        private static void ConfigureInteraction(Selectable control, RectTransform visual)
+        {
+            control.transition = Selectable.Transition.None;
+            ColorBlock colors = ColorBlock.defaultColorBlock;
+            colors.normalColor = colors.highlightedColor = colors.pressedColor = colors.selectedColor = colors.disabledColor = Color.white;
+            control.colors = colors;
+            control.gameObject.AddComponent<UIInteractionScale>().Target = visual;
         }
 
         private static Slider VolumeSlider(string name, Transform parent, Vector2 position)
@@ -226,6 +234,7 @@ namespace TapTap.Editor
             // Slider stretches the handle vertically across its 40px area; keep the knob 35px tall.
             handle.rectTransform.sizeDelta = new Vector2(22, -5);
             slider.targetGraphic = handle;
+            ConfigureInteraction(slider, handle.rectTransform);
             slider.minValue = 0f; slider.maxValue = 1f; slider.value = 0.5f;
             return slider;
         }

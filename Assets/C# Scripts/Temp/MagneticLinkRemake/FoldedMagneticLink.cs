@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 
 namespace TapTap.MagneticLinkRemake
 {
-    // Presentation only: endpoints, tension and a caller-owned clock are the complete input.
+    // Presentation only: the caller supplies endpoints, strength, distance state and simulation time.
     public sealed class FoldedMagneticLink : MonoBehaviour
     {
         [SerializeField, Min(0.001f)] private float coreWidth = 0.022f;
@@ -12,6 +12,13 @@ namespace TapTap.MagneticLinkRemake
         [SerializeField, Min(0f)] private float flowSpeed = 1.6f;
         [SerializeField, Range(0f, 1f)] private float irregularity = 0.7f;
         [SerializeField, ColorUsage(true, true)] private Color coreColor = new Color(4.7f, 3.8f, 0.15f, 1f);
+        [SerializeField, Range(0f, 1f)] private float previewOpacity = 0.25f;
+        [SerializeField, Range(0.01f, 1f)] private float previewWidth = 0.35f;
+        [SerializeField, Min(1f)] private float distantAmplitude = 1.6f;
+        [SerializeField, Min(1f)] private float distantFrequency = 1.8f;
+        [SerializeField, Min(1f)] private float distantWidth = 1.15f;
+        [SerializeField, Min(1f)] private float distantSharpness = 1.5f;
+        [SerializeField, ColorUsage(true, true)] private Color distantCoreColor = new Color(4.7f, 0.05f, 0.03f, 1f);
         private readonly Vector3[] points = new Vector3[41];
         private readonly float[] lengths = new float[41];
         private readonly Vector3[] pair = new Vector3[2];
@@ -37,7 +44,7 @@ namespace TapTap.MagneticLinkRemake
             material = new Material(shader) { name = "Folded magnetic filament", hideFlags = HideFlags.HideAndDontSave };
             properties = new MaterialPropertyBlock();
             halo = MakeLine("Soft field", points.Length);
-            sheath = MakeLine("Yellow sheath", points.Length);
+            sheath = MakeLine("Field sheath", points.Length);
             core = MakeLine("Bright core", points.Length);
             core.widthCurve = new AnimationCurve(new Keyframe(0f, 0.5f), new Keyframe(0.12f, 1f),
                 new Keyframe(0.88f, 1f), new Keyframe(1f, 0.5f));
@@ -70,15 +77,23 @@ namespace TapTap.MagneticLinkRemake
             return line;
         }
 
-        public void Render(Vector3 from, Vector3 to, float visibility, float tension, double clock, float unit)
+        public void Render(Vector3 from, Vector3 to, float visibility, float tension, double clock, float unit,
+            float activation = 1f, float distant = 0f)
         {
             if (!Ready) return;
             float distance = Vector3.Distance(from, to);
             bool visible = visibility > 0.001f && distance > 0.025f * unit;
-            core.enabled = sheath.enabled = halo.enabled = visible;
-            for (int i = 0; i < 2; i++) terminals[i].enabled = pulses[i].enabled = visible;
-            if (!visible) return;
-            widthVisibility = Mathf.Pow(Mathf.Clamp01(visibility), 0.45f);
+            if (!visible) { Clear(); return; }
+            core.enabled = sheath.enabled = halo.enabled = true;
+            for (int i = 0; i < 2; i++) terminals[i].enabled = pulses[i].enabled = true;
+            activation = Mathf.Clamp01(activation);
+            distant = Mathf.Clamp01(distant);
+            float opacity = Mathf.Lerp(previewOpacity, 1f, activation);
+            float glowStrength = Mathf.Lerp(0.25f, 1f, activation);
+            widthVisibility = Mathf.Pow(Mathf.Clamp01(visibility), 0.45f) * Mathf.Lerp(previewWidth, 1f, activation)
+                * Mathf.Lerp(1f, distantWidth, distant);
+            core.numCornerVertices = sheath.numCornerVertices = halo.numCornerVertices
+                = Mathf.RoundToInt(Mathf.Lerp(5f, 0f, distant));
 
             // Repeat a double clock before conversion, retaining smooth motion in long sessions.
             float time = (float)(clock % 4096d);
@@ -86,32 +101,28 @@ namespace TapTap.MagneticLinkRemake
             Vector3 side = Vector3.Cross(axis, Vector3.forward).normalized;
             if (side.sqrMagnitude < 0.1f) side = Vector3.right;
             float bend = bendWidth * unit * Mathf.Clamp01(distance / (unit * 1.5f))
-                * Mathf.Lerp(1f, 0.55f, tension);
+                * Mathf.Lerp(1f, 0.55f, tension) * Mathf.Lerp(1f, distantAmplitude, distant);
             flowPhase = (float)((clock * flowSpeed) % 1d);
             totalLength = 0f;
             for (int i = 0; i < points.Length; i++)
             {
                 float t = (float)i / (points.Length - 1);
-                // Carry nonuniform folds along the link. Noise is continuous and clock-based,
-                // so pause/rewind remain stable without generating random positions each frame.
-                double travelling = t * waveCount - clock * flowSpeed;
-                float warp = Noise(travelling * 0.73d, 17u) * irregularity * 0.4f;
-                warp += Noise(t * waveCount * 0.85d + clock * 0.31d, 53u) * irregularity * 0.14f;
-                float phase = (float)(travelling - System.Math.Floor(travelling));
-                float triangle = 1f - 4f * Mathf.Abs(Mathf.Repeat(phase + warp, 1f) - 0.5f);
                 float envelope = Mathf.SmoothStep(0f, 1f, Mathf.Min(t, 1f - t) / 0.09f);
-                float surge = 0.9f + Mathf.Sin(t * Mathf.PI * 2f - time * 3.2f) * 0.1f;
-                float amplitude = 1f + Noise(travelling * 1.37d + 4.6d, 97u) * irregularity * 0.6f;
-                float bias = Noise(travelling * 0.43d - 2.8d, 131u) * irregularity * 0.3f;
-                points[i] = Vector3.Lerp(from, to, t) + side * ((triangle * amplitude + bias) * bend * envelope * surge);
+                // Crossfade two clock-based waves rather than changing clock speed in place.
+                // This avoids phase jumps at the distance threshold and remains reversible.
+                float wave = Wave(t, clock, 1f);
+                if (distant > 0f) wave = Mathf.Lerp(wave, Wave(t, clock, distantFrequency, distantSharpness), distant);
+                points[i] = Vector3.Lerp(from, to, t) + side * (wave * bend * envelope);
                 if (i > 0) totalLength += Vector3.Distance(points[i - 1], points[i]);
                 lengths[i] = totalLength;
             }
-            float breath = (0.94f + Mathf.Sin(time * 2.2f) * 0.06f) * visibility;
+            float breath = (0.94f + Mathf.Sin(time * 2.2f) * 0.06f) * visibility * opacity;
             float power = Mathf.Lerp(1f, 1.45f, tension);
-            SetFilament(halo, coreWidth * unit * 7f, new Color(1.1f, 0.8f, 0.02f, breath * 0.16f), 2.5f);
-            SetFilament(sheath, coreWidth * unit * 2.4f, new Color(1.6f, 1.25f, 0.04f, breath * 0.48f), 1.5f);
-            Color light = coreColor * power;
+            SetFilament(halo, coreWidth * unit * 7f,
+                Tint(new Color(1.1f, 0.8f, 0.02f), new Color(1.1f, 0.01f, 0.005f), distant, breath * 0.16f * glowStrength), 2.5f);
+            SetFilament(sheath, coreWidth * unit * 2.4f,
+                Tint(new Color(1.6f, 1.25f, 0.04f), new Color(1.6f, 0.02f, 0.01f), distant, breath * 0.48f * glowStrength), 1.5f);
+            Color light = Color.Lerp(coreColor, distantCoreColor, distant) * power;
             light.a = breath;
             SetFilament(core, coreWidth * unit, light, 0.7f);
             for (int i = 0; i < 2; i++)
@@ -121,7 +132,8 @@ namespace TapTap.MagneticLinkRemake
                 pair[1] = pole + side * (0.008f * unit);
                 terminals[i].SetPositions(pair);
                 Style(terminals[i], unit * Mathf.Lerp(0.075f, 0.095f, tension),
-                    new Color(3f, 2.4f, 0.08f, visibility * 0.65f), 2f);
+                    Tint(new Color(3f, 2.4f, 0.08f), new Color(3f, 0.03f, 0.02f), distant,
+                        visibility * opacity * 0.65f * glowStrength), 2f);
 
                 float phase = Mathf.Repeat((float)((clock * (1.1d + tension) * unit / totalLength) % 1d)
                     * (tension > 0.5f ? -1f : 1f) + i * 0.5f, 1f);
@@ -131,8 +143,39 @@ namespace TapTap.MagneticLinkRemake
                 pair[1] = Sample(end);
                 pulses[i].SetPositions(pair);
                 Style(pulses[i], coreWidth * unit * 1.8f,
-                    new Color(5.2f, 4.4f, 0.2f, visibility * Mathf.Sin(phase * Mathf.PI) * 0.8f), 1f);
+                    Tint(new Color(5.2f, 4.4f, 0.2f), new Color(5.2f, 0.05f, 0.03f), distant,
+                        visibility * opacity * Mathf.Sin(phase * Mathf.PI) * 0.8f * glowStrength), 1f);
             }
+        }
+
+        public void Clear()
+        {
+            if (!Ready) return;
+            core.enabled = sheath.enabled = halo.enabled = false;
+            for (int i = 0; i < 2; i++) terminals[i].enabled = pulses[i].enabled = false;
+        }
+
+        private float Wave(float t, double clock, float frequency, float sharpness = 1f)
+        {
+            double travelling = t * waveCount * frequency - clock * flowSpeed * frequency;
+            float warp = Noise(travelling * 0.73d, 17u) * irregularity * 0.4f;
+            warp += Noise(t * waveCount * frequency * 0.85d + clock * frequency * 0.31d, 53u) * irregularity * 0.14f;
+            float phase = (float)(travelling - System.Math.Floor(travelling));
+            float triangle = 1f - 4f * Mathf.Abs(Mathf.Repeat(phase + warp, 1f) - 0.5f);
+            // Narrow red peaks without altering the normal yellow wave or its phase.
+            triangle = Mathf.Sign(triangle) * Mathf.Pow(Mathf.Abs(triangle), sharpness);
+            float time = (float)((clock * frequency) % 4096d);
+            float surge = 0.9f + Mathf.Sin(t * Mathf.PI * 2f - time * 3.2f) * 0.1f;
+            float amplitude = 1f + Noise(travelling * 1.37d + 4.6d, 97u) * irregularity * 0.6f;
+            float bias = Noise(travelling * 0.43d - 2.8d, 131u) * irregularity * 0.3f;
+            return (triangle * amplitude + bias) * surge;
+        }
+
+        private static Color Tint(Color normal, Color far, float distant, float alpha)
+        {
+            Color color = Color.Lerp(normal, far, distant);
+            color.a = alpha;
+            return color;
         }
 
         private static float Noise(double coordinate, uint seed)

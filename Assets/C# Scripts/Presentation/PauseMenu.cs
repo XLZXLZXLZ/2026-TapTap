@@ -128,6 +128,7 @@ namespace TapTap
             Content.SetActive(true);
             if (OpenButton != null) OpenButton.gameObject.SetActive(false);
             AnimateOpen(true);
+            // Keep keyboard navigation; prefab selection feedback must not tint the artwork.
             EventSystem.current.SetSelectedGameObject(ResumeButton.gameObject);
             return true;
         }
