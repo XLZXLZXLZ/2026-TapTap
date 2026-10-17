@@ -7,6 +7,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using DG.Tweening;
+using ScreenFilters;
+using System.Linq;
+using System.Reflection;
+using UnityEngine.Rendering.Universal;
 using Object = UnityEngine.Object;
 
 namespace TapTap.Editor
@@ -15,7 +20,7 @@ namespace TapTap.Editor
     public static class PauseMenuRegressionTests
     {
         private const string Pending = "TapTap.PauseMenuRegression.Pending";
-        private static int stage, lastFrame;
+        private static int stage, lastFrame, captureFrame;
         private static double deadline;
         private static string Results => Path.Combine(Application.dataPath, "../Logs/PauseMenu/results.txt");
 
@@ -54,6 +59,16 @@ namespace TapTap.Editor
                 Check(prefab.GetComponent<Canvas>().renderMode == RenderMode.ScreenSpaceOverlay, "Canvas needs a scene camera");
                 Check(prefab.GetComponentsInChildren<Camera>(true).Length == 0
                     && prefab.GetComponentsInChildren<EventSystem>(true).Length == 0, "Prefab contains duplicate scene services");
+                Check(menu.OpenButton != null && menu.LeftArt != null && menu.RightRows.Length == 4
+                    && menu.ContentGroup != null && menu.PanelGroup != null && menu.BackdropGroup != null, "Animation references missing");
+                Check(!prefab.GetComponentsInChildren<Text>(true).Any(label => label.text.Contains("ESC")), "Escape hint remains");
+                var renderer = AssetDatabase.LoadAssetAtPath<UniversalRendererData>("Assets/Rendering/Settings/TapTapRenderer.asset");
+                var blur = renderer.rendererFeatures.OfType<PauseBlurFeature>().Single();
+                Check(blur.BlurShader != null && !ShaderUtil.ShaderHasError(blur.BlurShader), "Blur shader invalid");
+                EditorSceneManager.OpenScene(PauseMenuAssets.PlayScenePath);
+                Check(Object.FindObjectsOfType<PauseMenu>().Length == 1
+                    && PrefabUtility.GetCorrespondingObjectFromSource(Object.FindObjectOfType<PauseMenu>()) == menu,
+                    "World_Character_Play needs exactly one linked pause prefab");
                 EditorSceneManager.OpenScene(PauseMenuAssets.ScenePath);
                 Check(PrefabUtility.IsPartOfPrefabInstance(Object.FindObjectOfType<PauseMenu>()), "Fqh Canvas is not a prefab instance");
                 Pass("Prefab is linked in Fqh, all controls/audio assigned, no camera/EventSystem scene references");
@@ -78,13 +93,25 @@ namespace TapTap.Editor
                 {
                     if (menu == null || MenuAudio.Current == null) return;
                     Check(!PauseMenu.IsOpen && !menu.Content.activeSelf, "Menu did not start closed");
+                    Check(EventSystem.current != null && menu.OpenButton.gameObject.activeInHierarchy, "HUD cannot receive clicks before Escape");
+                    CheckHit(menu.OpenButton.GetComponent<RectTransform>(), menu.OpenButton.gameObject);
                     Check(MenuAudio.Current.MusicSource.loop && MenuAudio.Current.MusicSource.clip.length > 20f,
                         "Looping BGM missing");
                     Time.timeScale = 2f;
                     EffectManager.Instance.Play(PlayerEffect.Joined, null);
                     float expectedScale = Time.timeScale;
-                    menu.Toggle();
+                    menu.OpenButton.onClick.Invoke();
                     Check(PauseMenu.IsOpen && menu.Content.activeSelf && Time.timeScale == 0f, "Escape toggle did not pause");
+                    Check(menu.LeftArt.anchoredPosition.y > 500f && menu.RightRows.All(row => row.anchoredPosition.x > 500f)
+                        && menu.PanelGroup.alpha == 0f && PauseBlurFeature.Amount == 0f, "Entrance did not start offscreen");
+                    Advance(menu, 0.15f);
+                    Check(menu.RightRows[0].anchoredPosition.x < menu.RightRows[1].anchoredPosition.x
+                        && menu.RightRows[1].anchoredPosition.x < menu.RightRows[2].anchoredPosition.x,
+                        "Entrance rows are not staggered");
+                    Check(menu.PanelGroup.alpha > 0f && menu.PanelGroup.alpha < 1f
+                        && PauseBlurFeature.Amount > 0f && PauseBlurFeature.Amount < 1f, "Fades do not interpolate while paused");
+                    Advance(menu, 99f);
+                    Check(menu.LeftArt.anchoredPosition == Vector2.zero && menu.RightRows.All(row => row.anchoredPosition == Vector2.zero), "Entrance did not settle");
                     EffectManager.Instance.Simulate(2f);
                     Check(Time.timeScale == 0f, "Hit-stop effect overrode pause");
                     var input = new GameObject("Pause Input Test").AddComponent<PlayerInput>();
@@ -106,7 +133,20 @@ namespace TapTap.Editor
                     CheckHit(menu.MainMenuButton.GetComponent<RectTransform>(), menu.MainMenuButton.gameObject);
                     CheckHit(menu.MusicSlider.GetComponent<RectTransform>(), menu.MusicSlider.gameObject);
                     menu.Toggle();
+                    Check(menu.IsClosing && PauseMenu.BlocksInput && Time.timeScale == 0f && menu.Content.activeSelf,
+                        "Exit restored game before animation finished");
+                    Advance(menu, 0.15f);
+                    Check(menu.LeftArt.anchoredPosition.x < 0f && menu.RightRows[0].anchoredPosition.x > menu.RightRows[1].anchoredPosition.x,
+                        "Exit direction/stagger wrong");
+                    Vector2 interrupted = menu.LeftArt.anchoredPosition;
+                    menu.Toggle();
+                    Check(!menu.IsClosing && menu.LeftArt.anchoredPosition == interrupted, "Rapid Escape jumped or lost pause ownership");
+                    Advance(menu, 99f);
+                    menu.Resume();
+                    Advance(menu, 99f);
                     Check(!PauseMenu.IsOpen && !menu.Content.activeSelf && PauseMenu.BlocksInput, "Close did not consume the input frame");
+                    Check(PauseBlurFeature.Amount == 0f && menu.OpenButton.gameObject.activeInHierarchy
+                        && EventSystem.current != null, "Close left blur or disabled HUD events");
                     Near(Time.timeScale, expectedScale, "Restore pre-pause time scale");
                     EffectManager.Instance.Simulate(2f);
                     Near(Time.timeScale, 2f, "Hit stop failed to resume");
@@ -119,7 +159,9 @@ namespace TapTap.Editor
                 {
                     Check(!PauseMenu.BlocksInput, "Input remained blocked on next frame");
                     menu.Open();
+                    Advance(menu, 99f);
                     menu.ResumeButton.onClick.Invoke();
+                    Advance(menu, 99f);
                     Check(!PauseMenu.IsOpen, "Continue button failed");
                     menu.Open();
                     Object.DestroyImmediate(menu.gameObject);
@@ -137,9 +179,11 @@ namespace TapTap.Editor
                     Object.DestroyImmediate(duplicate);
                     menu.MainMenuScenePath = "Assets/Scenes/DoesNotExist.unity";
                     menu.ReturnToMainMenu();
+                    Advance(menu, 99f);
                     Check(PauseMenu.IsOpen && !string.IsNullOrEmpty(menu.Notice.text), "Missing main scene did not recover with notice");
                     menu.MainMenuScenePath = "Assets/Scenes/WorldMaps/World_Character_Select.unity";
                     menu.MainMenuButton.onClick.Invoke();
+                    Advance(menu, 99f);
                     Check(WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Main menu button did not start scene navigation");
                     Pass("Continue button, disable/destroy restoration, portable EventSystem, saved volume reload, duplicate suppression, missing-scene recovery");
                     stage = 2;
@@ -154,8 +198,65 @@ namespace TapTap.Editor
                     menu = instance.GetComponent<PauseMenu>();
                     Check(menu.Open(), "Cannot pause in selection scene");
                     menu.ReturnToMainMenu();
+                    Advance(menu, 99f);
                     Check(!WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Main-menu button reloaded its current scene");
                     Pass("Real Fqh-to-selection scene navigation restores time, preserves one BGM player, same-scene main-menu action resumes");
+                    WorldMapSceneRouter.Instance.Load(PauseMenuAssets.PlayScenePath);
+                    stage = 3;
+                }
+                else if (stage == 3)
+                {
+                    if (WorldMapSceneRouter.IsLoading || menu == null || SceneManager.GetActiveScene().path != PauseMenuAssets.PlayScenePath) return;
+                    Check(menu.Open(), "World_Character_Play cannot pause");
+                    Advance(menu, 99f);
+                    menu.Content.SetActive(false);
+                    PauseBlurFeature.Amount = 0f;
+                    captureFrame = Time.frameCount;
+                    stage = 4;
+                }
+                else if (stage == 4 && Time.frameCount > captureFrame + 3)
+                {
+                    CaptureWorld(menu, "world-sharp", false);
+                    captureFrame = Time.frameCount; stage = 5;
+                }
+                else if (stage == 5 && Time.frameCount > captureFrame + 3)
+                {
+                    PauseBlurFeature.Amount = 1f;
+                    captureFrame = Time.frameCount; stage = 6;
+                }
+                else if (stage == 6 && Time.frameCount > captureFrame + 3)
+                {
+                    CaptureWorld(menu, "world-blurred", false);
+                    captureFrame = Time.frameCount; stage = 7;
+                }
+                else if (stage == 7 && Time.frameCount > captureFrame + 3)
+                {
+                    ValidateBlurCaptures();
+                    menu.Content.SetActive(true);
+                    captureFrame = Time.frameCount; stage = 8;
+                }
+                else if (stage == 8 && Time.frameCount > captureFrame + 3)
+                {
+                    CaptureWorld(menu, "world-pause", true);
+                    menu.Resume();
+                    captureFrame = Time.frameCount; stage = 9;
+                }
+                else if (stage == 9)
+                {
+                    if (PauseMenu.IsOpen || Time.frameCount <= captureFrame + 3) return;
+                    Check(Time.timeScale > 0f && PauseBlurFeature.Amount == 0f, "World resume left blur or paused clock");
+                    ExecuteEvents.Execute(menu.OpenButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerEnterHandler);
+                    captureFrame = Time.frameCount; stage = 10;
+                }
+                else if (stage == 10 && Time.frameCount > captureFrame + 12)
+                {
+                    Check(menu.OpenButton.GetComponent<Outline>().effectColor.a > 0f, "Hover outline failed");
+                    CaptureWorld(menu, "world-hud-hover", true);
+                    captureFrame = Time.frameCount; stage = 11;
+                }
+                else if (stage == 11 && Time.frameCount > captureFrame + 3)
+                {
+                    Pass("World_Character_Play linked prefab, real URP sharp/blur/menu/HUD captures, animated resume and icon hover");
                     Finish(null);
                 }
             }
@@ -175,8 +276,75 @@ namespace TapTap.Editor
                 + ", culled=" + expected.GetComponent<CanvasRenderer>().cull);
         }
 
-        private static void Capture(PauseMenu menu, int width, int height)
+        private static void Advance(PauseMenu menu, float time)
         {
+            var sequence = (Sequence)typeof(PauseMenu).GetField("transition", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(menu);
+            Check(sequence != null && sequence.IsActive(), "Missing presentation sequence");
+            sequence.Goto(Mathf.Min(time, sequence.Duration()), true);
+        }
+
+        private static void CaptureWorld(PauseMenu menu, string name, bool includeUI)
+        {
+            Camera camera = Camera.main;
+            Check(camera != null, "World camera missing");
+            RenderTexture previousTarget = camera.targetTexture;
+            RenderTexture previousActive = RenderTexture.active;
+            var target = new RenderTexture(1920, 1080, 24);
+            target.Create();
+            camera.targetTexture = target;
+            camera.Render();
+            if (includeUI)
+            {
+                var background = new GameObject("Validation World Background", typeof(RectTransform), typeof(RawImage));
+                background.layer = 5;
+                background.transform.SetParent(menu.transform, false);
+                background.transform.SetAsFirstSibling();
+                var rect = (RectTransform)background.transform;
+                rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+                background.GetComponent<RawImage>().texture = target;
+                Capture(menu, 1920, 1080, name);
+                Object.DestroyImmediate(background);
+            }
+            else
+            {
+                RenderTexture.active = target;
+                var image = new Texture2D(1920, 1080, TextureFormat.RGB24, false);
+                image.ReadPixels(new Rect(0, 0, 1920, 1080), 0, 0); image.Apply();
+                File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(Results), name + ".png"), image.EncodeToPNG());
+                Object.DestroyImmediate(image);
+            }
+            camera.targetTexture = previousTarget;
+            RenderTexture.active = previousActive;
+            target.Release(); Object.DestroyImmediate(target);
+        }
+
+        private static void ValidateBlurCaptures()
+        {
+            var sharp = new Texture2D(2, 2);
+            var blurred = new Texture2D(2, 2);
+            sharp.LoadImage(File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Results), "world-sharp.png")));
+            blurred.LoadImage(File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Results), "world-blurred.png")));
+            Color[] a = sharp.GetPixels(), b = blurred.GetPixels();
+            float sharpEdges = 0f, blurEdges = 0f, min = 1f, max = 0f;
+            for (int y = 1; y < sharp.height; y += 4)
+                for (int x = 1; x < sharp.width; x += 4)
+                {
+                    int i = y * sharp.width + x;
+                    sharpEdges += Mathf.Abs(a[i].grayscale - a[i - 1].grayscale);
+                    blurEdges += Mathf.Abs(b[i].grayscale - b[i - 1].grayscale);
+                    min = Mathf.Min(min, b[i].grayscale); max = Mathf.Max(max, b[i].grayscale);
+                }
+            Object.DestroyImmediate(sharp); Object.DestroyImmediate(blurred);
+            Check(max - min > 0.15f, "Blur output lost the scene image");
+            Check(blurEdges < sharpEdges * 0.85f && blurEdges > 0f, "Blur does not reduce scene edge detail");
+            Pass("Rendered blur preserves scene and reduces edge energy: " + sharpEdges.ToString("F2") + " -> " + blurEdges.ToString("F2"));
+        }
+
+        private static void Capture(PauseMenu menu, int width, int height, string name = null)
+        {
+            float blurAmount = PauseBlurFeature.Amount;
+            PauseBlurFeature.Amount = 0f; // This helper renders UI on a temporary camera, rather than an overlay.
             var cameraObject = new GameObject("Pause Menu Preview Camera");
             Camera camera = cameraObject.AddComponent<Camera>();
             camera.enabled = false;
@@ -198,12 +366,13 @@ namespace TapTap.Editor
             RenderTexture.active = target;
             var image = new Texture2D(width, height, TextureFormat.RGB24, false);
             image.ReadPixels(new Rect(0, 0, width, height), 0, 0); image.Apply();
-            File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(Results), "pause-" + width + "x" + height + ".png"), image.EncodeToPNG());
+            File.WriteAllBytes(Path.Combine(Path.GetDirectoryName(Results), (name ?? "pause-" + width + "x" + height) + ".png"), image.EncodeToPNG());
             RenderTexture.active = previous;
             canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.worldCamera = null;
             canvas.scaleFactor = oldScale; scaler.enabled = true;
             Object.DestroyImmediate(image); target.Release(); Object.DestroyImmediate(target); Object.DestroyImmediate(cameraObject);
             Canvas.ForceUpdateCanvases();
+            PauseBlurFeature.Amount = blurAmount;
         }
 
         private static void SavePreference(string key, string suffix)

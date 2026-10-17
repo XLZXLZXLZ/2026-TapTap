@@ -19,12 +19,26 @@ namespace TapTap
         private bool selection;
         private WorldMapDefinition selectionWorld;
         private readonly Dictionary<WorldMapModule, Transform> pieces = new Dictionary<WorldMapModule, Transform>();
+        private NeonWorldMapScreen neonScreen;
+        [Tooltip("场景中提前摆放的地图界面；运行时只切换显隐，不实例化或销毁。")]
+        public NeonWorldMapScreen SceneScreen;
+        public bool UsesNeonScreen => neonScreen != null;
+        public NeonWorldMapScreen NeonScreen => neonScreen;
+        public static List<WorldMapModule> SelectableModules(WorldMapDefinition world) => NeonWorldMapScreen.SelectableModules(world);
+        public List<WorldMapModule> AvailableModules(WorldMapDefinition world) => SceneScreen!=null && SceneScreen.Source==world
+            ? SceneScreen.AvailableModules(world) : SelectableModules(world);
+        public void SetMenuSelection(WorldMapModule module, string notice = null) => neonScreen?.SetSelected(module, notice);
         private Rect RenderRect => selection ? new Rect(16f, 110f, Mathf.Max(1f, Screen.width - 32f),
             Mathf.Max(80f, Screen.height - 254f)) : new Rect(0f, 0f, Screen.width, Screen.height);
 
         public IEnumerator Play(WorldMapRoot world, IReadOnlyList<WorldMapModule> modules,
             HashSet<string> passed, WorldMapModule incoming, float duration, float hold, string message = null)
         {
+            if (TryPrepareNeon(world.Source, false))
+            {
+                yield return neonScreen.Play(passed, incoming, duration, hold);
+                yield break;
+            }
             PrepareBoard(world.Source, modules, message ?? "第 " + world.Source.SequenceNumber(incoming) + " 关完成");
             foreach (WorldMapModule module in modules)
                 if (passed.Contains(module.Id) && module != incoming) CreatePiece(world.Source, module);
@@ -85,6 +99,7 @@ namespace TapTap
 
         public void ShowSelection(WorldMapDefinition world)
         {
+            if (TryPrepareNeon(world, true)) return;
             var modules = world.OrderedModules();
             PrepareBoard(world, modules, "关 卡 拼 图", true);
             selectionWorld = world;
@@ -93,9 +108,23 @@ namespace TapTap
             preview.Render();
         }
 
+        private bool TryPrepareNeon(WorldMapDefinition world, bool asSelection)
+        {
+            if (SceneScreen==null)
+                foreach (GameObject root in gameObject.scene.GetRootGameObjects())
+                    foreach (NeonWorldMapScreen screen in root.GetComponentsInChildren<NeonWorldMapScreen>(true))
+                        if (screen.Source==world) { SceneScreen=screen; break; }
+            if (SceneScreen==null || SceneScreen.Source!=world) return false;
+            Hide();
+            neonScreen = SceneScreen;
+            neonScreen.Initialize(asSelection);
+            return true;
+        }
+
         // Screen coordinates follow Input.mousePosition (origin at the bottom left).
         public bool TryPick(Vector2 screenPoint, out WorldMapModule picked)
         {
+            if (neonScreen != null) return neonScreen.TryPick(screenPoint, out picked);
             picked = null;
             if (!selection || preview == null || Screen.width == 0 || Screen.height == 0) return false;
             Rect rect = RenderRect;
@@ -118,6 +147,7 @@ namespace TapTap
 
         public Vector2 LabelScreenPosition(WorldMapModule module)
         {
+            if (neonScreen != null) return neonScreen.LabelScreenPosition(module);
             Vector3 point = preview.WorldToViewportPoint(pieces[module].Find("Number").position);
             Rect rect = RenderRect;
             return new Vector2(rect.x + point.x * rect.width, Screen.height - rect.yMax + point.y * rect.height);
@@ -205,6 +235,11 @@ namespace TapTap
 
         public void ShowCompletion()
         {
+            if (neonScreen != null)
+            {
+                neonScreen.ShowCompletion();
+                return;
+            }
             complete = true;
             WorldMapProgression flow = WorldMapProgression.Current;
             caption = flow.CompletedCount == flow.LevelCount ? "大世界已完成" : "最终关已通过";
@@ -235,6 +270,11 @@ namespace TapTap
 
         public void Hide()
         {
+            if (neonScreen != null)
+            {
+                neonScreen.HidePresentation();
+                neonScreen = null;
+            }
             visible = complete = selection = false;
             selectionWorld = null;
             pieces.Clear();

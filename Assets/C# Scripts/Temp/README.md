@@ -2,6 +2,8 @@
 
 编辑器未运行时，在大世界场景中使用 **[ / ]** 将 Scene 视图切到上一 / 下一子关卡的预设位置、旋转和视野角度。优先以当前选中的子关卡作为起点，未选中时以距离 Scene 相机最近的预设作为起点；按推进序号切换，到首尾停止。菜单入口为 `Tools → TapTap → 调试镜头`；可在 Unity 的 `Edit → Shortcuts` 中搜索 `TapTap/Debug Camera` 修改按键。此操作只移动编辑器 Scene 视图，不改游戏相机或预设资源。编辑器 Scene 视图按常规透视显示，物理镜头的 Lens Shift / Gate Fit 精确构图请使用已有的“关卡镜头预览”窗口。
 
+编辑器未运行时，聚焦 Scene 视图按 **'（单引号）**，自动将带 `MainCamera` 标签的相机对齐到当前 Scene 视图的位置和旋转，无需先选中相机，相当于选中相机后按 `Ctrl+Shift+F`。优先使用活动场景中的主相机；操作会修改场景，支持 `Ctrl+Z` 撤销，保存场景后保留。只对齐位置和旋转，镜头参数保持原值。菜单入口为 `Tools → TapTap → 调试镜头 → 将 MainCamera 对齐当前视角`，快捷键可在 `Edit → Shortcuts` 中搜索 `TapTap/Debug Camera/Align Main Camera With View` 修改。
+
 `DebugRegionOutlines` 在 Unity 编辑器中自动绘制各子关卡的彩色区域线框，未运行时也显示，无需按 U。按真实 Footprint 轮廓向内缩 0.5 格，沿边缘方块中心连线，包含凹形轮廓；线框固定在世界 Z = -0.1，透过场景模型可见，不受未探索区域隐藏影响。调试对象不保存到场景。仅编译于 `UNITY_EDITOR`，所有打包版本（包括 Development Build）均不启用。线宽和 Z 坐标可在 `Debug Region Outlines (Editor Only)` 对象上调整。
 
 `DebugWorldCamera` 在 Unity 编辑器和 Development Build 中自动创建，无需挂载到场景。正式发布构建不会自动启用。删除本目录即可移除此功能，现有脚本和场景不依赖它。

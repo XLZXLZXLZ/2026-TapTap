@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace TapTap.Editor
 {
-    // Scene-view navigation only. Never moves scene cameras or edits saved presets.
+    // Scene-view preset navigation and explicit alignment of the main scene camera.
     public static class DebugCameraPresetShortcuts
     {
         private static WorldMapRoot currentWorld;
@@ -20,6 +20,48 @@ namespace TapTap.Editor
         [Shortcut("TapTap/Debug Camera/Next Preset", KeyCode.RightBracket)]
         [MenuItem("Tools/TapTap/调试镜头/下一子关卡预设")]
         private static void Next() => Navigate(1);
+
+        [Shortcut("TapTap/Debug Camera/Align Main Camera With View", typeof(SceneView), KeyCode.Quote)]
+        [MenuItem("Tools/TapTap/调试镜头/将 MainCamera 对齐当前视角")]
+        private static void AlignMainCameraWithView()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode || EditorGUIUtility.editingTextField) return;
+            SceneView sceneView = SceneView.lastActiveSceneView;
+            if (sceneView == null || sceneView.camera == null) return;
+            Camera mainCamera = FindMainCamera();
+            if (mainCamera == null)
+            {
+                sceneView.ShowNotification(new GUIContent("请先打开包含 MainCamera 标签相机的场景。"));
+                return;
+            }
+
+            Transform target = mainCamera.transform;
+            Undo.RecordObject(target, "将 MainCamera 对齐当前视角");
+            target.SetPositionAndRotation(sceneView.camera.transform.position, sceneView.camera.transform.rotation);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(target);
+            EditorSceneManager.MarkSceneDirty(mainCamera.gameObject.scene);
+            sceneView.ShowNotification(new GUIContent("MainCamera 已对齐当前视角（可 Ctrl+Z 撤销）"));
+            sceneView.Repaint();
+        }
+
+        private static Camera FindMainCamera()
+        {
+            Camera fallback = null;
+            Scene activeScene = SceneManager.GetActiveScene();
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                Scene scene = SceneManager.GetSceneAt(i);
+                if (!scene.isLoaded || EditorSceneManager.IsPreviewScene(scene)) continue;
+                foreach (GameObject root in scene.GetRootGameObjects())
+                    foreach (Camera camera in root.GetComponentsInChildren<Camera>(true))
+                    {
+                        if (!camera.CompareTag("MainCamera")) continue;
+                        if (scene == activeScene) return camera;
+                        if (fallback == null) fallback = camera;
+                    }
+            }
+            return fallback;
+        }
 
         private static void Navigate(int direction)
         {

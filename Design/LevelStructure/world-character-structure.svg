@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1440" height="1600" viewBox="0 0 1440 1600">
+<title>World Character · 22 关实际结构核对图</title>
+<desc>基于实际关卡关系整理的矢量结构图。展示边界规整化，消除半格小凸角，收平中段外凸边，左上入口归纳为连续 L 形。只对右上、右下、左下外角取圆角。原始占格另附对照图。</desc>
+<defs><pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80" fill="none" stroke="#dddcd4" stroke-width=".7"/></pattern>
+<clipPath id="silhouette-clip"><path d="M88,198 L88,462 L160,462 L160,886 L440,886 L440,942 L160,942 L160,1406 A32,32 0 0 0 192,1438 L720,1438 A32,32 0 0 0 752,1406 L752,942 L480,942 L480,886 L752,886 L752,454 A32,32 0 0 0 720,422 L136,422 L136,198 L88,198 Z" fill-rule="evenodd"/></clipPath>
+<marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#405a55" stroke-width="1.3"/></marker>
+</defs><style>text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#233831} .muted{fill:#748079} .mono{font-family:Consolas,monospace} .label{font-size:22px;font-weight:700;text-anchor:middle;dominant-baseline:central;paint-order:stroke;stroke:#faf8ee;stroke-width:3;stroke-linejoin:round}</style>
+<rect width="1440" height="1600" fill="#f7f5ed"/>
+<text x="80" y="65" font-size="14" letter-spacing="3" class="muted">TAPTAP / WORLD CHARACTER / STRUCTURE STUDY</text>
+<text x="80" y="122" font-size="42" font-weight="700">关卡结构 · 分区核对稿</text>
+<text x="82" y="158" font-size="17" class="muted">22 个关卡 · 按实际分区关系规整绘制 · 2026.10.17</text>
+<rect x="64" y="182" width="770" height="1308" rx="16" fill="url(#grid)"/>
+<path d="M88,198 L88,462 L160,462 L160,886 L440,886 L440,942 L160,942 L160,1406 A32,32 0 0 0 192,1438 L720,1438 A32,32 0 0 0 752,1406 L752,942 L480,942 L480,886 L752,886 L752,454 A32,32 0 0 0 720,422 L136,422 L136,198 L88,198 Z" fill="#e6cf7c" fill-rule="evenodd"/>
+<g id="level-regions" clip-path="url(#silhouette-clip)">
+<g id="level-01" data-module-id="e3d4dc65b67d431cb4a96331e6e6e586" data-source="Assets/Runtime/Levels/Level_Test_1.asset"><title>01 · Level_Test_1 · 原点 [11, 113]</title><path d="M160,422 L160,562 L396,562 L396,422 L160,422 Z" fill="#e3a29b" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-02" data-module-id="7d2861e155f94be491b6c5437f229f83" data-source="Assets/Runtime/Levels/Demo_GroundConnect 1.asset"><title>02 · Demo_GroundConnect 1 · 原点 [40, 95]</title><path d="M396,494 L396,706 L500,706 L500,494 L396,494 Z" fill="#e3a29b" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-03" data-module-id="a0cadc7204034720ab7eff930c366903" data-source="Assets/Runtime/Levels/Level_Test_2.asset"><title>03 · Level_Test_2 · 原点 [11, 96]</title><path d="M160,562 L160,706 L396,706 L396,562 L160,562 Z" fill="#e3a29b" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-04" data-module-id="d8b0a52796e04e4bbddd92188c1c4808" data-source="Assets/Runtime/Levels/Demo_LowerHead.asset"><title>04 · Demo_LowerHead · 原点 [40, 122]</title><path d="M396,422 L396,494 L752,494 L752,454 A32,32 0 0 0 720,422 L396,422 Z" fill="#e3a29b" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-05" data-module-id="76fbb97aa8144e238fbd9ae00d5f1283" data-source="Assets/Runtime/Levels/Level_Test_3.asset"><title>05 · Level_Test_3 · 原点 [53, 106]</title><path d="M500,494 L500,618 L752,618 L752,494 L500,494 Z" fill="#e3a29b" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-06" data-module-id="d1f89e7af7a6404299db80c1d30b56cb" data-source="Assets/Runtime/Levels/Level_Test_4.asset"><title>06 · Level_Test_4 · 原点 [54, 84]</title><path d="M500,618 L500,706 L660,706 L660,794 L752,794 L752,618 L500,618 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-07" data-module-id="d739a00201634759a77941122e7335c5" data-source="Assets/Runtime/Levels/Level_Test_5Maybe.asset"><title>07 · Level_Test_5Maybe · 原点 [22, 84]</title><path d="M252,706 L252,794 L660,794 L660,706 L252,706 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-08" data-module-id="412005a821984653ab3b0a215fe811ba" data-source="Assets/Runtime/Levels/Level_Test_7.asset"><title>08 · Level_Test_7 · 原点 [57, 73]</title><path d="M528,794 L528,886 L752,886 L752,794 L528,794 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-09" data-module-id="30a4ad492bd142e8aaf02cc9e42103fc" data-source="Assets/Runtime/Levels/Demo_PickHead.asset"><title>09 · Demo_PickHead · 原点 [22, 76]</title><path d="M160,706 L160,886 L528,886 L528,794 L252,794 L252,706 L160,706 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-10" data-module-id="704d4109545f4f288c9048b4c8a679a7" data-source="Assets/Runtime/Levels/Level_Test_6.asset"><title>10 · Level_Test_6 · 原点 [53, 48]</title><path d="M508,942 L508,1058 L572,1058 L572,1082 L752,1082 L752,942 L508,942 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-11" data-module-id="1249a37049554f77a3bd3cc1c1fbfe4e" data-source="Assets/Runtime/Levels/Demo_DownPlatformOfHead.asset"><title>11 · Demo_DownPlatformOfHead · 原点 [5, 50]</title><path d="M160,942 L160,1178 L276,1178 L276,942 L160,942 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-12" data-module-id="8e53708b328042ad8235f2eac0808179" data-source="Assets/Runtime/Levels/Demo_HighJump.asset"><title>12 · Demo_HighJump · 原点 [25, 38]</title><path d="M276,942 L276,1162 L396,1162 L396,942 L276,942 Z" fill="#8bb7db" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-13" data-module-id="c56ef1126bb941f5aa90ad28f3b62dcd" data-source="Assets/Runtime/Levels/Level_Test_10.asset"><title>13 · Level_Test_10 · 原点 [40, 38]</title><path d="M396,942 L396,1162 L628,1162 L628,1082 L572,1082 L572,1058 L508,1058 L508,942 L396,942 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-14" data-module-id="58d3f3cac75f407a8c2b193aecebc6b9" data-source="Assets/Runtime/Levels/Demo_HeadSpring.asset"><title>14 · Demo_HeadSpring · 原点 [10, 25]</title><path d="M160,1178 L160,1270 L276,1270 L276,1178 L160,1178 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-15" data-module-id="83f81c461527499dbef1314c6a6086a3" data-source="Assets/Runtime/Levels/Level_Test_13.asset"><title>15 · Level_Test_13 · 原点 [38, 26]</title><path d="M412,1162 L412,1242 L628,1242 L628,1162 L412,1162 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-16" data-module-id="1aa84240b1db41b4a30440c429a675a4" data-source="Assets/Runtime/Levels/Level_New_17.asset"><title>16 · Level_New_17 · 原点 [11, 8]</title><path d="M160,1270 L160,1406 A32,32 0 0 0 192,1438 L276,1438 L276,1270 L160,1270 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-17" data-module-id="0d82da05cf0149f3a34b263f051f9da6" data-source="Assets/Runtime/Levels/Level_Test_14 1.asset"><title>17 · Level_Test_14 1 · 原点 [69, 26]</title><path d="M628,1082 L628,1306 L752,1306 L752,1082 L628,1082 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-18" data-module-id="16e4d0ba687846938cc39173dbe4c164" data-source="Assets/Runtime/Levels/Level_New_15.asset"><title>18 · Level_New_15 · 原点 [55, 8]</title><path d="M444,1242 L444,1282 L516,1282 L516,1438 L720,1438 A32,32 0 0 0 752,1406 L752,1306 L628,1306 L628,1242 L444,1242 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-19" data-module-id="debbcc0b7b4047a1baff7945de02234e" data-source="Assets/Runtime/Levels/Level_Test_16.asset"><title>19 · Level_Test_16 · 原点 [25, 17]</title><path d="M276,1162 L276,1338 L516,1338 L516,1282 L444,1282 L444,1242 L412,1242 L412,1162 L276,1162 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-20" data-module-id="58a00ac9703d478badf56eefbfbfe6d1" data-source="Assets/Runtime/Levels/Level_New_18.asset"><title>20 · Level_New_18 · 原点 [26, 4]</title><path d="M276,1338 L276,1438 L516,1438 L516,1338 L276,1338 Z" fill="#e6cf7c" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-21" data-module-id="08ac8d6efad7412dbd7487b0fb10f1cf" data-source="Assets/Runtime/Levels/Level_Connect.asset"><title>21 · Level_Connect · 原点 [46, 70]</title><path d="M440,886 L440,942 L480,942 L480,886 L440,886 Z" fill="#c2c8c3" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+<g id="level-22" data-module-id="ab62f0d55e154b5dbecafd8bfa6af962" data-source="Assets/Runtime/Levels/Level_OutWay.asset"><title>22 · Level_OutWay · 原点 [5, 128]</title><path d="M88,198 L88,462 L160,462 L160,422 L136,422 L136,198 L88,198 Z" fill="#c2c8c3" fill-rule="evenodd" stroke="#53665e" stroke-width="1.6" stroke-linejoin="miter"/></g>
+</g>
+<path id="world-silhouette" d="M88,198 L88,462 L160,462 L160,886 L440,886 L440,942 L160,942 L160,1406 A32,32 0 0 0 192,1438 L720,1438 A32,32 0 0 0 752,1406 L752,942 L480,942 L480,886 L752,886 L752,454 A32,32 0 0 0 720,422 L136,422 L136,198 L88,198 Z" fill="none" stroke="#304a3f" stroke-width="2.7" stroke-linejoin="round" fill-rule="evenodd"/>
+<g id="passage-arrows">
+<path id="passage-01" d="M376,577.6 L376,554.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-02" d="M232,713.6 L232,690.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-03" d="M264,786.4 L264,809.6" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-04" d="M512,809.6 L512,786.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-05" d="M608,1074.4 L608,1097.6" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-06" d="M688,1097.6 L688,1074.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-07" d="M456,961.6 L456,938.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-08" d="M640,1321.6 L640,1298.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-09" d="M480,1297.6 L480,1274.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+<path id="passage-10" d="M496,1353.6 L496,1330.4" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>
+</g><g id="level-numbers">
+<text class="label" x="276" y="490">01</text>
+<text class="label" x="444" y="602">02</text>
+<text class="label" x="284" y="626">03</text>
+<text class="label" x="572" y="458">04</text>
+<text class="label" x="628" y="562">05</text>
+<text class="label" x="676" y="674">06</text>
+<text class="label" x="452" y="754">07</text>
+<text class="label" x="652" y="842">08</text>
+<text class="label" x="236" y="826">09</text>
+<text class="label" x="644" y="1010">10</text>
+<text class="label" x="220" y="1058">11</text>
+<text class="label" x="340" y="1058">12</text>
+<text class="label" x="476" y="1090">13</text>
+<text class="label" x="220" y="1226">14</text>
+<text class="label" x="516" y="1202">15</text>
+<text class="label" x="220" y="1354">16</text>
+<text class="label" x="684" y="1194">17</text>
+<text class="label" x="604" y="1354">18</text>
+<text class="label" x="364" y="1266">19</text>
+<text class="label" x="404" y="1386">20</text>
+<text class="label" x="460" y="914">21</text>
+<text class="label" x="116" y="322">22</text>
+</g>
+<path d="M140 276 H208" fill="none" stroke="#7a8980" stroke-width="1.2"/><text x="220" y="270" font-size="20" font-weight="700">左上新增 / 22</text><text x="220" y="297" class="mono muted" font-size="15">Level_OutWay</text>
+<text x="96" y="1464" class="muted" font-size="14">规整结构示意 · 保留区域位置与连接关系 · 网格线每 10 单位</text>
+<line x1="869" y1="204" x2="869" y2="1468" stroke="#d7d9cf"/>
+<text x="905" y="222" font-size="24" font-weight="700">区域与关卡索引</text>
+<rect x="905" y="247" width="20" height="20" rx="4" fill="#e3a29b"/><text x="940" y="264" font-size="17">一区 01–05 / 红</text>
+<rect x="905" y="283" width="20" height="20" rx="4" fill="#8bb7db"/><text x="940" y="300" font-size="17">二区 06–12 / 蓝</text>
+<rect x="905" y="319" width="20" height="20" rx="4" fill="#e6cf7c"/><text x="940" y="336" font-size="17">三区 13–20 / 黄</text>
+<rect x="905" y="355" width="20" height="20" rx="4" fill="#c2c8c3"/><text x="940" y="372" font-size="17">其它 21–22 / 灰</text>
+<text x="905" y="417" font-size="14" class="muted">编号使用 Sequence；文件名数字不是关卡顺序</text>
+<circle cx="919" cy="452" r="12" fill="#e3a29b"/><text x="919" y="456" font-size="12" text-anchor="middle" font-weight="700">01</text><text x="944" y="457" font-size="16" class="mono">Level_Test_1</text>
+<circle cx="919" cy="485" r="12" fill="#e3a29b"/><text x="919" y="489" font-size="12" text-anchor="middle" font-weight="700">02</text><text x="944" y="490" font-size="16" class="mono">Demo_GroundConnect 1</text>
+<circle cx="919" cy="518" r="12" fill="#e3a29b"/><text x="919" y="522" font-size="12" text-anchor="middle" font-weight="700">03</text><text x="944" y="523" font-size="16" class="mono">Level_Test_2</text>
+<circle cx="919" cy="551" r="12" fill="#e3a29b"/><text x="919" y="555" font-size="12" text-anchor="middle" font-weight="700">04</text><text x="944" y="556" font-size="16" class="mono">Demo_LowerHead</text>
+<circle cx="919" cy="584" r="12" fill="#e3a29b"/><text x="919" y="588" font-size="12" text-anchor="middle" font-weight="700">05</text><text x="944" y="589" font-size="16" class="mono">Level_Test_3</text>
+<circle cx="919" cy="617" r="12" fill="#8bb7db"/><text x="919" y="621" font-size="12" text-anchor="middle" font-weight="700">06</text><text x="944" y="622" font-size="16" class="mono">Level_Test_4</text>
+<circle cx="919" cy="650" r="12" fill="#8bb7db"/><text x="919" y="654" font-size="12" text-anchor="middle" font-weight="700">07</text><text x="944" y="655" font-size="16" class="mono">Level_Test_5Maybe</text>
+<circle cx="919" cy="683" r="12" fill="#8bb7db"/><text x="919" y="687" font-size="12" text-anchor="middle" font-weight="700">08</text><text x="944" y="688" font-size="16" class="mono">Level_Test_7</text>
+<circle cx="919" cy="716" r="12" fill="#8bb7db"/><text x="919" y="720" font-size="12" text-anchor="middle" font-weight="700">09</text><text x="944" y="721" font-size="16" class="mono">Demo_PickHead</text>
+<circle cx="919" cy="749" r="12" fill="#8bb7db"/><text x="919" y="753" font-size="12" text-anchor="middle" font-weight="700">10</text><text x="944" y="754" font-size="16" class="mono">Level_Test_6</text>
+<circle cx="919" cy="782" r="12" fill="#8bb7db"/><text x="919" y="786" font-size="12" text-anchor="middle" font-weight="700">11</text><text x="944" y="787" font-size="16" class="mono">Demo_DownPlatformOfHead</text>
+<circle cx="919" cy="815" r="12" fill="#8bb7db"/><text x="919" y="819" font-size="12" text-anchor="middle" font-weight="700">12</text><text x="944" y="820" font-size="16" class="mono">Demo_HighJump</text>
+<circle cx="919" cy="848" r="12" fill="#e6cf7c"/><text x="919" y="852" font-size="12" text-anchor="middle" font-weight="700">13</text><text x="944" y="853" font-size="16" class="mono">Level_Test_10</text>
+<circle cx="919" cy="881" r="12" fill="#e6cf7c"/><text x="919" y="885" font-size="12" text-anchor="middle" font-weight="700">14</text><text x="944" y="886" font-size="16" class="mono">Demo_HeadSpring</text>
+<circle cx="919" cy="914" r="12" fill="#e6cf7c"/><text x="919" y="918" font-size="12" text-anchor="middle" font-weight="700">15</text><text x="944" y="919" font-size="16" class="mono">Level_Test_13</text>
+<circle cx="919" cy="947" r="12" fill="#e6cf7c"/><text x="919" y="951" font-size="12" text-anchor="middle" font-weight="700">16</text><text x="944" y="952" font-size="16" class="mono">Level_New_17</text>
+<circle cx="919" cy="980" r="12" fill="#e6cf7c"/><text x="919" y="984" font-size="12" text-anchor="middle" font-weight="700">17</text><text x="944" y="985" font-size="16" class="mono">Level_Test_14 1</text>
+<circle cx="919" cy="1013" r="12" fill="#e6cf7c"/><text x="919" y="1017" font-size="12" text-anchor="middle" font-weight="700">18</text><text x="944" y="1018" font-size="16" class="mono">Level_New_15</text>
+<circle cx="919" cy="1046" r="12" fill="#e6cf7c"/><text x="919" y="1050" font-size="12" text-anchor="middle" font-weight="700">19</text><text x="944" y="1051" font-size="16" class="mono">Level_Test_16</text>
+<circle cx="919" cy="1079" r="12" fill="#e6cf7c"/><text x="919" y="1083" font-size="12" text-anchor="middle" font-weight="700">20</text><text x="944" y="1084" font-size="16" class="mono">Level_New_18</text>
+<circle cx="919" cy="1112" r="12" fill="#c2c8c3"/><text x="919" y="1116" font-size="12" text-anchor="middle" font-weight="700">21</text><text x="944" y="1117" font-size="16" class="mono">Level_Connect</text>
+<circle cx="919" cy="1145" r="12" fill="#c2c8c3"/><text x="919" y="1149" font-size="12" text-anchor="middle" font-weight="700">22</text><text x="944" y="1150" font-size="16" class="mono">Level_OutWay</text>
+<line x1="905" y1="1211" x2="1355" y2="1211" stroke="#d7d9cf"/>
+<text x="905" y="1248" font-size="16" class="muted">边界读取：图块占格 + 自定义范围</text>
+<text x="905" y="1277" font-size="16" class="muted">分界：共享端点，移除半格齿状凸角</text>
+<text x="905" y="1306" font-size="16" class="muted">圆角：右上 / 右下 / 左下，半径 4 格</text>
+<text x="905" y="1335" font-size="16" class="muted">左上：归纳为连续 L 形入口</text>
+<text x="905" y="1364" font-size="16" class="muted">中段：上下横边拉平，连接段齐平</text>
+<text x="905" y="1393" font-size="16" class="muted">颜色：以关卡 Style 资源分区为准</text>
+<text x="905" y="1422" font-size="16" class="muted">原始占格另附 SVG，可对照共墙范围</text>
+<line x1="80" y1="1520" x2="1360" y2="1520" stroke="#cdd1c6"/>
+<text x="80" y="1556" font-size="15" class="muted">结构确认用 SVG · 各关卡独立分组，可后续拆分选关素材 · 本次未修改场景、关卡资源或选关逻辑</text>
+</svg>

@@ -73,7 +73,8 @@ namespace TapTap
                 if (operation != null) yield return operation;
                 else { launchWorld = null; launchModuleId = null; }
                 yield return null;
-                yield return fade.FadeTo(0f, 0.25f);
+                yield return null;
+                yield return fade.FadeTo(0f, 0.35f);
             }
             finally { Time.timeScale = resumeScale; fade.SetOpacity(0f); loading = false; }
         }

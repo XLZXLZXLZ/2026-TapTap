@@ -38,6 +38,7 @@ namespace TapTap.Editor
                 cameraObject.AddComponent<AudioListener>();
                 var menu = new GameObject("World Level Selection").AddComponent<WorldLevelMenu>();
                 menu.World = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(mapPath);
+                NeonWorldMapAssets.EnsureSceneScreen(scene,menu.gameObject,menu.World,true);
             });
             map = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(mapPath);
             map.SelectionSceneGuid = AssetDatabase.AssetPathToGUID(selection);

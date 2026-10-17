@@ -109,6 +109,8 @@ namespace TapTap.Editor
                     opened = true;
                 }
                 Populate(scene, map, resources, levels, changedLevels);
+                WorldMapRoot authoredWorld=Find<WorldMapRoot>(scene);
+                if (authoredWorld!=null) NeonWorldMapAssets.EnsureSceneScreen(scene,authoredWorld.gameObject,map,false);
                 WorldMapSceneConflicts.Check(scene);
                 EditorSceneManager.MarkSceneDirty(scene);
                 // Keep unsaved manual work in an already-open scene under normal Unity save control.

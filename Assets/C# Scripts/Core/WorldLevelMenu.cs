@@ -12,6 +12,8 @@ namespace TapTap
         private GUIStyle detailStyle;
         private string notice;
         private int passedCount;
+        private Vector2 lastPointerPosition;
+        private bool pointerInitialized;
         public static WorldLevelMenu Current { get; private set; }
         public static bool IsOpen => Current != null;
         public WorldMapModule Selected => selected;
@@ -24,13 +26,13 @@ namespace TapTap
         {
             Current = this;
             if (World == null) { notice = "请为选关入口配置大世界。"; return; }
-            modules = World.OrderedModules();
             view = GetComponent<WorldMapAssemblyView>();
             if (view == null) view = gameObject.AddComponent<WorldMapAssemblyView>();
+            modules = view.AvailableModules(World);
             Refresh();
             HashSet<string> passed = WorldMapProgressStore.Completed(World);
-            Select(modules.Find(module => WorldMapProgressStore.IsUnlocked(World, module) && !passed.Contains(module.Id))
-                ?? (modules.Count > 0 ? modules[0] : null));
+            Select(modules.Find(module => CanSelect(module) && !passed.Contains(module.Id))
+                ?? modules.Find(CanSelect));
         }
 
         private void Refresh()
@@ -38,6 +40,8 @@ namespace TapTap
             view.ShowSelection(World);
             HashSet<string> passed = WorldMapProgressStore.Completed(World);
             passedCount = modules.FindAll(module => passed.Contains(module.Id)).Count;
+            if (selected!=null && !CanSelect(selected)) selected=null;
+            view.SetMenuSelection(selected, notice ?? "");
         }
 
         public void UnlockAll()
@@ -46,21 +50,28 @@ namespace TapTap
             WorldMapProgressStore.UnlockAll(World);
             Refresh();
             notice = "全部关卡已解锁";
+            view.SetMenuSelection(selected, notice);
         }
 
         public void Select(WorldMapModule module)
         {
+            if (module!=null && view.UsesNeonScreen && !CanSelect(module)) return;
             if (selected == module) return;
             selected = module;
+            view.SetMenuSelection(selected, notice ?? "");
         }
+
+        private bool CanSelect(WorldMapModule module) => view.UsesNeonScreen
+            ? view.NeonScreen.CanSelect(module) : WorldMapProgressStore.IsUnlocked(World,module);
 
         public bool EnterSelected()
         {
             if (selected == null || WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return false;
-            if (!WorldMapProgressStore.IsUnlocked(World, selected))
-            { notice = "先通过前一关，或按 P 解锁全部关卡"; return false; }
+            if (!CanSelect(selected))
+            { notice = "先通过前一关，或按 P 解锁全部关卡"; view.SetMenuSelection(selected, notice); return false; }
             bool result = WorldMapSceneRouter.Instance.Enter(World, selected);
             notice = result ? "正在进入第 " + World.SequenceNumber(selected) + " 关…" : WorldMapSceneRouter.Instance.LastError;
+            view.SetMenuSelection(selected, notice);
             return result;
         }
 
@@ -72,12 +83,19 @@ namespace TapTap
                 : Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A) ? -1 : 0;
             if (direction != 0 && modules.Count > 0)
             {
-                int index = modules.IndexOf(selected);
-                Select(modules[(index + direction + modules.Count) % modules.Count]);
+                var choices=view.UsesNeonScreen?modules.FindAll(CanSelect):modules;
+                if (choices.Count>0)
+                {
+                    int index = choices.IndexOf(selected);
+                    Select(choices[(index + direction + choices.Count) % choices.Count]);
+                }
             }
             Vector2 mouse = Input.mousePosition;
+            bool pointerMoved=pointerInitialized && (mouse-lastPointerPosition).sqrMagnitude>1f;
+            lastPointerPosition=mouse; pointerInitialized=true;
             if (view.TryPick(mouse, out WorldMapModule module))
             {
+                if (pointerMoved) Select(module);
                 if (Input.GetMouseButtonDown(0)) { Select(module); EnterSelected(); }
             }
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) EnterSelected();
@@ -85,6 +103,7 @@ namespace TapTap
 
         private void OnGUI()
         {
+            if (view != null && view.UsesNeonScreen) return;
             if (PauseMenu.BlocksInput) return;
             if (detailStyle == null) detailStyle = new GUIStyle(GUI.skin.label)
                 { fontSize = 16, alignment = TextAnchor.MiddleCenter, normal = { textColor = new Color(0.7f, 0.83f, 0.88f) } };

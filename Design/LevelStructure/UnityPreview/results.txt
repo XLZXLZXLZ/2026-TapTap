@@ -1,0 +1,8 @@
+PASS: Map only: 20 numbers, no captions/controls; 20 nested prefabs with fixed positions and supplied font; URP-only HDR outline/number materials and Bloom
+PASS: Both saved scenes contain one editable pre-placed 20-room map, with serialized view references and all rooms visible in the editor
+PASS: Selection shows all unlocked rooms; later completion records do not impose a current-room cutoff
+PASS: 20 number positions clickable; locks/unlock preserved; HDR Bloom visibly expands the glow; sibling order does not replace neighbouring colors
+PASS: Soft palette, thin antialiased strokes, pale numbers and restrained Bloom render correctly; focus fades smoothly between existing rooms
+PASS: Pre-placed transition map and all 20 room instances survive show/hide without recreation; persistent cover, delayed 1.4-second drawing and gameplay advance remain correct
+PASS: Return to selection restores saved completion and reuses the shared screen
+PASS: Completion cutscene stops at the replayed room even when later rooms are completed; selection restores all unlocked rooms afterwards

@@ -5,6 +5,8 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+using ScreenFilters;
+using UnityEngine.Rendering.Universal;
 using Object = UnityEngine.Object;
 
 namespace TapTap.Editor
@@ -15,6 +17,7 @@ namespace TapTap.Editor
         public const string PrefabPath = "Assets/Prefabs/UI/PauseMenu.prefab";
         public const string MusicPath = "Assets/Audio/QuietWorkshop.wav";
         public const string ClickPath = "Assets/Audio/SoftClick.wav";
+        public const string PlayScenePath = "Assets/Scenes/WorldMaps/World_Character_Play.unity";
 
         // Explicit command only: opening Unity never rewrites the artist's scene.
         [MenuItem("Tools/TapTap/UI/Build Fqh Pause Menu Prefab")]
@@ -27,6 +30,9 @@ namespace TapTap.Editor
             AssetDatabase.Refresh();
             ConfigureAudio(MusicPath);
             ConfigureAudio(ClickPath);
+            ConfigureSprite("Assets/Art/UI/PauseButton.png");
+            ConfigureSprite("Assets/Art/UI/Panel.jpg");
+            ConfigureBlur();
             var scene = EditorSceneManager.OpenScene(ScenePath);
             Canvas canvas = scene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<Canvas>(true)).First();
             if (PrefabUtility.IsPartOfPrefabInstance(canvas))
@@ -58,12 +64,29 @@ namespace TapTap.Editor
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
             RectTransform content = Rect("MenuContent", canvas.transform, Vector2.zero, Vector2.zero);
             Stretch(content);
+            CanvasGroup contentGroup = content.gameObject.AddComponent<CanvasGroup>();
             Image backdrop = Rect("Backdrop", content, Vector2.zero, Vector2.zero).gameObject.AddComponent<Image>();
             Stretch(backdrop.rectTransform);
-            backdrop.color = new Color(0.025f, 0.035f, 0.07f, 0.9f);
+            backdrop.color = new Color(0.025f, 0.035f, 0.07f, 0.25f);
+            CanvasGroup backdropGroup = backdrop.gameObject.AddComponent<CanvasGroup>();
+            Image panel = Rect("Panel Strip", content, Vector2.zero, new Vector2(2400, 1060)).gameObject.AddComponent<Image>();
+            panel.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Panel.jpg");
+            panel.color = new Color(0.025f, 0.035f, 0.07f, 0.75f);
+            panel.raycastTarget = false;
+            const string panelMaterialPath = "Assets/Art/Materials/UI/PausePanel.mat";
+            Material panelMaterial = AssetDatabase.LoadAssetAtPath<Material>(panelMaterialPath);
+            if (panelMaterial == null)
+            {
+                panelMaterial = new Material(Shader.Find("TapTap/UI/Pause Panel"));
+                AssetDatabase.CreateAsset(panelMaterial, panelMaterialPath);
+            }
+            panel.material = panelMaterial;
+            CanvasGroup panelGroup = panel.gameObject.AddComponent<CanvasGroup>();
+            RectTransform[] groups = new[] { "Left Instructions", "Title Row", "Resume Row", "Main Menu Row", "Audio Row" }
+                .Select(name => Rect(name, content, Vector2.zero, new Vector2(1920, 1080))).ToArray();
             foreach (Image image in art.OrderBy(image => image.sprite.name))
             {
-                image.transform.SetParent(content, false);
+                image.transform.SetParent(groups[int.Parse(image.sprite.name) - 1], false);
                 image.name = new[] { "Instructions", "PauseTitle", "ResumeArt", "MainMenuArt", "AudioSettingsArt" }
                     [int.Parse(image.sprite.name) - 1];
                 Place(image.rectTransform, Vector2.zero, new Vector2(1920, 1080));
@@ -71,16 +94,32 @@ namespace TapTap.Editor
             PauseMenu menu = canvas.GetComponent<PauseMenu>();
             if (menu == null) menu = canvas.gameObject.AddComponent<PauseMenu>();
             menu.Content = content.gameObject;
-            menu.ResumeButton = Hotspot("ResumeButton", content, new Vector2(484, 72), new Vector2(266, 96),
+            menu.ContentGroup = contentGroup;
+            menu.BackdropGroup = backdropGroup;
+            menu.PanelGroup = panelGroup;
+            menu.LeftArt = groups[0];
+            menu.RightRows = groups.Skip(1).ToArray();
+            menu.ResumeButton = Hotspot("ResumeButton", groups[2], new Vector2(484, 72), new Vector2(266, 96),
                 art.First(image => image.sprite.name == "03"));
-            menu.MainMenuButton = Hotspot("MainMenuButton", content, new Vector2(484, -69), new Vector2(264, 96),
+            menu.MainMenuButton = Hotspot("MainMenuButton", groups[3], new Vector2(484, -69), new Vector2(264, 96),
                 art.First(image => image.sprite.name == "04"));
-            menu.MusicSlider = VolumeSlider("MusicVolume", content, new Vector2(540, -264));
-            menu.EffectsSlider = VolumeSlider("EffectsVolume", content, new Vector2(540, -325));
-            menu.MusicValue = Label("MusicValue", content, new Vector2(697, -264), new Vector2(74, 34), "45%", 22);
-            menu.EffectsValue = Label("EffectsValue", content, new Vector2(697, -325), new Vector2(74, 34), "70%", 22);
-            Label("EscapeHint", content, new Vector2(484, -445), new Vector2(480, 36), "ESC 返回游戏", 24);
-            menu.Notice = Label("Notice", content, new Vector2(470, -500), new Vector2(650, 50), "", 20);
+            menu.MusicSlider = VolumeSlider("MusicVolume", groups[4], new Vector2(540, -264));
+            menu.EffectsSlider = VolumeSlider("EffectsVolume", groups[4], new Vector2(540, -325));
+            menu.MusicValue = Label("MusicValue", groups[4], new Vector2(697, -264), new Vector2(74, 34), "45%", 22);
+            menu.EffectsValue = Label("EffectsValue", groups[4], new Vector2(697, -325), new Vector2(74, 34), "70%", 22);
+            menu.Notice = Label("Notice", groups[4], new Vector2(470, -500), new Vector2(650, 50), "", 20);
+            Image icon = Rect("PauseButton", canvas.transform, new Vector2(-70, -76), new Vector2(72, 80)).gameObject.AddComponent<Image>();
+            icon.rectTransform.anchorMin = icon.rectTransform.anchorMax = Vector2.one;
+            icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/PauseButton.png");
+            icon.preserveAspect = true;
+            Outline outline = icon.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0.85f, 0.93f, 1f, 0f);
+            outline.effectDistance = new Vector2(2f, -2f);
+            icon.gameObject.AddComponent<PauseIconHover>();
+            menu.OpenButton = icon.gameObject.AddComponent<Button>();
+            menu.OpenButton.targetGraphic = icon;
+            menu.OpenButton.transition = Selectable.Transition.None;
+            menu.OpenButton.navigation = new Navigation { mode = UnityEngine.UI.Navigation.Mode.None };
             menu.BackgroundMusic = AssetDatabase.LoadAssetAtPath<AudioClip>(MusicPath);
             menu.ClickSound = AssetDatabase.LoadAssetAtPath<AudioClip>(ClickPath);
             Navigation(menu.ResumeButton, menu.EffectsSlider, menu.MainMenuButton);
@@ -90,8 +129,54 @@ namespace TapTap.Editor
             PrefabUtility.SaveAsPrefabAssetAndConnect(canvas.gameObject, PrefabPath, InteractionMode.AutomatedAction);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+            var playScene = EditorSceneManager.OpenScene(PlayScenePath);
+            PauseMenu[] existing = playScene.GetRootGameObjects().SelectMany(root => root.GetComponentsInChildren<PauseMenu>(true)).ToArray();
+            if (existing.Length == 0)
+                PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath), playScene);
+            else if (existing.Length != 1)
+                throw new InvalidOperationException("World_Character_Play contains multiple pause menus.");
+            EditorSceneManager.SaveScene(playScene);
             AssetDatabase.SaveAssets();
-            Debug.Log("Fqh pause menu prefab and test audio saved: " + PrefabPath);
+            Debug.Log("Animated Fqh pause prefab saved and installed in World_Character_Play: " + PrefabPath);
+        }
+
+        private static void ConfigureSprite(string path)
+        {
+            var importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            importer.textureType = TextureImporterType.Sprite;
+            importer.spriteImportMode = SpriteImportMode.Single;
+            importer.mipmapEnabled = false;
+            importer.wrapMode = TextureWrapMode.Clamp;
+            importer.alphaIsTransparency = path.EndsWith(".png", StringComparison.OrdinalIgnoreCase);
+            importer.SaveAndReimport();
+        }
+
+        private static void ConfigureBlur()
+        {
+            var renderer = AssetDatabase.LoadAssetAtPath<UniversalRendererData>("Assets/Rendering/Settings/TapTapRenderer.asset");
+            PauseBlurFeature feature = renderer.rendererFeatures.OfType<PauseBlurFeature>().FirstOrDefault();
+            if (feature == null)
+            {
+                feature = ScriptableObject.CreateInstance<PauseBlurFeature>();
+                feature.name = "Pause Menu Blur";
+                AssetDatabase.AddObjectToAsset(feature, renderer);
+                renderer.rendererFeatures.Add(feature);
+            }
+            feature.BlurShader = Shader.Find("Hidden/TapTap/Pause Blur");
+            if (feature.BlurShader == null) throw new InvalidOperationException("Pause blur shader missing.");
+            feature.Create();
+            var serialized = new SerializedObject(renderer);
+            SerializedProperty map = serialized.FindProperty("m_RendererFeatureMap");
+            map.arraySize = renderer.rendererFeatures.Count;
+            for (int i = 0; i < renderer.rendererFeatures.Count; i++)
+            {
+                AssetDatabase.TryGetGUIDAndLocalFileIdentifier(renderer.rendererFeatures[i], out string _, out long id);
+                map.GetArrayElementAtIndex(i).longValue = id;
+            }
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            renderer.SetDirty();
+            EditorUtility.SetDirty(feature);
+            EditorUtility.SetDirty(renderer);
         }
 
         private static RectTransform Rect(string name, Transform parent, Vector2 position, Vector2 size)
