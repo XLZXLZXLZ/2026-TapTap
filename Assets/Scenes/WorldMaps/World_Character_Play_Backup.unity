@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 3550405}
   - component: {fileID: 3550407}
   - component: {fileID: 3550406}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -216,7 +216,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3596322}
   - component: {fileID: 3596323}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "ChatGPT \u56FE\u50CF 2026\u5E7410\u670812\u65E5 21_01_33 (1)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -301,7 +301,7 @@ GameObject:
   - component: {fileID: 5587800}
   - component: {fileID: 5587802}
   - component: {fileID: 5587801}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -384,7 +384,7 @@ GameObject:
   - component: {fileID: 6470762}
   - component: {fileID: 6470764}
   - component: {fileID: 6470763}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -456,6 +456,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6470761}
   m_Mesh: {fileID: 4300000, guid: bcbe9c3d0b4d02e449c128aa5035f238, type: 2}
+--- !u!1 &10393430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 10393431}
+  - component: {fileID: 10393433}
+  - component: {fileID: 10393432}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &10393431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10393430}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: 0.5689392, z: 0.24790192}
+  m_LocalScale: {x: 0.24, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &10393432
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10393430}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &10393433
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10393430}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1001 &12513791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -537,7 +620,7 @@ GameObject:
   - component: {fileID: 12598585}
   - component: {fileID: 12598587}
   - component: {fileID: 12598586}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -620,7 +703,7 @@ GameObject:
   - component: {fileID: 13315303}
   - component: {fileID: 13315305}
   - component: {fileID: 13315304}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -703,7 +786,7 @@ GameObject:
   - component: {fileID: 16690026}
   - component: {fileID: 16690028}
   - component: {fileID: 16690027}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -784,7 +867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 20628801}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "\u94A9\u5B50"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -823,7 +906,7 @@ GameObject:
   - component: {fileID: 24570011}
   - component: {fileID: 24570013}
   - component: {fileID: 24570012}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -974,7 +1057,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 28380934}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1007,7 +1090,7 @@ GameObject:
   - component: {fileID: 43455253}
   - component: {fileID: 43455255}
   - component: {fileID: 43455254}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Segmented_Coil_Ring
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1090,7 +1173,7 @@ GameObject:
   - component: {fileID: 43554892}
   - component: {fileID: 43554894}
   - component: {fileID: 43554893}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1173,7 +1256,7 @@ GameObject:
   - component: {fileID: 45909748}
   - component: {fileID: 45909750}
   - component: {fileID: 45909749}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1254,7 +1337,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 46810663}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1287,7 +1370,7 @@ GameObject:
   - component: {fileID: 50265263}
   - component: {fileID: 50265265}
   - component: {fileID: 50265264}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1370,7 +1453,7 @@ GameObject:
   - component: {fileID: 52952922}
   - component: {fileID: 52952924}
   - component: {fileID: 52952923}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Diagonal_Window_Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1451,7 +1534,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 56949051}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1530,7 +1613,7 @@ GameObject:
   - component: {fileID: 58449306}
   - component: {fileID: 58449308}
   - component: {fileID: 58449307}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1613,7 +1696,7 @@ GameObject:
   - component: {fileID: 58719063}
   - component: {fileID: 58719065}
   - component: {fileID: 58719064}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1696,7 +1779,7 @@ GameObject:
   - component: {fileID: 69267176}
   - component: {fileID: 69267178}
   - component: {fileID: 69267177}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1779,7 +1862,7 @@ GameObject:
   - component: {fileID: 75133042}
   - component: {fileID: 75133044}
   - component: {fileID: 75133043}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Cable (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1863,7 +1946,7 @@ GameObject:
   - component: {fileID: 78687544}
   - component: {fileID: 78687543}
   - component: {fileID: 78687542}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1959,7 +2042,7 @@ GameObject:
   - component: {fileID: 79844339}
   - component: {fileID: 79844341}
   - component: {fileID: 79844340}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2042,7 +2125,7 @@ GameObject:
   - component: {fileID: 87935814}
   - component: {fileID: 87935816}
   - component: {fileID: 87935815}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2125,7 +2208,7 @@ GameObject:
   - component: {fileID: 89681378}
   - component: {fileID: 89681380}
   - component: {fileID: 89681379}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2206,7 +2289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 95343487}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "\u67B6\u5B50"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2253,7 +2336,7 @@ GameObject:
   - component: {fileID: 100570208}
   - component: {fileID: 100570210}
   - component: {fileID: 100570209}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2340,7 +2423,7 @@ GameObject:
   - component: {fileID: 104321594}
   - component: {fileID: 104321596}
   - component: {fileID: 104321595}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2426,7 +2509,7 @@ GameObject:
   - component: {fileID: 109432793}
   - component: {fileID: 109432795}
   - component: {fileID: 109432794}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2509,7 +2592,7 @@ GameObject:
   - component: {fileID: 111126603}
   - component: {fileID: 111126605}
   - component: {fileID: 111126604}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2592,7 +2675,7 @@ GameObject:
   - component: {fileID: 122769002}
   - component: {fileID: 122769004}
   - component: {fileID: 122769003}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Storage_Side_Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2676,7 +2759,7 @@ GameObject:
   - component: {fileID: 131060728}
   - component: {fileID: 131060730}
   - component: {fileID: 131060729}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2759,7 +2842,7 @@ GameObject:
   - component: {fileID: 141785696}
   - component: {fileID: 141785698}
   - component: {fileID: 141785697}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Upper (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2842,7 +2925,7 @@ GameObject:
   - component: {fileID: 146348321}
   - component: {fileID: 146348323}
   - component: {fileID: 146348322}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2925,7 +3008,7 @@ GameObject:
   - component: {fileID: 149410052}
   - component: {fileID: 149410054}
   - component: {fileID: 149410053}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3008,7 +3091,7 @@ GameObject:
   - component: {fileID: 152412145}
   - component: {fileID: 152412147}
   - component: {fileID: 152412146}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3091,7 +3174,7 @@ GameObject:
   - component: {fileID: 154493391}
   - component: {fileID: 154493393}
   - component: {fileID: 154493392}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3172,7 +3255,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 155306602}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3194,6 +3277,89 @@ Transform:
   m_Father: {fileID: 351145194}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &158959260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 158959261}
+  - component: {fileID: 158959263}
+  - component: {fileID: 158959262}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (6)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &158959261
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158959260}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: -0.33106232, z: 0.24790192}
+  m_LocalScale: {x: 0.24, y: 0.044999998, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &158959262
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158959260}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &158959263
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158959260}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &159173042
 GameObject:
   m_ObjectHideFlags: 0
@@ -3205,7 +3371,7 @@ GameObject:
   - component: {fileID: 159173043}
   - component: {fileID: 159173045}
   - component: {fileID: 159173044}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Warm_Background_Window_Fill (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3320,7 +3486,7 @@ GameObject:
   - component: {fileID: 181979567}
   - component: {fileID: 181979569}
   - component: {fileID: 181979568}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3403,7 +3569,7 @@ GameObject:
   - component: {fileID: 186050147}
   - component: {fileID: 186050149}
   - component: {fileID: 186050148}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Top_Conduit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3578,6 +3744,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5737962372152861618, guid: 1bda3f14ab6914e4c8c20438f3960b0b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6749346605990718852, guid: 1bda3f14ab6914e4c8c20438f3960b0b, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -3616,7 +3786,7 @@ GameObject:
   - component: {fileID: 199855325}
   - component: {fileID: 199855327}
   - component: {fileID: 199855326}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3699,7 +3869,7 @@ GameObject:
   - component: {fileID: 206323819}
   - component: {fileID: 206323821}
   - component: {fileID: 206323820}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3782,7 +3952,7 @@ GameObject:
   - component: {fileID: 210769448}
   - component: {fileID: 210769450}
   - component: {fileID: 210769449}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3865,7 +4035,7 @@ GameObject:
   - component: {fileID: 215604230}
   - component: {fileID: 215604232}
   - component: {fileID: 215604231}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3946,7 +4116,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 222433473}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4025,7 +4195,7 @@ GameObject:
   - component: {fileID: 232623232}
   - component: {fileID: 232623234}
   - component: {fileID: 232623233}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4108,7 +4278,7 @@ GameObject:
   - component: {fileID: 238465818}
   - component: {fileID: 238465820}
   - component: {fileID: 238465819}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4191,7 +4361,7 @@ GameObject:
   - component: {fileID: 245632451}
   - component: {fileID: 245632453}
   - component: {fileID: 245632452}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4367,7 +4537,7 @@ GameObject:
   - component: {fileID: 253810932}
   - component: {fileID: 253810934}
   - component: {fileID: 253810933}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4450,7 +4620,7 @@ GameObject:
   - component: {fileID: 255423713}
   - component: {fileID: 255423715}
   - component: {fileID: 255423714}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4533,7 +4703,7 @@ GameObject:
   - component: {fileID: 258543481}
   - component: {fileID: 258543483}
   - component: {fileID: 258543482}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4616,7 +4786,7 @@ GameObject:
   - component: {fileID: 268411780}
   - component: {fileID: 268411782}
   - component: {fileID: 268411781}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Vertical_Frame (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4699,7 +4869,7 @@ GameObject:
   - component: {fileID: 282758024}
   - component: {fileID: 282758026}
   - component: {fileID: 282758025}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4780,7 +4950,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 284999175}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4948,7 +5118,7 @@ GameObject:
   - component: {fileID: 292379458}
   - component: {fileID: 292379460}
   - component: {fileID: 292379459}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5030,6 +5200,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_Name
       value: "\u4F53\u79EF\u96FE"
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_RootOrder
@@ -5160,7 +5334,7 @@ GameObject:
   - component: {fileID: 300094921}
   - component: {fileID: 300094923}
   - component: {fileID: 300094922}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5243,7 +5417,7 @@ GameObject:
   - component: {fileID: 302991102}
   - component: {fileID: 302991104}
   - component: {fileID: 302991103}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5327,7 +5501,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 20
+      value: 31
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -5397,6 +5571,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &309517567 stripped
@@ -5415,7 +5593,7 @@ GameObject:
   - component: {fileID: 312366085}
   - component: {fileID: 312366087}
   - component: {fileID: 312366086}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Diagonal_Window_Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5498,7 +5676,7 @@ GameObject:
   - component: {fileID: 314794638}
   - component: {fileID: 314794640}
   - component: {fileID: 314794639}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5581,7 +5759,7 @@ GameObject:
   - component: {fileID: 316205732}
   - component: {fileID: 316205734}
   - component: {fileID: 316205733}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Start_Portal_Green_Light (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5696,7 +5874,7 @@ GameObject:
   - component: {fileID: 324991537}
   - component: {fileID: 324991539}
   - component: {fileID: 324991538}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5777,7 +5955,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 327091014}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5821,7 +5999,7 @@ GameObject:
   - component: {fileID: 327309935}
   - component: {fileID: 327309937}
   - component: {fileID: 327309936}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5904,7 +6082,7 @@ GameObject:
   - component: {fileID: 333271259}
   - component: {fileID: 333271261}
   - component: {fileID: 333271260}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5986,7 +6164,7 @@ GameObject:
   m_Component:
   - component: {fileID: 333271649}
   - component: {fileID: 333271650}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "ChatGPT \u56FE\u50CF 2026\u5E7410\u670812\u65E5 19_57_36"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6071,7 +6249,7 @@ GameObject:
   - component: {fileID: 333474484}
   - component: {fileID: 333474486}
   - component: {fileID: 333474485}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6157,7 +6335,7 @@ GameObject:
   - component: {fileID: 333480260}
   - component: {fileID: 333480262}
   - component: {fileID: 333480261}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6240,7 +6418,7 @@ GameObject:
   - component: {fileID: 342435102}
   - component: {fileID: 342435104}
   - component: {fileID: 342435103}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6323,7 +6501,7 @@ GameObject:
   - component: {fileID: 343493393}
   - component: {fileID: 343493395}
   - component: {fileID: 343493394}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6406,7 +6584,7 @@ GameObject:
   - component: {fileID: 346645610}
   - component: {fileID: 346645612}
   - component: {fileID: 346645611}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Upper (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6489,7 +6667,7 @@ GameObject:
   - component: {fileID: 348332583}
   - component: {fileID: 348332585}
   - component: {fileID: 348332584}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6576,7 +6754,7 @@ GameObject:
   - component: {fileID: 351145194}
   - component: {fileID: 351145196}
   - component: {fileID: 351145195}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6660,7 +6838,7 @@ GameObject:
   - component: {fileID: 375484038}
   - component: {fileID: 375484040}
   - component: {fileID: 375484039}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Start_Portal_Green_Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6775,7 +6953,7 @@ GameObject:
   - component: {fileID: 378616749}
   - component: {fileID: 378616751}
   - component: {fileID: 378616750}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6858,7 +7036,7 @@ GameObject:
   - component: {fileID: 380421912}
   - component: {fileID: 380421914}
   - component: {fileID: 380421913}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Storage_Side_Frame (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6942,7 +7120,7 @@ GameObject:
   - component: {fileID: 380799677}
   - component: {fileID: 380799679}
   - component: {fileID: 380799678}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7025,7 +7203,7 @@ GameObject:
   - component: {fileID: 384541445}
   - component: {fileID: 384541447}
   - component: {fileID: 384541446}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7108,7 +7286,7 @@ GameObject:
   - component: {fileID: 384813400}
   - component: {fileID: 384813402}
   - component: {fileID: 384813401}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7189,7 +7367,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 386954937}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: clock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7229,7 +7407,7 @@ Transform:
   - {fileID: 342435102}
   - {fileID: 186050147}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &388664960
 GameObject:
@@ -7240,7 +7418,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 388664961}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7278,7 +7456,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 388805576}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7311,7 +7489,7 @@ GameObject:
   - component: {fileID: 391356739}
   - component: {fileID: 391356741}
   - component: {fileID: 391356740}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7392,7 +7570,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 391480968}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7425,7 +7603,7 @@ GameObject:
   - component: {fileID: 400520139}
   - component: {fileID: 400520141}
   - component: {fileID: 400520140}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Storage_Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7448,7 +7626,7 @@ Transform:
   - {fileID: 1051285551}
   - {fileID: 122769002}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &400520140
 MeshRenderer:
@@ -7511,7 +7689,7 @@ GameObject:
   - component: {fileID: 404587892}
   - component: {fileID: 404587894}
   - component: {fileID: 404587893}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7594,7 +7772,7 @@ GameObject:
   - component: {fileID: 412143394}
   - component: {fileID: 412143396}
   - component: {fileID: 412143395}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7675,7 +7853,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 419259450}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7708,7 +7886,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -7778,6 +7956,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &421858757 stripped
@@ -7796,7 +7978,7 @@ GameObject:
   - component: {fileID: 423142533}
   - component: {fileID: 423142535}
   - component: {fileID: 423142534}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7880,7 +8062,7 @@ GameObject:
   - component: {fileID: 430967280}
   - component: {fileID: 430967282}
   - component: {fileID: 430967281}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Warm_Background_Window_Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7995,7 +8177,7 @@ GameObject:
   - component: {fileID: 437946990}
   - component: {fileID: 437946992}
   - component: {fileID: 437946991}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8078,7 +8260,7 @@ GameObject:
   - component: {fileID: 439275780}
   - component: {fileID: 439275782}
   - component: {fileID: 439275781}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8161,7 +8343,7 @@ GameObject:
   - component: {fileID: 440812563}
   - component: {fileID: 440812565}
   - component: {fileID: 440812564}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8245,7 +8427,7 @@ GameObject:
   - component: {fileID: 440893598}
   - component: {fileID: 440893597}
   - component: {fileID: 440893596}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8341,7 +8523,7 @@ GameObject:
   - component: {fileID: 444248067}
   - component: {fileID: 444248069}
   - component: {fileID: 444248068}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Storage_Side_Frame (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8426,7 +8608,7 @@ GameObject:
   - component: {fileID: 445645750}
   - component: {fileID: 445645749}
   - component: {fileID: 445645748}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8522,7 +8704,7 @@ GameObject:
   - component: {fileID: 446784144}
   - component: {fileID: 446784146}
   - component: {fileID: 446784145}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Workbench_Post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8604,7 +8786,7 @@ GameObject:
   m_Component:
   - component: {fileID: 450898280}
   - component: {fileID: 450898281}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "ChatGPT \u56FE\u50CF 2026\u5E7410\u670812\u65E5 19_57_36"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8689,7 +8871,7 @@ GameObject:
   - component: {fileID: 454243812}
   - component: {fileID: 454243814}
   - component: {fileID: 454243813}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8778,7 +8960,7 @@ GameObject:
   - component: {fileID: 457528524}
   - component: {fileID: 457528523}
   - component: {fileID: 457528522}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8938,6 +9120,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_7 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7c50da2276418a0439665708c40db48e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c50da2276418a0439665708c40db48e, type: 3}
 --- !u!1 &465768341
@@ -8951,7 +9137,7 @@ GameObject:
   - component: {fileID: 465768342}
   - component: {fileID: 465768344}
   - component: {fileID: 465768343}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9037,7 +9223,7 @@ GameObject:
   - component: {fileID: 470684910}
   - component: {fileID: 470684912}
   - component: {fileID: 470684911}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Storage_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9119,7 +9305,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 472036727}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9152,7 +9338,7 @@ GameObject:
   - component: {fileID: 478516264}
   - component: {fileID: 478516266}
   - component: {fileID: 478516265}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Horizontal_Frame (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9235,7 +9421,7 @@ GameObject:
   - component: {fileID: 496670531}
   - component: {fileID: 496670533}
   - component: {fileID: 496670532}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fixture_Light_Cone_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9318,7 +9504,7 @@ GameObject:
   - component: {fileID: 498090697}
   - component: {fileID: 498090699}
   - component: {fileID: 498090698}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9401,7 +9587,7 @@ GameObject:
   - component: {fileID: 498532901}
   - component: {fileID: 498532903}
   - component: {fileID: 498532902}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Cable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9484,6 +9670,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_Name
       value: "\u4F53\u79EF\u96FE "
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_RootOrder
@@ -9619,7 +9809,7 @@ GameObject:
   - component: {fileID: 513769658}
   - component: {fileID: 513769660}
   - component: {fileID: 513769659}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9700,7 +9890,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 514664265}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9733,7 +9923,7 @@ GameObject:
   - component: {fileID: 519803984}
   - component: {fileID: 519803986}
   - component: {fileID: 519803985}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9816,7 +10006,7 @@ GameObject:
   - component: {fileID: 523802484}
   - component: {fileID: 523802486}
   - component: {fileID: 523802485}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9932,7 +10122,7 @@ GameObject:
   - component: {fileID: 524892647}
   - component: {fileID: 524892646}
   - component: {fileID: 524892645}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10028,7 +10218,7 @@ GameObject:
   - component: {fileID: 537214709}
   - component: {fileID: 537214711}
   - component: {fileID: 537214710}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Cable (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10111,7 +10301,7 @@ GameObject:
   - component: {fileID: 537457206}
   - component: {fileID: 537457208}
   - component: {fileID: 537457207}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10264,7 +10454,7 @@ GameObject:
   - component: {fileID: 546440309}
   - component: {fileID: 546440311}
   - component: {fileID: 546440310}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10347,7 +10537,7 @@ GameObject:
   - component: {fileID: 548082913}
   - component: {fileID: 548082915}
   - component: {fileID: 548082914}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10430,7 +10620,7 @@ GameObject:
   - component: {fileID: 550479973}
   - component: {fileID: 550479975}
   - component: {fileID: 550479974}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10513,7 +10703,7 @@ GameObject:
   - component: {fileID: 562160048}
   - component: {fileID: 562160050}
   - component: {fileID: 562160049}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10596,7 +10786,7 @@ GameObject:
   - component: {fileID: 570438806}
   - component: {fileID: 570438808}
   - component: {fileID: 570438807}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10677,7 +10867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 571560851}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10714,7 +10904,7 @@ GameObject:
   - component: {fileID: 571946766}
   - component: {fileID: 571946768}
   - component: {fileID: 571946767}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Hub (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10798,7 +10988,7 @@ GameObject:
   - component: {fileID: 576367093}
   - component: {fileID: 576367092}
   - component: {fileID: 576367091}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10894,7 +11084,7 @@ GameObject:
   - component: {fileID: 577369404}
   - component: {fileID: 577369406}
   - component: {fileID: 577369405}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Horizontal_Frame (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10976,7 +11166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 580564113}
   - component: {fileID: 580564112}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11048,7 +11238,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &593637916
 GameObject:
@@ -11061,7 +11251,7 @@ GameObject:
   - component: {fileID: 593637917}
   - component: {fileID: 593637919}
   - component: {fileID: 593637918}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Deep_Blue_Back_Wall (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11214,7 +11404,7 @@ GameObject:
   - component: {fileID: 601634980}
   - component: {fileID: 601634982}
   - component: {fileID: 601634981}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Equipment_Recess
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11297,7 +11487,7 @@ GameObject:
   - component: {fileID: 606344773}
   - component: {fileID: 606344775}
   - component: {fileID: 606344774}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11380,7 +11570,7 @@ GameObject:
   - component: {fileID: 614012744}
   - component: {fileID: 614012746}
   - component: {fileID: 614012745}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Hub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11453,6 +11643,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 614012743}
   m_Mesh: {fileID: 4300000, guid: bcbe9c3d0b4d02e449c128aa5035f238, type: 2}
+--- !u!1 &621603017
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 621603018}
+  - component: {fileID: 621603020}
+  - component: {fileID: 621603019}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &621603018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621603017}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: 0.26893616, z: 0.24790192}
+  m_LocalScale: {x: 0.13, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &621603019
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621603017}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &621603020
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 621603017}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &626926186
 GameObject:
   m_ObjectHideFlags: 0
@@ -11464,7 +11737,7 @@ GameObject:
   - component: {fileID: 626926187}
   - component: {fileID: 626926189}
   - component: {fileID: 626926188}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11550,7 +11823,7 @@ GameObject:
   - component: {fileID: 628306197}
   - component: {fileID: 628306199}
   - component: {fileID: 628306198}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11637,7 +11910,7 @@ GameObject:
   - component: {fileID: 629105604}
   - component: {fileID: 629105606}
   - component: {fileID: 629105605}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11724,7 +11997,7 @@ GameObject:
   - component: {fileID: 629892123}
   - component: {fileID: 629892125}
   - component: {fileID: 629892124}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11807,7 +12080,7 @@ GameObject:
   - component: {fileID: 630075535}
   - component: {fileID: 630075537}
   - component: {fileID: 630075536}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Industrial_Fixture_Housing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12023,7 +12296,7 @@ GameObject:
   m_Component:
   - component: {fileID: 635886989}
   - component: {fileID: 635886990}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "ChatGPT \u56FE\u50CF 2026\u5E7410\u670812\u65E5 21_01_33 (1)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12111,7 +12384,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 646270286}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12148,7 +12421,7 @@ GameObject:
   - component: {fileID: 656597280}
   - component: {fileID: 656597282}
   - component: {fileID: 656597281}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12231,7 +12504,7 @@ GameObject:
   - component: {fileID: 660216832}
   - component: {fileID: 660216834}
   - component: {fileID: 660216833}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12314,7 +12587,7 @@ GameObject:
   - component: {fileID: 660949958}
   - component: {fileID: 660949960}
   - component: {fileID: 660949959}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12461,6 +12734,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_7
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7c50da2276418a0439665708c40db48e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c50da2276418a0439665708c40db48e, type: 3}
 --- !u!4 &662610647 stripped
@@ -12547,6 +12824,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!1 &672254825
@@ -12560,7 +12841,7 @@ GameObject:
   - component: {fileID: 672254826}
   - component: {fileID: 672254828}
   - component: {fileID: 672254827}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12643,7 +12924,7 @@ GameObject:
   - component: {fileID: 685991287}
   - component: {fileID: 685991289}
   - component: {fileID: 685991288}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Deep_Blue_Back_Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12787,7 +13068,7 @@ GameObject:
   - component: {fileID: 694578089}
   - component: {fileID: 694578091}
   - component: {fileID: 694578090}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12870,7 +13151,7 @@ GameObject:
   - component: {fileID: 695630725}
   - component: {fileID: 695630727}
   - component: {fileID: 695630726}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Upper (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12953,7 +13234,7 @@ GameObject:
   - component: {fileID: 695777147}
   - component: {fileID: 695777149}
   - component: {fileID: 695777148}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Equipment_Recess
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13036,7 +13317,7 @@ GameObject:
   - component: {fileID: 702842792}
   - component: {fileID: 702842794}
   - component: {fileID: 702842793}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13119,7 +13400,7 @@ GameObject:
   - component: {fileID: 707139690}
   - component: {fileID: 707139692}
   - component: {fileID: 707139691}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Vertical_Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13202,7 +13483,7 @@ GameObject:
   - component: {fileID: 707593640}
   - component: {fileID: 707593642}
   - component: {fileID: 707593641}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13286,7 +13567,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 712566294}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: lamp (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13313,7 +13594,7 @@ Transform:
   - {fileID: 1916792661}
   - {fileID: 1577658018}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 22
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &722974554
 GameObject:
@@ -13326,7 +13607,7 @@ GameObject:
   - component: {fileID: 722974555}
   - component: {fileID: 722974557}
   - component: {fileID: 722974556}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13479,7 +13760,7 @@ GameObject:
   - component: {fileID: 730501335}
   - component: {fileID: 730501337}
   - component: {fileID: 730501336}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Tall_Equipment_Bay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13560,7 +13841,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 732169170}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Art_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13604,7 +13885,7 @@ GameObject:
   - component: {fileID: 735133574}
   - component: {fileID: 735133576}
   - component: {fileID: 735133575}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Diagonal_Window_Light (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13687,7 +13968,7 @@ GameObject:
   - component: {fileID: 758362455}
   - component: {fileID: 758362457}
   - component: {fileID: 758362456}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13770,7 +14051,7 @@ GameObject:
   - component: {fileID: 759346425}
   - component: {fileID: 759346427}
   - component: {fileID: 759346426}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13853,7 +14134,7 @@ GameObject:
   - component: {fileID: 765746250}
   - component: {fileID: 765746252}
   - component: {fileID: 765746251}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13936,7 +14217,7 @@ GameObject:
   - component: {fileID: 770132147}
   - component: {fileID: 770132149}
   - component: {fileID: 770132148}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14019,7 +14300,7 @@ GameObject:
   - component: {fileID: 772381714}
   - component: {fileID: 772381716}
   - component: {fileID: 772381715}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14102,7 +14383,7 @@ GameObject:
   - component: {fileID: 782211065}
   - component: {fileID: 782211067}
   - component: {fileID: 782211066}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14183,7 +14464,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 783065369}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14216,7 +14497,7 @@ GameObject:
   - component: {fileID: 786375862}
   - component: {fileID: 786375864}
   - component: {fileID: 786375863}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fixture_Suspension
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14299,7 +14580,7 @@ GameObject:
   - component: {fileID: 790271789}
   - component: {fileID: 790271791}
   - component: {fileID: 790271790}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14383,7 +14664,7 @@ GameObject:
   - component: {fileID: 792653295}
   - component: {fileID: 792653294}
   - component: {fileID: 792653293}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14479,7 +14760,7 @@ GameObject:
   - component: {fileID: 800471194}
   - component: {fileID: 800471196}
   - component: {fileID: 800471195}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14562,7 +14843,7 @@ GameObject:
   - component: {fileID: 800540364}
   - component: {fileID: 800540366}
   - component: {fileID: 800540365}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14645,7 +14926,7 @@ GameObject:
   - component: {fileID: 807245752}
   - component: {fileID: 807245754}
   - component: {fileID: 807245753}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Start_Portal_Green_Light (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14760,7 +15041,7 @@ GameObject:
   - component: {fileID: 808829981}
   - component: {fileID: 808829983}
   - component: {fileID: 808829982}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fixture_Front_Luminous_Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14843,7 +15124,7 @@ GameObject:
   - component: {fileID: 812322900}
   - component: {fileID: 812322902}
   - component: {fileID: 812322901}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14926,7 +15207,7 @@ GameObject:
   - component: {fileID: 820642394}
   - component: {fileID: 820642396}
   - component: {fileID: 820642395}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14941,8 +15222,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820642393}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 59.4, y: 11.61, z: 48.21}
-  m_LocalScale: {x: 1.215617, y: 8.145788, z: 9.008014}
+  m_LocalPosition: {x: 59.4, y: 11.99, z: 48.21}
+  m_LocalScale: {x: 1.215617, y: 7.5348544, z: 9.008014}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 327091014}
@@ -15010,7 +15291,7 @@ GameObject:
   - component: {fileID: 820764647}
   - component: {fileID: 820764646}
   - component: {fileID: 820764645}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15194,6 +15475,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7619817802870121498, guid: c1a9e96e8245e2148803044d2cb50dbe, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8129006457729877339, guid: c1a9e96e8245e2148803044d2cb50dbe, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -15236,7 +15521,7 @@ GameObject:
   - component: {fileID: 825394278}
   - component: {fileID: 825394280}
   - component: {fileID: 825394279}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15319,7 +15604,7 @@ GameObject:
   - component: {fileID: 827137432}
   - component: {fileID: 827137434}
   - component: {fileID: 827137433}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15402,7 +15687,7 @@ GameObject:
   - component: {fileID: 828998928}
   - component: {fileID: 828998930}
   - component: {fileID: 828998929}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15417,8 +15702,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 828998927}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 73.15, y: 3.47, z: 48.21}
-  m_LocalScale: {x: 1.215617, y: 10.085643, z: 9.008014}
+  m_LocalPosition: {x: 73.43, y: 3.47, z: 48.21}
+  m_LocalScale: {x: 1.1083789, y: 10.085643, z: 9.008014}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 327091014}
@@ -15485,7 +15770,7 @@ GameObject:
   - component: {fileID: 829609508}
   - component: {fileID: 829609510}
   - component: {fileID: 829609509}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Horizontal_Frame (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15568,7 +15853,7 @@ GameObject:
   - component: {fileID: 830810091}
   - component: {fileID: 830810093}
   - component: {fileID: 830810092}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Vertical_Frame (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15649,7 +15934,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 831383587}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15676,7 +15961,7 @@ Transform:
   - {fileID: 1737781644}
   - {fileID: 847983489}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 21
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &832769768
 PrefabInstance:
@@ -15749,6 +16034,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 49fa76b66a96aa4488ef0864456732c5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49fa76b66a96aa4488ef0864456732c5, type: 3}
 --- !u!4 &832769769 stripped
@@ -15767,7 +16056,7 @@ GameObject:
   - component: {fileID: 832901267}
   - component: {fileID: 832901269}
   - component: {fileID: 832901268}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Cable (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15920,7 +16209,7 @@ GameObject:
   - component: {fileID: 834055281}
   - component: {fileID: 834055283}
   - component: {fileID: 834055282}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16003,7 +16292,7 @@ GameObject:
   - component: {fileID: 836703975}
   - component: {fileID: 836703977}
   - component: {fileID: 836703976}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16086,7 +16375,7 @@ GameObject:
   - component: {fileID: 840699016}
   - component: {fileID: 840699018}
   - component: {fileID: 840699017}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16169,7 +16458,7 @@ GameObject:
   - component: {fileID: 847983489}
   - component: {fileID: 847983491}
   - component: {fileID: 847983490}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Equipment_Bay_Cool_Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16224,7 +16513,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.49, g: 0.66, b: 0.78, a: 1}
   m_Intensity: 42.6
-  m_Range: 32.79
+  m_Range: 9.7
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -16260,7 +16549,7 @@ Light:
   m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -16282,7 +16571,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 849160494}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16304,7 +16593,7 @@ Transform:
   - {fileID: 1307450471}
   - {fileID: 695777147}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &857084371
 GameObject:
@@ -16317,7 +16606,7 @@ GameObject:
   - component: {fileID: 857084372}
   - component: {fileID: 857084374}
   - component: {fileID: 857084373}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16400,7 +16689,7 @@ GameObject:
   - component: {fileID: 857482891}
   - component: {fileID: 857482893}
   - component: {fileID: 857482892}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Storage_Side_Frame (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16484,7 +16773,7 @@ GameObject:
   - component: {fileID: 863617773}
   - component: {fileID: 863617775}
   - component: {fileID: 863617774}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16635,6 +16924,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &864336364 stripped
@@ -16653,7 +16946,7 @@ GameObject:
   - component: {fileID: 865807503}
   - component: {fileID: 865807505}
   - component: {fileID: 865807504}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16736,7 +17029,7 @@ GameObject:
   - component: {fileID: 868206201}
   - component: {fileID: 868206203}
   - component: {fileID: 868206202}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (21)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16817,7 +17110,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 871196419}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16850,7 +17143,7 @@ GameObject:
   - component: {fileID: 884747989}
   - component: {fileID: 884747991}
   - component: {fileID: 884747990}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cold_White_Luminous_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16933,7 +17226,7 @@ GameObject:
   - component: {fileID: 888138053}
   - component: {fileID: 888138055}
   - component: {fileID: 888138054}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17016,7 +17309,7 @@ GameObject:
   - component: {fileID: 892323356}
   - component: {fileID: 892323358}
   - component: {fileID: 892323357}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Horizontal_Frame (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17099,7 +17392,7 @@ GameObject:
   - component: {fileID: 897048927}
   - component: {fileID: 897048929}
   - component: {fileID: 897048928}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17182,7 +17475,7 @@ GameObject:
   - component: {fileID: 898386646}
   - component: {fileID: 898386648}
   - component: {fileID: 898386647}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17265,7 +17558,7 @@ GameObject:
   - component: {fileID: 901077696}
   - component: {fileID: 901077698}
   - component: {fileID: 901077697}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17348,7 +17641,7 @@ GameObject:
   - component: {fileID: 910578972}
   - component: {fileID: 910578974}
   - component: {fileID: 910578973}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17543,6 +17836,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8898397273356629544, guid: 633ac33bbc0f06c48aa8986b686900d2, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 633ac33bbc0f06c48aa8986b686900d2, type: 3}
 --- !u!4 &911805994 stripped
@@ -17561,7 +17858,7 @@ GameObject:
   - component: {fileID: 914204961}
   - component: {fileID: 914204963}
   - component: {fileID: 914204962}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17644,7 +17941,7 @@ GameObject:
   - component: {fileID: 920670854}
   - component: {fileID: 920670856}
   - component: {fileID: 920670855}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17727,7 +18024,7 @@ GameObject:
   - component: {fileID: 921500481}
   - component: {fileID: 921500483}
   - component: {fileID: 921500482}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fixture_Light_Cone_7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17810,7 +18107,7 @@ GameObject:
   - component: {fileID: 922122579}
   - component: {fileID: 922122581}
   - component: {fileID: 922122580}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17891,7 +18188,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 923097366}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17924,7 +18221,7 @@ GameObject:
   - component: {fileID: 924789974}
   - component: {fileID: 924789976}
   - component: {fileID: 924789975}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Tall_Equipment_Bay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18007,7 +18304,7 @@ GameObject:
   - component: {fileID: 935061878}
   - component: {fileID: 935061880}
   - component: {fileID: 935061879}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18090,7 +18387,7 @@ GameObject:
   - component: {fileID: 938547448}
   - component: {fileID: 938547450}
   - component: {fileID: 938547449}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18173,7 +18470,7 @@ GameObject:
   - component: {fileID: 951576730}
   - component: {fileID: 951576732}
   - component: {fileID: 951576731}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18256,7 +18553,7 @@ GameObject:
   - component: {fileID: 959147572}
   - component: {fileID: 959147574}
   - component: {fileID: 959147573}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18337,7 +18634,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 959581425}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18370,7 +18667,7 @@ GameObject:
   - component: {fileID: 959869476}
   - component: {fileID: 959869478}
   - component: {fileID: 959869477}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18453,7 +18750,7 @@ GameObject:
   - component: {fileID: 963916770}
   - component: {fileID: 963916772}
   - component: {fileID: 963916771}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fixture_Front_Luminous_Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18604,6 +18901,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &967264110 stripped
@@ -18622,7 +18923,7 @@ GameObject:
   - component: {fileID: 972652510}
   - component: {fileID: 972652512}
   - component: {fileID: 972652511}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18703,7 +19004,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 975094498}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Board (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18725,7 +19026,7 @@ Transform:
   - {fileID: 924789974}
   - {fileID: 601634980}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &980450963
 GameObject:
@@ -18738,7 +19039,7 @@ GameObject:
   - component: {fileID: 980450964}
   - component: {fileID: 980450966}
   - component: {fileID: 980450965}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Vertical_Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18821,7 +19122,7 @@ GameObject:
   - component: {fileID: 981873724}
   - component: {fileID: 981873726}
   - component: {fileID: 981873725}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18907,7 +19208,7 @@ GameObject:
   - component: {fileID: 996389394}
   - component: {fileID: 996389396}
   - component: {fileID: 996389395}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18990,7 +19291,7 @@ GameObject:
   - component: {fileID: 1004373234}
   - component: {fileID: 1004373236}
   - component: {fileID: 1004373235}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19075,7 +19376,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1021943121}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19094,6 +19395,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1176845730}
   - {fileID: 849160494}
   - {fileID: 1698523383}
   - {fileID: 975094498}
@@ -19131,7 +19433,7 @@ GameObject:
   - component: {fileID: 1030588164}
   - component: {fileID: 1030588166}
   - component: {fileID: 1030588165}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19214,7 +19516,7 @@ GameObject:
   - component: {fileID: 1037881862}
   - component: {fileID: 1037881864}
   - component: {fileID: 1037881863}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19297,7 +19599,7 @@ GameObject:
   - component: {fileID: 1044130376}
   - component: {fileID: 1044130378}
   - component: {fileID: 1044130377}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19380,7 +19682,7 @@ GameObject:
   - component: {fileID: 1051285551}
   - component: {fileID: 1051285553}
   - component: {fileID: 1051285552}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Storage_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19464,7 +19766,7 @@ GameObject:
   - component: {fileID: 1064184919}
   - component: {fileID: 1064184921}
   - component: {fileID: 1064184920}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19545,7 +19847,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1065037529}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19577,7 +19879,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1074134992}
   - component: {fileID: 1074134991}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19649,7 +19951,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1085787450
 GameObject:
@@ -19662,7 +19964,7 @@ GameObject:
   - component: {fileID: 1085787451}
   - component: {fileID: 1085787453}
   - component: {fileID: 1085787452}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19746,7 +20048,7 @@ GameObject:
   - component: {fileID: 1091173839}
   - component: {fileID: 1091173841}
   - component: {fileID: 1091173840}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19829,7 +20131,7 @@ GameObject:
   - component: {fileID: 1093062340}
   - component: {fileID: 1093062342}
   - component: {fileID: 1093062341}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19916,7 +20218,7 @@ GameObject:
   - component: {fileID: 1101441895}
   - component: {fileID: 1101441897}
   - component: {fileID: 1101441896}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20003,7 +20305,7 @@ GameObject:
   - component: {fileID: 1105708806}
   - component: {fileID: 1105708808}
   - component: {fileID: 1105708807}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Distant_Grey_Component
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20086,7 +20388,7 @@ GameObject:
   - component: {fileID: 1106048256}
   - component: {fileID: 1106048258}
   - component: {fileID: 1106048257}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Finger (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20169,7 +20471,7 @@ GameObject:
   - component: {fileID: 1109342341}
   - component: {fileID: 1109342343}
   - component: {fileID: 1109342342}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20252,7 +20554,7 @@ GameObject:
   - component: {fileID: 1111339644}
   - component: {fileID: 1111339646}
   - component: {fileID: 1111339645}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20335,7 +20637,7 @@ GameObject:
   - component: {fileID: 1125518324}
   - component: {fileID: 1125518326}
   - component: {fileID: 1125518325}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20418,7 +20720,7 @@ GameObject:
   - component: {fileID: 1130561725}
   - component: {fileID: 1130561727}
   - component: {fileID: 1130561726}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20501,7 +20803,7 @@ GameObject:
   - component: {fileID: 1134086675}
   - component: {fileID: 1134086677}
   - component: {fileID: 1134086676}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20616,7 +20918,7 @@ GameObject:
   - component: {fileID: 1136876398}
   - component: {fileID: 1136876400}
   - component: {fileID: 1136876399}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20699,7 +21001,7 @@ GameObject:
   - component: {fileID: 1137054784}
   - component: {fileID: 1137054786}
   - component: {fileID: 1137054785}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20782,7 +21084,7 @@ GameObject:
   - component: {fileID: 1139508516}
   - component: {fileID: 1139508518}
   - component: {fileID: 1139508517}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Distant_Grey_Component (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20865,7 +21167,7 @@ GameObject:
   - component: {fileID: 1140091738}
   - component: {fileID: 1140091740}
   - component: {fileID: 1140091739}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20937,6 +21239,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1140091737}
   m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
+--- !u!1 &1144121218
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1144121219}
+  - component: {fileID: 1144121221}
+  - component: {fileID: 1144121220}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1144121219
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144121218}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: 0.41893768, z: 0.24790192}
+  m_LocalScale: {x: 0.13, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1144121220
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144121218}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1144121221
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144121218}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1149432233
 GameObject:
   m_ObjectHideFlags: 0
@@ -20948,7 +21333,7 @@ GameObject:
   - component: {fileID: 1149432234}
   - component: {fileID: 1149432236}
   - component: {fileID: 1149432235}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Finger (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21031,7 +21416,7 @@ GameObject:
   - component: {fileID: 1153722143}
   - component: {fileID: 1153722145}
   - component: {fileID: 1153722144}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21114,7 +21499,7 @@ GameObject:
   - component: {fileID: 1159749901}
   - component: {fileID: 1159749903}
   - component: {fileID: 1159749902}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21197,7 +21582,7 @@ GameObject:
   - component: {fileID: 1164106570}
   - component: {fileID: 1164106572}
   - component: {fileID: 1164106571}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Workbench_Post (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21384,6 +21769,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6185179344673287314, guid: 3135b00574fb6554ba910259632694f6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6858102281302701338, guid: 3135b00574fb6554ba910259632694f6, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -21414,7 +21803,7 @@ GameObject:
   - component: {fileID: 1170343858}
   - component: {fileID: 1170343860}
   - component: {fileID: 1170343859}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21565,8 +21954,53 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+--- !u!1 &1176845729
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1176845730}
+  m_Layer: 8
+  m_Name: "\u523B\u5EA6"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1176845730
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1176845729}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -22.971, y: -75.21, z: 50.084}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 10393431}
+  - {fileID: 1144121219}
+  - {fileID: 621603018}
+  - {fileID: 1619320612}
+  - {fileID: 1286675266}
+  - {fileID: 1822539710}
+  - {fileID: 158959261}
+  - {fileID: 1312576673}
+  - {fileID: 1488916978}
+  - {fileID: 1800527244}
+  m_Father: {fileID: 1021943121}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1178939955
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21646,6 +22080,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &1178939956 stripped
@@ -21664,7 +22102,7 @@ GameObject:
   - component: {fileID: 1184097856}
   - component: {fileID: 1184097858}
   - component: {fileID: 1184097857}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21751,7 +22189,7 @@ GameObject:
   - component: {fileID: 1185036689}
   - component: {fileID: 1185036691}
   - component: {fileID: 1185036690}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21834,7 +22272,7 @@ GameObject:
   - component: {fileID: 1188675509}
   - component: {fileID: 1188675511}
   - component: {fileID: 1188675510}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21917,7 +22355,7 @@ GameObject:
   - component: {fileID: 1188865964}
   - component: {fileID: 1188865966}
   - component: {fileID: 1188865965}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22000,7 +22438,7 @@ GameObject:
   - component: {fileID: 1194739911}
   - component: {fileID: 1194739913}
   - component: {fileID: 1194739912}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22087,7 +22525,7 @@ GameObject:
   - component: {fileID: 1201544130}
   - component: {fileID: 1201544132}
   - component: {fileID: 1201544131}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Diagram_Poster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22170,7 +22608,7 @@ GameObject:
   - component: {fileID: 1208611068}
   - component: {fileID: 1208611070}
   - component: {fileID: 1208611069}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22253,7 +22691,7 @@ GameObject:
   - component: {fileID: 1210891746}
   - component: {fileID: 1210891748}
   - component: {fileID: 1210891747}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22403,6 +22841,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_7 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7c50da2276418a0439665708c40db48e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c50da2276418a0439665708c40db48e, type: 3}
 --- !u!4 &1212532897 stripped
@@ -22421,7 +22863,7 @@ GameObject:
   - component: {fileID: 1222624321}
   - component: {fileID: 1222624323}
   - component: {fileID: 1222624322}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22504,7 +22946,7 @@ GameObject:
   - component: {fileID: 1223972362}
   - component: {fileID: 1223972364}
   - component: {fileID: 1223972363}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22587,7 +23029,7 @@ GameObject:
   - component: {fileID: 1224854408}
   - component: {fileID: 1224854410}
   - component: {fileID: 1224854409}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22670,7 +23112,7 @@ GameObject:
   - component: {fileID: 1234603500}
   - component: {fileID: 1234603502}
   - component: {fileID: 1234603501}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22753,7 +23195,7 @@ GameObject:
   - component: {fileID: 1234886589}
   - component: {fileID: 1234886591}
   - component: {fileID: 1234886590}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22836,7 +23278,7 @@ GameObject:
   - component: {fileID: 1236752736}
   - component: {fileID: 1236752738}
   - component: {fileID: 1236752737}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22919,7 +23361,7 @@ GameObject:
   - component: {fileID: 1241085709}
   - component: {fileID: 1241085711}
   - component: {fileID: 1241085710}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Cable (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23002,7 +23444,7 @@ GameObject:
   - component: {fileID: 1241699558}
   - component: {fileID: 1241699560}
   - component: {fileID: 1241699559}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23085,7 +23527,7 @@ GameObject:
   - component: {fileID: 1253740673}
   - component: {fileID: 1253740675}
   - component: {fileID: 1253740674}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23172,7 +23614,7 @@ GameObject:
   - component: {fileID: 1256905188}
   - component: {fileID: 1256905190}
   - component: {fileID: 1256905189}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23256,7 +23698,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1260815867}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "\u67B6\u5B50 (1)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23303,7 +23745,7 @@ GameObject:
   - component: {fileID: 1263077642}
   - component: {fileID: 1263077644}
   - component: {fileID: 1263077643}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (19)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23384,7 +23826,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1265845520}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "\u67B6\u5B50 (1)"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23491,6 +23933,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 80723b44f888a564e88795eeb08ae491, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80723b44f888a564e88795eeb08ae491, type: 3}
 --- !u!4 &1272607467 stripped
@@ -23507,7 +23953,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 14
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -23577,6 +24023,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &1279757161 stripped
@@ -23584,6 +24034,89 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
   m_PrefabInstance: {fileID: 1279757160}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1286675265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1286675266}
+  - component: {fileID: 1286675268}
+  - component: {fileID: 1286675267}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1286675266
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286675265}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: -0.031059265, z: 0.24790192}
+  m_LocalScale: {x: 0.13, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1286675267
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286675265}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1286675268
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1286675265}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1292817565
 GameObject:
   m_ObjectHideFlags: 0
@@ -23594,7 +24127,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1292817567}
   - component: {fileID: 1292817566}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: roboTex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23666,7 +24199,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1303162658
 GameObject:
@@ -23679,7 +24212,7 @@ GameObject:
   - component: {fileID: 1303162659}
   - component: {fileID: 1303162661}
   - component: {fileID: 1303162660}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23762,7 +24295,7 @@ GameObject:
   - component: {fileID: 1307450471}
   - component: {fileID: 1307450473}
   - component: {fileID: 1307450472}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Tall_Equipment_Bay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23845,7 +24378,7 @@ GameObject:
   - component: {fileID: 1307600040}
   - component: {fileID: 1307600042}
   - component: {fileID: 1307600041}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23928,7 +24461,7 @@ GameObject:
   - component: {fileID: 1308473611}
   - component: {fileID: 1308473613}
   - component: {fileID: 1308473612}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24000,6 +24533,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308473610}
   m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
+--- !u!1 &1312576672
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1312576673}
+  - component: {fileID: 1312576675}
+  - component: {fileID: 1312576674}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (7)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1312576673
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312576672}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: -0.48106384, z: 0.24790192}
+  m_LocalScale: {x: 0.13, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1312576674
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312576672}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1312576675
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312576672}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1320041691
 GameObject:
   m_ObjectHideFlags: 0
@@ -24011,7 +24627,7 @@ GameObject:
   - component: {fileID: 1320041692}
   - component: {fileID: 1320041694}
   - component: {fileID: 1320041693}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Warm_Background_Window_Fill (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24126,7 +24742,7 @@ GameObject:
   - component: {fileID: 1320369790}
   - component: {fileID: 1320369792}
   - component: {fileID: 1320369791}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24209,7 +24825,7 @@ GameObject:
   - component: {fileID: 1323440963}
   - component: {fileID: 1323440965}
   - component: {fileID: 1323440964}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24323,7 +24939,7 @@ GameObject:
   - component: {fileID: 1325733630}
   - component: {fileID: 1325733632}
   - component: {fileID: 1325733631}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24406,7 +25022,7 @@ GameObject:
   - component: {fileID: 1326058042}
   - component: {fileID: 1326058044}
   - component: {fileID: 1326058043}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (8)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24490,7 +25106,7 @@ GameObject:
   - component: {fileID: 1327848628}
   - component: {fileID: 1327848627}
   - component: {fileID: 1327848626}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24586,7 +25202,7 @@ GameObject:
   - component: {fileID: 1332655633}
   - component: {fileID: 1332655635}
   - component: {fileID: 1332655634}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Background_Workbench
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24667,7 +25283,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1334008941}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24711,7 +25327,7 @@ GameObject:
   - component: {fileID: 1336004484}
   - component: {fileID: 1336004486}
   - component: {fileID: 1336004485}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Warm_Background_Window_Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24826,7 +25442,7 @@ GameObject:
   - component: {fileID: 1347862631}
   - component: {fileID: 1347862633}
   - component: {fileID: 1347862632}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24907,7 +25523,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1352017607}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24948,7 +25564,7 @@ GameObject:
   - component: {fileID: 1364101193}
   - component: {fileID: 1364101192}
   - component: {fileID: 1364101191}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25044,7 +25660,7 @@ GameObject:
   - component: {fileID: 1379005674}
   - component: {fileID: 1379005676}
   - component: {fileID: 1379005675}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25127,7 +25743,7 @@ GameObject:
   - component: {fileID: 1399261595}
   - component: {fileID: 1399261597}
   - component: {fileID: 1399261596}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25208,7 +25824,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1400499464}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25325,6 +25941,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6666019027850607797, guid: 2383e6c73f58585429f081b219e0485a, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7293020409474921173, guid: 2383e6c73f58585429f081b219e0485a, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -25371,7 +25991,7 @@ GameObject:
   - component: {fileID: 1405717675}
   - component: {fileID: 1405717677}
   - component: {fileID: 1405717676}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Hub (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25454,7 +26074,7 @@ GameObject:
   - component: {fileID: 1406954617}
   - component: {fileID: 1406954619}
   - component: {fileID: 1406954618}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25537,7 +26157,7 @@ GameObject:
   - component: {fileID: 1409876483}
   - component: {fileID: 1409876485}
   - component: {fileID: 1409876484}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Radial_Rib (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25620,7 +26240,7 @@ GameObject:
   - component: {fileID: 1416068185}
   - component: {fileID: 1416068187}
   - component: {fileID: 1416068186}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25703,7 +26323,7 @@ GameObject:
   - component: {fileID: 1418484176}
   - component: {fileID: 1418484178}
   - component: {fileID: 1418484177}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25786,7 +26406,7 @@ GameObject:
   - component: {fileID: 1418561948}
   - component: {fileID: 1418561950}
   - component: {fileID: 1418561949}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25869,7 +26489,7 @@ GameObject:
   - component: {fileID: 1425065882}
   - component: {fileID: 1425065884}
   - component: {fileID: 1425065883}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25954,7 +26574,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1428881536}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25987,7 +26607,7 @@ GameObject:
   - component: {fileID: 1442304992}
   - component: {fileID: 1442304994}
   - component: {fileID: 1442304993}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Storage_Top (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26010,7 +26630,7 @@ Transform:
   - {fileID: 470684910}
   - {fileID: 1908620660}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1442304993
 MeshRenderer:
@@ -26072,7 +26692,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1448428493}
   - component: {fileID: 1448428492}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26144,7 +26764,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1450924508
 GameObject:
@@ -26157,7 +26777,7 @@ GameObject:
   - component: {fileID: 1450924509}
   - component: {fileID: 1450924511}
   - component: {fileID: 1450924510}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Start_Portal_Green_Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26272,7 +26892,7 @@ GameObject:
   - component: {fileID: 1456636819}
   - component: {fileID: 1456636821}
   - component: {fileID: 1456636820}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26355,7 +26975,7 @@ GameObject:
   - component: {fileID: 1457052328}
   - component: {fileID: 1457052330}
   - component: {fileID: 1457052329}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26437,6 +27057,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_Name
       value: "\u4F53\u79EF\u96FE"
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 4acd5ab9ae034a879a34c789e9c2c15f, type: 3}
       propertyPath: m_RootOrder
@@ -26572,7 +27196,7 @@ GameObject:
   - component: {fileID: 1463023590}
   - component: {fileID: 1463023592}
   - component: {fileID: 1463023591}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26655,7 +27279,7 @@ GameObject:
   - component: {fileID: 1470302325}
   - component: {fileID: 1470302327}
   - component: {fileID: 1470302326}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26738,7 +27362,7 @@ GameObject:
   - component: {fileID: 1485800641}
   - component: {fileID: 1485800643}
   - component: {fileID: 1485800642}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (20)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26821,7 +27445,7 @@ GameObject:
   - component: {fileID: 1486479991}
   - component: {fileID: 1486479993}
   - component: {fileID: 1486479992}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Storage_Side_Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26894,6 +27518,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486479990}
   m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
+--- !u!1 &1488916977
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1488916978}
+  - component: {fileID: 1488916980}
+  - component: {fileID: 1488916979}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (8)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1488916978
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488916977}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: -0.63106537, z: 0.24790192}
+  m_LocalScale: {x: 0.13, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1488916979
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488916977}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1488916980
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488916977}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1496129937
 GameObject:
   m_ObjectHideFlags: 0
@@ -26905,7 +27612,7 @@ GameObject:
   - component: {fileID: 1496129938}
   - component: {fileID: 1496129940}
   - component: {fileID: 1496129939}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -26988,7 +27695,7 @@ GameObject:
   - component: {fileID: 1503497710}
   - component: {fileID: 1503497712}
   - component: {fileID: 1503497711}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27069,7 +27776,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1508766606}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27102,7 +27809,7 @@ GameObject:
   - component: {fileID: 1508922631}
   - component: {fileID: 1508922633}
   - component: {fileID: 1508922632}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27185,7 +27892,7 @@ GameObject:
   - component: {fileID: 1512596865}
   - component: {fileID: 1512596867}
   - component: {fileID: 1512596866}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27268,7 +27975,7 @@ GameObject:
   - component: {fileID: 1526058870}
   - component: {fileID: 1526058872}
   - component: {fileID: 1526058871}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27467,6 +28174,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: f59ad27b95177ac43984f562b823cffa, type: 2}
+    - target: {fileID: 2595168298318022509, guid: 15b0ef28997cc8e488b51e396fd63712, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2779833759800004638, guid: 15b0ef28997cc8e488b51e396fd63712, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -27676,7 +28387,7 @@ GameObject:
   - component: {fileID: 1529762293}
   - component: {fileID: 1529762295}
   - component: {fileID: 1529762294}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (17)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27759,7 +28470,7 @@ GameObject:
   - component: {fileID: 1530019496}
   - component: {fileID: 1530019498}
   - component: {fileID: 1530019497}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Upper (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27842,7 +28553,7 @@ GameObject:
   - component: {fileID: 1531571143}
   - component: {fileID: 1531571145}
   - component: {fileID: 1531571144}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Fixture_Suspension
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27925,7 +28636,7 @@ GameObject:
   - component: {fileID: 1537005653}
   - component: {fileID: 1537005655}
   - component: {fileID: 1537005654}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28008,7 +28719,7 @@ GameObject:
   - component: {fileID: 1538252098}
   - component: {fileID: 1538252100}
   - component: {fileID: 1538252099}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Hub (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28091,7 +28802,7 @@ GameObject:
   - component: {fileID: 1539279084}
   - component: {fileID: 1539279086}
   - component: {fileID: 1539279085}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28174,7 +28885,7 @@ GameObject:
   - component: {fileID: 1539361001}
   - component: {fileID: 1539361003}
   - component: {fileID: 1539361002}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28255,7 +28966,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1541185576}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28400,6 +29111,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level_Test_10 [40,38] c56ef1126bb941f5aa90ad28f3b62dcd
       objectReference: {fileID: 0}
+    - target: {fileID: 7826300716919970680, guid: 3c25537d1ae6cc740860d380f1aefe12, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c25537d1ae6cc740860d380f1aefe12, type: 3}
 --- !u!4 &1552814561 stripped
@@ -28418,7 +29133,7 @@ GameObject:
   - component: {fileID: 1562278794}
   - component: {fileID: 1562278796}
   - component: {fileID: 1562278795}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28501,7 +29216,7 @@ GameObject:
   - component: {fileID: 1567373322}
   - component: {fileID: 1567373324}
   - component: {fileID: 1567373323}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28688,6 +29403,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 3799525363214534250, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3958246395818847352, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -28729,6 +29448,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7295333313125674119, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8014467045498386481, guid: e08e91b8f3117c648a7da97c0c9a61e6, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -28782,7 +29505,7 @@ GameObject:
   - component: {fileID: 1572303809}
   - component: {fileID: 1572303811}
   - component: {fileID: 1572303810}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28865,7 +29588,7 @@ GameObject:
   - component: {fileID: 1577367910}
   - component: {fileID: 1577367912}
   - component: {fileID: 1577367911}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28948,7 +29671,7 @@ GameObject:
   - component: {fileID: 1577658018}
   - component: {fileID: 1577658020}
   - component: {fileID: 1577658019}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Equipment_Bay_Cool_Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29003,7 +29726,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.49, g: 0.66, b: 0.78, a: 1}
   m_Intensity: 42.6
-  m_Range: 32.79
+  m_Range: 9.7
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -29039,7 +29762,7 @@ Light:
   m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 256
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -29063,7 +29786,7 @@ GameObject:
   - component: {fileID: 1596804148}
   - component: {fileID: 1596804150}
   - component: {fileID: 1596804149}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29146,7 +29869,7 @@ GameObject:
   - component: {fileID: 1598626486}
   - component: {fileID: 1598626488}
   - component: {fileID: 1598626487}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29237,7 +29960,7 @@ GameObject:
   - component: {fileID: 1607551167}
   - component: {fileID: 1607551169}
   - component: {fileID: 1607551168}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29329,7 +30052,7 @@ GameObject:
   - component: {fileID: 1613150972}
   - component: {fileID: 1613150974}
   - component: {fileID: 1613150973}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29412,7 +30135,7 @@ GameObject:
   - component: {fileID: 1617341653}
   - component: {fileID: 1617341655}
   - component: {fileID: 1617341654}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29484,6 +30207,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617341652}
   m_Mesh: {fileID: 4300000, guid: a1aa30541f828be43a5ff87b4fb9e8d1, type: 2}
+--- !u!1 &1619320611
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1619320612}
+  - component: {fileID: 1619320614}
+  - component: {fileID: 1619320613}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1619320612
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619320611}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: 0.11893463, z: 0.24790192}
+  m_LocalScale: {x: 0.24, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1619320613
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619320611}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1619320614
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1619320611}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1631374139
 GameObject:
   m_ObjectHideFlags: 0
@@ -29495,7 +30301,7 @@ GameObject:
   - component: {fileID: 1631374140}
   - component: {fileID: 1631374142}
   - component: {fileID: 1631374141}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29583,7 +30389,7 @@ GameObject:
   - component: {fileID: 1638017094}
   - component: {fileID: 1638017096}
   - component: {fileID: 1638017095}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29664,7 +30470,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 17
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -29734,6 +30540,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &1639542952 stripped
@@ -29752,7 +30562,7 @@ GameObject:
   - component: {fileID: 1641520479}
   - component: {fileID: 1641520481}
   - component: {fileID: 1641520480}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29833,7 +30643,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1646780728}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Art_20
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29877,7 +30687,7 @@ GameObject:
   - component: {fileID: 1656560931}
   - component: {fileID: 1656560933}
   - component: {fileID: 1656560932}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Diagram_Poster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29960,7 +30770,7 @@ GameObject:
   - component: {fileID: 1658454286}
   - component: {fileID: 1658454288}
   - component: {fileID: 1658454287}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30041,7 +30851,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1673736504}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30148,7 +30958,7 @@ GameObject:
   - component: {fileID: 1684864143}
   - component: {fileID: 1684864145}
   - component: {fileID: 1684864144}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Storage_Top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30171,7 +30981,7 @@ Transform:
   - {fileID: 2072105932}
   - {fileID: 1486479991}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1684864144
 MeshRenderer:
@@ -30234,7 +31044,7 @@ GameObject:
   - component: {fileID: 1686190167}
   - component: {fileID: 1686190169}
   - component: {fileID: 1686190168}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30317,7 +31127,7 @@ GameObject:
   - component: {fileID: 1691104502}
   - component: {fileID: 1691104504}
   - component: {fileID: 1691104503}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Distant_Grey_Component (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30398,7 +31208,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1698523383}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Board (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30420,7 +31230,7 @@ Transform:
   - {fileID: 730501335}
   - {fileID: 1766962304}
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1703249460
 GameObject:
@@ -30433,7 +31243,7 @@ GameObject:
   - component: {fileID: 1703249461}
   - component: {fileID: 1703249463}
   - component: {fileID: 1703249462}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30514,7 +31324,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 16
+      value: 27
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -30583,6 +31393,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_Name
       value: Head (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
@@ -30670,6 +31484,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!1 &1710059555
@@ -30683,7 +31501,7 @@ GameObject:
   - component: {fileID: 1710059556}
   - component: {fileID: 1710059558}
   - component: {fileID: 1710059557}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30766,7 +31584,7 @@ GameObject:
   - component: {fileID: 1711219817}
   - component: {fileID: 1711219819}
   - component: {fileID: 1711219818}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30849,7 +31667,7 @@ GameObject:
   - component: {fileID: 1712239639}
   - component: {fileID: 1712239641}
   - component: {fileID: 1712239640}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30932,7 +31750,7 @@ GameObject:
   - component: {fileID: 1712758870}
   - component: {fileID: 1712758872}
   - component: {fileID: 1712758871}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31015,7 +31833,7 @@ GameObject:
   - component: {fileID: 1737781644}
   - component: {fileID: 1737781646}
   - component: {fileID: 1737781645}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cold_White_Ceiling_Spot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31130,7 +31948,7 @@ GameObject:
   - component: {fileID: 1738641217}
   - component: {fileID: 1738641219}
   - component: {fileID: 1738641218}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (10)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31213,7 +32031,7 @@ GameObject:
   - component: {fileID: 1744422893}
   - component: {fileID: 1744422895}
   - component: {fileID: 1744422894}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31297,7 +32115,7 @@ GameObject:
   - component: {fileID: 1746444179}
   - component: {fileID: 1746444178}
   - component: {fileID: 1746444177}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31393,7 +32211,7 @@ GameObject:
   - component: {fileID: 1748075708}
   - component: {fileID: 1748075710}
   - component: {fileID: 1748075709}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Diagonal_Window_Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31474,7 +32292,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -31544,6 +32362,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &1749696202 stripped
@@ -31562,7 +32384,7 @@ GameObject:
   - component: {fileID: 1762048305}
   - component: {fileID: 1762048307}
   - component: {fileID: 1762048306}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31645,7 +32467,7 @@ GameObject:
   - component: {fileID: 1762701649}
   - component: {fileID: 1762701651}
   - component: {fileID: 1762701650}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31781,7 +32603,7 @@ GameObject:
   - component: {fileID: 1765824162}
   - component: {fileID: 1765824161}
   - component: {fileID: 1765824160}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31877,7 +32699,7 @@ GameObject:
   - component: {fileID: 1766931764}
   - component: {fileID: 1766931766}
   - component: {fileID: 1766931765}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -31960,7 +32782,7 @@ GameObject:
   - component: {fileID: 1766962304}
   - component: {fileID: 1766962306}
   - component: {fileID: 1766962305}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Equipment_Recess
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32043,7 +32865,7 @@ GameObject:
   - component: {fileID: 1769285374}
   - component: {fileID: 1769285376}
   - component: {fileID: 1769285375}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32130,7 +32952,7 @@ GameObject:
   - component: {fileID: 1774004902}
   - component: {fileID: 1774004904}
   - component: {fileID: 1774004903}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Inset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32213,7 +33035,7 @@ GameObject:
   - component: {fileID: 1777825418}
   - component: {fileID: 1777825420}
   - component: {fileID: 1777825419}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (13)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32296,7 +33118,7 @@ GameObject:
   - component: {fileID: 1787355653}
   - component: {fileID: 1787355655}
   - component: {fileID: 1787355654}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Hub (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32400,6 +33222,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3969984821779923593, guid: 4a682c58963343d428334e2c2676a326, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4049777295530843371, guid: 4a682c58963343d428334e2c2676a326, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -32513,7 +33339,7 @@ GameObject:
   - component: {fileID: 1788415297}
   - component: {fileID: 1788415299}
   - component: {fileID: 1788415298}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32594,7 +33420,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1790826165}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Front
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32638,7 +33464,7 @@ GameObject:
   - component: {fileID: 1797538591}
   - component: {fileID: 1797538593}
   - component: {fileID: 1797538592}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (9)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32721,7 +33547,7 @@ GameObject:
   - component: {fileID: 1800124958}
   - component: {fileID: 1800124960}
   - component: {fileID: 1800124959}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32793,6 +33619,89 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1800124957}
   m_Mesh: {fileID: 4300000, guid: bcbe9c3d0b4d02e449c128aa5035f238, type: 2}
+--- !u!1 &1800527243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1800527244}
+  - component: {fileID: 1800527246}
+  - component: {fileID: 1800527245}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (9)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1800527244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800527243}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: -0.78105927, z: 0.24790192}
+  m_LocalScale: {x: 0.24, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1800527245
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800527243}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1800527246
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800527243}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1821685837
 GameObject:
   m_ObjectHideFlags: 0
@@ -32802,7 +33711,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1821685838}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "\u94A9\u5B50"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32830,6 +33739,89 @@ Transform:
   m_Father: {fileID: 222433473}
   m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1822539709
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1822539710}
+  - component: {fileID: 1822539712}
+  - component: {fileID: 1822539711}
+  m_Layer: 8
+  m_Name: Painted_Inspection_Tick (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1822539710
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1822539709}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.40615273, y: -0.18106079, z: 0.24790192}
+  m_LocalScale: {x: 0.13, y: 0.044999994, z: 0.012}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1176845730}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1822539711
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1822539709}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 510cf23895089cf4aabe709dff6f7eb7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1822539712
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1822539709}
+  m_Mesh: {fileID: 4300000, guid: aac1ef99ba95630498f7d122144a58cf, type: 2}
 --- !u!1 &1840731142
 GameObject:
   m_ObjectHideFlags: 0
@@ -32841,7 +33833,7 @@ GameObject:
   - component: {fileID: 1840731143}
   - component: {fileID: 1840731145}
   - component: {fileID: 1840731144}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Distant_Grey_Component
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32924,7 +33916,7 @@ GameObject:
   - component: {fileID: 1844828432}
   - component: {fileID: 1844828434}
   - component: {fileID: 1844828433}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Finger (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33007,7 +33999,7 @@ GameObject:
   - component: {fileID: 1846153772}
   - component: {fileID: 1846153774}
   - component: {fileID: 1846153773}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33164,7 +34156,7 @@ GameObject:
   - component: {fileID: 1853251166}
   - component: {fileID: 1853251168}
   - component: {fileID: 1853251167}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33247,7 +34239,7 @@ GameObject:
   - component: {fileID: 1864434972}
   - component: {fileID: 1864434974}
   - component: {fileID: 1864434973}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33330,7 +34322,7 @@ GameObject:
   - component: {fileID: 1865893075}
   - component: {fileID: 1865893077}
   - component: {fileID: 1865893076}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33413,7 +34405,7 @@ GameObject:
   - component: {fileID: 1873759721}
   - component: {fileID: 1873759723}
   - component: {fileID: 1873759722}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Diagonal_Window_Light (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33496,7 +34488,7 @@ GameObject:
   - component: {fileID: 1883730334}
   - component: {fileID: 1883730336}
   - component: {fileID: 1883730335}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Workbench_Post
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33579,7 +34571,7 @@ GameObject:
   - component: {fileID: 1893700357}
   - component: {fileID: 1893700359}
   - component: {fileID: 1893700358}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33662,7 +34654,7 @@ GameObject:
   - component: {fileID: 1898217247}
   - component: {fileID: 1898217249}
   - component: {fileID: 1898217248}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33745,7 +34737,7 @@ GameObject:
   - component: {fileID: 1900317314}
   - component: {fileID: 1900317316}
   - component: {fileID: 1900317315}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Cable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33829,7 +34821,7 @@ GameObject:
   - component: {fileID: 1903174330}
   - component: {fileID: 1903174332}
   - component: {fileID: 1903174331}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Horizontal_Frame (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33912,7 +34904,7 @@ GameObject:
   - component: {fileID: 1908061726}
   - component: {fileID: 1908061728}
   - component: {fileID: 1908061727}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33995,7 +34987,7 @@ GameObject:
   - component: {fileID: 1908620660}
   - component: {fileID: 1908620662}
   - component: {fileID: 1908620661}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Storage_Side_Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34079,7 +35071,7 @@ GameObject:
   - component: {fileID: 1912879559}
   - component: {fileID: 1912879561}
   - component: {fileID: 1912879560}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Workbench_Post (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34163,7 +35155,7 @@ GameObject:
   - component: {fileID: 1913621681}
   - component: {fileID: 1913621680}
   - component: {fileID: 1913621679}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34259,7 +35251,7 @@ GameObject:
   - component: {fileID: 1916792661}
   - component: {fileID: 1916792663}
   - component: {fileID: 1916792662}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cold_White_Ceiling_Spot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34373,7 +35365,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1933359836}
   - component: {fileID: 1933359835}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34445,7 +35437,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1021943121}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1942366179
 GameObject:
@@ -34458,7 +35450,7 @@ GameObject:
   - component: {fileID: 1942366180}
   - component: {fileID: 1942366182}
   - component: {fileID: 1942366181}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34541,7 +35533,7 @@ GameObject:
   - component: {fileID: 1949841143}
   - component: {fileID: 1949841145}
   - component: {fileID: 1949841144}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (11)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34624,7 +35616,7 @@ GameObject:
   - component: {fileID: 1953100729}
   - component: {fileID: 1953100731}
   - component: {fileID: 1953100730}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cold_White_Luminous_Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34707,7 +35699,7 @@ GameObject:
   - component: {fileID: 1957838830}
   - component: {fileID: 1957838832}
   - component: {fileID: 1957838831}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34791,7 +35783,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1959160426}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34824,7 +35816,7 @@ GameObject:
   - component: {fileID: 1961798265}
   - component: {fileID: 1961798267}
   - component: {fileID: 1961798266}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34907,7 +35899,7 @@ GameObject:
   - component: {fileID: 1965660413}
   - component: {fileID: 1965660415}
   - component: {fileID: 1965660414}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Background_Workbench
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34991,7 +35983,7 @@ GameObject:
   - component: {fileID: 1967101064}
   - component: {fileID: 1967101063}
   - component: {fileID: 1967101062}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35087,7 +36079,7 @@ GameObject:
   - component: {fileID: 1976174565}
   - component: {fileID: 1976174567}
   - component: {fileID: 1976174566}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (15)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35170,7 +36162,7 @@ GameObject:
   - component: {fileID: 1979492875}
   - component: {fileID: 1979492877}
   - component: {fileID: 1979492876}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35253,7 +36245,7 @@ GameObject:
   - component: {fileID: 1986996508}
   - component: {fileID: 1986996510}
   - component: {fileID: 1986996509}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35339,7 +36331,7 @@ GameObject:
   - component: {fileID: 1990266298}
   - component: {fileID: 1990266300}
   - component: {fileID: 1990266299}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35423,7 +36415,7 @@ GameObject:
   - component: {fileID: 2005147701}
   - component: {fileID: 2005147703}
   - component: {fileID: 2005147702}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35504,7 +36496,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2008097054}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: "\u67B6\u5B50"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35549,7 +36541,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 19
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -35619,6 +36611,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &2016327735 stripped
@@ -35642,6 +36638,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1502426430980375085, guid: e714f839ebf386d459c2b56662732d70, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1713922652263905589, guid: e714f839ebf386d459c2b56662732d70, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
@@ -35767,7 +36767,7 @@ GameObject:
   - component: {fileID: 2027083004}
   - component: {fileID: 2027083006}
   - component: {fileID: 2027083005}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Right_Finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35851,7 +36851,7 @@ GameObject:
   - component: {fileID: 2035280131}
   - component: {fileID: 2035280133}
   - component: {fileID: 2035280132}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (7)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35937,7 +36937,7 @@ GameObject:
   - component: {fileID: 2036968338}
   - component: {fileID: 2036968340}
   - component: {fileID: 2036968339}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36020,7 +37020,7 @@ GameObject:
   - component: {fileID: 2038826027}
   - component: {fileID: 2038826029}
   - component: {fileID: 2038826028}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Cage_Diagonal (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36103,7 +37103,7 @@ GameObject:
   - component: {fileID: 2040029396}
   - component: {fileID: 2040029398}
   - component: {fileID: 2040029397}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Steel_Cage (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36189,7 +37189,7 @@ GameObject:
   - component: {fileID: 2040322168}
   - component: {fileID: 2040322170}
   - component: {fileID: 2040322169}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Rear_Horizontal_Frame (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36272,7 +37272,7 @@ GameObject:
   - component: {fileID: 2041652981}
   - component: {fileID: 2041652983}
   - component: {fileID: 2041652982}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Outer_Casing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36353,7 +37353,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2048832396}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Art_6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36390,7 +37390,7 @@ GameObject:
   - component: {fileID: 2059462961}
   - component: {fileID: 2059462963}
   - component: {fileID: 2059462962}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36472,7 +37472,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 18
+      value: 29
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -36542,6 +37542,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Head (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
 --- !u!4 &2064339743 stripped
@@ -36560,7 +37564,7 @@ GameObject:
   - component: {fileID: 2072105932}
   - component: {fileID: 2072105934}
   - component: {fileID: 2072105933}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Component_Storage_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36644,7 +37648,7 @@ GameObject:
   - component: {fileID: 2076063744}
   - component: {fileID: 2076063746}
   - component: {fileID: 2076063745}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Coil_Inner_Shadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36815,6 +37819,10 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6725091975526169784, guid: c92f494f06283aa4c8cfd119e8c546e0, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 6736712515038640399, guid: c92f494f06283aa4c8cfd119e8c546e0, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -36859,7 +37867,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_LocalScale.x
@@ -36928,6 +37936,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
       propertyPath: m_Name
       value: Head
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a679eab9b8c4644c96b8025327d6212, type: 3}
@@ -37011,6 +38023,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_7
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7c50da2276418a0439665708c40db48e, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7c50da2276418a0439665708c40db48e, type: 3}
 --- !u!4 &2086936736 stripped
@@ -37029,7 +38045,7 @@ GameObject:
   - component: {fileID: 2087361165}
   - component: {fileID: 2087361167}
   - component: {fileID: 2087361166}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Hub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37113,7 +38129,7 @@ GameObject:
   - component: {fileID: 2087681631}
   - component: {fileID: 2087681633}
   - component: {fileID: 2087681632}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37256,6 +38272,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_1
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 49fa76b66a96aa4488ef0864456732c5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 49fa76b66a96aa4488ef0864456732c5, type: 3}
 --- !u!4 &2101106637 stripped
@@ -37334,6 +38354,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Vine_2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 80723b44f888a564e88795eeb08ae491, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80723b44f888a564e88795eeb08ae491, type: 3}
 --- !u!4 &2102336410 stripped
@@ -37352,7 +38376,7 @@ GameObject:
   - component: {fileID: 2102652637}
   - component: {fileID: 2102652639}
   - component: {fileID: 2102652638}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (12)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37435,7 +38459,7 @@ GameObject:
   - component: {fileID: 2102759303}
   - component: {fileID: 2102759305}
   - component: {fileID: 2102759304}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Industrial_Fixture_Housing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37518,7 +38542,7 @@ GameObject:
   - component: {fileID: 2111437155}
   - component: {fileID: 2111437157}
   - component: {fileID: 2111437156}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (14)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37601,7 +38625,7 @@ GameObject:
   - component: {fileID: 2111573454}
   - component: {fileID: 2111573456}
   - component: {fileID: 2111573455}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Left_Diagonal_Window_Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37684,7 +38708,7 @@ GameObject:
   - component: {fileID: 2117181896}
   - component: {fileID: 2117181898}
   - component: {fileID: 2117181897}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Claw_Left_Finger (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37767,7 +38791,7 @@ GameObject:
   - component: {fileID: 2119601727}
   - component: {fileID: 2119601729}
   - component: {fileID: 2119601728}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pipe_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37924,7 +38948,7 @@ GameObject:
   - component: {fileID: 2141415382}
   - component: {fileID: 2141415384}
   - component: {fileID: 2141415383}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Structural_Column (16)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
