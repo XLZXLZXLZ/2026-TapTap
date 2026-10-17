@@ -15,7 +15,7 @@ namespace TapTap
 
         [Header("磁力连接线与光点")]
         [InspectorName("磁力线颜色"), Tooltip("生成磁力连接线和沿线光点时使用的基础颜色与透明度。")]
-        [HideInInspector] public Color MagneticColor = new Color(0.52f, 0.85f, 1f, 0.65f);
+        [HideInInspector] public Color MagneticColor = new Color(1f, 0.85f, 0.05f, 0.65f);
         [InspectorName("磁力线宽度"), Tooltip("磁力连接线的基础宽度；显示时会随角色尺度缩放。")]
         [HideInInspector] [Min(0.002f)] public float MagneticWidth = 0.025f;
         [InspectorName("磁力线波动幅度"), Tooltip("磁力连接线横向波动的基础幅度；显示时会随角色尺度和头身距离调整。")]

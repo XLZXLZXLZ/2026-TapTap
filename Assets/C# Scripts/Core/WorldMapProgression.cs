@@ -225,7 +225,9 @@ namespace TapTap
                 bool showBoard = passed || nextIndex != CurrentIndex;
                 if (passed)
                 {
-                    yield return assembly.Play(world, ordered, completed, finished, AssemblyDuration, AssemblyHold);
+                    WorldMapModule upcoming = nextIndex < LevelCount ? ordered[nextIndex] : null;
+                    yield return assembly.Play(world, ordered, completed, upcoming, AssemblyDuration, AssemblyHold,
+                        departing: finished);
                     completed.Add(finished.Id);
                     WorldMapProgressStore.Complete(world.Source, finished);
                 }

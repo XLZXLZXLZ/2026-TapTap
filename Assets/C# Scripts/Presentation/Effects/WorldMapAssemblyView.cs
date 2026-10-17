@@ -32,16 +32,17 @@ namespace TapTap
             Mathf.Max(80f, Screen.height - 254f)) : new Rect(0f, 0f, Screen.width, Screen.height);
 
         public IEnumerator Play(WorldMapRoot world, IReadOnlyList<WorldMapModule> modules,
-            HashSet<string> passed, WorldMapModule incoming, float duration, float hold, string message = null)
+            HashSet<string> passed, WorldMapModule incoming, float duration, float hold, string message = null,
+            WorldMapModule departing = null)
         {
             if (TryPrepareNeon(world.Source, false))
             {
-                yield return neonScreen.Play(passed, incoming, duration, hold);
+                yield return neonScreen.Play(passed, incoming, duration, hold, departing);
                 yield break;
             }
-            PrepareBoard(world.Source, modules, message ?? "第 " + world.Source.SequenceNumber(incoming) + " 关完成");
+            PrepareBoard(world.Source, modules, message ?? "第 " + world.Source.SequenceNumber(departing ?? incoming) + " 关完成");
             foreach (WorldMapModule module in modules)
-                if (passed.Contains(module.Id) && module != incoming) CreatePiece(world.Source, module);
+                if ((passed.Contains(module.Id) || module == departing) && module != incoming) CreatePiece(world.Source, module);
             if (incoming == null)
             {
                 preview.Render();

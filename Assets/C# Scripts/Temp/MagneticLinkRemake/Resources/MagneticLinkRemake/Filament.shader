@@ -2,7 +2,7 @@ Shader "TapTap/MagneticLinkRemake/Filament"
 {
     Properties
     {
-        [HDR] _Tint ("Light color", Color) = (1, 3, 4, 1)
+        [HDR] _Tint ("Light color", Color) = (4.7, 3.8, 0.15, 1)
         _Softness ("Soft edge", Float) = 1
         _FlowPhase ("Flow phase", Float) = 0
         _BandCount ("Flow bands", Float) = 5

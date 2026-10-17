@@ -45,11 +45,13 @@ namespace TapTap.Editor
                 });
                 Ensure("RespawnOrb", preview, root =>
                 {
+                    Material glow = EnsureRespawnMaterial(settings);
                     root.transform.localScale = Vector3.one * settings.RespawnDotSize;
                     var sprite = root.AddComponent<SpriteRenderer>();
-                    sprite.sprite = settings.DotSprite; sprite.color = new Color(0.35f, 0.94f, 0.88f); sprite.sortingOrder = 15;
+                    sprite.sprite = settings.DotSprite; sprite.color = Color.white; sprite.sortingOrder = 15;
+                    sprite.sharedMaterial = glow;
                     var trail = root.AddComponent<TrailRenderer>();
-                    trail.sharedMaterial = settings.EffectsMaterial; trail.time = settings.RespawnTrailTime;
+                    trail.sharedMaterial = glow; trail.time = settings.RespawnTrailTime;
                     trail.startWidth = settings.RespawnDotSize * 0.75f; trail.endWidth = 0f;
                     trail.startColor = sprite.color; trail.endColor = new Color(sprite.color.r, sprite.color.g, sprite.color.b, 0f);
                     trail.minVertexDistance = 0.025f; trail.numCapVertices = 4; trail.sortingOrder = 14; trail.emitting = false;
@@ -73,6 +75,18 @@ namespace TapTap.Editor
             configure(root);
             PrefabUtility.SaveAsPrefabAsset(root, Path(name));
             Object.DestroyImmediate(root);
+        }
+
+        private static Material EnsureRespawnMaterial(PlayerVisualConfig settings)
+        {
+            const string path = "Assets/Art/Materials/Prototype/RespawnNeonGreen.mat";
+            Material material = AssetDatabase.LoadAssetAtPath<Material>(path);
+            if (material != null) return material;
+            LevelPrefabBuilder.EnsureFolder("Assets/Art/Materials/Prototype");
+            material = new Material(settings.EffectsMaterial) { name = "RespawnNeonGreen" };
+            material.SetColor("_Color", new Color(0.2f, 3f, 0.03f, 1f));
+            AssetDatabase.CreateAsset(material, path);
+            return material;
         }
 
         private static LineRenderer Line(GameObject root, Material material, float width, Color color)

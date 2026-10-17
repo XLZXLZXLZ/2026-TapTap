@@ -9,7 +9,8 @@ namespace TapTap
     [ExecuteAlways]
     public sealed class NeonWorldMapScreen : MonoBehaviour
     {
-        public enum TransitionPhase { None, Preparing, CoverReveal, Delay, Drawing, Holding, Complete }
+        public enum TransitionPhase { None, Preparing, CoverReveal, Delay, Drawing, Holding, Complete,
+            OrbAppearing, OrbTravelling, OrbDisappearing, TrailFading, OrbHolding }
         public const string ResourcePath = "WorldMapSelection/WorldCharacterSelection";
         public WorldMapDefinition Source;
         public Camera UICamera;
@@ -23,6 +24,10 @@ namespace TapTap
         public NeonLevelPiece[] Pieces;
         [Min(0f)] public float AnimationDelay = 0.35f;
         [Min(0.1f)] public float MinimumDrawDuration = 1.4f;
+        [Min(0.1f)] public float OrbTravelDuration = 0.5f;
+        [Min(0f)] public float OrbPauseDuration = 0.6f;
+        [Min(0.1f)] public float OrbSize = 3f;
+        public WorldMapTravelEffect ActiveTravel { get; private set; }
         public TransitionPhase Phase { get; private set; }
         public float DrawingElapsed { get; private set; }
         private WorldMapModule selected;
@@ -67,6 +72,7 @@ namespace TapTap
 
         public void HidePresentation()
         {
+            ClearTravel();
             SetPresentationVisible(false);
             Phase=TransitionPhase.None;
         }
@@ -89,6 +95,7 @@ namespace TapTap
 
         public void Initialize(bool asSelection)
         {
+            ClearTravel();
             selection = asSelection;
             Phase=TransitionPhase.None; DrawingElapsed=0f;
             byId.Clear(); passed.Clear(); unlocked.Clear();
@@ -139,13 +146,17 @@ namespace TapTap
 
         public Vector2 LabelScreenPosition(WorldMapModule module) => byId[module.Id].NumberScreenPosition(UICamera);
 
-        public IEnumerator Play(HashSet<string> completed, WorldMapModule incoming, float duration, float hold)
+        public IEnumerator Play(HashSet<string> completed, WorldMapModule incoming, float duration, float hold,
+            WorldMapModule departing = null)
         {
+            ClearTravel();
             passed.Clear(); passed.UnionWith(completed);
+            if (departing != null) passed.Add(departing.Id);
             Phase=TransitionPhase.Preparing;
             NeonLevelPiece arriving = null;
             // A replay must not reveal later rooms from an older completion record.
-            int lastSequence=incoming!=null?Source.SequenceNumber(incoming):int.MaxValue;
+            int lastSequence=incoming!=null?Source.SequenceNumber(incoming)
+                :departing!=null?Source.SequenceNumber(departing):int.MaxValue;
             foreach (NeonLevelPiece piece in Pieces)
             {
                 bool current = incoming != null && piece.ModuleId == incoming.Id;
@@ -180,8 +191,18 @@ namespace TapTap
                 arriving.SetReveal(Mathf.SmoothStep(0f,1f,DrawingElapsed/drawDuration));
                 yield return null;
             }
-            if (incoming != null) passed.Add(incoming.Id);
             if (arriving != null) { arriving.SetIntensity(0.94f); arriving.SetReveal(1f); }
+            if (arriving != null && departing != null && departing != incoming
+                && byId.TryGetValue(departing.Id, out NeonLevelPiece origin))
+            {
+                ActiveTravel = WorldMapTravelEffect.Create(Board, origin.Number.transform, arriving.Number.transform,
+                    OrbSize, OrbTravelDuration, OrbPauseDuration);
+                try
+                {
+                    yield return ActiveTravel.Play(stage => Phase = stage);
+                }
+                finally { ClearTravel(); }
+            }
             Phase=TransitionPhase.Holding;
             elapsed = 0f;
             float visibleHold=arriving!=null?Mathf.Max(0.65f,hold):hold;
@@ -199,6 +220,15 @@ namespace TapTap
         }
 
         public void ShowCompletion() => Phase=TransitionPhase.Complete;
+
+        private void ClearTravel()
+        {
+            if (ActiveTravel == null) return;
+            ActiveTravel.Cancel();
+            ActiveTravel = null;
+        }
+
+        private void OnDisable() => ClearTravel();
 
         private void Update()
         {

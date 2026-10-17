@@ -11,7 +11,7 @@ namespace TapTap.MagneticLinkRemake
         [SerializeField, Range(2, 10)] private int waveCount = 5;
         [SerializeField, Min(0f)] private float flowSpeed = 1.6f;
         [SerializeField, Range(0f, 1f)] private float irregularity = 0.7f;
-        [SerializeField, ColorUsage(true, true)] private Color coreColor = new Color(2.8f, 4.1f, 4.7f, 1f);
+        [SerializeField, ColorUsage(true, true)] private Color coreColor = new Color(4.7f, 3.8f, 0.15f, 1f);
         private readonly Vector3[] points = new Vector3[41];
         private readonly float[] lengths = new float[41];
         private readonly Vector3[] pair = new Vector3[2];
@@ -37,7 +37,7 @@ namespace TapTap.MagneticLinkRemake
             material = new Material(shader) { name = "Folded magnetic filament", hideFlags = HideFlags.HideAndDontSave };
             properties = new MaterialPropertyBlock();
             halo = MakeLine("Soft field", points.Length);
-            sheath = MakeLine("Blue sheath", points.Length);
+            sheath = MakeLine("Yellow sheath", points.Length);
             core = MakeLine("Bright core", points.Length);
             core.widthCurve = new AnimationCurve(new Keyframe(0f, 0.5f), new Keyframe(0.12f, 1f),
                 new Keyframe(0.88f, 1f), new Keyframe(1f, 0.5f));
@@ -109,8 +109,8 @@ namespace TapTap.MagneticLinkRemake
             }
             float breath = (0.94f + Mathf.Sin(time * 2.2f) * 0.06f) * visibility;
             float power = Mathf.Lerp(1f, 1.45f, tension);
-            SetFilament(halo, coreWidth * unit * 7f, new Color(0.12f, 0.65f, 1.1f, breath * 0.16f), 2.5f);
-            SetFilament(sheath, coreWidth * unit * 2.4f, new Color(0.25f, 1.1f, 1.6f, breath * 0.48f), 1.5f);
+            SetFilament(halo, coreWidth * unit * 7f, new Color(1.1f, 0.8f, 0.02f, breath * 0.16f), 2.5f);
+            SetFilament(sheath, coreWidth * unit * 2.4f, new Color(1.6f, 1.25f, 0.04f, breath * 0.48f), 1.5f);
             Color light = coreColor * power;
             light.a = breath;
             SetFilament(core, coreWidth * unit, light, 0.7f);
@@ -121,7 +121,7 @@ namespace TapTap.MagneticLinkRemake
                 pair[1] = pole + side * (0.008f * unit);
                 terminals[i].SetPositions(pair);
                 Style(terminals[i], unit * Mathf.Lerp(0.075f, 0.095f, tension),
-                    new Color(1.1f, 2.4f, 3f, visibility * 0.65f), 2f);
+                    new Color(3f, 2.4f, 0.08f, visibility * 0.65f), 2f);
 
                 float phase = Mathf.Repeat((float)((clock * (1.1d + tension) * unit / totalLength) % 1d)
                     * (tension > 0.5f ? -1f : 1f) + i * 0.5f, 1f);
@@ -131,7 +131,7 @@ namespace TapTap.MagneticLinkRemake
                 pair[1] = Sample(end);
                 pulses[i].SetPositions(pair);
                 Style(pulses[i], coreWidth * unit * 1.8f,
-                    new Color(3.5f, 4.8f, 5.2f, visibility * Mathf.Sin(phase * Mathf.PI) * 0.8f), 1f);
+                    new Color(5.2f, 4.4f, 0.2f, visibility * Mathf.Sin(phase * Mathf.PI) * 0.8f), 1f);
             }
         }
 
