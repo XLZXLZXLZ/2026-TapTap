@@ -7,16 +7,17 @@ Shader "TapTap/MagneticLinkRemake/Filament"
         _FlowPhase ("Flow phase", Float) = 0
         _BandCount ("Flow bands", Float) = 5
         _FlowStrength ("Flow contrast", Float) = 0
+        [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest ("Depth test", Float) = 8
     }
     SubShader
     {
-        Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Transparent+10" "RenderType"="Transparent" }
+        Tags { "RenderPipeline"="UniversalPipeline" "Queue"="Transparent+100" "RenderType"="Transparent" }
         Pass
         {
             Tags { "LightMode"="SRPDefaultUnlit" }
             Blend SrcAlpha One
             ZWrite Off
-            ZTest LEqual
+            ZTest [_ZTest]
             Cull Off
             HLSLPROGRAM
             #pragma vertex Vert

@@ -13,6 +13,8 @@ namespace TapTap
         [SerializeField, Min(0f)] private float deathShakeStrength = 0.1f;
         [SerializeField, Min(0f)] private float headReturnShakeStrength = 0.035f;
         [SerializeField, Min(0f)] private float landingShakeStrength = 0.045f;
+        [Tooltip("远距离吸附成功合体瞬间的轻微震屏强度。")]
+        [SerializeField, Min(0f)] private float distantJoinShakeStrength = 0.035f;
         [Header("Shake motion")]
         [SerializeField, Min(0.001f)] private float shakeDuration = 0.12f;
         [Tooltip("Oscillation frequency in cycles per second.")]
@@ -26,11 +28,11 @@ namespace TapTap
         [SerializeField, Min(0.001f)] private float zoomInDuration = 0.07f;
         [SerializeField, Min(0.001f)] private float zoomOutDuration = 0.18f;
         [Header("合体顿帧（真实秒数）")]
-        [SerializeField, Range(0.01f, 1f)] private float joinTimeScale = 0.5f;
-        [SerializeField, Min(0f)] private float joinHitDuration = 0.09f;
-        [Tooltip("会起跳的吸附合体使用更强、更长的顿帧。")]
-        [SerializeField, Range(0.01f, 1f)] private float launchJoinTimeScale = 0.25f;
-        [SerializeField, Min(0f)] private float launchJoinHitDuration = 0.16f;
+        [SerializeField, InspectorName("近距离/落下合体速度比例"), Range(0.01f, 1f)] private float joinTimeScale = 0.5f;
+        [SerializeField, InspectorName("近距离/落下合体顿帧时长"), Min(0f)] private float joinHitDuration = 0.09f;
+        [Tooltip("按吸附开始时的远距离判定使用强顿帧，与跃起高度无关。")]
+        [SerializeField, InspectorName("远距离合体速度比例"), Range(0.01f, 1f)] private float launchJoinTimeScale = 0.25f;
+        [SerializeField, InspectorName("远距离合体顿帧时长"), Min(0f)] private float launchJoinHitDuration = 0.16f;
         [SerializeField, Min(1f)] private float launchJoinZoomDurationMultiplier = 1.8f;
         [Header("黑屏与画面淡入淡出")]
         [Tooltip("画面变为全黑所需的时间（秒）。不受游戏慢动作或暂停影响。")]
@@ -139,10 +141,12 @@ namespace TapTap
             if (effect == PlayerEffect.HeadReturned) Shake(headReturnShakeStrength);
             if (effect == PlayerEffect.Landed) Shake(landingShakeStrength);
             if (effect == PlayerEffect.Death) Shake(deathShakeStrength);
-            if (effect == PlayerEffect.Joined || effect == PlayerEffect.DownwardJoined)
+            if (effect == PlayerEffect.DistantJoined) Shake(distantJoinShakeStrength);
+            if (effect == PlayerEffect.Joined || effect == PlayerEffect.DownwardJoined || effect == PlayerEffect.DistantJoined)
             {
-                // Joined is emitted by upward-launching pulls; ordinary head returns only shake.
-                bool launching = effect == PlayerEffect.Joined;
+                // Distance is captured before gameplay clears the completed pull state.
+                // Launch height can be tuned independently and must not choose the feedback.
+                bool launching = effect == PlayerEffect.DistantJoined;
                 zoomStart = zoomPulse;
                 zoomElapsed = 0f;
                 activeZoomDurationMultiplier = launching ? Mathf.Max(1f, launchJoinZoomDurationMultiplier) : 1f;

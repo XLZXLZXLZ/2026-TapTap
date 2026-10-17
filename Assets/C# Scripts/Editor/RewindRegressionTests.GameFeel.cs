@@ -1,5 +1,7 @@
 using System;
 using System.Reflection;
+using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -7,6 +9,83 @@ namespace TapTap.Editor
 {
     public static partial class RewindRegressionTests
     {
+        private const string JoinFeedbackPending = "TapTap.JoinFeedback.Pending";
+
+        public static void RunJoinFeedbackBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("Use an isolated batch-mode project.");
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), "Assets/JoinFeedbackRegressionScene.unity");
+            SessionState.SetBool(JoinFeedbackPending, true);
+            EditorApplication.EnterPlaymode();
+        }
+
+        [InitializeOnLoadMethod]
+        private static void SubscribeJoinFeedback()
+        {
+            EditorApplication.playModeStateChanged += state =>
+            {
+                if (state != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool(JoinFeedbackPending, false)) return;
+                SessionState.SetBool(JoinFeedbackPending, false);
+                EditorApplication.delayCall += () =>
+                {
+                    results.Clear();
+                    try
+                    {
+                        Test("Actual near/far pulls select distinct hit stop and distant-only camera shake", DistanceJoinFeedbackFeel);
+                        Test("Join feedback zoom, repeated events and speed restoration", AssemblyFeedbackFeel);
+                        Test("Join slowdown composes with bullet time", BulletTimeFeel);
+                        Finish();
+                    }
+                    catch (Exception exception) { Finish(exception); }
+                };
+            };
+        }
+
+        private static void DistanceJoinFeedbackFeel()
+        {
+            // Matching/zero launch heights must not change the latched distance classification.
+            foreach (bool distant in new[] { false, true })
+            foreach (float launchHeight in new[] { 0f, 1f })
+            using (var f = new Fixture())
+            {
+                f.Floor(); f.CreatePlayer();
+                f.Config.NormalLaunchHeight = f.Config.DistantLaunchHeight = launchHeight;
+                float height = distant ? f.Config.DistantThreshold + 2f : f.Config.DistantThreshold * 0.5f;
+                f.Detach(f.Spawn, f.Spawn + Vector2.up * height);
+                EffectManager effects = EffectManager.Instance;
+                effects.ClearTransientEffects(); Time.timeScale = 1f;
+                PlayerEffect? joined = null;
+                f.Player.Effect += effect =>
+                {
+                    if (effect != PlayerEffect.Joined && effect != PlayerEffect.DistantJoined) return;
+                    joined = effect; effects.Play(effect, null);
+                };
+                f.Input.SetExternalInput(0f, true); f.Step();
+                Check(f.Player.IsDistantPull == distant && f.Player.Phase == PlayerPhase.Pulling, "Pull fixture has wrong distance");
+                for (int i = 0; i < 400 && f.Player.Phase == PlayerPhase.Pulling; i++) f.Step();
+                Check(joined == (distant ? PlayerEffect.DistantJoined : PlayerEffect.Joined), "Completed pull lost its starting distance");
+                Check(Mathf.Abs(Time.timeScale - (distant ? 0.25f : 0.5f)) < 0.0001f, "Near/far slowdown is reversed");
+                Check((effects.ShakeOffset.sqrMagnitude > 0f) == distant, "Small shake is not exclusive to distant joins");
+                var rig = f.NewObject("Join feedback camera", Vector2.zero).AddComponent<DemoCamera>();
+                Transform shake = f.NewObject("Shake", Vector2.zero).transform;
+                shake.SetParent(rig.transform, false);
+                Camera camera = f.NewObject("View", Vector2.zero).AddComponent<Camera>();
+                camera.transform.SetParent(shake, false); camera.enabled = false;
+                rig.Configure(f.Player, camera, shake);
+                rig.SetRegion(f.NewObject("Join feedback region", Vector2.zero).AddComponent<LevelRegion>());
+                Check((shake.localPosition.sqrMagnitude > 0f) == distant, "Camera did not consume distant shake");
+                effects.Simulate(0.08f);
+                Check(Time.timeScale < 1f, "Hit stop ended too early");
+                effects.Simulate(0.02f);
+                Check(Mathf.Abs(Time.timeScale - (distant ? 0.25f : 1f)) < 0.0001f, "Near/far real-time duration is incorrect");
+                effects.Simulate(0.07f); rig.SnapToPlayer();
+                Check(Time.timeScale == 1f && effects.ShakeOffset == Vector2.zero && shake.localPosition == Vector3.zero,
+                    "Join feedback left time scale or camera displacement behind");
+                effects.ClearTransientEffects();
+            }
+        }
+
         private static void ImmediateRecallFeel()
         {
             using (var f = new Fixture())
@@ -149,7 +228,7 @@ namespace TapTap.Editor
                             "Assembly zoom did not restore its base lens");
                     }
                     SetField(effects, "zoomAmount", 0.02f);
-                    effects.Play(PlayerEffect.Joined, null);
+                    effects.Play(PlayerEffect.DistantJoined, null);
                     effects.Simulate(0.1f);
                     Check(Mathf.Abs(Time.timeScale - 0.25f) < 0.0001f, "Launching join did not retain stronger hit stop");
                     effects.SetGameplayTimeScale(2f);
@@ -160,7 +239,7 @@ namespace TapTap.Editor
                     Check(effects.ZoomPulse > 0f, "Launching zoom ended as early as an ordinary join");
                     effects.Simulate(0.2f);
                     Check(effects.ZoomPulse == 0f, "Launching zoom did not finish");
-                    effects.Play(PlayerEffect.Joined, null);
+                    effects.Play(PlayerEffect.DistantJoined, null);
                     effects.Play(PlayerEffect.DownwardJoined, null);
                     Check(Mathf.Abs(Time.timeScale - 0.5f) < 0.0001f, "Repeated joins compounded or weakened slowdown");
                     effects.ClearTransientEffects();
@@ -197,7 +276,7 @@ namespace TapTap.Editor
                     Check(overlay.BulletOpacity > 0f && overlay.BulletOpacity < 0.1f, "Blue overlay snapped instead of fading");
                     overlay.AdvanceBulletTint(0.1f, true);
                     Check(Mathf.Abs(overlay.BulletOpacity - 0.1f) < 0.0001f, "Blue overlay did not finish fading in");
-                    EffectManager.Instance.Play(PlayerEffect.Joined, null);
+                    EffectManager.Instance.Play(PlayerEffect.DistantJoined, null);
                     Check(Mathf.Abs(Time.timeScale - 0.125f) < 0.0001f, "Assembly slow motion replaced bullet time");
                     EffectManager.Instance.Simulate(0.2f);
                     Check(Time.timeScale == 0.5f, "Assembly effect did not restore bullet speed");

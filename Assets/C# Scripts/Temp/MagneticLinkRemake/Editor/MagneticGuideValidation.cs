@@ -77,19 +77,20 @@ namespace TapTap.MagneticLinkRemake.Editor
                 Check(core.enabled && preview.a > 0.2f && preview.a <= 0.26f && preview.g > preview.r * 0.5f,
                     "Near preview is not translucent yellow");
                 Capture("01-near-preview.png");
+                Capture("05-near-preview-over-terrain.png", true);
                 Vector3[] frozen = Points(core);
                 adapter.RefreshPresentation(clock, false);
                 Check(Same(frozen, Points(core)) && Tint(core) == preview, "Paused clock advanced the guide");
                 Activate();
                 Check(player.Phase == PlayerPhase.Pulling && !player.IsDistantPull, "Space did not trigger normal gameplay pull");
                 Advance(0.02f);
-                Check(core.widthMultiplier > previewWidth && core.widthMultiplier < previewWidth / 0.35f,
+                Check(core.widthMultiplier > previewWidth && core.widthMultiplier < previewWidth / 0.70f,
                     "Preview-to-active width transition jumped");
                 Advance(0.3f);
-                Check(core.widthMultiplier > previewWidth * 2.8f && Tint(core).a > 0.8f,
+                Check(core.widthMultiplier > previewWidth * 1.4f && Tint(core).a > 0.8f,
                     "Active connection did not reach full width/opacity");
                 Capture("02-near-active.png");
-                Pass("Actual CanRecall geometry, no guide outside zone, translucent 35%-width preview, Space starts full-strength pull, pause freezes motion");
+                Pass("Actual CanRecall geometry, no guide outside zone, translucent 70%-width preview, Space starts full-strength pull, pause freezes motion");
 
                 SetState(PlayerPhase.Detached, far);
                 Advance(0.02f);
@@ -101,10 +102,11 @@ namespace TapTap.MagneticLinkRemake.Editor
                 Check(core.numCornerVertices == 0, "Distant wave still has rounded corners");
                 CheckRed();
                 Capture("03-distant-preview.png");
+                Capture("06-distant-preview-over-terrain.png", true);
                 Activate();
                 Check(player.IsDistantPull, "Space did not use the gameplay distant-pull threshold");
                 Advance(0.3f); CheckRed();
-                Check(Tint(core).a > 0.8f && core.widthMultiplier > previewWidth * 2.8f, "Distant pull is not a full-strength line");
+                Check(Tint(core).a > 0.8f && core.widthMultiplier > previewWidth * 1.4f, "Distant pull is not a full-strength line");
                 Capture("04-distant-active.png");
                 player.Head.Motor.Teleport(player.Body.Motor.Position + Vector2.up * near);
                 Advance(0.3f); CheckRed();
@@ -242,7 +244,7 @@ namespace TapTap.MagneticLinkRemake.Editor
             Pass("Frozen-clock exit clears all layers in five player phases; actual completion during extension clears immediately before the exit cinematic");
         }
 
-        private static void Capture(string name)
+        private static void Capture(string name, bool occluded = false)
         {
             var node = new GameObject("Magnetic preview camera");
             var camera = node.AddComponent<Camera>(); camera.enabled = false;
@@ -250,6 +252,20 @@ namespace TapTap.MagneticLinkRemake.Editor
             camera.transform.position = new Vector3(2000f, 2000f + far * 0.45f, -10f);
             camera.cullingMask = 1 << 30; camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = new Color(0.008f, 0.012f, 0.02f);
+            GameObject blocker = null;
+            Material blockerMaterial = null;
+            if (occluded)
+            {
+                blocker = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                blocker.layer = 30;
+                blocker.transform.position = new Vector3(2000f, camera.transform.position.y, -1f);
+                blocker.transform.localScale = Vector3.one * (camera.orthographicSize * 3f);
+                blockerMaterial = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                blockerMaterial.SetColor("_BaseColor", Color.black);
+                blocker.GetComponent<Renderer>().sharedMaterial = blockerMaterial;
+                Check(core.sharedMaterial.GetInt("_ZTest") == (int)UnityEngine.Rendering.CompareFunction.Always,
+                    "Priority drawing is not enabled by default");
+            }
             var target = new RenderTexture(600, 900, 24); target.Create(); camera.targetTexture = target;
             camera.Render(); RenderTexture previous = RenderTexture.active; RenderTexture.active = target;
             var image = new Texture2D(600, 900, TextureFormat.RGB24, false);
@@ -257,8 +273,21 @@ namespace TapTap.MagneticLinkRemake.Editor
             File.WriteAllBytes(Path.Combine(Output, name), image.EncodeToPNG());
             Check(image.GetPixels32().Count(pixel => pixel.r > 50 || pixel.g > 50 || pixel.b > 50) > 10,
                 "Captured magnetic line is blank: " + name);
+            if (occluded)
+            {
+                // The same opaque foreground must hide the line when normal depth testing is restored.
+                core.sharedMaterial.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.LessEqual);
+                camera.Render(); RenderTexture.active = target;
+                image.ReadPixels(new Rect(0, 0, 600, 900), 0, 0); image.Apply();
+                core.sharedMaterial.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
+                Check(image.GetPixels32().Count(pixel => pixel.r > 50 || pixel.g > 50 || pixel.b > 50) < 10,
+                    "Occlusion fixture did not actually block the magnetic line");
+                Pass("Guide renders through opaque foreground while normal depth mode is occluded: " + name);
+            }
             RenderTexture.active = previous; camera.targetTexture = null;
             target.Release(); Object.DestroyImmediate(target); Object.DestroyImmediate(image); Object.DestroyImmediate(node);
+            if (blocker != null) Object.DestroyImmediate(blocker);
+            if (blockerMaterial != null) Object.DestroyImmediate(blockerMaterial);
         }
 
         private static void Check(bool value, string message) { if (!value) throw new Exception(message); }

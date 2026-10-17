@@ -54,6 +54,7 @@ namespace TapTap.Editor
                 Test("Downward head contact drops through only its supporting platform and rewinds", SinglePlatformDrop);
                 Test("Extension replays identically and a historical hold can release", ExtensionAndInput);
                 Test("Pulling and pickup continue from restored action progress", PullAndPickup);
+                Test("Contact assembly succeeds under ceilings, animates visually and replays after rewind", ContactAssemblyUnderCeiling);
                 Test("3D facing restores intermediate yaw and replays the same turn", ModelFacingRewind);
                 Test("Detached heads keep their facing and locked steering does not turn", ModelFacingDetachedAndLocked);
                 Test("3D visuals retain landing, spring squash and vertical stretch without changing colliders", ModelSquashFeedback);
@@ -496,6 +497,59 @@ namespace TapTap.Editor
                 f.Step(3);
                 Near(f.Head.Motor.Position, expectedHead, "Pickup offset or progress diverged");
                 Near(f.Body.Motor.Position, expectedBody, "Pickup body motion diverged");
+            }
+        }
+
+        private static void ContactAssemblyUnderCeiling()
+        {
+            using (var f = new Fixture())
+            {
+                f.Floor();
+                f.Box("Low ceiling", Origin + Vector2.up, new Vector2(1.2f, 0.3f));
+                f.Box("Exit wall", Origin + new Vector2(3f, 1.5f), new Vector2(0.3f, 3f));
+                f.CreatePlayer(true);
+                f.Detach(f.Spawn, f.Spawn + Vector2.right * 0.8f);
+                f.Input.SetExternalInput(1f, false);
+                for (int i = 0; i < 10 && f.Player.Phase != PlayerPhase.PickingUp; i++) f.Step();
+                Check(f.Player.Phase == PlayerPhase.PickingUp, "Ceiling prevented side-contact pickup");
+                Check(!f.Body.Motor.CanJoinWith(f.Head.Motor), "Fixture did not obstruct the joined shape");
+                Near(f.Head.Motor.Position, f.Body.Motor.Position + Vector2.up * f.Config.JoinedOffset,
+                    "Head collider did not immediately move to the joined position");
+                Check(f.Player.PickupVisualOffset.sqrMagnitude > 0.1f,
+                    "Pickup did not retain its visual animation offset");
+                Check(f.Body.Motor.JoinedPartner == f.Head.Motor && f.Head.Motor.CollisionsEnabled,
+                    "Contact assembly did not enable the joined collision shape");
+                f.Step(3);
+                Vector2 expectedBody = f.Body.Motor.Position;
+                Vector2 expectedHead = f.Head.Motor.Position;
+                Vector2 expectedVisualOffset = f.Player.PickupVisualOffset;
+                f.Back(3);
+                Check(f.Player.Phase == PlayerPhase.PickingUp, "Ceiling pickup did not restore");
+                f.Manager.EndRewind();
+                f.Step(3);
+                Near(f.Body.Motor.Position, expectedBody, "Ceiling pickup body replay diverged");
+                Near(f.Head.Motor.Position, expectedHead, "Ceiling pickup head replay diverged");
+                Near(f.Player.PickupVisualOffset, expectedVisualOffset, "Ceiling pickup animation replay diverged");
+                f.Step(50);
+                Check(f.Player.Phase == PlayerPhase.Joined, "Ceiling pickup did not finish");
+                Near(f.Player.PickupVisualOffset, Vector2.zero, "Finished pickup retained its animation offset");
+                Check(f.Body.Motor.Position.x > Origin.x + 1.2f, "Joined player could not leave the low ceiling");
+                Check(f.Body.Motor.CollisionBounds.max.x <= Origin.x + 2.86f,
+                    "Joined player passed through the exit wall");
+                Near(f.Head.Motor.Position, f.Body.Motor.Position + Vector2.up * f.Config.JoinedOffset,
+                    "Finished pickup lost head alignment");
+            }
+            using (var f = new Fixture())
+            {
+                f.Floor();
+                f.Box("Assembly overhang", Origin + new Vector2(-0.35f, 1.1f), new Vector2(0.2f, 0.4f));
+                f.CreatePlayer();
+                f.Detach(f.Spawn, f.Spawn + new Vector2(0.3f, 1.2f));
+                f.Head.Velocity = Vector2.down * 10f;
+                for (int i = 0; i < 10 && f.Player.Phase != PlayerPhase.Joined; i++) f.Step();
+                Check(f.Player.Phase == PlayerPhase.Joined, "Overhang prevented catching the falling head");
+                Near(f.Head.Motor.Position, f.Body.Motor.Position + Vector2.up * f.Config.JoinedOffset,
+                    "Caught head did not snap to the joined position");
             }
         }
 

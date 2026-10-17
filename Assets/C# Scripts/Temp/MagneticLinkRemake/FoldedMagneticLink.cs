@@ -13,7 +13,8 @@ namespace TapTap.MagneticLinkRemake
         [SerializeField, Range(0f, 1f)] private float irregularity = 0.7f;
         [SerializeField, ColorUsage(true, true)] private Color coreColor = new Color(4.7f, 3.8f, 0.15f, 1f);
         [SerializeField, Range(0f, 1f)] private float previewOpacity = 0.25f;
-        [SerializeField, Range(0.01f, 1f)] private float previewWidth = 0.35f;
+        [SerializeField, Range(0.01f, 1f)] private float previewWidth = 0.70f;
+        [SerializeField] private bool drawOverTerrain = true;
         [SerializeField, Min(1f)] private float distantAmplitude = 1.6f;
         [SerializeField, Min(1f)] private float distantFrequency = 1.8f;
         [SerializeField, Min(1f)] private float distantWidth = 1.15f;
@@ -42,6 +43,7 @@ namespace TapTap.MagneticLinkRemake
                 return;
             }
             material = new Material(shader) { name = "Folded magnetic filament", hideFlags = HideFlags.HideAndDontSave };
+            ApplyDepthMode();
             properties = new MaterialPropertyBlock();
             halo = MakeLine("Soft field", points.Length);
             sheath = MakeLine("Field sheath", points.Length);
@@ -75,6 +77,15 @@ namespace TapTap.MagneticLinkRemake
             line.sortingOrder = 10;
             line.enabled = false;
             return line;
+        }
+
+        private void OnValidate() => ApplyDepthMode();
+
+        private void ApplyDepthMode()
+        {
+            if (material == null) return;
+            material.SetInt("_ZTest", (int)(drawOverTerrain ? CompareFunction.Always : CompareFunction.LessEqual));
+            material.renderQueue = (int)RenderQueue.Transparent + (drawOverTerrain ? 100 : 10);
         }
 
         public void Render(Vector3 from, Vector3 to, float visibility, float tension, double clock, float unit,

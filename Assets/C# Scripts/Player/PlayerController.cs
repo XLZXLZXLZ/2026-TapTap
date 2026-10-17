@@ -6,7 +6,7 @@ using UnityEngine;
 namespace TapTap
 {
     public enum PlayerPhase { Joined, Extending, Holding, Retracting, Pulling, Detached, PickingUp }
-    public enum PlayerEffect { HeadLanded, PullBlocked, Joined, DownwardJoined, Bounce, Death, RecallFailed, HeadReturned, Landed, ExtensionBlocked }
+    public enum PlayerEffect { HeadLanded, PullBlocked, Joined, DownwardJoined, Bounce, Death, RecallFailed, HeadReturned, Landed, ExtensionBlocked, DistantJoined }
 
     public struct PlayerContactFeedback
     {
@@ -489,12 +489,8 @@ namespace TapTap
 
         private void BeginPickup()
         {
-            Vector2 target = body.Motor.Position + Vector2.up * config.ToWorld(config.JoinedOffset);
-            // Validate the final collision shape before changing either actor's logical position.
-            if (!body.Motor.CanJoinWith(head.Motor, target)) return;
             Vector2 startOffset = head.Motor.Position - body.Motor.Position;
-            head.Motor.StageTranslation(target - head.Motor.Position);
-            ApplyJoin(0f, false);
+            ApplyJoin(0f, false, pickup: true);
             if (phase != PlayerPhase.Joined) return;
             pickupStartOffset = startOffset;
             SetPhase(PlayerPhase.PickingUp);
@@ -627,16 +623,26 @@ namespace TapTap
             }
         }
 
-        private void ApplyJoin(float height, bool downward)
+        private void ApplyJoin(float height, bool downward, bool pickup = false)
         {
             bool magneticPull = phase == PlayerPhase.Pulling;
+            bool distantJoin = magneticPull && distantPull;
             Vector2 target = body.Motor.Position + Vector2.up * config.ToWorld(config.JoinedOffset);
-            MoveResult correction = head.Motor.Move(target - head.Motor.Position, body);
-            if (correction.Blocked || !body.Motor.CanJoinWith(head.Motor))
+            if (pickup || downward)
             {
-                SetPhase(PlayerPhase.Detached);
-                head.SpringEnabled = true;
-                return;
+                // Contact completes assembly even under a low ceiling. Only the pickup view
+                // animates from the contact pose; collision starts at the joined position.
+                head.Motor.StageTranslation(target - head.Motor.Position);
+            }
+            else
+            {
+                MoveResult correction = head.Motor.Move(target - head.Motor.Position, body);
+                if (correction.Blocked || !body.Motor.CanJoinWith(head.Motor))
+                {
+                    SetPhase(PlayerPhase.Detached);
+                    head.SpringEnabled = true;
+                    return;
+                }
             }
             Vector2 velocity = body.Velocity;
             if (downward)
@@ -662,7 +668,9 @@ namespace TapTap
                     + head.Motor.Position - Vector2.up * head.Motor.Size.y * 0.5f) * 0.5f,
                 Normal = downward || height <= 0f ? Vector2.up : Vector2.down
             });
-            if (downward || height > 0f) effects.Add(downward ? PlayerEffect.DownwardJoined : PlayerEffect.Joined);
+            if (downward || magneticPull || height > 0f)
+                effects.Add(downward ? PlayerEffect.DownwardJoined
+                    : distantJoin ? PlayerEffect.DistantJoined : PlayerEffect.Joined);
             else effects.Add(PlayerEffect.HeadReturned);
             if (magneticPull) MagneticJoined?.Invoke();
         }
