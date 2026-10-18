@@ -15,7 +15,7 @@ namespace TapTap.Editor
         private const string MaterialFolder = "Assets/Art/Materials/Player";
         private const float JoinedVisualGap = 0.05f;
 
-        [MenuItem("TapTap/主角/更新绑定模型与走路动画")]
+        [MenuItem("TapTap/维护/素材装配/更新绑定模型与走路动画")]
         public static void ReplacePlayerModels()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)

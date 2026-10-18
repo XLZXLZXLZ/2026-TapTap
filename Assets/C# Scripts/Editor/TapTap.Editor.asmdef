@@ -1,7 +1,7 @@
 {
   "name": "TapTap.Editor",
   "rootNamespace": "TapTap.Editor",
-  "references": ["TapTap.Runtime", "UnityEngine.UI", "ScreenFilters.Runtime", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"],
+  "references": ["TapTap.Runtime", "UnityEngine.UI", "Unity.TextMeshPro", "ReusableTextEffects", "ScreenFilters.Runtime", "Unity.RenderPipelines.Core.Runtime", "Unity.RenderPipelines.Universal.Runtime"],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

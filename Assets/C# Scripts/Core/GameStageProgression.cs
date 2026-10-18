@@ -63,7 +63,7 @@ namespace TapTap
         public bool Collect(ProgressKey key, PlayerController character)
         {
             if (key == null || character == null || key.gameObject.scene != gameObject.scene || HasProgressed
-                || InputBlocked || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen || RewindManager.Rewinding
+                || InputBlocked || WorldMapProgression.InputBlocked || RewindManager.Rewinding
                 || Time.timeScale <= 0f || character.Body.IsReturning || character.Head.IsReturning
                 || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting)) return false;
             pendingKey = key;

@@ -35,7 +35,7 @@ namespace TapTap
         {
             if (controller == null || view == null) return;
             if (view.ExitPresentation) { ResetBlink(); return; }
-            if (RewindManager.Rewinding || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen) return;
+            if (RewindManager.Rewinding || WorldMapProgression.InputBlocked) return;
             if (controller.Body.IsReturning || controller.Head.IsReturning) { ResetBlink(); return; }
             Simulate(Time.deltaTime);
         }

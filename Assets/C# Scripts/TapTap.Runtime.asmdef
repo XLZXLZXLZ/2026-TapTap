@@ -1,7 +1,7 @@
 {
   "name": "TapTap.Runtime",
   "rootNamespace": "TapTap",
-  "references": ["UnityEngine.UI", "ScreenFilters.Runtime"],
+  "references": ["UnityEngine.UI", "Unity.TextMeshPro", "ReusableTextEffects", "ScreenFilters.Runtime"],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

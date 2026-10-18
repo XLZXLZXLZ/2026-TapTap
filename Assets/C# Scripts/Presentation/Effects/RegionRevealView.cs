@@ -9,15 +9,22 @@ namespace TapTap
     [DefaultExecutionOrder(500)]
     public class RegionRevealView : MonoBehaviour
     {
+        [Tooltip("首次进入区域时，探索遮罩渐退的时长。设为 0 则立即显示。")]
+        [Min(0f)] public float RevealDuration = 0.4f;
+
         private readonly List<Renderer> renderers = new List<Renderer>();
         private readonly Dictionary<Renderer, bool> originalHidden = new Dictionary<Renderer, bool>();
         private readonly Dictionary<Light, bool> hiddenLights = new Dictionary<Light, bool>();
         private readonly Dictionary<Object, float> visibilityOverrides = new Dictionary<Object, float>();
+        private float discoveryOpacity, revealStart, revealElapsed;
+        private bool revealing;
+        // Models must already render behind the mask on the first (fully covered) frame.
+        private bool VisuallyActive => Discovered || VisibleOpacity > 0f;
         public float VisibleOpacity
         {
             get
             {
-                float value = Discovered ? 1f : 0f;
+                float value = discoveryOpacity;
                 foreach (var entry in visibilityOverrides)
                     if (entry.Key != null) value = Mathf.Max(value, entry.Value);
                 return value;
@@ -27,10 +34,10 @@ namespace TapTap
         public void SetVisibilityOverride(Object owner, float opacity)
         {
             if (owner == null) return;
-            bool wasVisible = VisibleOpacity > 0f;
+            bool wasVisible = VisuallyActive;
             if (opacity <= 0f) visibilityOverrides.Remove(owner);
             else visibilityOverrides[owner] = Mathf.Clamp01(opacity);
-            bool visible = VisibleOpacity > 0f;
+            bool visible = VisuallyActive;
             if (visible != wasVisible) { DiscoverRenderers(); ApplyVisibility(visible, true); }
         }
         protected IReadOnlyList<Renderer> Renderers => renderers;
@@ -42,15 +49,39 @@ namespace TapTap
         public void SetDiscovered(bool value, bool immediate = false)
         {
             DiscoverRenderers();
+            bool wasDiscovered = Discovered;
             Discovered = value;
-            ApplyVisibility(VisibleOpacity > 0f, immediate);
+            if (!value || immediate || !Application.isPlaying || RevealDuration <= 0f)
+            {
+                discoveryOpacity = value ? 1f : 0f;
+                revealing = false;
+            }
+            else if (!wasDiscovered)
+            {
+                revealStart = discoveryOpacity;
+                revealElapsed = 0f;
+                revealing = discoveryOpacity < 1f;
+            }
+            ApplyVisibility(VisuallyActive, immediate);
+        }
+
+        // Match camera blending: unaffected by bullet time, frozen while the game is paused.
+        private void Update() => AdvanceReveal(Time.timeScale > 0f ? Time.unscaledDeltaTime : 0f);
+
+        private void AdvanceReveal(float deltaTime)
+        {
+            if (!revealing || deltaTime <= 0f) return;
+            revealElapsed += deltaTime;
+            float t = RevealDuration > 0f ? Mathf.Clamp01(revealElapsed / RevealDuration) : 1f;
+            discoveryOpacity = Mathf.SmoothStep(revealStart, 1f, t);
+            if (t >= 1f) revealing = false;
         }
 
         // Call after spawning visuals inside an already initialized region.
         public void RefreshVisuals()
         {
             DiscoverRenderers();
-            ApplyVisibility(VisibleOpacity > 0f, true);
+            ApplyVisibility(VisuallyActive, true);
         }
 
         private void DiscoverRenderers()

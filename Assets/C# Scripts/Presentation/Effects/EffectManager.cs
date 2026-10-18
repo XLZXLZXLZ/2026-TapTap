@@ -178,7 +178,7 @@ namespace TapTap
         {
             if (unscaledDt <= 0f) return;
             SimulateRewindVisual(unscaledDt);
-            if (PauseMenu.IsOpen || LevelAnnotation.IsFeedbackOpen || RewindManager.Rewinding) return;
+            if (PauseMenu.IsOpen || RewindManager.Rewinding) return;
             shakeClock += unscaledDt;
             shakeRemaining = Mathf.Max(0f, shakeRemaining - unscaledDt);
             if (zoomActive)

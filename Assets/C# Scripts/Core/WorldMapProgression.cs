@@ -140,7 +140,7 @@ namespace TapTap
 
         private void Update()
         {
-            if (!initialized || !UseKeyboard || IsTransitioning || LevelAnnotation.IsFeedbackOpen) return;
+            if (!initialized || !UseKeyboard || IsTransitioning) return;
             if (WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return;
             if (Application.isFocused && !WorldLevelMenu.IsOpen && !IsComplete && CanTransition && Input.GetKeyDown(KeyCode.O))
                 ExitsEnabled = !ExitsEnabled;
@@ -149,7 +149,7 @@ namespace TapTap
             if (Input.GetKeyDown(KeyCode.PageDown)) SkipNext();
         }
 
-        private bool CanTransition => initialized && !PauseMenu.IsOpen && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading && !LevelAnnotation.IsFeedbackOpen
+        private bool CanTransition => initialized && !PauseMenu.IsOpen && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         public bool CompleteCurrent(LevelEndpoint endpoint)

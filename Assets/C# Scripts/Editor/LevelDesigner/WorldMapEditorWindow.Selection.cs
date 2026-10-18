@@ -29,7 +29,6 @@ namespace TapTap.Editor
             selectingModules = true;
             moduleSelectionAnchor = cell;
             moduleSelectionArea = WorldMapRegionCreator.Rectangle(cell, cell);
-            selectedPassageId = null;
             GUIUtility.hotControl = canvasControlId;
         }
 
@@ -79,7 +78,7 @@ namespace TapTap.Editor
 
         private void DrawModuleSelection()
         {
-            if (designTool != DesignTool.Arrange || SelectedPassage != null || pendingLevel != null) return;
+            if (designTool != DesignTool.Arrange || pendingLevel != null) return;
             RectInt area;
             if (selectingModules) area = moduleSelectionArea;
             else if (selectedModuleIds.Count <= 1 || !TrySelectedModuleBounds(out area)) return;

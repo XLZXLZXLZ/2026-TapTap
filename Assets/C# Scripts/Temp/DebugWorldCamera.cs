@@ -54,7 +54,7 @@ namespace TapTap
             SceneManager.sceneLoaded += SceneLoaded;
         }
 
-        private static bool Blocked => WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen
+        private static bool Blocked => WorldMapProgression.InputBlocked
             || GameplayActionLocks.IsLocked(GameplayAction.DebugCamera, SceneManager.GetActiveScene())
             || RewindManager.Rewinding
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);

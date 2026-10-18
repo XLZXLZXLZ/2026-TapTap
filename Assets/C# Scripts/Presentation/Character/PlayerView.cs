@@ -151,7 +151,7 @@ namespace TapTap
         {
             if (ExitPresentation) return;
             if (controller == null || body == null || head == null) return;
-            paused |= WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen;
+            paused |= WorldMapProgression.InputBlocked;
             if (bodyAnimator != null) bodyAnimator.speed = paused ? 0f : 1f;
             if (headAnimator != null) headAnimator.speed = paused ? 0f : 1f;
             if (paused) return;
@@ -304,7 +304,7 @@ namespace TapTap
             EnsureVisuals();
             RenderFacing(false);
             RenderMovementAnimations(false);
-            if (!WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen)
+            if (!WorldMapProgression.InputBlocked)
             {
                 AdvanceReaction(true, dt);
                 AdvanceReaction(false, dt);
@@ -377,7 +377,7 @@ namespace TapTap
         }
 
         private bool CanReact() => visualSettings != null && !ExitPresentation && !RewindManager.Rewinding
-            && !WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen;
+            && !WorldMapProgression.InputBlocked;
 
         private void OnPhaseChanged(PlayerPhase next)
         {

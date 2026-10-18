@@ -46,7 +46,7 @@ namespace TapTap.Editor
             SavePreference(MenuAudio.MusicPreference, "Music");
             SavePreference(MenuAudio.EffectsPreference, "Effects");
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuAssets.PrefabPath));
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab"));
             SessionState.SetBool(InteractionOnly, true);
             SessionState.SetBool(Pending, true);
             EditorApplication.isPlaying = true;
@@ -116,7 +116,6 @@ namespace TapTap.Editor
         public static void BuildAndRunBatch()
         {
             if (!Application.isBatchMode) throw new InvalidOperationException("Run in an isolated batch project.");
-            PauseMenuAssets.Build();
             RunBatch();
         }
 
@@ -128,7 +127,7 @@ namespace TapTap.Editor
             File.WriteAllText(Results, "");
             try
             {
-                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuAssets.PrefabPath);
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab");
                 Check(prefab != null, "Prefab missing");
                 var menu = prefab.GetComponent<PauseMenu>();
                 Check(menu.Content != null && menu.ResumeButton != null && menu.MainMenuButton != null
@@ -153,11 +152,11 @@ namespace TapTap.Editor
                 var renderer = AssetDatabase.LoadAssetAtPath<UniversalRendererData>("Assets/Rendering/Settings/TapTapRenderer.asset");
                 var blur = renderer.rendererFeatures.OfType<PauseBlurFeature>().Single();
                 Check(blur.BlurShader != null && !ShaderUtil.ShaderHasError(blur.BlurShader), "Blur shader invalid");
-                EditorSceneManager.OpenScene(PauseMenuAssets.PlayScenePath);
+                EditorSceneManager.OpenScene("Assets/Scenes/WorldMaps/World_Character_Play.unity");
                 Check(Object.FindObjectsOfType<PauseMenu>().Length == 1
                     && PrefabUtility.GetCorrespondingObjectFromSource(Object.FindObjectOfType<PauseMenu>()) == menu,
                     "World_Character_Play needs exactly one linked pause prefab");
-                EditorSceneManager.OpenScene(PauseMenuAssets.ScenePath);
+                EditorSceneManager.OpenScene("Assets/Art/Sprite/UI/Fqh.unity");
                 Check(PrefabUtility.IsPartOfPrefabInstance(Object.FindObjectOfType<PauseMenu>()), "Fqh Canvas is not a prefab instance");
                 Pass("Prefab is linked in Fqh, all controls/audio assigned, no camera/EventSystem scene references");
                 SavePreference(MenuAudio.MusicPreference, "Music");
@@ -265,13 +264,13 @@ namespace TapTap.Editor
                     Near(Time.timeScale, 2f, "Destroying an open menu left the game paused");
                     Object.DestroyImmediate(MenuAudio.Current.gameObject);
                     foreach (EventSystem system in Object.FindObjectsOfType<EventSystem>()) Object.DestroyImmediate(system.gameObject);
-                    var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuAssets.PrefabPath));
+                    var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab"));
                     menu = instance.GetComponent<PauseMenu>();
                     Check(menu.Open() && EventSystem.current != null, "Prefab failed without an existing EventSystem");
                     Check(Object.FindObjectsOfType<EventSystem>().Length == 1, "Duplicate EventSystem");
                     Near(menu.MusicSlider.value, 0.23f, "Music not restored after recreation");
                     Near(menu.EffectsSlider.value, 0.81f, "Effects not restored after recreation");
-                    var duplicate = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuAssets.PrefabPath));
+                    var duplicate = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab"));
                     Check(!duplicate.activeSelf && Object.FindObjectsOfType<MenuAudio>().Length == 1, "Duplicate menu/audio not suppressed");
                     Object.DestroyImmediate(duplicate);
                     menu.MainMenuScenePath = "Assets/Scenes/DoesNotExist.unity";
@@ -291,19 +290,19 @@ namespace TapTap.Editor
                     Check(SceneManager.GetActiveScene().path == "Assets/Scenes/WorldMaps/World_Character_Select.unity"
                         && Time.timeScale > 0f, "Return to selection left wrong scene or paused clock");
                     Check(MenuAudio.Current != null && Object.FindObjectsOfType<MenuAudio>().Length == 1, "BGM did not survive scene change");
-                    var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PauseMenuAssets.PrefabPath));
+                    var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab"));
                     menu = instance.GetComponent<PauseMenu>();
                     Check(menu.Open(), "Cannot pause in selection scene");
                     menu.ReturnToMainMenu();
                     Advance(menu, 99f);
                     Check(!WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Main-menu button reloaded its current scene");
                     Pass("Real Fqh-to-selection scene navigation restores time, preserves one BGM player, same-scene main-menu action resumes");
-                    WorldMapSceneRouter.Instance.Load(PauseMenuAssets.PlayScenePath);
+                    WorldMapSceneRouter.Instance.Load("Assets/Scenes/WorldMaps/World_Character_Play.unity");
                     stage = 3;
                 }
                 else if (stage == 3)
                 {
-                    if (WorldMapSceneRouter.IsLoading || menu == null || SceneManager.GetActiveScene().path != PauseMenuAssets.PlayScenePath) return;
+                    if (WorldMapSceneRouter.IsLoading || menu == null || SceneManager.GetActiveScene().path != "Assets/Scenes/WorldMaps/World_Character_Play.unity") return;
                     Check(menu.Open(), "World_Character_Play cannot pause");
                     Advance(menu, 99f);
                     menu.Content.SetActive(false);

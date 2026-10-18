@@ -45,6 +45,8 @@ namespace TapTap.Editor
         {
             if (map == null) throw new ArgumentNullException(nameof(map));
             if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("请在编辑状态保存大地图。");
+            WorldMapValidation.RequireValid(map);
+            LevelTestSceneBuilder.LoadRuntimePrefab();
             AssetDatabase.SaveAssetIfDirty(map);
             foreach (WorldMapModule module in map.OrderedModules()) AssetDatabase.SaveAssetIfDirty(module.Level);
             string path = Synchronize(map);
@@ -65,31 +67,25 @@ namespace TapTap.Editor
         {
             if (map == null) throw new ArgumentNullException(nameof(map));
             if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("请在编辑状态更新大世界场景。");
-            if (synchronizing) return ScenePath(map);
+            if (synchronizing) throw new InvalidOperationException("大地图正在同步，请等待当前操作结束。");
+            WorldMapValidation.RequireValid(map);
             synchronizing = true;
             Scene previous = SceneManager.GetActiveScene();
             Scene scene = default;
             bool opened = false;
             try
             {
-                GameObject resources = LevelTestSceneBuilder.EnsureRuntimePrefab();
+                GameObject resources = LevelTestSceneBuilder.LoadRuntimePrefab();
                 var levels = new Dictionary<LevelDefinition, GameObject>();
                 foreach (WorldMapModule module in map.OrderedModules())
                 {
                     if (levels.ContainsKey(module.Level)) continue;
                     string levelPath = AssetDatabase.GetAssetPath(module.Level.OutputPrefab);
                     if (string.IsNullOrEmpty(levelPath)) levelPath = AssetDatabase.GenerateUniqueAssetPath(
-                        "Assets/Prefabs/Levels/" + WorldMapPrefabBuilder.SafeName(module.Level.name) + ".prefab");
+                        "Assets/Prefabs/Levels/" + LevelPrefabBuilder.SafeName(module.Level.name) + ".prefab");
                     GameObject prefab = module.Level.OutputPrefab;
                     if (prefab == null || changedLevels == null || changedLevels.Contains(module.Level))
-                    {
-                        try { prefab = LevelPrefabBuilder.Save(module.Level, levelPath); }
-                        catch (InvalidOperationException exception)
-                        {
-                            // Incomplete edits must not prevent other modules from moving in the scene.
-                            Debug.LogWarning(module.DisplayName + " 的地形暂未更新：" + exception.Message, module.Level);
-                        }
-                    }
+                        prefab = LevelPrefabBuilder.Save(module.Level, levelPath);
                     if (prefab != null) levels.Add(module.Level, prefab);
                 }
                 string path = ScenePath(map);
@@ -97,7 +93,7 @@ namespace TapTap.Editor
                 {
                     LevelPrefabBuilder.EnsureFolder("Assets/Scenes/WorldMaps");
                     path = AssetDatabase.GenerateUniqueAssetPath("Assets/Scenes/WorldMaps/"
-                        + WorldMapPrefabBuilder.SafeName(map.name) + "_Play.unity");
+                        + LevelPrefabBuilder.SafeName(map.name) + "_Play.unity");
                 }
                 scene = SceneManager.GetSceneByPath(path);
                 bool loaded = scene.IsValid() && scene.isLoaded;
@@ -110,8 +106,7 @@ namespace TapTap.Editor
                 }
                 Populate(scene, map, resources, levels, changedLevels);
                 WorldMapRoot authoredWorld=Find<WorldMapRoot>(scene);
-                if (authoredWorld!=null) NeonWorldMapAssets.EnsureSceneScreen(scene,authoredWorld.gameObject,map,false);
-                WorldMapSceneConflicts.Check(scene);
+                if (authoredWorld != null) NeonWorldMapSceneBinding.BindExisting(scene, authoredWorld.gameObject, map);
                 EditorSceneManager.MarkSceneDirty(scene);
                 // Keep unsaved manual work in an already-open scene under normal Unity save control.
                 if (opened && !EditorSceneManager.SaveScene(scene, path)) throw new IOException("无法保存游玩场景：" + path);
@@ -150,6 +145,8 @@ namespace TapTap.Editor
                 var root = new GameObject(map.name); SceneManager.MoveGameObjectToScene(root, scene);
                 world = root.AddComponent<WorldMapRoot>();
             }
+            else if (world.Source != null && world.Source != map)
+                throw new InvalidOperationException("目标游玩场景属于其它大地图，已停止同步。");
             else if (PrefabUtility.IsPartOfPrefabInstance(world.gameObject))
                 PrefabUtility.UnpackPrefabInstance(world.gameObject, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
             world.Source = map;
@@ -208,12 +205,10 @@ namespace TapTap.Editor
             runtime.Configure(player, first, config, first != null ? first.EntrySpawnPosition : (Vector2)player.Body.transform.position);
             if (world.GetComponent<WorldMapProgression>() == null) world.gameObject.AddComponent<WorldMapProgression>();
             foreach (LevelRegion region in retained)
-                if (changedLevels == null || changedLevels.Contains(region.Source) || region.transform.Find("Test Annotations") == null)
-                {
-                    Transform annotations = region.transform.Find("Test Annotations");
-                    if (annotations != null) UnityEngine.Object.DestroyImmediate(annotations.gameObject);
-                    LevelTestSceneBuilder.GenerateAnnotations(region, player);
-                }
+            {
+                Transform annotations = region.transform.Find("Test Annotations");
+                if (annotations != null) UnityEngine.Object.DestroyImmediate(annotations.gameObject);
+            }
             LevelPrefabBuilder.RecordInstanceOverrides(player.gameObject);
             LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
         }

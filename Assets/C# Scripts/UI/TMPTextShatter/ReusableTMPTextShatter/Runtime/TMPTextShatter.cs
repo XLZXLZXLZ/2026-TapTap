@@ -61,6 +61,7 @@ namespace ReusableTextEffects
         private float elapsed;
         private float totalDuration;
         private string preparedText;
+        private float? finishBelowY;
 
         public TMP_Text Source => source;
         public bool IsPlaying => playing;
@@ -149,9 +150,24 @@ namespace ReusableTextEffects
         /// <summary>Starts the shatter. Can be called by a Button, UnityEvent, or Animation Event.</summary>
         public void Shatter()
         {
+            Play(null);
+        }
+
+        /// <summary>
+        /// Keeps glyphs opaque until they have fallen completely below a local-space boundary.
+        /// Requires downward gravity; the ordinary Shatter API keeps its existing timing and fade.
+        /// </summary>
+        public void ShatterBelow(float localBottomY)
+        {
+            Play(gravity.y < -0.0001f ? (float?)localBottomY : null);
+        }
+
+        private void Play(float? bottom)
+        {
             ResolveSource();
             if (source == null || playing) return;
 
+            finishBelowY = bottom;
             if (!prepared || preparedText != source.text || source.havePropertiesChanged) Prepare();
             else BuildAnimationData();
             if (shards.Count == 0) return;
@@ -168,6 +184,7 @@ namespace ReusableTextEffects
         {
             playing = false;
             elapsed = 0f;
+            finishBelowY = null;
             if (source == null) return;
 
             source.enabled = true;
@@ -219,6 +236,19 @@ namespace ReusableTextEffects
                     Mathf.Min(rotationRange.x, rotationRange.y),
                     Mathf.Max(rotationRange.x, rotationRange.y));
                 shard.duration = Range(random, minDuration, maxDuration);
+                if (finishBelowY.HasValue)
+                {
+                    Vector3[] original = originalMeshInfo[shard.materialIndex].vertices;
+                    float radius = 0f;
+                    for (int corner = 0; corner < 4; corner++)
+                        radius = Mathf.Max(radius, (original[shard.vertexIndex + corner] - shard.center).magnitude);
+                    radius *= Mathf.Max(1f, endScale);
+                    float distance = Mathf.Max(0f, shard.center.y + radius - finishBelowY.Value);
+                    float acceleration = -gravity.y;
+                    float fallTime = (shard.velocity.y + Mathf.Sqrt(shard.velocity.y * shard.velocity.y
+                        + 2f * acceleration * distance)) / acceleration;
+                    shard.duration = Mathf.Max(shard.duration, fallTime);
+                }
                 shard.delay = characterOrder == CharacterOrder.Simultaneous
                     ? 0f
                     : ranks[i] * characterDelay;
@@ -280,7 +310,7 @@ namespace ReusableTextEffects
                 Vector3[] originals = originalMeshInfo[shard.materialIndex].vertices;
                 Color32[] originalColors = originalMeshInfo[shard.materialIndex].colors32;
 
-                float alpha = normalized <= fadeStart
+                float alpha = finishBelowY.HasValue || normalized <= fadeStart
                     ? 1f
                     : 1f - Mathf.InverseLerp(fadeStart, 1f, normalized);
 

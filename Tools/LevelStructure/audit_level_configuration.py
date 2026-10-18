@@ -262,7 +262,7 @@ def write_html(path, report, native_lines):
              '<style>body{font:15px/1.7 system-ui,"Microsoft YaHei",sans-serif;color:#202c39;background:#f5f7fa;margin:0}main{max-width:1240px;margin:32px auto;padding:32px;background:white;border-radius:12px}h1{font-size:28px}h2{font-size:21px;margin-top:32px}table{border-collapse:collapse;width:100%;margin:16px 0}td,th{text-align:left;vertical-align:top;border:1px solid #dbe2e9;padding:9px 12px}th{background:#edf2f7}tr:nth-child(even){background:#f8fafc}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}code{background:#edf2f7;padding:2px 5px}.note{background:#eaf5ef;padding:16px;border-left:4px solid #378261}</style><main>',
              '<h1>关卡入口与配置检查报告</h1><p>2026-10-17 · 当前大世界 22 个模块 · 全部 ' + str(report['level_count']) + ' 份布局 · 2 张大地图 · 5 份游玩场景</p>',
              '<div class="note"><b>已修复第六关入口。</b>指定现有复活点 (22, 2)，Prefab 出生坐标 (22.5, 2.45)，大世界出生坐标 (76.5, 86.45)。主场景与 CLX 场景已移除强制置空入口的覆盖。' + native_status + '</div>',
-             '<h2>需要后续处理的配置</h2><ol><li>Unity 原生大地图生成校验发现当前地图有 ' + str(len(world.get('overlap_conflicts', []))) + ' 组重叠格块类型冲突。WorldMapPrefabBuilder.Save 会因这些错误拒绝重新生成整体 Prefab。这是布局资源之间的校验结果，不代表已逐项验证场景中的手工覆盖和实际碰撞。应对照下表处理格块/设置差异。</li>',
+             '<h2>需要后续处理的配置</h2><ol><li>历史检查记录中有 ' + str(len(world.get('overlap_conflicts', []))) + ' 组重叠格块差异。编辑器已移除重叠检查与整体 Prefab 导出，这些历史记录不再阻止当前同步。</li>',
              '<li>第 21 项 Level_Connect 和第 22 项 Level_OutWay 均无复活点和入口，且仍在 OrderedModules 中。它们属于连接区/出口区；第 22 项已配置独立最终逃离演出，不能把没有普通终点直接判为结局缺失。需要核实独立选关、重生和第 20 关后顺序进入第 21 项时的出生策略。目前这些操作会回退到模块原点。</li>',
              '<li>CLX 与三份备份场景均与当前大地图不完全同步：第一关位置不同，缺少第 22 项。三份备份还保留第六关的空入口覆盖；当前构建使用主场景，备份问题未修改。</li>',
              '<li>World_Heart 未配置游玩场景，第二、三项共用的 Demo_Hanging 没有入口绑定。</li>',
@@ -273,7 +273,7 @@ def write_html(path, report, native_lines):
              '<h2>大地图重叠配置冲突</h2>',
              table(['关卡序号', '布局资源', '影响'],
                    [(' / '.join(','.join(str(n) for n in seq) for seq in pair['sequences']),
-                     ' / '.join(pair['levels']), '重叠格块类型或配置不一致，整体 Prefab 生成校验失败')
+                     ' / '.join(pair['levels']), '历史重叠差异，不参与当前同步校验')
                     for pair in world.get('overlap_conflicts', [])]),
              '<h2>其余关卡资源</h2>', table(['布局', '用途', '静态检查', 'Unity 布局校验'], other),
              '<h2>场景版本检查</h2>', table(['场景', '用途', '结果'], scene_rows),

@@ -22,22 +22,11 @@ namespace TapTap.Editor
             try
             {
                 LevelPrefabBuilder.EnsureFolder(Folder);
-                Test("Heart silhouette is symmetric, connected and has two lobes across sizes", Shape);
-                Test("Whole-room containment catches the central notch, empty cells and map overflow", Containment);
-                Test("Character template has flat edges, rounded corners, two equal halves and a clear gap", CharacterShape);
-                Test("Character rooms cannot bridge the gap even when all corners fit", CharacterContainment);
-                Test("Existing heart layout dimensions and references survive the field migration", LegacyLayout);
-                Test("Changing templates refreshes the mask, preserves module coordinates and supports undo", TemplateSwitch);
-                Test("Module editing supports undo, independent copies, resize and serialization", Editing);
-                Test("Prefab export preserves linked levels, custom objects and world coordinates", Prefab);
-                Test("PNG preview includes the optional reference template and freely placed rooms", Preview);
+                Test("Module editing supports undo, independent copies and serialization", Editing);
                 Test("Automatic footprints preserve L/S concavities, disconnected islands and enclosed interiors", IrregularFootprints);
-                Test("Irregular modules can interlock and leave forbidden cutouts empty", IrregularPlacement);
                 Test("Edge resizing preserves terrain, supports undo and updates shared modules and runtime bounds", BoundaryEditing);
                 Test("Scene navigation finds existing scenes, binds by GUID and reuses the target scene", Navigation);
-                Test("Standalone passage arrows retain rotation and notes through copy, undo and serialization", PassageAnnotations);
                 Test("Region selection creates a same-size ordinary child level and permits occupied areas", RegionCreation);
-                Test("Overlapping modules accept identical cell types and reject different types, layers or empty mismatches", CompatibleOverlap);
                 Test("Single-level editing immediately invalidates shared world-map previews without focus or saving", LivePreview);
                 Test("Directional canvas expansion preserves terrain, world positions, selection, Custom content and undo", CanvasExpansion);
                 Test("Whole-map mirrors preserve all layers and IDs, reflect directions and boundaries, refresh previews and support undo", MapMirror);
@@ -50,65 +39,6 @@ namespace TapTap.Editor
 
         private static void Test(string name, Action run) { run(); results.Add("PASS: " + name); Debug.Log("WORLD MAP PASS: " + name); }
         private static void Check(bool condition, string message) { if (!condition) throw new Exception(message); }
-
-        private static void Shape()
-        {
-            foreach (Vector2Int size in new[] { new Vector2Int(8, 8), new Vector2Int(63, 57), new Vector2Int(160, 144), new Vector2Int(320, 288), new Vector2Int(641, 577), new Vector2Int(480, 240) })
-            {
-                var mask = new WorldMapMask(size, 8);
-                int filled = 0;
-                Vector2Int first = Vector2Int.zero;
-                for (int y = 0; y < mask.Size.y; y++)
-                    for (int x = 0; x < mask.Size.x; x++)
-                    {
-                        bool inside = mask.Contains(new Vector2Int(x, y));
-                        Check(inside == mask.Contains(new Vector2Int(mask.Size.x - 1 - x, y)), "Asymmetric raster at " + size + " " + x + "," + y);
-                        if (inside) { filled++; first = new Vector2Int(x, y); }
-                        if (x < 8 || y < 8 || x >= mask.Size.x - 8 || y >= mask.Size.y - 8) Check(!inside, "Padding must be empty.");
-                    }
-                Check(filled > size.x * size.y * 0.45f && filled < size.x * size.y * 0.85f, "Unexpected area: " + size);
-                var queue = new Queue<Vector2Int>();
-                var visited = new HashSet<Vector2Int> { first };
-                queue.Enqueue(first);
-                while (queue.Count > 0)
-                {
-                    Vector2Int point = queue.Dequeue();
-                    foreach (Vector2Int offset in new[] { Vector2Int.left, Vector2Int.right, Vector2Int.up, Vector2Int.down })
-                    {
-                        Vector2Int next = point + offset;
-                        if (mask.Contains(next) && visited.Add(next)) queue.Enqueue(next);
-                    }
-                }
-                Check(visited.Count == filled, "Disconnected heart mask.");
-                int yTop = 8 + Mathf.FloorToInt(size.y * 0.9f);
-                Check(!mask.Contains(new Vector2Int(mask.Size.x / 2, yTop)), "Top notch must be empty.");
-                Check(mask.Contains(new Vector2Int(8 + Mathf.FloorToInt(size.x * 0.25f), yTop)), "Left lobe missing.");
-                Check(mask.Contains(new Vector2Int(8 + Mathf.FloorToInt(size.x * 0.75f), yTop)), "Right lobe missing.");
-            }
-            var largest = new WorldMapMask(new Vector2Int(2048, 2048), 64);
-            Check(largest.Contains(new RectInt(1000, 1000, 32, 18)), "Maximum-size map failed.");
-        }
-
-        private static void Containment()
-        {
-            var mask = new WorldMapMask(new Vector2Int(320, 288), 8);
-            Check(mask.Contains(new RectInt(140, 120, 32, 18)), "Central room should fit.");
-            var crossing = new RectInt(96, 245, 144, 12);
-            Check(mask.Contains(crossing.min) && mask.Contains(new Vector2Int(crossing.xMax - 1, crossing.yMax - 1)) &&
-                mask.Contains(new Vector2Int(crossing.xMin, crossing.yMax - 1)) && mask.Contains(new Vector2Int(crossing.xMax - 1, crossing.yMin)),
-                "Fixture must have four valid corners.");
-            Check(mask.CountOutside(crossing) > 0 && !mask.Contains(crossing), "Four corners do not detect the notch inside the room.");
-            Check(!mask.Contains(new RectInt(-12, -4, 32, 18)), "Out-of-canvas room accepted.");
-            Check(mask.CountOutside(new RectInt(-100, -100, 32, 18)) == 576, "Entire room outside count.");
-            var random = new System.Random(17);
-            for (int i = 0; i < 200; i++)
-            {
-                var rect = new RectInt(random.Next(-20, 340), random.Next(-20, 310), random.Next(1, 70), random.Next(1, 40));
-                int count = 0;
-                foreach (Vector2Int cell in rect.allPositionsWithin) if (!mask.Contains(cell)) count++;
-                Check(mask.CountOutside(rect) == count, "Prefix sum disagrees with individual cell checks.");
-            }
-        }
 
         private static object Invoke(object target, string name, params object[] args) => target.GetType().GetMethod(name,
             BindingFlags.Instance | BindingFlags.NonPublic).Invoke(target, args);
@@ -136,95 +66,15 @@ namespace TapTap.Editor
                 Check(map.Modules.Count == 1, "Undo did not remove the duplicate.");
                 Undo.PerformRedo();
                 Check(map.Modules.Count == 2, "Redo did not restore the duplicate.");
-                Vector2Int originalPosition = map.Modules[0].Position;
-                Undo.IncrementCurrentGroup();
-                Invoke(window, "Resize", new Vector2Int(64, 64), 8);
-                Check(map.Modules[0].Position == originalPosition, "Resizing must retain room coordinates.");
-                Check(!new WorldMapMask(map).Contains(map.Modules[0].Bounds), "Shrinking must mark existing rooms as outside.");
-                Undo.FlushUndoRecordObjects();
-                Undo.PerformUndo();
-                Check(map.TemplateSize == new Vector2Int(320, 288), "Template size undo failed.");
                 Invoke(window, "DeleteSelected");
                 Check(map.Modules.Count == 1, "Delete failed.");
                 EditorUtility.SetDirty(map);
                 AssetDatabase.SaveAssetIfDirty(map);
                 string serialized = File.ReadAllText(Folder + "/Editing.asset");
-                Check(serialized.Contains(originalId) && serialized.Contains("x: 140") && serialized.Contains("TemplateSize:"), "Layout not serialized.");
+                Check(serialized.Contains(originalId) && serialized.Contains("x: 140") && serialized.Contains("Modules:"), "Layout not serialized.");
                 Check(level.Size == originalSize, "Source level changed by map editing.");
             }
             finally { UnityEngine.Object.DestroyImmediate(window); }
-        }
-
-        private static void Prefab()
-        {
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            AssetDatabase.CreateAsset(map, Folder + "/Prefab.asset");
-            var source = AssetDatabase.LoadAssetAtPath<LevelDefinition>("Assets/Runtime/Levels/Level_Test_1.asset");
-            var level = UnityEngine.Object.Instantiate(source);
-            level.OutputPrefab = null;
-            AssetDatabase.CreateAsset(level, Folder + "/Source.asset");
-            map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(100, 120) });
-            map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(132, 120) });
-            Check(WorldMapPrefabBuilder.Validate(map).Count == 0, "Valid map rejected: " + string.Join("; ", WorldMapPrefabBuilder.Validate(map)));
-            GameObject prefab = WorldMapPrefabBuilder.Save(map, Folder + "/World.prefab");
-            GameObject root = PrefabUtility.LoadPrefabContents(AssetDatabase.GetAssetPath(prefab));
-            try
-            {
-                LevelRegion[] regions = root.GetComponentsInChildren<LevelRegion>();
-                Check(regions.Length == 2, "Not all rooms exported.");
-                Check(regions[0].transform.localPosition == new Vector3(100, 120, 0), "Wrong world position.");
-                Check(regions[1].Source == level && PrefabUtility.IsPartOfPrefabInstance(regions[1].gameObject), "Source prefab link lost.");
-                new GameObject("Keep me").transform.SetParent(root.transform.Find("Custom"), false);
-                PrefabUtility.SaveAsPrefabAsset(root, Folder + "/World.prefab");
-            }
-            finally { PrefabUtility.UnloadPrefabContents(root); }
-            WorldMapPrefabBuilder.Save(map, Folder + "/World.prefab");
-            root = PrefabUtility.LoadPrefabContents(Folder + "/World.prefab");
-            try { Check(root.transform.Find("Custom/Keep me") != null, "Custom content deleted by regeneration."); }
-            finally { PrefabUtility.UnloadPrefabContents(root); }
-            map.Modules[1].Position = map.Modules[0].Position;
-            Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("重叠")), "Identical whole-room tiles should be compatible.");
-            map.Modules[1].Position = Vector2Int.zero;
-            Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("超出爱心")), "Reference template still restricts placement.");
-        }
-
-        private static void Preview()
-        {
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            var mask = new WorldMapMask(map);
-            Texture2D texture = WorldMapDrawing.Export(map, mask);
-            string output = Path.Combine(Application.dataPath, "../heart-template.png");
-            File.WriteAllBytes(output, texture.EncodeToPNG());
-            Check(texture.GetPixel(0, 0) == (Color)WorldMapDrawing.Outside, "Outside should be gray.");
-            UnityEngine.Object.DestroyImmediate(texture);
-            var level = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<LevelDefinition>("Assets/Runtime/Levels/Level_Test_1.asset"));
-            level.UseCustomBoundary = true;
-            foreach (Vector2Int cell in new RectInt(Vector2Int.zero, level.Size).allPositionsWithin) level.BoundaryCells.Add(cell);
-            level.InvalidateFootprint();
-            map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(140, 120) });
-            map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(0, 0) });
-            texture = WorldMapDrawing.Export(map, mask);
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../heart-modules.png"), texture.EncodeToPNG());
-            Check(map.PreviewBounds.Contains(Vector2Int.zero), "Free placement was omitted from export bounds.");
-            UnityEngine.Object.DestroyImmediate(texture);
-            map.Template = WorldMapTemplateKind.SplitCharacter;
-            map.TemplateSize = WorldMapDefinition.DefaultSize(map.Template);
-            map.Modules.Clear();
-            mask = new WorldMapMask(map);
-            texture = WorldMapDrawing.Export(map, mask);
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../character-template.png"), texture.EncodeToPNG());
-            int centerX = mask.Size.x / 2, centerY = mask.Size.y / 2;
-            Check(texture.GetPixel((centerX - map.PreviewBounds.xMin) * 3, (centerY - map.PreviewBounds.yMin) * 3)
-                == (Color)WorldMapDrawing.Outside, "PNG reference gap should be gray.");
-            UnityEngine.Object.DestroyImmediate(texture);
-            map.Modules.Add(new WorldMapModule { Level = level, Position = new Vector2Int(centerX - 16, centerY - 9) });
-            texture = WorldMapDrawing.Export(map, mask);
-            File.WriteAllBytes(Path.Combine(Application.dataPath, "../character-gap-warning.png"), texture.EncodeToPNG());
-            map.ShowTemplate = false;
-            Check(map.PreviewBounds.Contains(new Vector2Int(centerX, centerY)), "Cross-gap room is outside preview bounds.");
-            UnityEngine.Object.DestroyImmediate(texture);
-            UnityEngine.Object.DestroyImmediate(map);
-            UnityEngine.Object.DestroyImmediate(level);
         }
 
         private static void IrregularFootprints()
@@ -258,38 +108,6 @@ namespace TapTap.Editor
                 UnityEngine.Object.DestroyImmediate(note);
             }
             finally { UnityEngine.Object.DestroyImmediate(level); UnityEngine.Object.DestroyImmediate(brush); }
-        }
-
-        private static void IrregularPlacement()
-        {
-            var a = ScriptableObject.CreateInstance<LevelDefinition>();
-            var b = ScriptableObject.CreateInstance<LevelDefinition>();
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            try
-            {
-                a.UseCustomBoundary = b.UseCustomBoundary = true;
-                for (int y = 0; y < 12; y++) for (int x = 0; x < 12; x++)
-                    (x < 3 || y < 3 ? a.BoundaryCells : b.BoundaryCells).Add(new Vector2Int(x, y));
-                var ma = new WorldMapModule { Level = a, Position = new Vector2Int(140, 120) };
-                var mb = new WorldMapModule { Level = b, Position = ma.Position };
-                Check(ma.Bounds.Overlaps(mb.Bounds) && !a.Footprint.Overlaps(b.Footprint, ma.Position, mb.Position), "Interlocking L regions incorrectly overlap.");
-                Check(!ma.Contains(new Vector2Int(149, 129)) && mb.Contains(new Vector2Int(149, 129)), "Picking an L cutout selected the wrong module.");
-                map.Modules.Add(ma); map.Modules.Add(mb);
-                Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("重叠")), "Validation still uses rectangles.");
-                var mask = new WorldMapMask(map);
-                Texture2D png = WorldMapDrawing.Export(map, mask);
-                File.WriteAllBytes(Path.Combine(Application.dataPath, "../irregular-interlocking.png"), png.EncodeToPNG());
-                UnityEngine.Object.DestroyImmediate(png);
-                // Occupy the valid parts of a rectangle crossing the heart notch: all forbidden cells are cut out.
-                a.BoundaryCells.Clear();
-                foreach (Vector2Int cell in new RectInt(96, 245, 144, 12).allPositionsWithin)
-                    if (mask.Contains(cell)) a.BoundaryCells.Add(cell);
-                a.InvalidateFootprint(); ma.Position = Vector2Int.zero;
-                Check(mask.CountOutside(ma.Bounds) > 0 && WorldMapDrawing.CountOutside(mask, a.Footprint, ma.Position) == 0, "Empty notch cutouts still count as out of bounds.");
-                map.Modules.Remove(mb);
-                Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("超出")), "Validation still checks enclosing rectangles against the mask.");
-            }
-            finally { UnityEngine.Object.DestroyImmediate(a); UnityEngine.Object.DestroyImmediate(b); UnityEngine.Object.DestroyImmediate(map); }
         }
 
         private static void BoundaryEditing()
@@ -374,64 +192,6 @@ namespace TapTap.Editor
             Check(LevelSceneNavigation.Open(source, moduleId) && Selection.activeGameObject == second, "Shared-scene navigation selected the wrong copy of a level.");
         }
 
-        private static void PassageAnnotations()
-        {
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            string mapPath = AssetDatabase.GenerateUniqueAssetPath(Folder + "/Passages.asset");
-            AssetDatabase.CreateAsset(map, mapPath);
-            map = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(mapPath);
-            var level = ScriptableObject.CreateInstance<LevelDefinition>(); level.Size = new Vector2Int(8, 8);
-            var from = new WorldMapModule { Level = level, Position = new Vector2Int(120, 130), Label = "入口" };
-            var to = new WorldMapModule { Level = level, Position = new Vector2Int(160, 130), Label = "出口" };
-            map.Modules.Add(from); map.Modules.Add(to);
-            var window = ScriptableObject.CreateInstance<WorldMapEditorWindow>();
-            try
-            {
-                Invoke(window, "UseMap", map);
-                typeof(WorldMapEditorWindow).GetField("selectedId", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(window, from.Id);
-                Invoke(window, "AddPassage", new Vector2Int(145, 133));
-                WorldMapPassage pin = map.Passages[0];
-                Check(pin.FromModuleId == "" && pin.ToModuleId == "", "New arrows must not require linked modules.");
-                pin.Angle = 90f; pin.Note = "经过这里可进入下一关"; pin.Bidirectional = false;
-                // Old bindings must not cause exported arrows to draw cross-map routes.
-                pin.FromModuleId = from.Id; pin.ToModuleId = to.Id;
-                EditorUtility.SetDirty(map);
-                Texture2D png = WorldMapDrawing.Export(map, new WorldMapMask(map));
-                Vector2Int pixel = Vector2Int.RoundToInt(((Vector2)pin.Position + Vector2.one * 0.5f) * 3);
-                Check(png.GetPixel(pixel.x, pixel.y) == (Color)WorldMapDrawing.PassageColor, "Exported arrow is missing.");
-                Check(png.GetPixel(pixel.x, pixel.y + 12) == (Color)WorldMapDrawing.PassageColor, "Arrow rotation was not exported.");
-                int yellowPixels = 0;
-                for (int y = 0; y < png.height; y++) for (int x = 0; x < png.width; x++)
-                    if (png.GetPixel(x, y) == (Color)WorldMapDrawing.PassageColor)
-                    {
-                        yellowPixels++;
-                        Check(Mathf.Abs(x - pixel.x) <= 14 && Mathf.Abs(y - pixel.y) <= 14, "Arrow drew a route beyond its local marker.");
-                    }
-                Check(yellowPixels > 24, "Arrowhead was not exported.");
-                File.WriteAllBytes(Path.Combine(Application.dataPath, "../passage-annotations.png"), png.EncodeToPNG());
-                UnityEngine.Object.DestroyImmediate(png);
-                // Pins outside the canvas must not make PNG generation traverse huge line segments.
-                pin.Position = new Vector2Int(-1000000, 1000000);
-                png = WorldMapDrawing.Export(map, new WorldMapMask(map)); UnityEngine.Object.DestroyImmediate(png);
-                pin.Position = new Vector2Int(145, 133);
-                Undo.FlushUndoRecordObjects(); Undo.IncrementCurrentGroup();
-                Invoke(window, "DuplicatePassage"); Undo.FlushUndoRecordObjects();
-                Check(map.Passages.Count == 2 && map.Passages[1].Id != pin.Id && map.Passages[1].Note == pin.Note && map.Passages[1].Angle == 90f, "Arrow copy lost its rotation or note.");
-                Undo.PerformUndo(); Check(map.Passages.Count == 1, "Passage copy undo failed.");
-                Undo.PerformRedo(); Check(map.Passages.Count == 2, "Passage copy redo failed.");
-                typeof(WorldMapEditorWindow).GetField("selectedPassageId", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(window, map.Passages[1].Id);
-                Invoke(window, "DeletePassage"); Check(map.Passages.Count == 1, "Pin deletion did not target the pin.");
-                pin = map.Passages[0]; pin.Bidirectional = true;
-                string targetId = pin.ToModuleId;
-                map.Modules.RemoveAll(module => module.Id == targetId);
-                Check(pin.ToModuleId == targetId && pin.Note.Length > 0 && pin.Angle == 90f, "Deleting a module must retain its independent arrow.");
-                EditorUtility.SetDirty(map); AssetDatabase.SaveAssetIfDirty(map);
-                string saved = File.ReadAllText(mapPath);
-                Check(saved.Contains("Angle: 90") && saved.Contains("Bidirectional: 1") && saved.Contains("Passages:"), "Arrow metadata was not saved.");
-            }
-            finally { UnityEngine.Object.DestroyImmediate(window); UnityEngine.Object.DestroyImmediate(level); }
-        }
-
         private static void RegionCreation()
         {
             var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
@@ -441,9 +201,9 @@ namespace TapTap.Editor
             Check(area.Equals(new RectInt(140, 130, 14, 10)), "Reverse dragging or inclusive dimensions are wrong.");
             Check(WorldMapRegionCreator.Rectangle(new Vector2Int(140, 130), new Vector2Int(140, 130)).size == Vector2Int.one, "One-cell selections must be allowed.");
             Check(WorldMapRegionCreator.Validate(map, area) == null, "Valid region rejected.");
-            Check(WorldMapRegionCreator.Validate(map, new RectInt(0, 0, 14, 10)) != null, "Forbidden region accepted.");
+            Check(WorldMapRegionCreator.Validate(map, new RectInt(-100, -100, 14, 10)) == null, "Negative-coordinate region rejected.");
             var crossing = new RectInt(96, 245, 144, 12);
-            Check(WorldMapRegionCreator.Validate(map, crossing) != null, "Notch-crossing rectangle accepted.");
+            Check(WorldMapRegionCreator.Validate(map, crossing) == null, "Removed template still restricts new regions.");
             var palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(LevelEditorAssets.DefaultPalettePath);
             Undo.IncrementCurrentGroup();
             WorldMapModule created = WorldMapRegionCreator.Create(map, area, palette, Folder + "/RegionLevel.asset");
@@ -470,61 +230,6 @@ namespace TapTap.Editor
             Check(next.Level != child && AssetDatabase.GetAssetPath(next.Level) != occupiedPath && child.Placements.Count == 1, "Creating a child overwrote an existing layout.");
             Check(next.Position == area.min &&
                 next.Level.Size == area.size && !next.Level.UseCustomBoundary, "Overlapping child creation imposed a boundary or moved the child.");
-        }
-
-        private static void CompatibleOverlap()
-        {
-            var a = ScriptableObject.CreateInstance<LevelDefinition>(); a.Size = new Vector2Int(4, 4);
-            var b = ScriptableObject.CreateInstance<LevelDefinition>(); b.Size = a.Size;
-            var solid = ScriptableObject.CreateInstance<LevelBrush>();
-            var other = ScriptableObject.CreateInstance<LevelBrush>(); other.LayerId = solid.LayerId;
-            var objectBrush = ScriptableObject.CreateInstance<LevelBrush>(); objectBrush.LayerId = "objects";
-            var note = ScriptableObject.CreateInstance<LevelBrush>(); note.HandlerId = "annotation"; note.LayerId = "annotation";
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            var world = ScriptableObject.CreateInstance<WorldMapEditorWindow>();
-            Vector2Int origin = new Vector2Int(140, 130);
-            var ma = new WorldMapModule { Level = a, Position = origin };
-            var mb = new WorldMapModule { Level = b, Position = origin };
-            map.Modules.Add(ma); map.Modules.Add(mb);
-            try
-            {
-                Invoke(world, "UseMap", map);
-                Func<bool> conflict = () => WorldMapOverlap.HasConflict(a, a.Footprint, ma.Position, b, b.Footprint, mb.Position);
-                Check(!conflict(), "Empty shared cells should be compatible.");
-                a.Put(new Vector2Int(1, 1), solid, null); b.Put(new Vector2Int(1, 1), solid, null);
-                Check(!conflict() && !(bool)Invoke(world, "Overlapping", ma, a.Footprint, origin), "Matching types rejected in the map preview.");
-                Check(!WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("重叠")), "Matching types rejected in prefab validation.");
-                b.Put(new Vector2Int(1, 1), other, null);
-                Check(conflict() && (bool)Invoke(world, "Overlapping", ma, a.Footprint, origin), "A different type was accepted or the cache stayed stale.");
-                Check(WorldMapPrefabBuilder.Validate(map).Exists(message => message.Contains("重叠")), "Type mismatch missing in prefab validation.");
-                b.Put(new Vector2Int(1, 1), solid, null); b.Put(new Vector2Int(1, 1), objectBrush, null);
-                Check(conflict(), "An additional object layer must conflict.");
-                a.Put(new Vector2Int(1, 1), objectBrush, null);
-                Check(!conflict(), "Identical multi-layer cells should be compatible.");
-                b.Put(new Vector2Int(1, 1), note, null);
-                Check(!conflict(), "Testing annotations must not affect tile compatibility.");
-                b.Erase(new Vector2Int(1, 1), solid.LayerId);
-                Check(conflict(), "Erasing a type did not invalidate compatibility.");
-                b.Put(new Vector2Int(1, 1), solid, null);
-                b.UseCustomBoundary = true; b.BoundaryCells.Add(new Vector2Int(2, 1)); b.InvalidateFootprint();
-                ma.Position = origin + Vector2Int.right;
-                Check(conflict(), "Empty cell versus a placed tile must conflict.");
-                mb.Position = origin + new Vector2Int(20, 0);
-                Check(!conflict(), "Separated footprints must not conflict.");
-                ma.Position = origin; mb.Position = origin + Vector2Int.right;
-                a.Erase(new Vector2Int(1, 1), "objects"); b.Erase(new Vector2Int(1, 1), "objects");
-                a.Put(new Vector2Int(2, 1), solid, null);
-                Check(!conflict(), "Partially shared identical terrain must be compatible even at different origins.");
-                typeof(WorldMapEditorWindow).GetField("pendingLevel", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(world, a);
-                Check(!(bool)Invoke(world, "Overlapping", null, a.Footprint, ma.Position), "Pending placement must use the same compatibility rule.");
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(world); UnityEngine.Object.DestroyImmediate(map);
-                UnityEngine.Object.DestroyImmediate(a); UnityEngine.Object.DestroyImmediate(b);
-                UnityEngine.Object.DestroyImmediate(solid); UnityEngine.Object.DestroyImmediate(other);
-                UnityEngine.Object.DestroyImmediate(objectBrush); UnityEngine.Object.DestroyImmediate(note);
-            }
         }
 
         private static void CanvasContraction()
@@ -678,8 +383,8 @@ namespace TapTap.Editor
                 PrefabUtility.SaveAsPrefabAsset(root, prefabPath); PrefabUtility.UnloadPrefabContents(root);
                 Invoke(editor, "UseLayout", level);
                 Rect screenBefore = (Rect)Invoke(editor, "CellRect", original.Cell);
-                Texture2D before = WorldMapDrawing.Export(map, new WorldMapMask(map));
-                Color sample = before.GetPixel(424, 394); UnityEngine.Object.DestroyImmediate(before);
+                Texture2D before = WorldMapDrawing.Export(map);
+                Color sample = before.GetPixel(7, 7); UnityEngine.Object.DestroyImmediate(before);
                 Invoke(editor, "ApplyCanvasExpansion", Vector2Int.left, 3);
                 Invoke(editor, "ApplyCanvasExpansion", Vector2Int.right, 2);
                 Invoke(editor, "ApplyCanvasExpansion", Vector2Int.up, 2);
@@ -692,8 +397,8 @@ namespace TapTap.Editor
                 Check((Vector2Int)Invoke(editor, "ClampCell", new Vector2Int(-999, 999)) == new Vector2Int(-3, 4), "Negative canvas coordinates are incorrectly clamped.");
                 typeof(LevelEditorWindow).GetField("selectionArea", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(editor, new RectInt(1, 1, 1, 1));
                 Check((Vector2Int)Invoke(editor, "ClampSelectionMove", new Vector2Int(-999, 999)) == new Vector2Int(-4, 3), "Selection cannot move into the expanded canvas.");
-                Texture2D after = WorldMapDrawing.Export(map, new WorldMapMask(map));
-                Check(after.GetPixel(424, 394) == sample, "World export shifted the existing terrain."); UnityEngine.Object.DestroyImmediate(after);
+                Texture2D after = WorldMapDrawing.Export(map);
+                Check(after.GetPixel(7, 7) == sample, "World export shifted the existing terrain."); UnityEngine.Object.DestroyImmediate(after);
                 Undo.FlushUndoRecordObjects(); Undo.PerformUndo();
                 Check(level.CanvasBounds.Equals(new RectInt(-3, 0, 9, 5)), "Undo did not restore the canvas origin and dimensions together.");
                 Undo.PerformRedo(); Check(level.CanvasBounds.Equals(new RectInt(-3, -1, 9, 6)), "Canvas expansion redo failed.");
@@ -702,8 +407,8 @@ namespace TapTap.Editor
                 Check(LevelGridEditing.ConnectedArea(level, new Vector2Int(-2, 0), brush.LayerId).Contains(new Vector2Int(-3, 0)), "Bucket fill cannot reach the added space.");
                 Texture2D thumbnail = WorldMapDrawing.LevelTexture(level);
                 Check(thumbnail.GetPixel(0, 0).a > 0.9f, "Negative-coordinate terrain missing from thumbnail."); UnityEngine.Object.DestroyImmediate(thumbnail);
-                after = WorldMapDrawing.Export(map, new WorldMapMask(map));
-                Check(after.GetPixel(412, 388) == (Color)(Color32)brush.Color, "Negative-coordinate terrain missing from world export."); UnityEngine.Object.DestroyImmediate(after);
+                after = WorldMapDrawing.Export(map);
+                Check(after.GetPixel(7, 7) == (Color)(Color32)brush.Color, "Negative-coordinate terrain missing from world export."); UnityEngine.Object.DestroyImmediate(after);
                 prefab = LevelPrefabBuilder.Save(level, prefabPath);
                 root = PrefabUtility.LoadPrefabContents(prefabPath);
                 Check(root.transform.Find("Custom/Keep position").localPosition == new Vector3(2f, 1.5f, 0f), "Expansion moved Custom prefab content.");
@@ -764,101 +469,5 @@ namespace TapTap.Editor
             }
         }
 
-        private static void CharacterShape()
-        {
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            map.Template = WorldMapTemplateKind.SplitCharacter;
-            try
-            {
-                foreach (Vector2Int size in new[] { new Vector2Int(8, 8), new Vector2Int(63, 87), new Vector2Int(160, 224), new Vector2Int(320, 448), new Vector2Int(641, 897) })
-                {
-                    map.TemplateSize = size;
-                    var mask = new WorldMapMask(map);
-                    int gap = CharacterMapTemplate.GapCells(size.y, map.CharacterGapRatio), half = (size.y - gap) / 2;
-                    Check(mask.Outlines.Length == 2, "Character must have two independent outlines.");
-                    int filled = 0;
-                    for (int y = 0; y < mask.Size.y; y++)
-                        for (int x = 0; x < mask.Size.x; x++)
-                        {
-                            bool inside = mask.Contains(new Vector2Int(x, y));
-                            Check(inside == mask.Contains(new Vector2Int(mask.Size.x - 1 - x, y)), "Character not horizontally symmetric at " + size);
-                            Check(inside == mask.Contains(new Vector2Int(x, mask.Size.y - 1 - y)), "Character halves not equal at " + size);
-                            if (inside) filled++;
-                            if (y >= map.Padding + half && y < map.Padding + half + gap) Check(!inside, "Gap row not completely empty.");
-                        }
-                    Check(filled > size.x * size.y * 0.7f, "Character should use most of its rectangular area.");
-                    if (size.x > 32)
-                    {
-                        int top = map.Padding + size.y - 1;
-                        for (int x = size.x / 4; x < size.x * 3 / 4; x++)
-                            Check(mask.Contains(new Vector2Int(map.Padding + x, top)), "Top edge must remain horizontal and flat.");
-                        Check(!mask.Contains(new Vector2Int(map.Padding + Mathf.CeilToInt(size.x * 0.04f), map.Padding)), "Bottom corner should be rounded.");
-                        Check(mask.Contains(new Vector2Int(map.Padding, map.Padding + half - Mathf.RoundToInt(size.y * 0.02f))), "Middle collar protrusion missing.");
-                        Check(!mask.Contains(new Vector2Int(map.Padding, map.Padding + half / 2)), "Torso sides should be narrower than collar.");
-                    }
-                }
-            }
-            finally { UnityEngine.Object.DestroyImmediate(map); }
-        }
-
-        private static void CharacterContainment()
-        {
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            map.Template = WorldMapTemplateKind.SplitCharacter;
-            map.TemplateSize = WorldMapDefinition.DefaultSize(map.Template);
-            try
-            {
-                var mask = new WorldMapMask(map);
-                int centerY = mask.Size.y / 2;
-                var rectangle = new RectInt(mask.Size.x / 2 - 16, centerY - 9, 32, 18);
-                foreach (Vector2Int corner in new[] { rectangle.min, new Vector2Int(rectangle.xMin, rectangle.yMax - 1),
-                    new Vector2Int(rectangle.xMax - 1, rectangle.yMin), new Vector2Int(rectangle.xMax - 1, rectangle.yMax - 1) })
-                    Check(mask.Contains(corner), "Cross-gap fixture corners must be inside both halves.");
-                Check(!mask.Contains(rectangle) && mask.CountOutside(rectangle) == 32 * CharacterMapTemplate.GapCells(map.TemplateSize.y, map.CharacterGapRatio), "Whole rectangle must reject the gap.");
-                Check(mask.Contains(new RectInt(100, 120, 32, 18)) && mask.Contains(new RectInt(100, 330, 32, 18)), "Room should fit inside either half.");
-            }
-            finally { UnityEngine.Object.DestroyImmediate(map); }
-        }
-
-        private static void LegacyLayout()
-        {
-            string scriptGuid = AssetDatabase.AssetPathToGUID("Assets/C# Scripts/World/Levels/WorldMapDefinition.cs");
-            string levelGuid = AssetDatabase.AssetPathToGUID("Assets/Runtime/Levels/Level_Test_1.asset");
-            string path = Folder + "/Legacy.asset";
-            File.WriteAllText(path, "%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n" +
-                "  m_ObjectHideFlags: 0\n  m_Script: {fileID: 11500000, guid: " + scriptGuid + ", type: 3}\n" +
-                "  m_Name: Legacy\n  HeartSize: {x: 160, y: 144}\n  Padding: 8\n  Modules:\n" +
-                "  - Id: legacy-room\n    Level: {fileID: 11400000, guid: " + levelGuid + ", type: 2}\n    Position: {x: 22, y: 71}\n    Label: retained\n");
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceSynchronousImport);
-            var legacy = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>(path);
-            Check(legacy != null && legacy.Template == WorldMapTemplateKind.Heart && legacy.TemplateSize == new Vector2Int(160, 144), "Legacy dimensions were lost.");
-            Check(legacy.Modules.Count == 1 && legacy.Modules[0].Position == new Vector2Int(22, 71) && legacy.Modules[0].Level != null && legacy.Modules[0].Id == "legacy-room", "Legacy room data was lost.");
-        }
-
-        private static void TemplateSwitch()
-        {
-            var map = ScriptableObject.CreateInstance<WorldMapDefinition>();
-            AssetDatabase.CreateAsset(map, Folder + "/Switch.asset");
-            var level = AssetDatabase.LoadAssetAtPath<LevelDefinition>("Assets/Runtime/Levels/Level_Test_1.asset");
-            var position = new Vector2Int(140, 120);
-            map.Modules.Add(new WorldMapModule { Level = level, Position = position });
-            var window = ScriptableObject.CreateInstance<WorldMapEditorWindow>();
-            try
-            {
-                Invoke(window, "UseMap", map);
-                Invoke(window, "EnsureMask");
-                Undo.IncrementCurrentGroup();
-                Invoke(window, "SetTemplate", WorldMapTemplateKind.SplitCharacter);
-                Undo.FlushUndoRecordObjects();
-                var mask = (WorldMapMask)typeof(WorldMapEditorWindow).GetField("mask", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(window);
-                Check(mask.Outlines.Length == 2 && map.TemplateSize == new Vector2Int(320, 448), "Template switch did not refresh the mask or size.");
-                Check(map.Modules[0].Position == position && map.Modules[0].Level == level, "Template switch changed a module.");
-                Undo.PerformUndo();
-                Invoke(window, "EnsureMask");
-                mask = (WorldMapMask)typeof(WorldMapEditorWindow).GetField("mask", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(window);
-                Check(map.Template == WorldMapTemplateKind.Heart && mask.Outlines.Length == 1 && map.TemplateSize == new Vector2Int(320, 288), "Template undo failed.");
-            }
-            finally { UnityEngine.Object.DestroyImmediate(window); }
-        }
     }
 }

@@ -19,7 +19,7 @@ namespace TapTap
         private void Update()
         {
             if (RewindManager.Rewinding) { Horizontal = 0f; edges.Clear(); return; }
-            if (LevelAnnotation.IsFeedbackOpen || WorldMapProgression.InputBlocked)
+            if (WorldMapProgression.InputBlocked)
             {
                 Horizontal = 0f;
                 SpaceHeld = false;
@@ -44,7 +44,7 @@ namespace TapTap
             externalHorizontal = horizontal;
             externalHeld = held;
             if (RewindManager.Rewinding) { edges.Clear(); return; }
-            if (LevelAnnotation.IsFeedbackOpen || WorldMapProgression.InputBlocked) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
+            if (WorldMapProgression.InputBlocked) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
             if (waitForSpaceRelease) { if (!held) waitForSpaceRelease = false; held = false; }
             Sample(horizontal, held);
         }

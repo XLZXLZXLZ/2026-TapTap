@@ -6,8 +6,6 @@ namespace TapTap.Editor
     public static class WorldMapDrawing
     {
         public static readonly Color32 Outside = new Color32(87, 91, 101, 255);
-        public static readonly Color32 Inside = new Color32(30, 34, 43, 255);
-        public static readonly Color32 PassageColor = new Color32(255, 216, 85, 255);
         private static readonly Color[] ModuleColors =
         {
             new Color(0.32f, 0.75f, 0.92f), new Color(0.78f, 0.57f, 0.91f),
@@ -23,13 +21,6 @@ namespace TapTap.Editor
             return ModuleColors[hash % ModuleColors.Length];
         }
 
-        public static Texture2D MaskTexture(WorldMapMask mask)
-        {
-            var pixels = new Color32[mask.Cells.Length];
-            for (int i = 0; i < pixels.Length; i++) pixels[i] = mask.Cells[i] ? Inside : Outside;
-            return Texture(mask.Size.x, mask.Size.y, pixels);
-        }
-
         public static Texture2D LevelTexture(LevelDefinition level)
         {
             // Two pixels per cell also distinguish thin platforms from full terrain.
@@ -39,7 +30,7 @@ namespace TapTap.Editor
             if (level.Placements != null)
                 foreach (LevelPlacement placement in level.Placements)
                 {
-                    if (placement?.Brush == null) continue;
+                    if (placement?.Brush == null || placement.Brush.HandlerId == "annotation") continue;
                     Color color = level.Style != null ? level.Style.BrushColor(placement.Brush) : placement.Brush.Color;
                     if (placement.Settings is PhaseBlockPlacementSettings phase && phase.SolidWhenActive) color.a *= 0.3f;
                     if (placement.Settings is PistonPlacementSettings piston && piston.ExtendedWhenActive) color.a *= 0.3f;
@@ -52,7 +43,7 @@ namespace TapTap.Editor
             return Texture(width, height, pixels);
         }
 
-        public static Texture2D Export(WorldMapDefinition map, WorldMapMask mask)
+        public static Texture2D Export(WorldMapDefinition map)
         {
             RectInt bounds = map.PreviewBounds;
             Vector2Int offset = bounds.min;
@@ -61,7 +52,7 @@ namespace TapTap.Editor
             var pixels = new Color32[width * height];
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
-                    pixels[y * width + x] = map.ShowTemplate && mask.Contains(offset + new Vector2Int(x / scale, y / scale)) ? Inside : Outside;
+                    pixels[y * width + x] = Outside;
             foreach (WorldMapModule module in map.Modules)
             {
                 if (module?.Level == null) continue;
@@ -95,54 +86,7 @@ namespace TapTap.Editor
                     Line(pixels, width, height, a + inset, b + inset - tangent, color);
                 }
             }
-            foreach (Vector2[] outline in map.ShowTemplate ? mask.Outlines : new Vector2[0][])
-                for (int i = 0; i < outline.Length; i++)
-                    Line(pixels, width, height, Vector2Int.RoundToInt((outline[i] - (Vector2)offset) * scale),
-                        Vector2Int.RoundToInt((outline[(i + 1) % outline.Length] - (Vector2)offset) * scale), new Color32(255, 143, 168, 255));
-            if (map.Passages != null)
-                for (int i = 0; i < map.Passages.Count; i++)
-                {
-                    WorldMapPassage passage = map.Passages[i]; if (passage == null) continue;
-                    Vector2 point = ((Vector2)(passage.Position - offset) + Vector2.one * 0.5f) * scale;
-                    float halfLength = Mathf.Max(6f, scale * 4f);
-                    Vector2 from = point - passage.ArrowDirection * halfLength, to = point + passage.ArrowDirection * halfLength;
-                    ClippedLine(pixels, width, height, from, to, PassageColor);
-                    ExportArrow(pixels, width, height, from, to, PassageColor);
-                    if (passage.Bidirectional) ExportArrow(pixels, width, height, to, from, PassageColor);
-                }
             return Texture(width, height, pixels);
-        }
-
-        private static void ExportArrow(Color32[] pixels, int width, int height, Vector2 from, Vector2 to, Color32 color)
-        {
-            Vector2 direction = (to - from).normalized; if (direction.sqrMagnitude < 0.01f) return;
-            Vector2 side = new Vector2(-direction.y, direction.x);
-            ClippedLine(pixels, width, height, to - direction * 7f + side * 4f, to, color);
-            ClippedLine(pixels, width, height, to - direction * 7f - side * 4f, to, color);
-        }
-
-        private static void ClippedLine(Color32[] pixels, int width, int height, Vector2 a, Vector2 b, Color32 color)
-        {
-            Vector2 delta = b - a; float first = 0f, last = 1f;
-            if (!Clip(-delta.x, a.x, ref first, ref last) || !Clip(delta.x, width - 1 - a.x, ref first, ref last) ||
-                !Clip(-delta.y, a.y, ref first, ref last) || !Clip(delta.y, height - 1 - a.y, ref first, ref last)) return;
-            Line(pixels, width, height, Vector2Int.RoundToInt(a + delta * first), Vector2Int.RoundToInt(a + delta * last), color);
-        }
-
-        private static bool Clip(float slope, float distance, ref float first, ref float last)
-        {
-            if (Mathf.Abs(slope) < 0.0001f) return distance >= 0f;
-            float t = distance / slope;
-            if (slope < 0f) { if (t > last) return false; first = Mathf.Max(first, t); }
-            else { if (t < first) return false; last = Mathf.Min(last, t); }
-            return true;
-        }
-
-        public static int CountOutside(WorldMapMask mask, LevelFootprint footprint, Vector2Int position)
-        {
-            int count = 0;
-            foreach (RectInt run in footprint.Runs) count += mask.CountOutside(new RectInt(run.position + position, run.size));
-            return count;
         }
 
         private static void Line(Color32[] pixels, int width, int height, Vector2Int a, Vector2Int b, Color32 color)

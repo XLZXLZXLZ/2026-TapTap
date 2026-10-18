@@ -93,6 +93,19 @@ namespace TapTap.Editor
             finally { EditorSceneManager.ClosePreviewScene(preview); }
         }
 
+        public static GameObject LoadRuntimePrefab()
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(RuntimePrefabPath);
+            LevelSceneRuntime runtime = prefab != null ? prefab.GetComponent<LevelSceneRuntime>() : null;
+            PlayerController player = runtime != null && runtime.PlayerPrefab != null
+                ? runtime.PlayerPrefab.GetComponent<PlayerController>() : null;
+            if (runtime == null || player == null || player.Body == null || player.Head == null
+                || player.GetComponent<RespawnService>() == null || player.GetComponent<PlayerInput>() == null
+                || runtime.CameraRig == null || runtime.PlayerConfig == null)
+                throw new InvalidOperationException("GameplayRuntime 或主角配置不完整，请使用 TapTap → 维护 → 升级关卡编辑资源。");
+            return prefab;
+        }
+
         private static void BindScreenFilters(Camera camera)
         {
             var binding = camera.GetComponent<ScreenFilterCamera>();
@@ -118,7 +131,7 @@ namespace TapTap.Editor
             if (levelPrefab == null || !PrefabUtility.IsPartOfPrefabAsset(levelPrefab)
                 || levelPrefab.GetComponent<LevelRegion>() == null)
                 throw new InvalidOperationException("请选择带有 LevelRegion 的区域 Prefab。");
-            GameObject runtimePrefab = EnsureRuntimePrefab();
+            GameObject runtimePrefab = LoadRuntimePrefab();
             LevelSceneRuntime shared = runtimePrefab.GetComponent<LevelSceneRuntime>();
             if (shared.PlayerPrefab == null || shared.PlayerPrefab.GetComponent<PlayerController>() == null)
                 throw new InvalidOperationException("Runtime 配置需要一个带有 PlayerController 的玩家 Prefab。");
@@ -131,96 +144,98 @@ namespace TapTap.Editor
             if (config == null || config.UnitSize <= 0f || float.IsNaN(config.UnitSize) || float.IsInfinity(config.UnitSize))
                 throw new InvalidOperationException("Runtime 配置缺少有效的玩家配置。");
             LevelPrefabBuilder.EnsureFolder(TestSceneFolder);
-            string scenePath = AssetDatabase.GenerateUniqueAssetPath(TestSceneFolder + "/" + FileName(levelPrefab.name) + "_Test.unity");
+            LevelDefinition source = levelPrefab.GetComponent<LevelRegion>().Source;
+            string sourcePath = source != null ? AssetDatabase.GetAssetPath(source) : null;
+            string bound = source != null ? AssetDatabase.GUIDToAssetPath(source.TestSceneGuid) : null;
+            string scenePath = !string.IsNullOrEmpty(bound) && AssetDatabase.LoadAssetAtPath<SceneAsset>(bound) != null ? bound
+                : TestSceneFolder + "/" + FileName(levelPrefab.name) + "_Test.unity";
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return null;
             Scene previous = SceneManager.GetActiveScene();
-            bool untitledScene = false;
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-                untitledScene |= string.IsNullOrEmpty(SceneManager.GetSceneAt(i).path);
-            if (!Application.isBatchMode && untitledScene && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
-                return null;
-            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,
-                Application.isBatchMode || untitledScene ? NewSceneMode.Single : NewSceneMode.Additive);
+            bool untitled = false;
+            for (int index = 0; index < SceneManager.sceneCount; index++)
+                untitled |= string.IsNullOrEmpty(SceneManager.GetSceneAt(index).path);
+            Scene scene = SceneManager.GetSceneByPath(scenePath);
+            bool alreadyOpen = scene.IsValid() && scene.isLoaded;
+            bool existed = File.Exists(scenePath);
+            if (!alreadyOpen)
+                scene = existed ? EditorSceneManager.OpenScene(scenePath, untitled ? OpenSceneMode.Single : OpenSceneMode.Additive)
+                    : EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, untitled ? NewSceneMode.Single : NewSceneMode.Additive);
             try
             {
+                if (FindOne<WorldMapRoot>(scene) != null)
+                    throw new InvalidOperationException("绑定的导航场景是大地图，请为此关卡绑定单关测试场景后再更新。");
+                LevelRegion region = FindOne<LevelRegion>(scene);
+                if (region != null && (region.Source != source ||
+                    PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(region.gameObject) != AssetDatabase.GetAssetPath(levelPrefab)))
+                    throw new InvalidOperationException("目标测试场景的关卡已解包或引用了其它 Prefab，已停止更新。");
                 SceneManager.SetActiveScene(scene);
-                GameplayLightingDefaults.Apply(scene);
-                var regionObject = (GameObject)PrefabUtility.InstantiatePrefab(levelPrefab, scene);
-                LevelRegion region = regionObject.GetComponent<LevelRegion>();
-                regionObject.transform.position = Vector3.zero;
-                var playerObject = (GameObject)PrefabUtility.InstantiatePrefab(shared.PlayerPrefab, scene);
-                PlayerController player = playerObject.GetComponent<PlayerController>();
-                Vector3 scale = playerObject.transform.localScale;
-                playerObject.transform.localScale = scale * config.UnitSize;
+                if (!existed) GameplayLightingDefaults.Apply(scene);
+                if (region == null)
+                    region = ((GameObject)PrefabUtility.InstantiatePrefab(levelPrefab, scene)).GetComponent<LevelRegion>();
+                PlayerController player = FindOne<PlayerController>(scene);
+                bool newPlayer = player == null;
+                if (newPlayer)
+                {
+                    player = ((GameObject)PrefabUtility.InstantiatePrefab(shared.PlayerPrefab, scene)).GetComponent<PlayerController>();
+                    player.transform.localScale *= config.UnitSize;
+                }
                 SetConfig(player, config);
                 SetConfig(player.GetComponent<RespawnService>(), config);
                 SetConfig(player.GetComponent<PlayerView>(), config);
                 Physics2D.SyncTransforms();
                 Vector2 spawn = FindSpawn(region, player, config);
-                playerObject.transform.position += (Vector3)(spawn - (Vector2)player.Body.transform.position);
-                player.Head.transform.position = (Vector3)(spawn + Vector2.up * config.ToWorld(config.JoinedOffset));
-                player.GetComponent<RespawnService>().SetCheckpoint(spawn);
-                var runtimeObject = (GameObject)PrefabUtility.InstantiatePrefab(runtimePrefab, scene);
-                LevelSceneRuntime runtime = runtimeObject.GetComponent<LevelSceneRuntime>();
+                if (newPlayer)
+                {
+                    player.transform.position += (Vector3)(spawn - (Vector2)player.Body.transform.position);
+                    player.Head.transform.position = spawn + Vector2.up * config.ToWorld(config.JoinedOffset);
+                    player.GetComponent<RespawnService>().SetCheckpoint(spawn);
+                }
+                LevelSceneRuntime runtime = FindOne<LevelSceneRuntime>(scene);
+                bool newRuntime = runtime == null;
+                if (newRuntime) runtime = ((GameObject)PrefabUtility.InstantiatePrefab(runtimePrefab, scene)).GetComponent<LevelSceneRuntime>();
                 runtime.Configure(player, region, config, spawn);
-                GenerateAnnotations(region, player);
-                SceneCameraDefaults.Apply(runtimeObject);
+                if (newRuntime) SceneCameraDefaults.Apply(runtime.gameObject);
                 runtime.CameraRig?.SetRegion(region);
-                LevelPrefabBuilder.RecordInstanceOverrides(regionObject);
-                LevelPrefabBuilder.RecordInstanceOverrides(playerObject);
-                LevelPrefabBuilder.RecordInstanceOverrides(runtimeObject);
+                Transform annotations = region.transform.Find("Test Annotations");
+                if (annotations != null) UnityEngine.Object.DestroyImmediate(annotations.gameObject);
+                LevelPrefabBuilder.RecordInstanceOverrides(region.gameObject);
+                LevelPrefabBuilder.RecordInstanceOverrides(player.gameObject);
+                LevelPrefabBuilder.RecordInstanceOverrides(runtime.gameObject);
                 if (!EditorSceneManager.SaveScene(scene, scenePath)) throw new IOException("无法保存测试场景。");
                 AssetDatabase.ImportAsset(scenePath, ImportAssetOptions.ForceSynchronousImport);
-                if (region.Source != null)
-                    LevelSceneNavigation.Assign(region.Source, AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath));
-                AssetDatabase.SaveAssets();
+                if (!string.IsNullOrEmpty(sourcePath)) source = AssetDatabase.LoadAssetAtPath<LevelDefinition>(sourcePath);
+                if (source != null)
+                {
+                    LevelSceneNavigation.Assign(source, AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath));
+                    AssetDatabase.SaveAssetIfDirty(source);
+                }
             }
             finally
             {
                 if (previous.IsValid() && previous.isLoaded) SceneManager.SetActiveScene(previous);
-                if (scene.IsValid() && scene.isLoaded && SceneManager.sceneCount > 1) EditorSceneManager.CloseScene(scene, true);
+                if (!alreadyOpen && scene.IsValid() && scene.isLoaded && SceneManager.sceneCount > 1)
+                    EditorSceneManager.CloseScene(scene, true);
             }
             if (!Application.isBatchMode && openScene)
             {
-                Selection.activeObject = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
-                EditorGUIUtility.PingObject(Selection.activeObject);
-                if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
-                {
-                    EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
-                    if (SceneView.lastActiveSceneView != null)
-                        SceneView.lastActiveSceneView.Frame(levelPrefab.GetComponent<LevelRegion>().WorldBounds, false);
-                }
+                EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
+                if (SceneView.lastActiveSceneView != null)
+                    SceneView.lastActiveSceneView.Frame(levelPrefab.GetComponent<LevelRegion>().WorldBounds, false);
             }
             Debug.Log("Level test scene saved: " + scenePath);
             return scenePath;
         }
 
-        public static void GenerateAnnotations(LevelRegion region, PlayerController player)
+        private static T FindOne<T>(Scene scene) where T : Component
         {
-            LevelDefinition layout = region.Source;
-            if (layout == null || layout.Placements == null) return;
-            Transform root = null;
-            var context = new LevelBuildContext(layout, region);
-            foreach (LevelPlacement placement in layout.Placements)
-            {
-                if (placement?.Brush == null || placement.Brush.HandlerId != "annotation") continue;
-                if (root == null)
+            T found = null;
+            foreach (GameObject root in scene.GetRootGameObjects())
+                foreach (T candidate in root.GetComponentsInChildren<T>(true))
                 {
-                    root = new GameObject("Test Annotations").transform;
-                    root.SetParent(region.transform, false);
+                    if (found != null) throw new InvalidOperationException("测试场景存在多个 " + typeof(T).Name + "，已停止更新。");
+                    found = candidate;
                 }
-                GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(placement.Brush.Prefab, region.gameObject.scene);
-                instance.transform.SetParent(root, false);
-                instance.name = "Annotation [" + placement.Cell.x + "," + placement.Cell.y + "]";
-                Vector2 position = ((Vector2)placement.Cell + placement.Brush.Anchor) * region.UnitSize;
-                instance.transform.localPosition = new Vector3(position.x, position.y, 0f);
-                instance.transform.localScale = new Vector3(region.UnitSize, region.UnitSize, 1f);
-                LevelBrushHandlers.Get(placement.Brush.HandlerId).ConfigureInstance(instance, placement, context);
-                LevelAnnotation annotation = instance.GetComponent<LevelAnnotation>();
-                annotation.Player = player;
-                annotation.Source = layout;
-                annotation.PlacementId = placement.Id;
-                LevelPrefabBuilder.RecordInstanceOverrides(instance);
-            }
+            return found;
         }
 
         private static Vector2 FindSpawn(LevelRegion region, PlayerController player, PlayerConfig config)
@@ -277,12 +292,12 @@ namespace TapTap.Editor
             return string.IsNullOrWhiteSpace(name) ? "Level" : name;
         }
 
-        [MenuItem("Assets/TapTap/Create Level Test Scene", true)]
+        [MenuItem("Assets/TapTap/更新或创建关卡测试场景", true)]
         private static bool CanCreateFromSelection() => Selection.activeObject is GameObject prefab &&
             PrefabUtility.IsPartOfPrefabAsset(prefab) && prefab.GetComponent<LevelRegion>() != null &&
             !EditorApplication.isPlayingOrWillChangePlaymode;
 
-        [MenuItem("Assets/TapTap/Create Level Test Scene")]
+        [MenuItem("Assets/TapTap/更新或创建关卡测试场景")]
         private static void CreateFromSelection() => Generate((GameObject)Selection.activeObject);
     }
 }

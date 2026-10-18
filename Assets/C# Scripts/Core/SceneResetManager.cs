@@ -17,7 +17,7 @@ namespace TapTap
         private void Update()
         {
             // Key progression is session-persistent; disable only the R shortcut after pickup.
-            if (!PauseMenu.BlocksInput && !LevelAnnotation.IsFeedbackOpen && !GameStageProgression.HasProgressedIn(SceneManager.GetActiveScene())
+            if (!PauseMenu.BlocksInput && !GameStageProgression.HasProgressedIn(SceneManager.GetActiveScene())
                 && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
         }
 

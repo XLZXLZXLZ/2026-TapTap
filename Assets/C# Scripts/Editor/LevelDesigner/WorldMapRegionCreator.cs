@@ -16,8 +16,6 @@ namespace TapTap.Editor
         {
             if (map == null) return "请选择大地图。";
             if (area.width < 1 || area.height < 1 || area.width > 2048 || area.height > 2048) return "新关卡长宽需为 1～2048 格。";
-            int outside = new WorldMapMask(map).CountOutside(area);
-            if (outside > 0) return "框选范围有 " + outside + " 格位于灰色留空区，请调整范围。";
             return null;
         }
 

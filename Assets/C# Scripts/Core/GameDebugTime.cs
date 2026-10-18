@@ -42,7 +42,7 @@ namespace TapTap
             bulletTimeActive = false;
         }
 
-        private bool CanControl => player != null && !WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen
+        private bool CanControl => player != null && !WorldMapProgression.InputBlocked
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         private void Update()

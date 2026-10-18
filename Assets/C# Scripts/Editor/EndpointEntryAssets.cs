@@ -5,7 +5,7 @@ namespace TapTap.Editor
 {
     public static class EndpointEntryAssets
     {
-        [MenuItem("TapTap/主角/更新终点入门锚点")]
+        [MenuItem("TapTap/维护/素材装配/更新终点入门锚点")]
         public static void EnsureAnchors()
         {
             GameObject root = PrefabUtility.LoadPrefabContents(GameplayVisualAssets.EndpointPrefabPath);

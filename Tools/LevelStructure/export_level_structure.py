@@ -254,12 +254,7 @@ def draw(world, modules, display, raw=False):
         s.append(f'<g id="level-{n:02}" data-module-id="{m["id"]}" data-source="{m["source"]}"><title>{n:02} · {escape(m["name"])} · 原点 {m["origin"]}</title><path d="{path(loops,not raw)}" fill="{color(n)}" fill-rule="evenodd" stroke="#53665e" stroke-width="{1.4 if raw else 1.6}" stroke-linejoin="miter"/></g>')
     s.append('</g>')
     s.append(f'<path id="world-silhouette" d="{silhouette}" fill="none" stroke="#304a3f" stroke-width="2.7" stroke-linejoin="round" fill-rule="evenodd"/>')
-    s.append('<g id="passage-arrows">')
-    for i,p in enumerate(world['Passages']):
-        x,y=xy(p['Position']); a=math.radians(p['Angle']); dx,dy=math.cos(a)*1.45,math.sin(a)*1.45
-        x1,y1=px((x-dx,y-dy)); x2,y2=px((x+dx,y+dy))
-        s.append(f'<path id="passage-{i+1:02}" d="M{x1:g},{y1:g} L{x2:g},{y2:g}" fill="none" stroke="#405a55" stroke-width="1.8" marker-end="url(#arrow)"/>')
-    s.append('</g><g id="level-numbers">')
+    s.append('<g id="level-numbers">')
     for m in modules:
         x,y=px(label_position(m['cells']))
         s.append(f'<text class="label" x="{x:g}" y="{y:g}">{m["sequence"]:02}</text>')
@@ -278,7 +273,7 @@ def draw(world, modules, display, raw=False):
              '共墙：保留原始重叠带与双方边线' if raw else '分界：共享端点，移除半格齿状凸角',
              '外角：保留原始阶梯轮廓，无圆角' if raw else '圆角：右上 / 右下 / 左下，半径 4 格',
              '左上：保留原始通道占格' if raw else '左上：归纳为连续 L 形入口',
-             '箭头：按地图内 10 个通行标记绘制' if raw else '中段：上下横边拉平，连接段齐平', '颜色：以关卡 Style 资源分区为准',
+             '通行箭头已停用' if raw else '中段：上下横边拉平，连接段齐平', '颜色：以关卡 Style 资源分区为准',
              '此图按实际占格绘制，供主图对照' if raw else '原始占格另附 SVG，可对照共墙范围']
     s.append('<line x1="905" y1="1211" x2="1355" y2="1211" stroke="#d7d9cf"/>')
     for i,t in enumerate(notes):
@@ -379,7 +374,7 @@ def main():
     for raw,name in [(False,'world-character-structure.svg'),(True,'world-character-raw-boundaries.svg')]:
         (OUT/name).write_text(draw(world,modules,display,raw),encoding='utf-8')
     (OUT/'world-character-wireframe.svg').write_text(draw_wireframe(draw(world,modules,display)),encoding='utf-8')
-    (OUT/'structure-data.json').write_text(json.dumps(dict(source='Assets/Runtime/WorldMaps/World_Character.asset', modules=report, overlaps=overlaps, passages=world['Passages'],display_policy='Presentation polygons are intentionally regularized: shared endpoints, no half-cell teeth, straight main sides X11/X85, straight middle edges Y66/Y73, flush central connector, solid L-shaped upper-left entrance. Actual contours remain in raw_contours and the raw SVG. Outer corners (85,131), (85,4), (11,4) use visual radius 4. No Unity source data modified.'),ensure_ascii=False,indent=2),encoding='utf-8')
+    (OUT/'structure-data.json').write_text(json.dumps(dict(source='Assets/Runtime/WorldMaps/World_Character.asset', modules=report, overlaps=overlaps, passages=[],display_policy='Presentation polygons are intentionally regularized: shared endpoints, no half-cell teeth, straight main sides X11/X85, straight middle edges Y66/Y73, flush central connector, solid L-shaped upper-left entrance. Actual contours remain in raw_contours and the raw SVG. Outer corners (85,131), (85,4), (11,4) use visual radius 4. No Unity source data modified.'),ensure_ascii=False,indent=2),encoding='utf-8')
     print(f'Exported {len(modules)} modules; all scene origins and sequence numbers match; {len(overlaps)} shared-footprint pairs; contour areas verified.')
     print(OUT)
 

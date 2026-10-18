@@ -22,7 +22,7 @@ namespace TapTap
         public int CurrentStep { get; private set; }
         public PlayerController Player { get; private set; }
         public bool CanTrigger => region != null && Player != null && !endingStarted
-            && !WorldMapProgression.InputBlocked && !LevelAnnotation.IsFeedbackOpen && !RewindManager.Rewinding
+            && !WorldMapProgression.InputBlocked && !RewindManager.Rewinding
             && Time.timeScale > 0f;
 
         private void Start()
@@ -75,7 +75,7 @@ namespace TapTap
                 ownsCamera = true;
                 initialShot = renderedShot = blendFrom = LevelCameraShot.Read(rig.ViewCamera);
             }
-            float dt = Time.timeScale > 0f && !LevelAnnotation.IsFeedbackOpen ? Time.unscaledDeltaTime : 0f;
+            float dt = Time.timeScale > 0f ? Time.unscaledDeltaTime : 0f;
             revealElapsed += dt;
             float reveal = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(revealElapsed / RevealDuration));
             if (reveals != null)

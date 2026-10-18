@@ -11,7 +11,7 @@ namespace TapTap.Editor
         public const string ModelFolder = "Assets/Prefabs/Terrain/Grid/SmartModels";
         public const float CoverThickness = 0.12f;
 
-        [MenuItem("TapTap/美术/配置 Telescopic 活塞模型")]
+        [MenuItem("TapTap/维护/素材装配/配置 Telescopic 活塞模型")]
         public static void InstallModels()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)

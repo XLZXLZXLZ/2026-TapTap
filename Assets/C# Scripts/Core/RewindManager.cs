@@ -212,8 +212,7 @@ namespace TapTap
             return true;
         }
 
-        private bool Blocked => LevelAnnotation.IsFeedbackOpen
-            || WorldMapProgression.InputBlocked
+        private bool Blocked => WorldMapProgression.InputBlocked
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         private void ReadControls()

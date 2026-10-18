@@ -17,7 +17,6 @@ namespace TapTap.Editor
         private static int stage;
         private static int sceneHandle;
         private static LevelRegion firstRegion;
-        private static bool capturedPreview;
         private static bool sawEntryWalk, sawEntryHold, capturedEntryPose, entryHoldValidated;
         private static Vector2 entryBodyPosition, detachedHeadPosition;
         private static double deadline;
@@ -78,7 +77,7 @@ namespace TapTap.Editor
                 Check(map.SequenceNumber(legacy) == 4, "Legacy sequence migration failed.");
                 map.Modules.Remove(legacy);
                 map.Modules[1].Sequence = 30;
-                Check(WorldMapPrefabBuilder.Validate(map).Exists(error => error.Contains("序号")), "Duplicate sequence accepted.");
+                Check(WorldMapValidation.Validate(map).Exists(error => error.Contains("序号")), "Duplicate sequence accepted.");
                 map.Modules[1].Sequence = 10;
                 var before = map.Modules[0].Level.Outline;
                 LevelOutlineBuilder.Save(map.Modules[0].Level);
@@ -180,14 +179,6 @@ namespace TapTap.Editor
                             sawEntryHold = true; entryHoldValidated = true;
                         }
                     }
-                    var view = flow.GetComponent<WorldMapAssemblyView>();
-                    var texture = (RenderTexture)typeof(WorldMapAssemblyView).GetField("texture",
-                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).GetValue(view);
-                    if (texture != null && !capturedPreview)
-                    {
-                        SavePreview(texture, "world-flow-preview.png");
-                        capturedPreview = true;
-                    }
                     return;
                 }
                 switch (stage)
@@ -244,11 +235,6 @@ namespace TapTap.Editor
                         if (!flow.IsComplete) return;
                         Check(flow.CompletedCount == 2 && WorldMapProgression.InputBlocked && Time.timeScale > 0f,
                             "Final completion or pause cleanup failed.");
-                        Check(capturedPreview, "Assembly never rendered.");
-                        var completeTexture = (RenderTexture)typeof(WorldMapAssemblyView).GetField("texture",
-                            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                            .GetValue(flow.GetComponent<WorldMapAssemblyView>());
-                        SavePreview(completeTexture, "world-flow-complete.png");
                         Check(flow.GoToSequence(10), "Cannot replay after completion."); stage = 7;
                         break;
                     case 7:
@@ -256,7 +242,7 @@ namespace TapTap.Editor
                         Check(!player.GetComponent<PlayerView>().ExitPresentation && player.Head.Visual.localPosition == Vector3.zero,
                             "Replay retained the final entry pose.");
                         Pass("Body-only completion keeps detached head in place; replay restores ordinary character presentation");
-                        Pass("Skip and explicit jumps, restart retains progress, final completion and replay, rendered assembly preview");
+                        Pass("Skip and explicit jumps, restart retains progress, final completion and replay");
                         SessionState.SetBool(Key, false);
                         EditorApplication.update -= Tick;
                         File.AppendAllLines(ResultPath, results);

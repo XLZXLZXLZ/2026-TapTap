@@ -33,24 +33,6 @@ namespace TapTap.Editor
         }
     }
 
-    public sealed class AnnotationLevelBrushHandler : LevelBrushHandler
-    {
-        public override string Id => "annotation";
-        public override bool TestOnly => true;
-        public override LevelPlacementSettings CreateSettings(LevelBrush brush) => new AnnotationPlacementSettings();
-        public override void DrawSettings(LevelPlacement placement)
-        {
-            if (!(placement.Settings is AnnotationPlacementSettings settings)) return;
-            EditorGUILayout.LabelField("批注内容（仅测试）");
-            settings.Text = EditorGUILayout.TextArea(settings.Text ?? "", GUILayout.MinHeight(80f));
-        }
-        public override string ValidatePlacement(LevelPlacement placement) =>
-            !(placement.Settings is AnnotationPlacementSettings) || placement.Brush.Prefab.GetComponent<LevelAnnotation>() == null
-                ? "批注缺少配置或 LevelAnnotation。" : null;
-        public override void ConfigureInstance(GameObject instance, LevelPlacement placement, LevelBuildContext context) =>
-            instance.GetComponent<LevelAnnotation>().Text = ((AnnotationPlacementSettings)placement.Settings).Text;
-    }
-
     public sealed class EndpointLevelBrushHandler : LevelBrushHandler
     {
         public override string Id => "endpoint";

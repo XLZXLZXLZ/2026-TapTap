@@ -48,21 +48,15 @@ public static class UrpTrialValidation
             {
                 var menu = WorldLevelMenu.Current;
                 if (menu == null || menu.View == null || menu.Selected == null) return;
-                var texture = (RenderTexture)typeof(WorldMapAssemblyView).GetField("texture", BindingFlags.NonPublic | BindingFlags.Instance)
-                    .GetValue(menu.View);
-                Require(texture != null, "Menu preview texture missing");
-                var previous = RenderTexture.active;
-                var image = new Texture2D(texture.width, texture.height, TextureFormat.RGBA32, false);
+                Require(menu.View.NeonScreen != null && menu.View.NeonScreen.UICamera != null, "Authored menu camera missing");
+                var image = Capture(menu.View.NeonScreen.UICamera, 1024, 640);
                 try
                 {
-                    RenderTexture.active = texture;
-                    image.ReadPixels(new Rect(0, 0, texture.width, texture.height), 0, 0);
-                    image.Apply();
                     var pixels = image.GetPixels32();
                     Require(pixels.Any(p => !p.Equals(pixels[0])), "Menu map preview blank");
                     File.WriteAllBytes(Output + "/World_Character_Select_preview.png", image.EncodeToPNG());
                 }
-                finally { RenderTexture.active = previous; UnityEngine.Object.DestroyImmediate(image); }
+                finally { UnityEngine.Object.DestroyImmediate(image); }
                 File.AppendAllText(Output + "/play-results.txt", "PASS: Actual Play menu selected a module and rendered its map preview through URP.\n");
                 Require(menu.EnterSelected(), "Cannot enter selected module");
                 playStage = 1;

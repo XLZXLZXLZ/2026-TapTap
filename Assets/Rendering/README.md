@@ -9,7 +9,9 @@
 
 可见窗口取已探索区域的内部范围与实际模型投影的并集：内部按 `LevelFootprint` 填充，保留凹口；模型通过独立的纯色绘制补上超出逻辑边界的 3D 外轮廓。遮罩按当前透视相机每帧投影，在 Bloom、倒带和屏幕滤镜后盖住窗口外的全部画面，因此背景放在更远的 Z 位置也不会漏出。场景材质、碰撞与机关逻辑不变，UI 随后正常绘制。
 
-目前使用不透明硬边遮罩。`GameplayRuntime/Environment/EnvironmentParticle` 使用专用 `EnvironmentBackground` Layer，单独渲染到没有关卡深度遮挡的背景纹理；遮罩外显示相机背景底色与这套粒子，遮罩内保留正常场景画面。使用同一套粒子模拟和原材质，粒子在已探索区域内仍正常受模型遮挡。没有启用粒子背景时回退到 `Mask Color`（默认黑色）。Play 中可在大世界根节点停用 `WorldExplorationMask` 对比。
+遮罩的空间边界保持硬边。首次跨入区域时，`RegionRevealView.SetDiscovered(true)` 立即记录探索状态并准备模型，再通过 `VisibleOpacity` 在默认 0.4 秒内平滑揭开遮罩。`RevealDuration` 可调整时长，设为 0 则立即显示；`SetDiscovered(value, true)` 用于初始化与重置，立即应用目标状态并取消未完成的渐变。暂停时渐变停止，子弹时间不拉长时长；重复进入与刷新模型不重播，临时演出覆盖仍与探索显示进度取最大值。
+
+`GameplayRuntime/Environment/EnvironmentParticle` 使用专用 `EnvironmentBackground` Layer，单独渲染到没有关卡深度遮挡的背景纹理；遮罩外显示相机背景底色与这套粒子，遮罩内保留正常场景画面。使用同一套粒子模拟和原材质，粒子在已探索区域内仍正常受模型遮挡。没有启用粒子背景时回退到 `Mask Color`（默认黑色）。Play 中可在大世界根节点停用 `WorldExplorationMask` 对比。
 
 `EnvironmentParticle` 的 `WorldEnvironmentParticles` 组件在运行时按整个 World 的包围范围自动居中并扩大发射区域，每边默认额外覆盖 16 单位。它只修改 Shape 范围，保持粒子大小、寿命、运动和颜色设置；发射率与最大粒子数按新旧面积比同步增加，以保留原始密度。重复进入、倒带和重开使用最初捕获的参数，不叠加倍数，也不会重置一个范围未变化的粒子场。
 

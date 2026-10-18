@@ -107,7 +107,7 @@ namespace TapTap
                 if (closing) AnimateOpen(false);
                 return true;
             }
-            if (Current != this || !isActiveAndEnabled || LevelAnnotation.IsFeedbackOpen
+            if (Current != this || !isActiveAndEnabled
                 || WorldMapSceneRouter.IsLoading || GameStageProgression.InputBlocked
                 || (WorldMapProgression.Current != null && WorldMapProgression.Current.IsTransitioning)
                 || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting)

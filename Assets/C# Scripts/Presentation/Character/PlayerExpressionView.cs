@@ -84,7 +84,7 @@ namespace TapTap
             if (controller == null || view == null) return;
             if (view.ExitPresentation || controller.Body.IsReturning || controller.Head.IsReturning)
             { wasDistantPull = false; ResetExpression(); return; }
-            if (dt <= 0f || RewindManager.Rewinding || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen) return;
+            if (dt <= 0f || RewindManager.Rewinding || WorldMapProgression.InputBlocked) return;
             bool distantPull = controller.IsDistantPull;
             if (distantPull && !wasDistantPull) Show(Expression.Sad);
             else if (!distantPull && Current == Expression.Sad) Show(Expression.Normal);

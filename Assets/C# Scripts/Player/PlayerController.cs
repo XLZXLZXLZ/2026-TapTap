@@ -147,7 +147,7 @@ namespace TapTap
         public void SimulateStep(float dt)
         {
             Initialize();
-            if (!initialized || dt <= 0f || WorldMapProgression.InputBlocked || LevelAnnotation.IsFeedbackOpen) return;
+            if (!initialized || dt <= 0f || WorldMapProgression.InputBlocked) return;
             respawn.Simulate(dt);
             body.Motor.BeginStep(dt);
             head.Motor.BeginStep(dt);

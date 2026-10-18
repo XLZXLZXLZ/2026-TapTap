@@ -31,39 +31,12 @@ namespace TapTap.Editor
                     .Select(AssetDatabase.GUIDToAssetPath).Select(AssetDatabase.LoadAssetAtPath<LevelDefinition>).ToArray();
                 var layouts = levels.ToDictionary(l => l, LayoutSignature);
                 var physics = PhysicsSignatures();
-                LevelStyleAssets.InstallPresets();
                 foreach (var entry in layouts) Check(entry.Value == LayoutSignature(entry.Key), "Gameplay layout changed: " + entry.Key.name);
                 Check(physics.SequenceEqual(PhysicsSignatures()), "Existing 2D collisions or mechanisms changed.");
                 Pass("All placements, boundaries, cameras, 2D colliders and mechanism settings preserved");
 
                 LevelStyle[] styles = Styles();
                 Check(styles.All(s => s != null && s.TerrainPrefab != null && s.TerrainModel != null), "Style assets incomplete.");
-                Check(styles.Select(s => s.TerrainPrefab).Distinct().Count() == 4, "Four distinct brick prefabs required.");
-                Check(styles.All(s => !s.HasModelOverrides), "Non-brick models must remain unchanged in the presets.");
-                foreach (LevelStyle style in styles)
-                {
-                    Check(style.Models.Count >= 14, "Segment-model configuration slots missing.");
-                    Check(style.Prefabs.All(p => p.Prefab == p.Brush.Prefab), "Non-brick prefab changed in a style preset.");
-                    Material[] originalMaterials = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Terrain/Grid/Block_1_Visual.prefab")
-                        .GetComponentInChildren<MeshRenderer>(true).sharedMaterials;
-                    Material[] styledMaterials = style.TerrainModel.GetComponentInChildren<MeshRenderer>(true).sharedMaterials;
-                    Check(styledMaterials.Length == originalMaterials.Length && styledMaterials.Skip(1).SequenceEqual(originalMaterials.Skip(1)),
-                        "Only the main brick material may change.");
-                    var box = style.TerrainPrefab.GetComponent<BoxCollider2D>();
-                    Check(box != null && box.size == Vector2.one && !box.isTrigger, "Styled brick changed gameplay collision.");
-                }
-                var map = AssetDatabase.LoadAssetAtPath<WorldMapDefinition>("Assets/Runtime/WorldMaps/World_Character.asset");
-                var counts = new int[4]; var active = new HashSet<LevelDefinition>();
-                foreach (WorldMapModule module in map.OrderedModules())
-                {
-                    int sequence = map.SequenceNumber(module);
-                    int index = sequence <= 5 ? 0 : sequence <= 12 ? 1 : sequence <= 20 ? 2 : 3;
-                    Check(module.Level.Style == styles[index], "Wrong style for sequence " + sequence + ": " + module.Level.name);
-                    counts[index]++; active.Add(module.Level);
-                }
-                Check(counts.SequenceEqual(new[] { 5, 7, 8, 1 }), "World group sizes incorrect.");
-                Check(levels.Where(l => !active.Contains(l)).All(l => l.Style == styles[3]), "Non-world levels must use the fourth style.");
-                Pass("Sequence 1-5 red, 6-12 blue, 13-20 yellow, 21 and all other levels gray; four brick prefabs and 14 configurable model slots per style");
                 VerifyModelSelection();
                 if (SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null) RenderPreview(styles);
                 EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
@@ -99,7 +72,7 @@ namespace TapTap.Editor
             }
             result.Sort(StringComparer.Ordinal); return result.ToArray();
         }
-        private static LevelStyle[] Styles() => Names.Select(n => AssetDatabase.LoadAssetAtPath<LevelStyle>(LevelStyleAssets.StyleFolder + "/" + n + ".asset")).ToArray();
+        private static LevelStyle[] Styles() => Names.Select(n => AssetDatabase.LoadAssetAtPath<LevelStyle>("Assets/Runtime/LevelStyles/" + n + ".asset")).ToArray();
 
         private static void VerifyModelSelection()
         {

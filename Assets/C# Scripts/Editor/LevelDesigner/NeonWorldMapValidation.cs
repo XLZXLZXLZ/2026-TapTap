@@ -35,7 +35,7 @@ namespace TapTap.Editor
 
         public static void ValidateAssets()
         {
-            GameObject prefab=AssetDatabase.LoadAssetAtPath<GameObject>(NeonWorldMapAssets.ScreenPath);
+            GameObject prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/WorldMapSelection/WorldCharacterSelection.prefab");
             Check(prefab!=null,"Shared screen prefab missing");
             var screen=prefab.GetComponent<NeonWorldMapScreen>();
             Check(screen.Source!=null && screen.Pieces.Length==20,"Screen must have exactly 20 rooms");
@@ -44,7 +44,7 @@ namespace TapTap.Editor
             Check(screen.UICamera.allowHDR && screen.UICamera.GetUniversalAdditionalCameraData().renderPostProcessing,"HDR/Bloom camera not enabled");
             Volume volume=prefab.GetComponentInChildren<Volume>();
             Check(volume!=null && volume.sharedProfile.TryGet(out Bloom bloom) && bloom.intensity.value>0f,"Real URP Bloom missing");
-            Font supplied=AssetDatabase.LoadAssetAtPath<Font>(NeonWorldMapAssets.FontPath);
+            Font supplied=AssetDatabase.LoadAssetAtPath<Font>("Assets/Fonts/ResourceHanRoundedCN-Bold.ttf");
             foreach (Text text in prefab.GetComponentsInChildren<Text>(true)) Check(text.font==supplied,"Supplied font not assigned: "+text.name);
             foreach (NeonLevelPiece piece in screen.Pieces)
             {
@@ -70,8 +70,7 @@ namespace TapTap.Editor
             {
                 Directory.CreateDirectory(Output);
                 File.WriteAllText(Path.Combine(Output,"results.txt"),"");
-                NeonWorldMapAssets.Build(); ValidateAssets();
-                NeonWorldMapAssets.PlaceInSavedScenes();
+                ValidateAssets();
                 var map=AssetDatabase.LoadAssetAtPath<WorldMapDefinition>("Assets/Runtime/WorldMaps/World_Character.asset");
                 foreach (string path in new[]{map.SelectionScenePath,map.PlayScenePath})
                 {
@@ -205,24 +204,24 @@ namespace TapTap.Editor
                         Check(screen==view.SceneScreen && screen.GetInstanceID()==gameScreenId,"Transition instantiated a new map");
                         var phase=screen.Phase;
                         if (phase!=NeonWorldMapScreen.TransitionPhase.None)
-                            Check(screen.Pieces.Skip(1).All(piece=>!piece.gameObject.activeSelf),"Completion cutscene revealed later rooms from unlock/completion records");
+                            Check(screen.Pieces.Skip(2).All(piece=>!piece.gameObject.activeSelf),"Completion cutscene revealed rooms after the incoming room from saved completion records");
                         if (phase==NeonWorldMapScreen.TransitionPhase.CoverReveal)
                         {
                             sawCoverReveal=true;
-                            Check(screen.Pieces[0].Outline.Reveal==0f,"Drawing started behind the fading cover");
+                            Check(screen.Pieces[1].Outline.Reveal==0f,"Drawing started behind the fading cover");
                         }
                         if (phase==NeonWorldMapScreen.TransitionPhase.Delay)
                         {
                             if (!sawDelay) visibleDelayStart=EditorApplication.timeSinceStartup;
                             sawDelay=true;
-                            Check(ScreenFadeOverlay.Instance.Opacity==0f && screen.Pieces[0].Outline.Reveal==0f,"Reveal delay is hidden or already animated");
+                            Check(ScreenFadeOverlay.Instance.Opacity==0f && screen.Pieces[1].Outline.Reveal==0f,"Reveal delay is hidden or already animated");
                         }
                         if (phase==NeonWorldMapScreen.TransitionPhase.Drawing)
                         {
                             if (!sawDrawing) Check(EditorApplication.timeSinceStartup-visibleDelayStart>=screen.AnimationDelay-0.1f,"Drawing delay was consumed during fade-in");
                             sawDrawing=true;
                             Check(ScreenFadeOverlay.Instance.Opacity==0f,"Drawing hidden by cover");
-                            if (!capturedDrawing && screen.Pieces[0].Outline.Reveal>0.25f && screen.Pieces[0].Outline.Reveal<0.75f)
+                            if (!capturedDrawing && screen.Pieces[1].Outline.Reveal>0.25f && screen.Pieces[1].Outline.Reveal<0.75f)
                             { Capture(screen,"transition-drawing.png"); capturedDrawing=true; }
                         }
                         if (!capturedTransition && phase==NeonWorldMapScreen.TransitionPhase.Holding)
@@ -231,9 +230,9 @@ namespace TapTap.Editor
                             Check(screen.DrawingElapsed>=1.4f,"Drawing duration is too short");
                             Capture(screen,"transition.png"); capturedTransition=true;
                         }
-                        if (capturedTransition && !capturedSettled && phase==NeonWorldMapScreen.TransitionPhase.Holding && screen.Pieces[0].Emphasis<0.01f)
+                        if (capturedTransition && !capturedSettled && phase==NeonWorldMapScreen.TransitionPhase.Holding && screen.Pieces[1].Emphasis<0.01f)
                         {
-                            Check(screen.Pieces[0].Emphasis<0.01f && screen.Pieces[0].Outline.color.a<0.55f,"Arrival highlight did not settle back to idle brightness");
+                            Check(screen.Pieces[1].Emphasis<0.01f && screen.Pieces[1].Outline.color.a<0.55f,"Arrival highlight did not settle back to idle brightness");
                             Capture(screen,"transition-settled.png"); capturedSettled=true;
                         }
                         return;
@@ -271,7 +270,7 @@ namespace TapTap.Editor
                     if (menu==null||menu.View==null) return;
                     Check(menu.View.NeonScreen.Pieces.All(piece=>piece.gameObject.activeSelf),"Replaying an earlier room incorrectly shrank the selection map");
                     Check(WorldMapProgressStore.Completed(menu.World).Count==3,"Replaying lost earlier/later completion records");
-                    Pass("Completion cutscene stops at the replayed room even when later rooms are completed; selection restores all unlocked rooms afterwards");
+                    Pass("Completion cutscene stops at the incoming room even when later rooms are completed; selection restores all unlocked rooms afterwards");
                     SessionState.SetBool(Key,false); EditorApplication.update-=Tick; EditorApplication.Exit(0);
                 }
             }

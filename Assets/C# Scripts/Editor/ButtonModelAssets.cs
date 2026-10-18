@@ -13,7 +13,7 @@ namespace TapTap.Editor
         public const float Height = 0.22f;
         public const float Travel = 0.06f;
 
-        [MenuItem("TapTap/美术/配置 Button 按钮模型")]
+        [MenuItem("TapTap/维护/素材装配/配置 Button 按钮模型")]
         public static void InstallModels()
         {
             if (EditorApplication.isPlayingOrWillChangePlaymode)

@@ -13,7 +13,7 @@ namespace TapTap.Editor
                 LevelPrefabBuilder.EnsureFolder("Assets/Runtime/LevelOutlines");
                 outline = ScriptableObject.CreateInstance<LevelOutlineData>();
                 string path = AssetDatabase.GenerateUniqueAssetPath("Assets/Runtime/LevelOutlines/"
-                    + WorldMapPrefabBuilder.SafeName(level.name) + "_Outline.asset");
+                    + LevelPrefabBuilder.SafeName(level.name) + "_Outline.asset");
                 AssetDatabase.CreateAsset(outline, path);
                 level.Outline = outline;
             }

@@ -138,6 +138,7 @@ public static class WorldExplorationMaskValidation
                 flow.UpdatePlayerRegion(player);
                 Check(flow.CurrentModule == next && flow.HasDiscovered(initial) && flow.HasDiscovered(next), "Walking into another region lost discovery");
                 rig.SetRegion(flow.CurrentRegion, true);
+                RevealTransitionChecks(flow.CurrentRegion.GetComponent<RegionRevealView>(), rig.ViewCamera);
                 CaptureRuntime("runtime-02-two-regions");
                 flow.RestoreState(in snapshot);
                 Check(flow.CurrentModule == initial && flow.HasDiscovered(next), "Rewind removed explored region");
@@ -167,6 +168,65 @@ public static class WorldExplorationMaskValidation
         EditorApplication.update -= TickPlayCheck;
         File.WriteAllLines(Output + "/runtime-results.txt", results);
         EditorApplication.Exit(code);
+    }
+
+    private static void RevealTransitionChecks(RegionRevealView reveal, Camera camera)
+    {
+        Check(reveal.Discovered && reveal.VisibleOpacity == 0f, "First entry skipped the covered frame");
+        Check(reveal.SceneRenderers.Any(renderer => renderer != null && !renderer.forceRenderingOff),
+            "Discovered models were not prepared behind the mask");
+        var update = typeof(RegionRevealView).GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic);
+        var advance = typeof(RegionRevealView).GetMethod("AdvanceReveal", BindingFlags.Instance | BindingFlags.NonPublic);
+        update.Invoke(reveal, null); // The runtime check holds timeScale at zero.
+        Check(reveal.VisibleOpacity == 0f, "Paused reveal advanced");
+        Texture2D start = Render(camera, 600, 375), middle = null, end = null;
+        try
+        {
+            advance.Invoke(reveal, new object[] { reveal.RevealDuration * 0.5f });
+            float opacity = reveal.VisibleOpacity;
+            Check(Mathf.Abs(opacity - 0.5f) < 0.001f, "Reveal has no intermediate opacity");
+            reveal.SetDiscovered(true);
+            reveal.RefreshVisuals();
+            Check(reveal.VisibleOpacity == opacity, "Repeated discovery or visual refresh restarted the reveal");
+            reveal.SetVisibilityOverride(camera, 0.8f);
+            Check(Mathf.Abs(reveal.VisibleOpacity - 0.8f) < 0.001f, "Presentation override stopped taking precedence");
+            reveal.SetVisibilityOverride(camera, 0f);
+            Check(reveal.VisibleOpacity == opacity, "Removing an override erased discovery progress");
+            middle = Render(camera, 600, 375);
+            advance.Invoke(reveal, new object[] { reveal.RevealDuration });
+            Check(reveal.VisibleOpacity == 1f, "Reveal did not complete");
+            reveal.SetDiscovered(true);
+            Check(reveal.VisibleOpacity == 1f, "Re-entry replayed a completed reveal");
+            end = Render(camera, 600, 375);
+            Color32[] a = start.GetPixels32(), b = middle.GetPixels32(), c = end.GetPixels32();
+            int blended = 0;
+            for (int i = 0; i < a.Length; i++)
+                if (Mathf.Abs(c[i].r - a[i].r) > 30
+                    && b[i].r > Mathf.Min(a[i].r, c[i].r) + 3
+                    && b[i].r < Mathf.Max(a[i].r, c[i].r) - 3) blended++;
+            Check(blended > 100, "Rendered mask did not blend through intermediate pixels: " + blended);
+            File.WriteAllBytes(Output + "/runtime-reveal-start.png", start.EncodeToPNG());
+            File.WriteAllBytes(Output + "/runtime-reveal-middle.png", middle.EncodeToPNG());
+            File.WriteAllBytes(Output + "/runtime-reveal-end.png", end.EncodeToPNG());
+
+            reveal.SetDiscovered(false, true);
+            reveal.SetDiscovered(true);
+            advance.Invoke(reveal, new object[] { reveal.RevealDuration * 0.25f });
+            reveal.SetDiscovered(true, true);
+            advance.Invoke(reveal, new object[] { reveal.RevealDuration });
+            Check(reveal.VisibleOpacity == 1f, "Immediate reveal did not cancel the transition");
+            reveal.SetDiscovered(false, true);
+            advance.Invoke(reveal, new object[] { reveal.RevealDuration });
+            Check(reveal.VisibleOpacity == 0f, "Reset allowed an old reveal to uncover the region");
+            reveal.SetDiscovered(true, true);
+            results.Add("PASS: First entry fades through " + blended + " real rendered pixels; pause, repeated entry, overrides, visual refresh and reset preserve the intended visibility.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(start);
+            if (middle != null) UnityEngine.Object.DestroyImmediate(middle);
+            if (end != null) UnityEngine.Object.DestroyImmediate(end);
+        }
     }
 
     public static void RunBatch()

@@ -73,10 +73,10 @@ namespace TapTap.Editor
                 tile.Cell = oldCell; EditorUtility.SetDirty(module.Level);
                 WorldMapSceneSync.Synchronize(map, new HashSet<LevelDefinition> { module.Level });
                 SceneManager.SetActiveScene(scene);
-                WorldMapMenuSceneBuilder.SaveSelection(map);
+                WorldMapSceneSync.Synchronize(map, new HashSet<LevelDefinition>());
                 Check(scene.isLoaded && custom != null && unrelated != null && SceneManager.GetActiveScene() == scene,
                     "Updating selection unloaded an open gameplay scene or manual work");
-                results.Add("PASS: Selection updates preserve the open gameplay scene and restore its active editor context");
+                results.Add("PASS: Repeated synchronization preserves the open gameplay scene and its active editor context");
                 UnityEngine.Object.DestroyImmediate(custom); UnityEngine.Object.DestroyImmediate(unrelated);
                 results.Add("PASS: Single-level geometry updates its scene instance without erasing Custom");
                 AssetDatabase.SaveAssetIfDirty(map);

@@ -46,6 +46,7 @@ namespace TapTap.Editor
                     errors.Add("布局存在空的放置记录。");
                     continue;
                 }
+                if (placement.Brush != null && placement.Brush.HandlerId == "annotation") continue;
                 string location = "格子 " + placement.Cell + "：";
                 if (!LevelPlacementGeometry.Fits(placement, layout.CanvasBounds))
                     errors.Add(location + "位于区域边界外；请先移除或扩大区域。");
@@ -152,7 +153,7 @@ namespace TapTap.Editor
                 var context = new LevelBuildContext(layout, region);
                 foreach (LevelPlacement placement in layout.Placements)
                 {
-                    if (LevelBrushHandlers.Get(placement.Brush.HandlerId).TestOnly) continue;
+                    if (placement.Brush.HandlerId == "annotation" || LevelBrushHandlers.Get(placement.Brush.HandlerId).TestOnly) continue;
                     string layerId = placement.Brush.LayerId;
                     if (!layers.TryGetValue(layerId, out Transform layer))
                     {
@@ -193,6 +194,12 @@ namespace TapTap.Editor
             EditorUtility.SetDirty(layout);
             AssetDatabase.SaveAssetIfDirty(layout);
             return result;
+        }
+
+        public static string SafeName(string name)
+        {
+            foreach (char invalid in Path.GetInvalidFileNameChars()) name = name.Replace(invalid, '_');
+            return string.IsNullOrWhiteSpace(name) ? "Level" : name;
         }
 
         public static void EnsureFolder(string folder)
