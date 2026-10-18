@@ -409,6 +409,14 @@ namespace TapTap.Editor
             foreach (WorldMapModule source in selected)
             {
                 var module = new WorldMapModule { Level = source.Level, Position = source.Position + new Vector2Int(2, -2), Label = source.Label, Sequence = map.NextSequence() };
+                TerrainPaintProfile paint = source.Level.TerrainPaint;
+                if (paint != null)
+                {
+                    Undo.RegisterCompleteObjectUndo(paint, "复制模块涂装");
+                    paint.CopyModule(source.Id, module.Id);
+                    EditorUtility.SetDirty(paint);
+                    AssetDatabase.SaveAssetIfDirty(paint);
+                }
                 map.Modules.Add(module); selectedModuleIds.Add(module.Id);
             }
             selectedId = selectedModuleIds[0];

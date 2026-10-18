@@ -8,6 +8,8 @@ namespace TapTap
         private LevelRegion region;
         private LevelDefinition cachedSource;
         private LevelStyle cachedStyle;
+        private TerrainPaintProfile cachedPaint;
+        private string cachedModuleId;
         private bool hadModelOverrides;
 #if UNITY_EDITOR
         private int styleVersion;
@@ -18,7 +20,8 @@ namespace TapTap
         {
             if (region == null) region = GetComponent<LevelRegion>();
             LevelStyle style = region.Source != null ? region.Source.Style : null;
-            bool changed = cachedSource != region.Source || cachedStyle != style;
+            bool changed = cachedSource != region.Source || cachedStyle != style
+                || cachedPaint != region.Source?.TerrainPaint || cachedModuleId != region.WorldModuleId;
 #if UNITY_EDITOR
             changed |= style != null && styleVersion != UnityEditor.EditorUtility.GetDirtyCount(style);
 #endif
@@ -38,6 +41,8 @@ namespace TapTap
             Transform generated = transform.Find("Generated");
             cachedSource = region.Source;
             cachedStyle = style;
+            cachedPaint = region.Source?.TerrainPaint;
+            cachedModuleId = region.WorldModuleId;
 #if UNITY_EDITOR
             styleVersion = style != null ? UnityEditor.EditorUtility.GetDirtyCount(style) : 0;
 #endif

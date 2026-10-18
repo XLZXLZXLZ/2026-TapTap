@@ -169,6 +169,8 @@ namespace TapTap.Editor
                     instance.transform.localPosition = new Vector3(anchor.x, anchor.y, 0f);
                     instance.transform.localRotation = Quaternion.identity;
                     instance.transform.localScale = new Vector3(context.UnitSize, context.UnitSize, 1f);
+                    TerrainTileVisual terrainVisual = instance.GetComponent<TerrainTileVisual>();
+                    if (terrainVisual != null) terrainVisual.PlacementId = placement.Id;
                     LevelBrushHandlers.Get(placement.Brush.HandlerId).ConfigureInstance(instance, placement, context);
                     RecordInstanceOverrides(instance);
                 }

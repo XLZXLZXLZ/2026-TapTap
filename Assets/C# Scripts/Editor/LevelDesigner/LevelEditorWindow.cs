@@ -61,6 +61,8 @@ namespace TapTap.Editor
         [SerializeField] private bool prefabNeedsUpdate;
         [SerializeField] private bool previewPhaseActive;
         private readonly List<LevelPlacement> clipboard = new List<LevelPlacement>();
+        private readonly List<List<TerrainPaintEntry>> clipboardPaint = new List<List<TerrainPaintEntry>>();
+        private TerrainPaintProfile clipboardPaintProfile;
         private int clipboardEntryIndex = -1;
         private bool clipboardIsCut;
 
@@ -1357,12 +1359,15 @@ namespace TapTap.Editor
                 selectionArea = new RectInt(min, Vector2Int.Max(selectionArea.max, occupied.max) - min);
             }
             clipboard.Clear();
+            clipboardPaint.Clear();
+            clipboardPaintProfile = layout.TerrainPaint;
             clipboardEntryIndex = -1;
             clipboardIsCut = false;
             foreach (LevelPlacement item in items)
             {
                 if (item.Id == layout.EntryPlacementId) clipboardEntryIndex = clipboard.Count;
                 clipboard.Add(new LevelPlacement { Cell = item.Cell - selectionArea.min, Brush = item.Brush, Settings = CloneSettings(item.Settings) });
+                clipboardPaint.Add(clipboardPaintProfile != null ? clipboardPaintProfile.CapturePlacement(item.Id) : new List<TerrainPaintEntry>());
             }
             ShowNotification(new GUIContent($"已复制 {items.Count} 个物体；Ctrl+V 放置"));
             return true;
@@ -1385,9 +1390,39 @@ namespace TapTap.Editor
                 RecordLayoutUndo("粘贴关卡区域");
                 recorded = true;
             }
-            foreach (LevelPlacement item in clipboard)
+            bool paintRecorded = false;
+            for (int index = 0; index < clipboard.Count; index++)
+            {
+                LevelPlacement item = clipboard[index];
                 changed |= LevelGridEditing.Apply(layout, new[] { origin + item.Cell }, item.Brush, item.Settings,
                     item.Brush.LayerId, false, false, RecordPasteUndo);
+                if (layout.TerrainPaint == null || index >= clipboardPaint.Count) continue;
+                LevelPlacement pasted = layout.Find(origin + item.Cell, item.Brush.LayerId);
+                if (pasted == null) continue;
+                foreach (TerrainPaintEntry previous in layout.TerrainPaint.CapturePlacement(pasted.Id))
+                {
+                    if (!paintRecorded) { Undo.RegisterCompleteObjectUndo(layout.TerrainPaint, "粘贴地形涂装"); paintRecorded = true; }
+                    changed |= layout.TerrainPaint.SetPaint(previous.ModuleId, pasted.Id, null);
+                }
+                foreach (TerrainPaintEntry sample in clipboardPaint[index])
+                {
+                    if (layout.TerrainPaint != clipboardPaintProfile && clipboardPaintProfile.ModuleKey(sample.ModuleId)
+                        != clipboardPaintProfile.ModuleKey(null)) continue;
+                    string moduleId = layout.TerrainPaint == clipboardPaintProfile ? sample.ModuleId : layout.TerrainPaint.ModuleKey(null);
+                    Material material = sample.Material;
+                    int variant = clipboardPaintProfile.Variants.IndexOf(material);
+                    if (variant >= 0 && layout.TerrainPaint.Variants.Count > variant) material = layout.TerrainPaint.Variants[variant];
+                    if (layout.TerrainPaint.GetPaint(moduleId, pasted.Id) == material) continue;
+                    if (!paintRecorded) { Undo.RegisterCompleteObjectUndo(layout.TerrainPaint, "粘贴地形涂装"); paintRecorded = true; }
+                    changed |= layout.TerrainPaint.SetPaint(moduleId, pasted.Id, material);
+                }
+            }
+            if (paintRecorded)
+            {
+                EditorUtility.SetDirty(layout.TerrainPaint);
+                AssetDatabase.SaveAssetIfDirty(layout.TerrainPaint);
+                TerrainPaintSceneIndex.RefreshLoadedPaint();
+            }
             if (clipboardIsCut && clipboardEntryIndex >= 0 && layout.EntryPlacement == null)
             {
                 LevelPlacement entry = clipboard[clipboardEntryIndex];

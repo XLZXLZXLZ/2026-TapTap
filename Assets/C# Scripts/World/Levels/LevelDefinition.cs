@@ -12,6 +12,7 @@ namespace TapTap
         public RectInt CanvasBounds => new RectInt(CanvasOrigin, Size);
         public LevelPalette Palette;
         [InspectorName("关卡风格（Style）")] public LevelStyle Style;
+        [InspectorName("场景地形涂装")] public TerrainPaintProfile TerrainPaint;
         public LevelCameraSettings CameraSettings = new LevelCameraSettings();
         public List<LevelPlacement> Placements = new List<LevelPlacement>();
         public string EntryPlacementId;
