@@ -60,6 +60,7 @@ namespace TapTap.Editor
                 Test("3D visuals retain landing, spring squash and vertical stretch without changing colliders", ModelSquashFeedback);
                 Test("Skinned walking synchronizes halves, detaches independently, idles and pauses for rewind", PlayerWalkingAnimation);
                 Test("Magnetic expressions follow real short/long pulls, recover and pause with rewind", PlayerMagneticExpressions);
+                Test("Head-supported hanging loops Sad, recovers and respects presentation pauses", PlayerHangingExpressions);
                 Test("Door entry recalls only extended heads and leaves detached heads in place", ExitHeadRules);
                 Test("Door entry follows foot anchors, turns, settles, and restores on cancel", ExitTimeline);
                 Test("Door entry animates independently while ordinary presentation is blocked", ExitAnimation);

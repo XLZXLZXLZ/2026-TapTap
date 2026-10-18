@@ -7,6 +7,7 @@ namespace TapTap
     public sealed class PlayerExpressionView : MonoBehaviour
     {
         public enum Expression { Normal, Happy, Sad }
+        public enum SadPlaybackPhase { None, Starting, Looping, Recovering }
 
         [Serializable]
         public sealed class EyeSet
@@ -44,12 +45,16 @@ namespace TapTap
         [SerializeField, Min(0.02f)] private float transitionDuration = 0.12f;
         [SerializeField, Min(0f), InspectorName("笑眼停留（秒）")] private float happyHoldDuration = 0.5f;
         [SerializeField, Min(0f), InspectorName("哭眼停留（秒）")] private float sadHoldDuration = 0.5f;
+        [SerializeField, Min(0.02f), InspectorName("悬空哭眼循环周期（秒）")] private float sadLoopPeriod = 0.6f;
+        [SerializeField, Range(0.1f, 1f), InspectorName("悬空哭眼最小高度")] private float sadLoopMinimum = 0.85f;
         private PlayerController subscribedController;
         private Sequence timeline;
         private float timelineTime;
         private float normalWeight = 1f, happyWeight, sadWeight;
         private bool wasDistantPull;
+        private float sadLoopTime;
         public Expression Current { get; private set; }
+        public SadPlaybackPhase SadPhase { get; private set; }
 
         public void Configure(PlayerController player, PlayerView presentation, PlayerBlinkView blinking,
             EyeSet lower, EyeSet upper)
@@ -76,7 +81,10 @@ namespace TapTap
             subscribedController = null;
         }
 
-        private void OnMagneticJoined() => Show(Expression.Happy);
+        private void OnMagneticJoined()
+        {
+            if (!controller.IsHangingFromHead) Show(Expression.Happy);
+        }
         private void LateUpdate() => Simulate(Time.deltaTime);
 
         public void Simulate(float dt)
@@ -86,23 +94,53 @@ namespace TapTap
             { wasDistantPull = false; ResetExpression(); return; }
             if (dt <= 0f || RewindManager.Rewinding || WorldMapProgression.InputBlocked) return;
             bool distantPull = controller.IsDistantPull;
-            if (distantPull && !wasDistantPull) Show(Expression.Sad);
-            else if (!distantPull && Current == Expression.Sad) Show(Expression.Normal);
+            bool hanging = controller.IsHangingFromHead;
+            bool sustainedSad = SadPhase == SadPlaybackPhase.Starting || SadPhase == SadPlaybackPhase.Looping;
+            if (hanging)
+            {
+                if (!sustainedSad) Show(Expression.Sad, true);
+            }
+            else if (sustainedSad)
+            {
+                Show(Expression.Normal);
+                SadPhase = SadPlaybackPhase.Recovering;
+            }
+            else if (distantPull && !wasDistantPull) Show(Expression.Sad);
+            else if (!distantPull && wasDistantPull && Current == Expression.Sad) Show(Expression.Normal);
             wasDistantPull = distantPull;
+            if (SadPhase == SadPlaybackPhase.Looping) { AdvanceSadLoop(dt); return; }
             if (timeline == null) return;
+            float remaining = Mathf.Max(0f, timelineTime + dt - timeline.Duration());
             timelineTime = Mathf.Min(timelineTime + dt, timeline.Duration());
             // A paused sequence advances only with presentation time, so rewind,
             // menus and gameplay pause cannot independently advance its tweens.
             timeline.Goto(timelineTime, false);
             if (timelineTime < timeline.Duration()) return;
             timeline.Kill(); timeline = null;
+            if (SadPhase == SadPlaybackPhase.Starting)
+            {
+                SadPhase = SadPlaybackPhase.Looping;
+                sadLoopTime = 0f;
+                AdvanceSadLoop(remaining);
+                return;
+            }
             ResetExpression();
         }
 
-        private void Show(Expression expression)
+        private void AdvanceSadLoop(float dt)
+        {
+            float period = Mathf.Max(0.02f, sadLoopPeriod);
+            sadLoopTime = Mathf.Repeat(sadLoopTime + dt, period);
+            float pulse = (1f - Mathf.Cos(sadLoopTime / period * Mathf.PI * 2f)) * 0.5f;
+            sadWeight = Mathf.Lerp(1f, Mathf.Clamp(sadLoopMinimum, 0.1f, 1f), pulse);
+            Render();
+        }
+
+        private void Show(Expression expression, bool sustainedSad = false)
         {
             timeline?.Kill();
             Current = expression;
+            SadPhase = sustainedSad ? SadPlaybackPhase.Starting : SadPlaybackPhase.None;
             timelineTime = 0f;
             if (blink != null) blink.SetSuppressed(true);
             timeline = DOTween.Sequence().SetAutoKill(false).Pause();
@@ -115,6 +153,7 @@ namespace TapTap
             {
                 bool happy = expression == Expression.Happy;
                 timeline.Append(Weight(0f, 1f, v => { if (happy) happyWeight = v; else sadWeight = v; Render(); }));
+                if (sustainedSad) return;
                 timeline.AppendInterval(happy ? happyHoldDuration : sadHoldDuration);
                 timeline.Append(Weight(1f, 0f, v => { if (happy) happyWeight = v; else sadWeight = v; Render(); }));
                 timeline.Append(Weight(0f, 1f, v => { normalWeight = v; Render(); }));
@@ -134,6 +173,8 @@ namespace TapTap
         {
             timeline?.Kill(); timeline = null;
             Current = Expression.Normal;
+            SadPhase = SadPlaybackPhase.None;
+            sadLoopTime = 0f;
             normalWeight = 1f; happyWeight = sadWeight = 0f;
             Render();
             if (blink != null) blink.SetSuppressed(false);

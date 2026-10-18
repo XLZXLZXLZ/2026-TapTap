@@ -20,7 +20,7 @@ namespace TapTap
         public bool ShowOnSceneStart = true;
         public bool PreviewInEditor = true;
         public RectTransform MapHost, Board;
-        public Vector2 MapSize = new Vector2(74f, 127f);
+        public Vector2 MapSize = new Vector2(86f, 127f);
         public NeonLevelPiece[] Pieces;
         [Min(0f)] public float AnimationDelay = 0.35f;
         [Min(0.1f)] public float MinimumDrawDuration = 1.4f;
@@ -95,6 +95,8 @@ namespace TapTap
 
         public void Initialize(bool asSelection)
         {
+            // An authored screen may be disabled to keep the gameplay scene unobstructed.
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
             ClearTravel();
             selection = asSelection;
             Phase=TransitionPhase.None; DrawingElapsed=0f;

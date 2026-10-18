@@ -16,6 +16,8 @@ namespace TapTap
         [Min(0.1f)] public float AssemblyDuration = 1.2f;
         [Min(0f)] public float AssemblyHold = 0.45f;
         public bool UseKeyboard = true;
+        [Tooltip("直接启动此场景时的关卡序号；0 从首关开始。从选关界面进入时仍优先使用选中的关卡。")]
+        [Min(0)] public int InitialLevelNumber;
         private WorldMapRoot world;
         private PlayerController player;
         private LevelSceneRuntime runtime;
@@ -97,6 +99,8 @@ namespace TapTap
             completed.RemoveWhere(id => !ordered.Exists(module => module.Id == id));
             string requested = WorldMapSceneRouter.ConsumeModule(world.Source);
             int start = ordered.FindIndex(module => module.Id == requested);
+            if (start < 0 && InitialLevelNumber > 0)
+                start = ordered.FindIndex(module => world.Source.SequenceNumber(module) == InitialLevelNumber);
             Activate(Mathf.Max(0, start), false);
             RewindManager.Current?.Register(this, this, 40);
             return true;

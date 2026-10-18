@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M06_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: a36e02e33d79588092bc75c0b62d9571, type: 3}
+    Subtitles:
+    - Start: 0.14
+      End: 5.8224
+      Chinese: "本台消息，受多方面因素影响，玩具工厂将暂时关闭。"
+      English: "Local news. The toy factory will close temporarily for a number of reasons."
+    - Start: 6.2226
+      End: 12.5853
+      Chinese: "厂方提醒，停止生产不代表所有设备停止运行。"
+      English: "The company reminds staff that stopping production does not mean all machinery will stop running."
+    - Start: 13.1056
+      End: 19.4083
+      Chinese: "部分自动系统仍将维持工作，直至最后一件产品离厂。"
+      English: "Some automatic systems will remain in operation until the last product leaves the factory."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

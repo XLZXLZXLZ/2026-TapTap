@@ -109,8 +109,8 @@ def clean_structure():
     """Presentation geometry, deliberately separate from authored grid occupancy.
 
     Shared boundaries use identical endpoints. The left entrance is a solid L;
-    the two middle edges are straight and the connector ends flush with them.
-    Outer flange cells and half-cell teeth have no meaning in this diagram.
+    the two middle baselines are straight and the connector ends flush with them.
+    Preserve the four structural corner flanges; remove only incidental cell teeth.
     """
     def rect(x0,y0,x1,y1):
         return [(x0,y0),(x1,y0),(x1,y1),(x0,y1)]
@@ -122,10 +122,10 @@ def clean_structure():
         5: rect(53.5,106.5,85,122),
         6: [(53.5,95.5),(73.5,95.5),(73.5,84.5),(85,84.5),(85,106.5),(53.5,106.5)],
         7: rect(22.5,84.5,73.5,95.5),
-        8: rect(57,73,85,84.5),
-        9: [(11,73),(57,73),(57,84.5),(22.5,84.5),(22.5,95.5),(11,95.5)],
-        10: [(54.5,51.5),(62.5,51.5),(62.5,48.5),(85,48.5),(85,66),(54.5,66)],
-        11: rect(11,36.5,25.5,66),
+        8: [(57,73),(91,73),(91,79),(85,79),(85,84.5),(57,84.5)],
+        9: [(5,73),(57,73),(57,84.5),(22.5,84.5),(22.5,95.5),(11,95.5),(11,79),(5,79)],
+        10: [(54.5,51.5),(62.5,51.5),(62.5,48.5),(85,48.5),(85,60),(91,60),(91,66),(54.5,66)],
+        11: [(11,36.5),(25.5,36.5),(25.5,66),(5,66),(5,60),(11,60)],
         12: rect(25.5,38.5,40.5,66),
         13: [(40.5,38.5),(69.5,38.5),(69.5,48.5),(62.5,48.5),(62.5,51.5),(54.5,51.5),(54.5,66),(40.5,66)],
         14: rect(11,25,25.5,36.5),
@@ -161,7 +161,8 @@ def validate_clean_structure(polygons):
     cells={n:polygon_cells(loops) for n,loops in polygons.items()}
     union=set.union(*cells.values())
     expected=set()
-    for x0,y0,x1,y1 in [(11,73,85,131),(11,4,85,66),(46,66,51,73),(2,126,8,159),(8,126,11,131)]:
+    for x0,y0,x1,y1 in [(11,73,85,131),(11,4,85,66),(46,66,51,73),(2,126,8,159),(8,126,11,131),
+                           (5,73,11,79),(85,73,91,79),(5,60,11,66),(85,60,91,66)]:
         expected.update((x,y) for x in range(x0*2,x1*2) for y in range(y0*2,y1*2))
     assert union==expected, 'Presentation contains a gap or an unwanted protrusion'
     assert sum(map(len,cells.values()))==len(union), 'Presentation regions overlap'
@@ -237,7 +238,7 @@ def draw(world, modules, display, raw=False):
         silhouette=path(contours(union,2),True)
     s=['<svg xmlns="http://www.w3.org/2000/svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" width="1440" height="1600" viewBox="0 0 1440 1600">',
        '<title>World Character · 22 关实际结构核对图</title>',
-       '<desc>基于实际关卡关系整理的矢量结构图。展示边界规整化，消除半格小凸角，收平中段外凸边，左上入口归纳为连续 L 形。只对右上、右下、左下外角取圆角。原始占格另附对照图。</desc>',
+       '<desc>基于实际关卡关系整理的矢量结构图。展示边界规整化，消除半格小凸角，保留中段四处结构凸沿，左上入口归纳为连续 L 形。只对右上、右下、左下外角取圆角。原始占格另附对照图。</desc>',
        '<defs><pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M80 0H0V80" fill="none" stroke="#dddcd4" stroke-width=".7"/></pattern>',
        f'<clipPath id="silhouette-clip"><path d="{silhouette}" fill-rule="evenodd"/></clipPath>',
        '<marker id="arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#405a55" stroke-width="1.3"/></marker>',
@@ -245,7 +246,7 @@ def draw(world, modules, display, raw=False):
        '<rect width="1440" height="1600" fill="#f7f5ed"/>',
        '<text x="80" y="65" font-size="14" letter-spacing="3" class="muted">TAPTAP / WORLD CHARACTER / STRUCTURE STUDY</text>',
        '<text x="80" y="122" font-size="42" font-weight="700">关卡结构 · '+('原始边界' if raw else '分区核对稿')+'</text>',
-       '<text x="82" y="158" font-size="17" class="muted">22 个关卡 · '+('原始占格边界' if raw else '按实际分区关系规整绘制')+' · 2026.10.17</text>',
+       '<text x="82" y="158" font-size="17" class="muted">22 个关卡 · '+('原始占格边界' if raw else '按实际分区关系规整绘制')+' · 2026.10.18</text>',
        '<rect x="64" y="182" width="770" height="1308" rx="16" fill="url(#grid)"/>',
        f'<path d="{silhouette}" fill="#e6cf7c" fill-rule="evenodd"/>',
        '<g id="level-regions" clip-path="url(#silhouette-clip)">']
@@ -273,7 +274,7 @@ def draw(world, modules, display, raw=False):
              '共墙：保留原始重叠带与双方边线' if raw else '分界：共享端点，移除半格齿状凸角',
              '外角：保留原始阶梯轮廓，无圆角' if raw else '圆角：右上 / 右下 / 左下，半径 4 格',
              '左上：保留原始通道占格' if raw else '左上：归纳为连续 L 形入口',
-             '通行箭头已停用' if raw else '中段：上下横边拉平，连接段齐平', '颜色：以关卡 Style 资源分区为准',
+             '通行箭头已停用' if raw else '中段：四角保留凸沿，横向基线齐平', '颜色：以关卡 Style 资源分区为准',
              '此图按实际占格绘制，供主图对照' if raw else '原始占格另附 SVG，可对照共墙范围']
     s.append('<line x1="905" y1="1211" x2="1355" y2="1211" stroke="#d7d9cf"/>')
     for i,t in enumerate(notes):
@@ -331,7 +332,7 @@ def draw_wireframe(source):
         if y=='122':
             text.text='关卡结构 · 彩色线框稿'
         elif y=='158':
-            text.text='22 个关卡 · 同色共边合一 / 异色共边并排 · 2026.10.17'
+            text.text='22 个关卡 · 同色共边合一 / 异色共边并排 · 2026.10.18'
         elif text.get('x')=='905' and y and int(y) in range(1248,1423,29):
             text.text=notes[(int(y)-1248)//29]
     for rect in list(svg.findall(tag('rect'))):
@@ -374,7 +375,7 @@ def main():
     for raw,name in [(False,'world-character-structure.svg'),(True,'world-character-raw-boundaries.svg')]:
         (OUT/name).write_text(draw(world,modules,display,raw),encoding='utf-8')
     (OUT/'world-character-wireframe.svg').write_text(draw_wireframe(draw(world,modules,display)),encoding='utf-8')
-    (OUT/'structure-data.json').write_text(json.dumps(dict(source='Assets/Runtime/WorldMaps/World_Character.asset', modules=report, overlaps=overlaps, passages=[],display_policy='Presentation polygons are intentionally regularized: shared endpoints, no half-cell teeth, straight main sides X11/X85, straight middle edges Y66/Y73, flush central connector, solid L-shaped upper-left entrance. Actual contours remain in raw_contours and the raw SVG. Outer corners (85,131), (85,4), (11,4) use visual radius 4. No Unity source data modified.'),ensure_ascii=False,indent=2),encoding='utf-8')
+    (OUT/'structure-data.json').write_text(json.dumps(dict(source='Assets/Runtime/WorldMaps/World_Character.asset', modules=report, overlaps=overlaps, passages=[],display_policy='Presentation polygons are intentionally regularized: shared endpoints, no half-cell teeth, straight main sides X11/X85, middle baselines Y66/Y73 with four structural corner flanges, flush central connector, solid L-shaped upper-left entrance. Actual contours remain in raw_contours and the raw SVG. Outer corners (85,131), (85,4), (11,4) use visual radius 4. No Unity source data modified.'),ensure_ascii=False,indent=2),encoding='utf-8')
     print(f'Exported {len(modules)} modules; all scene origins and sequence numbers match; {len(overlaps)} shared-footprint pairs; contour areas verified.')
     print(OUT)
 

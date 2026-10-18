@@ -159,6 +159,8 @@ namespace TapTap
             }
         }
 
+        public void ShakeCamera(float strength) => Shake(strength);
+
         private void Shake(float strength)
         {
             if (strength <= 0f) return;

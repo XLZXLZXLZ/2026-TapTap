@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M04_ReturnJourney
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: a542022af19c5e038735e5df26a81241, type: 3}
+    Subtitles:
+    - Start: 0.25
+      End: 2.9063
+      Chinese: "\u2026\u2026\u4F60\u7684\u2026\u2026\u7528\u9014\u2026\u2026\u53EF\u4EE5\u7559\u7A7A\u2026\u2026"
+      English: "Your \u2026 purpose \u2026 may be left blank."
+    - Start: 3.5563
+      End: 6.1632
+      Chinese: "\u2026\u2026\u7528\u4F60\u559C\u6B22\u7684\u65B9\u5F0F\uFF0C\u5B9A\u4E49\u4F60\u81EA\u5DF1\u2026\u2026"
+      English: Enter a new description in your own words.
+    Chinese: 
+    English: 
+    GapAfter: 0

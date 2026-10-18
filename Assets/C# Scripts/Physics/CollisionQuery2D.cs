@@ -9,14 +9,14 @@ namespace TapTap
         private Collider2D[] overlaps = new Collider2D[32];
 
         public SweepResult Sweep(KinematicMotor2D motor, Vector2 delta,
-            MovableEntity ignoredEntity = null, bool preserveGroundWidth = false)
+            MovableEntity ignoredEntity = null, bool preserveGroundWidth = false, bool partOnly = false)
         {
             float distance = delta.magnitude;
             if (distance < 0.000001f || !motor.CollisionsEnabled)
                 return SweepResult.Clear;
 
             Vector2 direction = delta / distance;
-            Bounds bounds = motor.CollisionBounds;
+            Bounds bounds = partOnly ? motor.PartBounds : motor.CollisionBounds;
             Vector2 center = bounds.center;
             Vector2 size = bounds.size;
             Vector2 castSize = size - Vector2.one * (motor.Skin * 2f);

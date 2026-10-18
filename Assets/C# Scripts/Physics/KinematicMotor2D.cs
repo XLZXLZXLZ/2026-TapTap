@@ -46,7 +46,7 @@ namespace TapTap
                 return bounds;
             }
         }
-        private Bounds PartBounds => new Bounds(Position + CenterOffset, Size);
+        internal Bounds PartBounds => new Bounds(Position + CenterOffset, Size);
         public float Skin => skin;
         public BoxCollider2D Collider { get { Initialize(); return box; } }
         public MovableEntity Entity
@@ -293,6 +293,15 @@ namespace TapTap
             SupportCollider = null;
             SupportEntity = null;
             ConveyorSpeed = 0f;
+        }
+
+        // Read-only support check for one half, independent of the joined collision shape.
+        public bool HasPartGroundSupport(MovableEntity ignoredEntity = null)
+        {
+            Initialize();
+            SweepResult support = query.Sweep(this, Vector2.down * (skin * 3f + 0.01f),
+                ignoredEntity, true, true);
+            return support.Blocked && support.Normal.y > 0.5f;
         }
 
         public void ProbeGround(MovableEntity ignoredEntity = null)

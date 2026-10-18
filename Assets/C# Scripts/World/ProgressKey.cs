@@ -23,7 +23,18 @@ namespace TapTap
         [Header("白色荧光")]
         public Material GlowParticleMaterial;
         public ParticleSystem PickupBurstPrefab;
+        [Tooltip("拾取时使用的较弱粒子；原 Pickup Burst 保留用于开门。")]
+        public ParticleSystem PickupFeedbackPrefab;
         [Min(0f)] public float GlowParticleRate = 12f;
+        [Header("携带：相对身体，单位为格")]
+        public Vector2 FollowOffset = new Vector2(0.8f, 0.65f);
+        [Min(0.01f)] public float FollowSmoothTime = 0.16f;
+        [Min(0f)] public float CarryFloatAmplitude = 0.08f;
+        private PlayerController carrier;
+        private Transform carryVisual;
+        private int facing = 1;
+        private bool unlocking;
+        public Transform CarryVisual => carryVisual;
         private ParticleSystem glowParticles, pickupBurst;
         private Mesh mesh;
         private MeshRenderer visual;
@@ -41,7 +52,16 @@ namespace TapTap
             if (Application.isPlaying) EnsureGlowParticles();
         }
 
-        public void ApplyStage() => SetCollected(Application.isPlaying && GameStageProgression.HasProgressedIn(gameObject.scene));
+        public void ApplyStage()
+        {
+            if (!Application.isPlaying) { SetCollected(false); return; }
+            GameStageProgression stage = GameStageProgression.ForScene(gameObject.scene);
+            if (stage.Stage == GameStage.CarryingKey && stage.BindCarriedKey(this))
+            {
+                if (carrier == null) BeginCarry(ReturnJourneyContact.FindPlayer(gameObject.scene));
+            }
+            else SetCollected(stage.Stage >= GameStage.CarryingKey);
+        }
 
         public bool TryCollect(PlayerController player) => !IsCollected
             && GameStageProgression.ForScene(gameObject.scene).Collect(this, player);
@@ -52,11 +72,66 @@ namespace TapTap
             if (visual == null) visual = GetComponent<MeshRenderer>();
             if (trigger == null) trigger = GetComponent<BoxCollider2D>();
             visual.enabled = trigger.enabled = !value;
+            if (!value) { carrier = null; unlocking = false; DestroyCarryVisual(); }
             if (glowParticles != null)
             {
                 if (value) glowParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                 else if (isActiveAndEnabled && !glowParticles.isPlaying) glowParticles.Play();
             }
+        }
+
+        public void BeginCarry(PlayerController player)
+        {
+            if (player == null) return;
+            carrier = player;
+            SetCollected(true);
+            if (carryVisual != null) return;
+            var owner = new GameObject("Carried Progress Key");
+            // This renderer is outside region roots, so leaving region 19 cannot hide it.
+            UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(owner, gameObject.scene);
+            owner.transform.position = transform.position;
+            owner.transform.rotation = transform.rotation;
+            owner.transform.localScale = transform.lossyScale;
+            owner.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var renderer = owner.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = visual.sharedMaterial;
+            renderer.sortingOrder = 13;
+            carryVisual = owner.transform;
+        }
+
+        public void BeginUnlock() => unlocking = true;
+        public void ResumeCarry() => unlocking = false;
+
+        public void Consume()
+        {
+            SetCollected(true);
+            carrier = null;
+            unlocking = false;
+            DestroyCarryVisual();
+        }
+
+        private void DestroyCarryVisual()
+        {
+            if (carryVisual != null) Destroy(carryVisual.gameObject);
+            carryVisual = null;
+        }
+
+        private void LateUpdate()
+        {
+            if (carrier == null || carryVisual == null || unlocking || PauseMenu.IsOpen) return;
+            if (Mathf.Abs(carrier.Body.Velocity.x) > 0.01f && !carrier.Body.IsReturning)
+                facing = carrier.Body.Velocity.x > 0f ? 1 : -1;
+            float unit = carrier.Config.UnitSize;
+            float clock = RewindManager.Current != null ? (float)RewindManager.Current.SimulationTime : Time.time;
+            Vector3 target = carrier.Body.IsReturning ? (Vector3)carrier.PresentationPosition
+                : RewindManager.Rewinding ? (Vector3)carrier.Body.Motor.Position
+                : carrier.Body.Visual != null ? carrier.Body.Visual.position : carrier.Body.transform.position;
+            target += new Vector3(-facing * FollowOffset.x, FollowOffset.y
+                + Mathf.Sin(clock * Mathf.PI * 2f / Mathf.Max(0.1f, FloatPeriod)) * CarryFloatAmplitude, -0.06f) * unit;
+            float distance = Vector3.Distance(carryVisual.position, target);
+            float blend = RewindManager.Rewinding || distance > unit * 3f ? 1f
+                : 1f - Mathf.Exp(-Time.unscaledDeltaTime / Mathf.Max(0.01f, FollowSmoothTime));
+            carryVisual.position = Vector3.Lerp(carryVisual.position, target, blend);
         }
 
         private void EnsureGlowParticles()
@@ -98,11 +173,19 @@ namespace TapTap
 
         public void PlayPickupBurst()
         {
-            if (PickupBurstPrefab == null) return;
+            PlayBurst(PickupFeedbackPrefab != null ? PickupFeedbackPrefab : PickupBurstPrefab,
+                carryVisual != null ? carryVisual.position : transform.TransformPoint(Vector3.up * floatOffset));
+        }
+
+        public void PlayUnlockBurst(Vector3 position) => PlayBurst(PickupBurstPrefab, position);
+
+        private void PlayBurst(ParticleSystem prefab, Vector3 position)
+        {
+            if (prefab == null) return;
             if (pickupBurst != null) Destroy(pickupBurst.gameObject);
-            pickupBurst = Instantiate(PickupBurstPrefab, transform.TransformPoint(Vector3.up * floatOffset), PickupBurstPrefab.transform.rotation);
+            pickupBurst = Instantiate(prefab, position, prefab.transform.rotation);
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(pickupBurst.gameObject, gameObject.scene);
-            pickupBurst.transform.localScale = Vector3.Scale(PickupBurstPrefab.transform.localScale, transform.lossyScale);
+            pickupBurst.transform.localScale = Vector3.Scale(prefab.transform.localScale, transform.lossyScale);
             pickupBurst.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             foreach (var particles in pickupBurst.GetComponentsInChildren<ParticleSystem>(true))
             {
@@ -167,6 +250,8 @@ namespace TapTap
         private void OnValidate() => visualDirty = true;
         private void OnDisable()
         {
+            DestroyCarryVisual();
+            carrier = null;
             if (glowParticles != null) glowParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             if (pickupBurst != null) Destroy(pickupBurst.gameObject);
         }

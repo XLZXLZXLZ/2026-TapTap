@@ -1,0 +1,645 @@
+{
+  "sequence_count": 18,
+  "audio_unchanged": true,
+  "master_sha256": {
+    "Assets/Audio/Voice/Processed/Full/H01_Verity_UndiscoveredPlay_Full.wav": "cfa3d88dac8a4419cfbf6bcce80776d89b46b91b54a274db630d93a82f5eec44",
+    "Assets/Audio/Voice/Processed/Full/H02_Sarah_ConnectionTests_Full.wav": "f1769488a45b7bc37be04f8a82ddb65101aaa7481c2c6c0d2d78a4dff0b69f62",
+    "Assets/Audio/Voice/Processed/Full/H03_Sarah_HeadHandling_Full.wav": "4342187e1239e96d77269c7c5a385938c70052fd01172b5bd4eb78d865ff400a",
+    "Assets/Audio/Voice/Processed/Full/H04_Sheila_AutomaticReturn_Full.wav": "c8e56e0ba2a31173c6897b07eab3709ed21add1b82d65d17626d9698b118d8bc",
+    "Assets/Audio/Voice/Processed/Full/M01_Verity_NewRobots_Full.wav": "49bf2a74a50cccb1a8e4d3b8f916a90c15a3d147ede41d35504173fee667c306",
+    "Assets/Audio/Voice/Processed/PowerCut/M01_Verity_NewRobots_PowerCut.wav": "6d3ca3181d3a477bc7f54c3d5add9490afa50e571e96369b8f2910b29868fc3f",
+    "Assets/Audio/Voice/Processed/Full/M02_Verity_TryYourOwn_Full.wav": "7e8dfcdbcbf77793ae926f5c2364b08cca762d49243015133fdc21afc1cf6768",
+    "Assets/Audio/Voice/Processed/PowerCut/M02_Verity_TryYourOwn_PowerCut.wav": "9089afacb99c2ef7370f760c3b5c50081204363b7992bb401a6b3e7b692cb2db",
+    "Assets/Audio/Voice/Processed/Full/M03_Sarah_ShiftHandover_Full.wav": "733dfd2adc363f12880cb611f3a5a8867e10414a9e1a5ecdd269e937a7486fb5",
+    "Assets/Audio/Voice/Processed/PowerCut/M03_Sarah_ShiftHandover_PowerCut.wav": "2255bb2fa2efa3dc162cce96ab8db880c63c7fe8af176e992f7e6eeee6b31fef",
+    "Assets/Audio/Voice/Processed/Full/M04_Sarah_TransferForm_Full.wav": "17d908575d13f85a4029ecfe1181f675f61d0017fcdf765a0c7dd435a8eee9c6",
+    "Assets/Audio/Voice/Processed/PowerCut/M04_Sarah_TransferForm_PowerCut.wav": "6c0aa3aecdfc00803eb660c7de83a85352c9108a2537d8685eda0c7ce0971cda",
+    "Assets/Audio/Voice/Processed/Full/M05_Sheila_Inventory_Full.wav": "06831b5b9ccc32aa0253ca731c27f65a9e7a13b14cf0082b526a0603cf62cb08",
+    "Assets/Audio/Voice/Processed/PowerCut/M05_Sheila_Inventory_PowerCut.wav": "8b4563940432b29d4e53b328a5d6af3163a7f01eb5f1d6ee5aa3d1df1fd6ab2d",
+    "Assets/Audio/Voice/Processed/Full/M06_Sheila_Shutdown_Full.wav": "6cb3c9b5ef02f68c318d681f5e3628e4e318522c830803f9417e93920d98b1fb",
+    "Assets/Audio/Voice/Processed/PowerCut/M06_Sheila_Shutdown_PowerCut.wav": "82d294b1871686f8c030f0ccba46410f7afa4b865a290133b79f4bd19687a304",
+    "Assets/Audio/Voice/Processed/Full/M07_Sheila_ProductRecall_Full.wav": "39bd27343235ae23503d9e436b129a118d5b9023cc5aed96b493c1345c70e630",
+    "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_01.wav": "fdfd9bd221144ae34012c966565e19cba891fcb5bbb9e2243041cba6d59bc989",
+    "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_02.wav": "e9f68645ecfe80d3b490bfbe037a3bf53c510b5440714df99477e27a6c85ec88",
+    "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_03.wav": "82c63d4afc1b30fa0954ea1609b5a0f878433bac6a71865ca349b7f8fc6a8324",
+    "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_04.wav": "12c06bf0a32df45ea137b74d4157a7da03d8765bab78d3576345f85fbceefefa"
+  },
+  "sequences": [
+    {
+      "name": "H01_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/H01_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/H01_Verity_UndiscoveredPlay_Full.wav",
+          "duration": 16.5019,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 3.6645,
+              "chinese": "磁吸拼装机器人，随盒附有基础玩法图册。",
+              "english": "Each magnetic robot comes with a booklet of basic activities."
+            },
+            {
+              "start": 4.2456,
+              "end": 9.6526,
+              "chinese": "不少孩子在试玩时发现了新花样，图册还来不及收录。",
+              "english": "Children at our demonstration counter have already found ways to play that haven't made it into the booklet yet."
+            },
+            {
+              "start": 10.1937,
+              "end": 11.7755,
+              "chinese": "周末欢迎到玩具专柜，亲自试试。",
+              "english": "Come and try one this weekend."
+            },
+            {
+              "start": 12.2164,
+              "end": 16.4619,
+              "chinese": "柜台旁还会展出往期试玩照片。",
+              "english": "Photos from earlier demonstrations will also be on display beside the counter."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "H02_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/H02_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/H02_Sarah_ConnectionTests_Full.wav",
+          "duration": 21.5305,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.105,
+              "end": 4.226,
+              "chinese": "远距连接组请留存本轮测试记录。",
+              "english": "Long-range connection staff should retain the latest test records."
+            },
+            {
+              "start": 4.9663,
+              "end": 12.4682,
+              "chinese": "顶部防护板新增了几处碰痕，回收的样机头身连接正常。",
+              "english": "Fresh impact marks have been found on the overhead guard, although the recovered unit's head-to-body joints are intact."
+            },
+            {
+              "start": 13.2084,
+              "end": 17.4695,
+              "chinese": "同批样机此前均已通过常规检查。",
+              "english": "All units in this batch had previously passed their routine checks."
+            },
+            {
+              "start": 18.2497,
+              "end": 21.4905,
+              "chinese": "检修前，请保持工位原样。",
+              "english": "Leave the station as it is until maintenance arrives."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "H03_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/H03_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/H03_Sarah_HeadHandling_Full.wav",
+          "duration": 21.4845,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.1051,
+              "end": 4.9093,
+              "chinese": "拆下的头部请放入周转盘，禁止抛掷。",
+              "english": "Detached heads must be placed in the parts tray, not thrown."
+            },
+            {
+              "start": 5.5301,
+              "end": 11.2151,
+              "chinese": "本周已有数台样机被落下的头部击中，跌下承载平台。",
+              "english": "Several units struck by falling heads have dropped off their support platforms this week."
+            },
+            {
+              "start": 11.8159,
+              "end": 17.2407,
+              "chinese": "受损外壳请单独送检，不要混回待包装区。",
+              "english": "Send damaged casings for inspection rather than returning them to the packing area."
+            },
+            {
+              "start": 17.5411,
+              "end": 21.4445,
+              "chinese": "损失将计入对应班组。",
+              "english": "The resulting losses will be charged to the responsible shift."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "H04_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/H04_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/H04_Sheila_AutomaticReturn_Full.wav",
+          "duration": 20.6141,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 9.1461,
+              "chinese": "多台机器人在无人操作时返回各自测试区的起点，引发关于自主意识的讨论。",
+              "english": "Reports of robots returning unprompted to the starting points in their test areas have renewed debate over possible self-awareness."
+            },
+            {
+              "start": 9.7067,
+              "end": 12.7887,
+              "chinese": "部分样机此前曾跌离测试路线。",
+              "english": "Some had previously fallen from the test course."
+            },
+            {
+              "start": 13.3092,
+              "end": 16.8315,
+              "chinese": "沿途监控却没有记录到返回过程。",
+              "english": "Cameras along the route recorded no return journey."
+            },
+            {
+              "start": 17.2319,
+              "end": 20.5741,
+              "chinese": "厂方称，这或与内置返航系统有关。",
+              "english": "The company has cited a built-in homing system."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M01_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M01_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M01_Verity_NewRobots_Full.wav",
+          "duration": 14.9732,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 2.3018,
+              "chinese": "新款磁吸机器人上市了！",
+              "english": "The new magnetic robots are here!"
+            },
+            {
+              "start": 2.6423,
+              "end": 7.3463,
+              "chinese": "头部和机身采用磁吸连接，拆装不用工具。",
+              "english": "The head and body connect magnetically, with no tools needed for assembly."
+            },
+            {
+              "start": 7.8069,
+              "end": 12.3508,
+              "chinese": "欢迎到玩具专柜亲手试试，挑一个喜欢的带回家。",
+              "english": "Visit the toy counter, try one out, and pick your favorite to take home!"
+            },
+            {
+              "start": 12.8915,
+              "end": 14.9332,
+              "chinese": "感谢收听，保重！",
+              "english": "Thanks for listening! Take care!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M02_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M02_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M02_Verity_TryYourOwn_Full.wav",
+          "duration": 16.3454,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 2.8808,
+              "chinese": "这周六，来试试新款磁吸套装吧！",
+              "english": "Come and try our new magnetic sets this Saturday!"
+            },
+            {
+              "start": 3.3611,
+              "end": 8.5228,
+              "chinese": "先和我们一起拼几个模型，再用同样的零件，做出自己的作品。",
+              "english": "We'll build a few models together, then you can use the same pieces to make something of your own!"
+            },
+            {
+              "start": 8.983,
+              "end": 13.0643,
+              "chinese": "也欢迎带上家里的套装，工作人员会帮您试配零件。",
+              "english": "Bring your own set too! Our staff can help you find matching parts!"
+            },
+            {
+              "start": 13.6045,
+              "end": 16.3054,
+              "chinese": "可以慢慢试，我们很想看看您会拼出什么！",
+              "english": "Take your time! We'd love to see it!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M03_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M03_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M03_Sarah_ShiftHandover_Full.wav",
+          "duration": 14.1022,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.1051,
+              "end": 3.9697,
+              "chinese": "最后一轮库存检查完成后，您在这里的工作才能签字验收。",
+              "english": "Your work here will be signed off once the final stock check is finished."
+            },
+            {
+              "start": 4.4706,
+              "end": 9.5566,
+              "chinese": "说明文件可以留在托盘里，由其他人归档。请保持出口畅通。",
+              "english": "You can leave the instructions in the tray for someone else to file and keep the exit clear."
+            },
+            {
+              "start": 10.3178,
+              "end": 14.0622,
+              "chinese": "未完成的清单项目请注明原因，留给下一班处理。",
+              "english": "Note any unfinished items on the checklist for the next shift."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M04_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M04_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M04_Sarah_TransferForm_Full.wav",
+          "duration": 19.1006,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.1051,
+              "end": 2.6871,
+              "chinese": "您的移交表应随设备保存。",
+              "english": "Your transfer form should stay with the equipment."
+            },
+            {
+              "start": 3.1476,
+              "end": 5.4493,
+              "chinese": "用途一栏可以留空。",
+              "english": "The purpose field may be left blank."
+            },
+            {
+              "start": 6.1901,
+              "end": 10.4335,
+              "chinese": "如设备经过改装，请用自己的话填写新的描述。",
+              "english": "For modified equipment, enter a new description in your own words."
+            },
+            {
+              "start": 11.0542,
+              "end": 13.456,
+              "chinese": "额外表纸可向办公室领取。",
+              "english": "Extra sheets are available from the office."
+            },
+            {
+              "start": 14.0566,
+              "end": 19.0606,
+              "chinese": "旧标签请随表附上，便于核对改装前的记录。",
+              "english": "Attach the old label so staff can check the records from before the modification."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M05_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M05_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M05_Sheila_Inventory_Full.wav",
+          "duration": 22.6734,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 7.5643,
+              "chinese": "工厂清查库存时，每个机器人计为一个单位，包括未完成的型号。",
+              "english": "During the factory inventory, every robot counts as one unit, including unfinished models."
+            },
+            {
+              "start": 8.2449,
+              "end": 11.4467,
+              "chinese": "个体差异会影响维修费用的估算。",
+              "english": "Differences matter when estimating repair costs."
+            },
+            {
+              "start": 12.0272,
+              "end": 14.3885,
+              "chinese": "每台机器将单独建档。",
+              "english": "Each unit will have a separate record."
+            },
+            {
+              "start": 14.7488,
+              "end": 17.3102,
+              "chinese": "后续用途仍在审核中。",
+              "english": "Its future use remains under review."
+            },
+            {
+              "start": 17.8907,
+              "end": 22.6334,
+              "chinese": "厂方表示，清查期间暂不安排新的出货。",
+              "english": "The company says no further shipments are scheduled during the inventory."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M06_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M06_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M06_Sheila_Shutdown_Full.wav",
+          "duration": 19.4483,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 5.8224,
+              "chinese": "本台消息，受多方面因素影响，玩具工厂将暂时关闭。",
+              "english": "Local news. The toy factory will close temporarily for a number of reasons."
+            },
+            {
+              "start": 6.2226,
+              "end": 12.5853,
+              "chinese": "厂方提醒，停止生产不代表所有设备停止运行。",
+              "english": "The company reminds staff that stopping production does not mean all machinery will stop running."
+            },
+            {
+              "start": 13.1056,
+              "end": 19.4083,
+              "chinese": "部分自动系统仍将维持工作，直至最后一件产品离厂。",
+              "english": "Some automatic systems will remain in operation until the last product leaves the factory."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M07_FirstEncounter",
+      "asset": "Assets/Audio/Voice/Sequences/M07_FirstEncounter.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/Full/M07_Sheila_ProductRecall_Full.wav",
+          "duration": 18.5413,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.14,
+              "end": 6.1468,
+              "chinese": "工厂因便携收纳盒破损报告，将召回部分机器人套装。",
+              "english": "The factory will take back several robot sets after reports of broken carrying cases."
+            },
+            {
+              "start": 6.8879,
+              "end": 10.3117,
+              "chinese": "检查人员称，主要问题是提手强度。",
+              "english": "Inspectors say the key issue is handle strength."
+            },
+            {
+              "start": 10.9727,
+              "end": 18.5013,
+              "chinese": "替换收纳盒送达后将继续测试，据称新盒体足够轻巧，儿童也能携带。",
+              "english": "Further tests will follow the delivery of replacement cases, described as light enough for children to carry."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M01_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M01_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M01_Verity_NewRobots_PowerCut.wav",
+          "duration": 1.4055,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.28,
+              "end": 1.2255,
+              "chinese": "保重。",
+              "english": "Take care."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M02_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M02_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M02_Verity_TryYourOwn_PowerCut.wav",
+          "duration": 4.681,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.25,
+              "end": 2.8558,
+              "chinese": "用同样的零件，做出自己的作品。",
+              "english": "Use the same pieces to make something of your own."
+            },
+            {
+              "start": 3.4558,
+              "end": 4.541,
+              "chinese": "可以慢慢试。",
+              "english": "Take your time."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M03_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M03_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M03_Sarah_ShiftHandover_PowerCut.wav",
+          "duration": 5.83,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.25,
+              "end": 5.69,
+              "chinese": "您在这里的工作……结束了。可以把指令……留给别人。",
+              "english": "Your work here … is finished. You can leave the instructions … for someone else."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M04_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M04_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M04_Sarah_TransferForm_PowerCut.wav",
+          "duration": 6.3032,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.25,
+              "end": 2.9063,
+              "chinese": "您的……用途……可以留空。",
+              "english": "Your … purpose … may be left blank."
+            },
+            {
+              "start": 3.5563,
+              "end": 6.1632,
+              "chinese": "请用自己的话，填写新的描述。",
+              "english": "Enter a new description in your own words."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M05_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M05_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M05_Sheila_Inventory_PowerCut.wav",
+          "duration": 9.3285,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.25,
+              "end": 4.3019,
+              "chinese": "每个机器人都算数……包括未完成的。",
+              "english": "Every robot counts … including unfinished models."
+            },
+            {
+              "start": 4.7819,
+              "end": 6.3275,
+              "chinese": "差异有其分量。",
+              "english": "Differences matter."
+            },
+            {
+              "start": 6.6475,
+              "end": 9.1885,
+              "chinese": "每一个，都将拥有一个……以后。",
+              "english": "Each unit will have a … future."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M06_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M06_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M06_Sheila_Shutdown_PowerCut.wav",
+          "duration": 6.6418,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.25,
+              "end": 3.0607,
+              "chinese": "工厂将……停止运行。",
+              "english": "The factory will … stop running."
+            },
+            {
+              "start": 3.8407,
+              "end": 6.5018,
+              "chinese": "最后一件产品离厂。",
+              "english": "The last product leaves the factory."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "M07_ReturnJourney",
+      "asset": "Assets/Audio/Voice/Sequences/M07_ReturnJourney.asset",
+      "segments": [
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_01.wav",
+          "duration": 8.7716,
+          "gap_after": 1,
+          "subtitles": [
+            {
+              "start": 0.35,
+              "end": 8.7616,
+              "chinese": "召回几套机器人套装……关键问题是……在送达之后……轻得孩子也能……",
+              "english": "Take back several robot sets … the key issue is … follow the delivery … light enough for children."
+            }
+          ]
+        },
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_02.wav",
+          "duration": 7.0693,
+          "gap_after": 1,
+          "subtitles": [
+            {
+              "start": 0.38,
+              "end": 7.0593,
+              "chinese": "召回几套……关键问题……在送达之后……足够轻……",
+              "english": "Take back several … the key issue … follow the delivery … light enough."
+            }
+          ]
+        },
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_03.wav",
+          "duration": 5.1974,
+          "gap_after": 1,
+          "subtitles": [
+            {
+              "start": 0.34,
+              "end": 5.1874,
+              "chinese": "拿起……关键问题……跟着光走。",
+              "english": "Take … the key issue … follow the … light."
+            }
+          ]
+        },
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_04.wav",
+          "duration": 3.8168,
+          "gap_after": 1,
+          "subtitles": [
+            {
+              "start": 0.28,
+              "end": 3.8068,
+              "chinese": "拿起钥匙。跟着光走。",
+              "english": "Take … the key. … Follow the … light."
+            }
+          ]
+        },
+        {
+          "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_04.wav",
+          "duration": 3.8168,
+          "gap_after": 0,
+          "subtitles": [
+            {
+              "start": 0.28,
+              "end": 3.8068,
+              "chinese": "拿起钥匙。跟着光走。",
+              "english": "Take … the key. … Follow the … light."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

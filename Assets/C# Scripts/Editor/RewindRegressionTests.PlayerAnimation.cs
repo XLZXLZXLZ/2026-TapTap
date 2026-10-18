@@ -72,6 +72,10 @@ namespace TapTap.Editor
                 foreach (MovableEntity entity in new[] { player.Body, player.Head })
                 {
                     Animator animator = entity.Visual.GetComponentInChildren<Animator>();
+                    var controller = animator.runtimeAnimatorController as UnityEditor.Animations.AnimatorController;
+                    var walkState = Array.Find(controller.layers[0].stateMachine.states, state => state.state.name == "Walk").state;
+                    Check(walkState != null && walkState.motion == walk && Mathf.Abs(walkState.speed - 1.3f) < 0.001f,
+                        entity.name + " must use the shared Walk clip at 1.3x speed");
                     Check(animator.avatar != null && animator.avatar.isValid, "Missing valid Generic avatar");
                     SkinnedMeshRenderer[] skins = animator.GetComponentsInChildren<SkinnedMeshRenderer>();
                     Check(skins.Length > 0 && Array.TrueForAll(skins, skin => skin.bones.Length > 0 && Array.TrueForAll(skin.bones, bone => bone != null)),

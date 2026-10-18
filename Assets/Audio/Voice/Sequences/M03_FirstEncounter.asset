@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M03_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: 7e7d58cfa52b5ce186c3bd604484c925, type: 3}
+    Subtitles:
+    - Start: 0.1051
+      End: 3.9697
+      Chinese: "最后一轮库存检查完成后，您在这里的工作才能签字验收。"
+      English: "Your work here will be signed off once the final stock check is finished."
+    - Start: 4.4706
+      End: 9.5566
+      Chinese: "说明文件可以留在托盘里，由其他人归档。请保持出口畅通。"
+      English: "You can leave the instructions in the tray for someone else to file and keep the exit clear."
+    - Start: 10.3178
+      End: 14.0622
+      Chinese: "未完成的清单项目请注明原因，留给下一班处理。"
+      English: "Note any unfinished items on the checklist for the next shift."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

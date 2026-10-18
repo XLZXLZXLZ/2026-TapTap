@@ -134,4 +134,8 @@ MonoBehaviour:
   FloatPeriod: 2.4
   GlowParticleMaterial: {fileID: 2100000, guid: 9d838e8c6ecc40c40b803da79952849d, type: 2}
   PickupBurstPrefab: {fileID: 759337362608597402, guid: 7702a3e91aa3e7b4fa68333d8c2f163e, type: 3}
+  PickupFeedbackPrefab: {fileID: 2172903857870619838, guid: dc2a02a08ae89b74797802e75457f373, type: 3}
   GlowParticleRate: 12
+  FollowOffset: {x: 0.8, y: 0.65}
+  FollowSmoothTime: 0.16
+  CarryFloatAmplitude: 0.08

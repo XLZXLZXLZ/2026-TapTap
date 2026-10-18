@@ -482,8 +482,16 @@
             73
           ],
           [
-            85,
+            91,
             73
+          ],
+          [
+            91,
+            79
+          ],
+          [
+            85,
+            79
           ],
           [
             85,
@@ -553,7 +561,7 @@
       "display_contours": [
         [
           [
-            11,
+            5,
             73
           ],
           [
@@ -575,6 +583,14 @@
           [
             11,
             95.5
+          ],
+          [
+            11,
+            79
+          ],
+          [
+            5,
+            79
           ]
         ]
       ],
@@ -653,6 +669,14 @@
           ],
           [
             85,
+            60
+          ],
+          [
+            91,
+            60
+          ],
+          [
+            91,
             66
           ],
           [
@@ -723,8 +747,16 @@
             66
           ],
           [
-            11,
+            5,
             66
+          ],
+          [
+            5,
+            60
+          ],
+          [
+            11,
+            60
           ]
         ]
       ],
@@ -4170,127 +4202,6 @@
       ]
     }
   ],
-  "passages": [
-    {
-      "Id": "f419bfd551d4499e9ed48651fac724b8",
-      "Position": {
-        "x": 38,
-        "y": 113
-      },
-      "FromModuleId": "a0cadc7204034720ab7eff930c366903",
-      "ToModuleId": "e3d4dc65b67d431cb4a96331e6e6e586",
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "64897d2540ed45a5bc96b03ecaf3e139",
-      "Position": {
-        "x": 20,
-        "y": 96
-      },
-      "FromModuleId": "a0cadc7204034720ab7eff930c366903",
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "771d5bcd91e044889819d366313050df",
-      "Position": {
-        "x": 24,
-        "y": 84
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 270,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "2862404a4c4942b2b23a912f206a3df7",
-      "Position": {
-        "x": 55,
-        "y": 84
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "eb75ee0a549b46f7ab40bf1624432a25",
-      "Position": {
-        "x": 67,
-        "y": 48
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 270,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "087129e3f5204fe8850650323ec95e39",
-      "Position": {
-        "x": 77,
-        "y": 48
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "9904dfb424cd48109a9bf6f9013d6460",
-      "Position": {
-        "x": 48,
-        "y": 65
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "4a61eff8739340b99b9e9b1915d7c08e",
-      "Position": {
-        "x": 71,
-        "y": 20
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "a7cdc937f9eb48d187b8de1a3cc0db28",
-      "Position": {
-        "x": 51,
-        "y": 23
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    },
-    {
-      "Id": "8e696a56c08c42b58aaec7bc5dfa3c31",
-      "Position": {
-        "x": 53,
-        "y": 16
-      },
-      "FromModuleId": null,
-      "ToModuleId": null,
-      "Angle": 90,
-      "Bidirectional": 0,
-      "Note": null
-    }
-  ],
-  "display_policy": "Presentation polygons are intentionally regularized: shared endpoints, no half-cell teeth, straight main sides X11/X85, straight middle edges Y66/Y73, flush central connector, solid L-shaped upper-left entrance. Actual contours remain in raw_contours and the raw SVG. Outer corners (85,131), (85,4), (11,4) use visual radius 4. No Unity source data modified."
+  "passages": [],
+  "display_policy": "Presentation polygons are intentionally regularized: shared endpoints, no half-cell teeth, straight main sides X11/X85, middle baselines Y66/Y73 with four structural corner flanges, flush central connector, solid L-shaped upper-left entrance. Actual contours remain in raw_contours and the raw SVG. Outer corners (85,131), (85,4), (11,4) use visual radius 4. No Unity source data modified."
 }

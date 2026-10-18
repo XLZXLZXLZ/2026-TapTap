@@ -155,6 +155,103 @@ namespace TapTap.Editor
                 "PASS: Real short/long recalls, success, blocked recall, rewind freeze/restore, disable and respawn.\n");
         }
 
+        private static void PlayerHangingExpressions()
+        {
+            using (var f = new Fixture())
+            {
+                PlayerExpressionView expressions = ExpressionFixture(f);
+                var blink = f.Player.GetComponent<PlayerBlinkView>();
+                var lower = ExpressionField<PlayerExpressionView.EyeSet>(expressions, "lowerEyes");
+                var upper = ExpressionField<PlayerExpressionView.EyeSet>(expressions, "upperEyes");
+                void SetPhase(PlayerPhase phase)
+                {
+                    var state = f.Player.CaptureState(); state.Phase = phase;
+                    f.Player.RestoreState(in state);
+                }
+                f.Detach(f.Spawn + Vector2.up, f.Spawn + Vector2.up * 3f);
+                SetPhase(PlayerPhase.Holding);
+                var ledge = f.Box("Head support", f.Head.Motor.Position
+                    + Vector2.down * (f.Head.Motor.Size.y * 0.5f + 0.1f + f.Config.Skin), new Vector2(2f, 0.2f));
+                ledge.AddComponent<WorldSurface>();
+                Physics2D.SyncTransforms();
+                Check(f.Player.IsHangingFromHead, "Supported head with hanging legs was not detected");
+                bool oldGrounded = f.Body.Motor.Grounded;
+                // Even with a combined collision shape, query each half independently.
+                f.Body.Motor.SetJoinedPartner(f.Head.Motor, true);
+                Bounds combinedBounds = f.Body.Motor.CollisionBounds;
+                Check(f.Player.IsHangingFromHead && f.Body.Motor.Grounded == oldGrounded
+                    && f.Body.Motor.CollisionBounds == combinedBounds, "Support query mutated motor state or used joined bounds");
+                SetPhase(PlayerPhase.Holding);
+                f.Step(3);
+                expressions.Simulate(0.3f);
+                Check(expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.Looping
+                    && lower.Sad.gameObject.activeSelf && upper.Sad.gameObject.activeSelf && blink.Suppressed,
+                    "Hanging did not enter Sad loop on both halves");
+                float firstHeight = lower.Sad.localScale.y;
+                expressions.Simulate(0.15f);
+                Check(Mathf.Abs(firstHeight - lower.Sad.localScale.y) > 0.001f,
+                    "Sad loop does not animate");
+                for (int i = 0; i < 40; i++) expressions.Simulate(0.1f);
+                Check(expressions.Current == PlayerExpressionView.Expression.Sad
+                    && expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.Looping
+                    && !lower.Normal.gameObject.activeSelf && blink.Suppressed, "Sustained Sad expired or restarted");
+                typeof(PlayerExpressionView).GetMethod("OnMagneticJoined", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .Invoke(expressions, null);
+                Check(expressions.Current == PlayerExpressionView.Expression.Sad, "Happy overrode head-supported Sad");
+                Vector3 frozen = lower.Sad.localScale;
+                expressions.Simulate(0f);
+                Check(lower.Sad.localScale == frozen, "Zero-delta pause advanced Sad");
+                Check(f.Manager.BeginRewind(), "Cannot rewind hanging player");
+                expressions.Simulate(0.2f);
+                Check(lower.Sad.localScale == frozen, "Rewind advanced Sad loop");
+                f.Manager.EndRewind();
+
+                var footSupport = f.Box("Foot support", f.Body.Motor.Position
+                    + Vector2.down * (f.Body.Motor.Size.y * 0.5f + 0.1f + f.Config.Skin), new Vector2(1f, 0.2f));
+                Physics2D.SyncTransforms();
+                Check(!f.Player.IsHangingFromHead, "Supported legs still count as hanging");
+                expressions.Simulate(0.02f);
+                Check(expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.Recovering
+                    && blink.Suppressed, "Landing did not begin recovery with blinking suppressed");
+                footSupport.SetActive(false);
+                Physics2D.SyncTransforms();
+                expressions.Simulate(0.3f);
+                Check(expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.Looping,
+                    "Re-entering while recovering did not resume Sad");
+                ledge.SetActive(false);
+                Physics2D.SyncTransforms();
+                expressions.Simulate(0.3f);
+                Check(expressions.Current == PlayerExpressionView.Expression.Normal && !blink.Suppressed,
+                    "Losing head support did not restore blinking");
+                ledge.SetActive(true);
+                Physics2D.SyncTransforms();
+                expressions.Simulate(0.3f);
+                SetPhase(PlayerPhase.Detached);
+                expressions.Simulate(0.3f);
+                Check(expressions.Current == PlayerExpressionView.Expression.Normal && !blink.Suppressed,
+                    "Detachment did not recover Sad");
+                SetPhase(PlayerPhase.Holding);
+                expressions.Simulate(0.02f);
+                Check(expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.Starting, "Missing Sad start phase");
+                ledge.SetActive(false);
+                Physics2D.SyncTransforms();
+                expressions.Simulate(0.3f);
+                Check(expressions.Current == PlayerExpressionView.Expression.Normal, "Interrupted Sad start did not recover");
+                ledge.SetActive(true);
+                Physics2D.SyncTransforms();
+                expressions.Simulate(0.3f);
+                expressions.enabled = false;
+                Check(!blink.Suppressed && expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.None,
+                    "Disabling left Sad loop or suppression active");
+                expressions.enabled = true;
+                expressions.Simulate(0.3f);
+                f.Respawn.BeginSingleReturn(f.Body);
+                expressions.Simulate(0.02f);
+                Check(expressions.Current == PlayerExpressionView.Expression.Normal && !blink.Suppressed,
+                    "Return did not clear sustained Sad");
+            }
+        }
+
         private static void RenderPlayerExpressions()
         {
             bool previousAsync = ShaderUtil.allowAsyncCompilation;

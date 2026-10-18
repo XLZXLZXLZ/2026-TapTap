@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M05_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: 9f929afde22a5385ae8cc2a7351c4c26, type: 3}
+    Subtitles:
+    - Start: 0.14
+      End: 7.5643
+      Chinese: "工厂清查库存时，每个机器人计为一个单位，包括未完成的型号。"
+      English: "During the factory inventory, every robot counts as one unit, including unfinished models."
+    - Start: 8.2449
+      End: 11.4467
+      Chinese: "个体差异会影响维修费用的估算。"
+      English: "Differences matter when estimating repair costs."
+    - Start: 12.0272
+      End: 14.3885
+      Chinese: "每台机器将单独建档。"
+      English: "Each unit will have a separate record."
+    - Start: 14.7488
+      End: 17.3102
+      Chinese: "后续用途仍在审核中。"
+      English: "Its future use remains under review."
+    - Start: 17.8907
+      End: 22.6334
+      Chinese: "厂方表示，清查期间暂不安排新的出货。"
+      English: "The company says no further shipments are scheduled during the inventory."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

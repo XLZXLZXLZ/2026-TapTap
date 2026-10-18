@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: H04_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: ffa3583c671c5d3096a58193ed226d1e, type: 3}
+    Subtitles:
+    - Start: 0.14
+      End: 9.1461
+      Chinese: "多台机器人在无人操作时返回各自测试区的起点，引发关于自主意识的讨论。"
+      English: "Reports of robots returning unprompted to the starting points in their test areas have renewed debate over possible self-awareness."
+    - Start: 9.7067
+      End: 12.7887
+      Chinese: "部分样机此前曾跌离测试路线。"
+      English: "Some had previously fallen from the test course."
+    - Start: 13.3092
+      End: 16.8315
+      Chinese: "沿途监控却没有记录到返回过程。"
+      English: "Cameras along the route recorded no return journey."
+    - Start: 17.2319
+      End: 20.5741
+      Chinese: "厂方称，这或与内置返航系统有关。"
+      English: "The company has cited a built-in homing system."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

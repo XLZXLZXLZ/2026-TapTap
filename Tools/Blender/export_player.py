@@ -1,7 +1,8 @@
 """Run with Blender --background --disable-autoexec --python Tools/Blender/export_player.py.
 
 Exports the new body meshes and bakes the eye drivers without modifying the sources.
-Idle comes from stand.blend; the existing Walk and animation binding paths are retained.
+Idle comes from New/stand.blend and Walk from Player/walk.blend; runtime binding paths are retained.
+Use --walk-only to update just the walking animation.
 """
 
 from pathlib import Path
@@ -45,8 +46,8 @@ def export(name, objects, animation=False):
     )
 
 
-def export_idle():
-    bpy.ops.wm.open_mainfile(filepath=str(SOURCE / "stand.blend"), load_ui=False, use_scripts=False)
+def export_locomotion(source, name, output):
+    bpy.ops.wm.open_mainfile(filepath=str(SOURCE / source), load_ui=False, use_scripts=False)
     scene = bpy.context.scene
     rig = bpy.data.objects["Robot_Controls"]
     start, end = scene.frame_start, scene.frame_end
@@ -64,8 +65,8 @@ def export_idle():
         bone.rotation_mode = "QUATERNION"
     bpy.context.view_layer.objects.active = rig
     bpy.ops.object.mode_set(mode="EDIT")
-    for name in ("CTRL_Foot_L", "CTRL_Foot_R"):
-        bone = rig.data.edit_bones[name]
+    for foot_name in ("CTRL_Foot_L", "CTRL_Foot_R"):
+        bone = rig.data.edit_bones[foot_name]
         matrix = bone.matrix.copy()
         bone.parent = rig.data.edit_bones["Lower"]
         bone.matrix = matrix
@@ -79,16 +80,20 @@ def export_idle():
                 pose[bone.name], bone.bone.matrix_local, invert=True, **options)
             for channel in ("location", "rotation_quaternion", "scale"):
                 bone.keyframe_insert(channel, frame=frame)
-    rig.animation_data.action.name = "Idle"
+    rig.animation_data.action.name = name
     scene.frame_set(start)
-    export("idle_rigged", [rig], animation=True)
-    print("IDLE EXPORT COMPLETE: stand.blend frames", start, "-", end)
+    export(output, [rig], animation=True)
+    print(name.upper(), "EXPORT COMPLETE:", source, "frames", start, "-", end)
 
 
 OUTPUT.mkdir(parents=True, exist_ok=True)
-export_idle()
+if "--walk-only" in sys.argv:
+    export_locomotion(OUTPUT / "walk.blend", "Walk", "walk_rigged")
+    sys.exit(0)
+export_locomotion("stand.blend", "Idle", "idle_rigged")
 if "--idle-only" in sys.argv:
     sys.exit(0)
+export_locomotion(OUTPUT / "walk.blend", "Walk", "walk_rigged")
 bpy.ops.wm.open_mainfile(filepath=str(SOURCE / "noeyes.blend"), load_ui=False, use_scripts=False)
 rig = bpy.data.objects["Robot_Controls"]
 rig.animation_data_clear()
@@ -152,4 +157,4 @@ for color, prefix in (("red", "Upper"), ("blue", "Lower")):
     scene.frame_set(1)
     export("blink_" + color + "eyes_baked", eyes, animation=True)
 
-print("PLAYER EXPORT COMPLETE: new bodies, stand Idle, and baked eyes; existing Walk retained")
+print("PLAYER EXPORT COMPLETE: new bodies, stand Idle, walk Walk, and baked eyes")

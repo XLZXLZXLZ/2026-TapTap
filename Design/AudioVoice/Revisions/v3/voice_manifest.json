@@ -1,0 +1,1039 @@
+{
+  "revision": 3,
+  "powercut_pitch_semitones": -1.5,
+  "fault_model": "sustained irregular electrical arc, mains harmonics and power sag",
+  "sample_rate": 48000,
+  "channels": 1,
+  "encoding": "PCM 24-bit",
+  "target_lufs": -19.0,
+  "language": "en",
+  "m07_playback": [
+    "M07_PowerCut_01",
+    "M07_PowerCut_02",
+    "M07_PowerCut_03",
+    "M07_PowerCut_04",
+    "M07_PowerCut_04"
+  ],
+  "files": [
+    {
+      "id": "H01_Verity_UndiscoveredPlay_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/H01_Verity_UndiscoveredPlay.mp3",
+      "source_sha256": "5679f8dd00fa378c3248178904adbc7c24a975f56520f1d38d7decdae23eb7a0",
+      "file": "Assets/Audio/Voice/Processed/Full/H01_Verity_UndiscoveredPlay_Full.wav",
+      "duration": 16.5019,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -2.2,
+      "transcript": "Each magnetic robot comes with a booklet of basic activities. Children at our demonstration counter have already found ways to play that haven't made it into the booklet yet. Come and try one this weekend. Photos from earlier demonstrations will also be on display beside the counter.",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 3.4845,
+          "text": "Each magnetic robot comes with a booklet of basic activities."
+        },
+        {
+          "start": 4.2456,
+          "end": 9.4726,
+          "text": "Children at our demonstration counter have already found ways to play that haven't made it into the booklet yet."
+        },
+        {
+          "start": 10.1937,
+          "end": 11.5955,
+          "text": "Come and try one this weekend."
+        },
+        {
+          "start": 12.2164,
+          "end": 16.2819,
+          "text": "Photos from earlier demonstrations will also be on display beside the counter."
+        }
+      ],
+      "profile": "Verity"
+    },
+    {
+      "id": "H02_Sarah_ConnectionTests_Full",
+      "source": "Assets/Audio/Voice/H02_Sarah_ConnectionTests.mp3",
+      "source_sha256": "d38bb89601cce1dd74426b0dafad48989323638d0ea2ba86f9587a879a2ceaac",
+      "file": "Assets/Audio/Voice/Processed/Full/H02_Sarah_ConnectionTests_Full.wav",
+      "duration": 21.5305,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -1.58,
+      "transcript": "Long-range connection staff should retain the latest test records. Fresh impact marks have been found on the overhead guard, although the recovered unit's head-to-body joints are intact. All units in this batch had previously passed their routine checks. Leave the station as it is until maintenance arrives.",
+      "cues": [
+        {
+          "start": 0.105,
+          "end": 4.046,
+          "text": "Long -range connection staff should retain the latest test records."
+        },
+        {
+          "start": 4.9663,
+          "end": 12.2882,
+          "text": "Fresh impact marks have been found on the overhead guard, although the recovered unit's head -to -body joints are intact."
+        },
+        {
+          "start": 13.2084,
+          "end": 17.2895,
+          "text": "All units in this batch had previously passed their routine checks."
+        },
+        {
+          "start": 18.2497,
+          "end": 21.3105,
+          "text": "Leave the station as it is until maintenance arrives."
+        }
+      ],
+      "profile": "Sarah"
+    },
+    {
+      "id": "H03_Sarah_HeadHandling_Full",
+      "source": "Assets/Audio/Voice/H03_Sarah_HeadHandling.mp3",
+      "source_sha256": "77dc65d9256ebe13884d48bc4cd5d6a18c2d6bb2d3523b2915df88858fce814c",
+      "file": "Assets/Audio/Voice/Processed/Full/H03_Sarah_HeadHandling_Full.wav",
+      "duration": 21.4845,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -1.57,
+      "transcript": "Detached heads must be placed in the parts tray, not thrown. Several units struck by falling heads have dropped off their support platforms this week. Send damaged casings for inspection rather than returning them to the packing area. The resulting losses will be charged to the responsible shift.",
+      "cues": [
+        {
+          "start": 0.1051,
+          "end": 4.7293,
+          "text": "Detached heads must be placed in the parts tray, not thrown."
+        },
+        {
+          "start": 5.5301,
+          "end": 11.0351,
+          "text": "Several units struck by falling heads have dropped off their support platforms this week."
+        },
+        {
+          "start": 11.8159,
+          "end": 17.0607,
+          "text": "Send damaged casings for inspection rather than returning them to the packing area."
+        },
+        {
+          "start": 17.5411,
+          "end": 21.2645,
+          "text": "The resulting losses will be charged to the responsible shift."
+        }
+      ],
+      "profile": "Sarah"
+    },
+    {
+      "id": "H04_Sheila_AutomaticReturn_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/H04_Sheila_AutomaticReturn.mp3",
+      "source_sha256": "02255d203ef8bdc5093df5ebd97d8d26d359bcc6b9f053a4fae18119e027b1b1",
+      "file": "Assets/Audio/Voice/Processed/Full/H04_Sheila_AutomaticReturn_Full.wav",
+      "duration": 20.6141,
+      "integrated_lufs": -18.99,
+      "true_peak_dbtp": -3.49,
+      "transcript": "Reports of robots returning unprompted to the starting points in their test areas have renewed debate over possible self-awareness. Some had previously fallen from the test course. Cameras along the route recorded no return journey. The company has cited a built-in homing system.",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 8.9661,
+          "text": "Reports of robots returning unprompted to the starting points in their test areas have renewed debate over possible self -awareness."
+        },
+        {
+          "start": 9.7067,
+          "end": 12.6087,
+          "text": "Some had previously fallen from the test course."
+        },
+        {
+          "start": 13.3092,
+          "end": 16.6515,
+          "text": "Cameras along the route recorded no return journey."
+        },
+        {
+          "start": 17.2319,
+          "end": 20.3941,
+          "text": "The company has cited a built -in homing system."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M01_Verity_NewRobots_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/M01_Verity_NewRobots.mp3",
+      "source_sha256": "54323efca5d3297d05fe57b9d9f4004d27a924e14138cc2af7244088b4f1c7bd",
+      "file": "Assets/Audio/Voice/Processed/Full/M01_Verity_NewRobots_Full.wav",
+      "duration": 14.9732,
+      "integrated_lufs": -19.01,
+      "true_peak_dbtp": -4.76,
+      "transcript": "The new magnetic robots are here! The head and body connect magnetically, with no tools needed for assembly. Visit the toy counter, try one out, and pick your favorite to take home! Thanks for listening! Take care!",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 2.1218,
+          "text": "The new magnetic robots are here!"
+        },
+        {
+          "start": 2.6423,
+          "end": 7.1663,
+          "text": "The head and body connect magnetically, with no tools needed for assembly."
+        },
+        {
+          "start": 7.8069,
+          "end": 12.1708,
+          "text": "Visit the toy counter, try one out, and pick your favorite to take home!"
+        },
+        {
+          "start": 12.8915,
+          "end": 13.7923,
+          "text": "Thanks for listening!"
+        },
+        {
+          "start": 14.1327,
+          "end": 14.7532,
+          "text": "Take care!"
+        }
+      ],
+      "profile": "Verity"
+    },
+    {
+      "id": "M01_Verity_NewRobots_PowerCut",
+      "source": "Assets/Audio/Voice/M01_Verity_NewRobots.mp3",
+      "source_sha256": "54323efca5d3297d05fe57b9d9f4004d27a924e14138cc2af7244088b4f1c7bd",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M01_Verity_NewRobots_PowerCut.wav",
+      "duration": 1.4055,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -3.53,
+      "transcript": "Take care.",
+      "removed_speech_ratio": 0.9412,
+      "source_spans": [
+        {
+          "start": 14.1128,
+          "end": 14.8783,
+          "words": [
+            35,
+            36
+          ],
+          "text": "Take care."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.28,
+          "end": 1.0455,
+          "text": "Take care."
+        }
+      ],
+      "profile": "Verity"
+    },
+    {
+      "id": "M02_Verity_TryYourOwn_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/M02_Verity_TryYourOwn.mp3",
+      "source_sha256": "7615d82cdb359da1c5d9128b561f903ea26b8e1e7f2842a9cdb1e9727228cab1",
+      "file": "Assets/Audio/Voice/Processed/Full/M02_Verity_TryYourOwn_Full.wav",
+      "duration": 16.3454,
+      "integrated_lufs": -18.99,
+      "true_peak_dbtp": -3.06,
+      "transcript": "Come and try our new magnetic sets this Saturday! We'll build a few models together, then you can use the same pieces to make something of your own! Bring your own set too! Our staff can help you find matching parts! Take your time! We'd love to see it!",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 2.7008,
+          "text": "Come and try our new magnetic sets this Saturday!"
+        },
+        {
+          "start": 3.3611,
+          "end": 8.3428,
+          "text": "We'll build a few models together, then you can use the same pieces to make something of your own!"
+        },
+        {
+          "start": 8.983,
+          "end": 10.1634,
+          "text": "Bring your own set too!"
+        },
+        {
+          "start": 10.7436,
+          "end": 12.8843,
+          "text": "Our staff can help you find matching parts!"
+        },
+        {
+          "start": 13.6045,
+          "end": 14.4448,
+          "text": "Take your time!"
+        },
+        {
+          "start": 14.805,
+          "end": 16.1254,
+          "text": "We'd love to see it!"
+        }
+      ],
+      "profile": "Verity"
+    },
+    {
+      "id": "M02_Verity_TryYourOwn_PowerCut",
+      "source": "Assets/Audio/Voice/M02_Verity_TryYourOwn.mp3",
+      "source_sha256": "7615d82cdb359da1c5d9128b561f903ea26b8e1e7f2842a9cdb1e9727228cab1",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M02_Verity_TryYourOwn_PowerCut.wav",
+      "duration": 4.681,
+      "integrated_lufs": -18.99,
+      "true_peak_dbtp": -4.6,
+      "transcript": "Use the same pieces to make something of your own. … Take your time.",
+      "removed_speech_ratio": 0.7436,
+      "source_spans": [
+        {
+          "start": 5.982,
+          "end": 8.4078,
+          "words": [
+            18,
+            27
+          ],
+          "text": "Use the same pieces to make something of your own."
+        },
+        {
+          "start": 13.6046,
+          "end": 14.5099,
+          "words": [
+            41,
+            43
+          ],
+          "text": "Take your time."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.25,
+          "end": 2.6758,
+          "text": "Use the same pieces to make something of your own."
+        },
+        {
+          "start": 3.4558,
+          "end": 4.361,
+          "text": "Take your time."
+        }
+      ],
+      "profile": "Verity"
+    },
+    {
+      "id": "M03_Sarah_ShiftHandover_Full",
+      "source": "Assets/Audio/Voice/M03_Sarah_ShiftHandover.mp3",
+      "source_sha256": "40d07032bfcaaf769ad48e2f81f0fcaeb91c0caf8e984be3a2b29cb02afc4190",
+      "file": "Assets/Audio/Voice/Processed/Full/M03_Sarah_ShiftHandover_Full.wav",
+      "duration": 14.1022,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -1.53,
+      "transcript": "Your work here will be signed off once the final stock check is finished. You can leave the instructions in the tray for someone else to file and keep the exit clear. Note any unfinished items on the checklist for the next shift.",
+      "cues": [
+        {
+          "start": 0.1051,
+          "end": 3.7897,
+          "text": "Your work here will be signed off once the final stock check is finished."
+        },
+        {
+          "start": 4.4706,
+          "end": 9.3766,
+          "text": "You can leave the instructions in the tray for someone else to file and keep the exit clear."
+        },
+        {
+          "start": 10.3178,
+          "end": 13.8822,
+          "text": "Note any unfinished items on the checklist for the next shift."
+        }
+      ],
+      "profile": "Sarah"
+    },
+    {
+      "id": "M03_Sarah_ShiftHandover_PowerCut",
+      "source": "Assets/Audio/Voice/M03_Sarah_ShiftHandover.mp3",
+      "source_sha256": "40d07032bfcaaf769ad48e2f81f0fcaeb91c0caf8e984be3a2b29cb02afc4190",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M03_Sarah_ShiftHandover_PowerCut.wav",
+      "duration": 5.83,
+      "integrated_lufs": -19.06,
+      "true_peak_dbtp": -1.59,
+      "transcript": "Your work here … is finished. You can leave the instructions … for someone else.",
+      "removed_speech_ratio": 0.6909,
+      "source_spans": [
+        {
+          "start": 0.0801,
+          "end": 0.806,
+          "words": [
+            0,
+            2
+          ],
+          "text": "Your work here"
+        },
+        {
+          "start": 3.204,
+          "end": 5.7922,
+          "words": [
+            12,
+            18
+          ],
+          "text": "is finished. You can leave the instructions"
+        },
+        {
+          "start": 6.388,
+          "end": 7.1339,
+          "words": [
+            22,
+            24
+          ],
+          "text": "for someone else."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.25,
+          "end": 0.9759,
+          "text": "Your work here"
+        },
+        {
+          "start": 1.5959,
+          "end": 4.1841,
+          "text": "is finished. You can leave the instructions"
+        },
+        {
+          "start": 4.7641,
+          "end": 5.51,
+          "text": "for someone else."
+        }
+      ],
+      "profile": "Sarah"
+    },
+    {
+      "id": "M04_Sarah_TransferForm_Full",
+      "source": "Assets/Audio/Voice/M04_Sarah_TransferForm.mp3",
+      "source_sha256": "4c6265d61928460c91baff55a65ca0109fa49592f8e54a97d600a2e060195d93",
+      "file": "Assets/Audio/Voice/Processed/Full/M04_Sarah_TransferForm_Full.wav",
+      "duration": 19.1006,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -1.59,
+      "transcript": "Your transfer form should stay with the equipment. The purpose field may be left blank. For modified equipment, enter a new description in your own words. Extra sheets are available from the office. Attach the old label so staff can check the records from before the modification.",
+      "cues": [
+        {
+          "start": 0.1051,
+          "end": 2.5071,
+          "text": "Your transfer form should stay with the equipment."
+        },
+        {
+          "start": 3.1476,
+          "end": 5.2693,
+          "text": "The purpose field may be left blank."
+        },
+        {
+          "start": 6.1901,
+          "end": 10.2535,
+          "text": "For modified equipment, enter a new description in your own words."
+        },
+        {
+          "start": 11.0542,
+          "end": 13.276,
+          "text": "Extra sheets are available from the office."
+        },
+        {
+          "start": 14.0566,
+          "end": 18.8806,
+          "text": "Attach the old label so staff can check the records from before the modification."
+        }
+      ],
+      "profile": "Sarah"
+    },
+    {
+      "id": "M04_Sarah_TransferForm_PowerCut",
+      "source": "Assets/Audio/Voice/M04_Sarah_TransferForm.mp3",
+      "source_sha256": "4c6265d61928460c91baff55a65ca0109fa49592f8e54a97d600a2e060195d93",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M04_Sarah_TransferForm_PowerCut.wav",
+      "duration": 6.3032,
+      "integrated_lufs": -19.01,
+      "true_peak_dbtp": -1.58,
+      "transcript": "Your … purpose … may be left blank. … Enter a new description in your own words.",
+      "removed_speech_ratio": 0.7422,
+      "source_spans": [
+        {
+          "start": 0.0801,
+          "end": 0.3053,
+          "words": [
+            0,
+            0
+          ],
+          "text": "Your"
+        },
+        {
+          "start": 3.2828,
+          "end": 3.7481,
+          "words": [
+            9,
+            9
+          ],
+          "text": "purpose"
+        },
+        {
+          "start": 4.2435,
+          "end": 5.3093,
+          "words": [
+            11,
+            14
+          ],
+          "text": "may be left blank."
+        },
+        {
+          "start": 7.8665,
+          "end": 10.2935,
+          "words": [
+            18,
+            25
+          ],
+          "text": "Enter a new description in your own words."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.25,
+          "end": 0.4752,
+          "text": "Your"
+        },
+        {
+          "start": 0.8552,
+          "end": 1.3205,
+          "text": "purpose"
+        },
+        {
+          "start": 1.6605,
+          "end": 2.7263,
+          "text": "may be left blank."
+        },
+        {
+          "start": 3.5563,
+          "end": 5.9832,
+          "text": "Enter a new description in your own words."
+        }
+      ],
+      "profile": "Sarah"
+    },
+    {
+      "id": "M05_Sheila_Inventory_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/M05_Sheila_Inventory.mp3",
+      "source_sha256": "06290cf9c1dc93fc3ed586b41e8c3da77b567e9fef2fa68d3975df8029539bbc",
+      "file": "Assets/Audio/Voice/Processed/Full/M05_Sheila_Inventory_Full.wav",
+      "duration": 22.6734,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -4.36,
+      "transcript": "During the factory inventory, every robot counts as one unit, including unfinished models. Differences matter when estimating repair costs. Each unit will have a separate record. Its future use remains under review. The company says no further shipments are scheduled during the inventory.",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 7.3843,
+          "text": "During the factory inventory, every robot counts as one unit, including unfinished models."
+        },
+        {
+          "start": 8.2449,
+          "end": 11.2667,
+          "text": "Differences matter when estimating repair costs."
+        },
+        {
+          "start": 12.0272,
+          "end": 14.2085,
+          "text": "Each unit will have a separate record."
+        },
+        {
+          "start": 14.7488,
+          "end": 17.1302,
+          "text": "Its future use remains under review."
+        },
+        {
+          "start": 17.8907,
+          "end": 22.4534,
+          "text": "The company says no further shipments are scheduled during the inventory."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M05_Sheila_Inventory_PowerCut",
+      "source": "Assets/Audio/Voice/M05_Sheila_Inventory.mp3",
+      "source_sha256": "06290cf9c1dc93fc3ed586b41e8c3da77b567e9fef2fa68d3975df8029539bbc",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M05_Sheila_Inventory_PowerCut.wav",
+      "duration": 9.3285,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -2.89,
+      "transcript": "Every robot counts … including unfinished models. … Differences matter. … Each unit will have a … future.",
+      "removed_speech_ratio": 0.6525,
+      "source_spans": [
+        {
+          "start": 2.4815,
+          "end": 3.8073,
+          "words": [
+            4,
+            6
+          ],
+          "text": "Every robot counts"
+        },
+        {
+          "start": 5.3833,
+          "end": 7.4494,
+          "words": [
+            10,
+            12
+          ],
+          "text": "including unfinished models."
+        },
+        {
+          "start": 8.245,
+          "end": 9.3906,
+          "words": [
+            13,
+            14
+          ],
+          "text": "Differences matter."
+        },
+        {
+          "start": 12.0273,
+          "end": 13.273,
+          "words": [
+            19,
+            23
+          ],
+          "text": "Each unit will have a"
+        },
+        {
+          "start": 14.9891,
+          "end": 15.4943,
+          "words": [
+            27,
+            27
+          ],
+          "text": "future."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.25,
+          "end": 1.5757,
+          "text": "Every robot counts"
+        },
+        {
+          "start": 2.0557,
+          "end": 4.1219,
+          "text": "including unfinished models."
+        },
+        {
+          "start": 4.7819,
+          "end": 5.9275,
+          "text": "Differences matter."
+        },
+        {
+          "start": 6.6475,
+          "end": 7.8932,
+          "text": "Each unit will have a"
+        },
+        {
+          "start": 8.5032,
+          "end": 9.0085,
+          "text": "future."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M06_Sheila_Shutdown_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/M06_Sheila_Shutdown.mp3",
+      "source_sha256": "080c179a902ae43584e8d40891d1bbfa86cdb86f1533378f7f4ba15987e5f586",
+      "file": "Assets/Audio/Voice/Processed/Full/M06_Sheila_Shutdown_Full.wav",
+      "duration": 19.4483,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -5.07,
+      "transcript": "Local news. The toy factory will close temporarily for a number of reasons. The company reminds staff that stopping production does not mean all machinery will stop running. Some automatic systems will remain in operation until the last product leaves the factory.",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 0.9403,
+          "text": "Local news."
+        },
+        {
+          "start": 1.5006,
+          "end": 5.6424,
+          "text": "The toy factory will close temporarily for a number of reasons."
+        },
+        {
+          "start": 6.2226,
+          "end": 12.4053,
+          "text": "The company reminds staff that stopping production does not mean all machinery will stop running."
+        },
+        {
+          "start": 13.1056,
+          "end": 19.2283,
+          "text": "Some automatic systems will remain in operation until the last product leaves the factory."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M06_Sheila_Shutdown_PowerCut",
+      "source": "Assets/Audio/Voice/M06_Sheila_Shutdown.mp3",
+      "source_sha256": "080c179a902ae43584e8d40891d1bbfa86cdb86f1533378f7f4ba15987e5f586",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M06_Sheila_Shutdown_PowerCut.wav",
+      "duration": 6.6418,
+      "integrated_lufs": -19.01,
+      "true_peak_dbtp": -1.6,
+      "transcript": "The factory will … stop running. … The last product leaves the factory.",
+      "removed_speech_ratio": 0.7469,
+      "source_spans": [
+        {
+          "start": 1.4807,
+          "end": 1.6857,
+          "words": [
+            2,
+            2
+          ],
+          "text": "The"
+        },
+        {
+          "start": 2.0009,
+          "end": 2.8662,
+          "words": [
+            4,
+            5
+          ],
+          "text": "factory will"
+        },
+        {
+          "start": 11.65,
+          "end": 12.4504,
+          "words": [
+            26,
+            27
+          ],
+          "text": "stop running."
+        },
+        {
+          "start": 16.7923,
+          "end": 19.2733,
+          "words": [
+            36,
+            41
+          ],
+          "text": "The last product leaves the factory."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.25,
+          "end": 1.3204,
+          "text": "The factory will"
+        },
+        {
+          "start": 2.0804,
+          "end": 2.8807,
+          "text": "stop running."
+        },
+        {
+          "start": 3.8407,
+          "end": 6.3218,
+          "text": "The last product leaves the factory."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M07_Sheila_ProductRecall_Full",
+      "revision": 3,
+      "source": "Assets/Audio/Voice/M07_Sheila_ProductRecall.mp3",
+      "source_sha256": "8220a74fe7bc7b8166f6347d9af34ff3bd8970219aaca76e096fad8a9bf8fb13",
+      "file": "Assets/Audio/Voice/Processed/Full/M07_Sheila_ProductRecall_Full.wav",
+      "duration": 18.5413,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -4.53,
+      "transcript": "The factory will take back several robot sets after reports of broken carrying cases. Inspectors say the key issue is handle strength. Further tests will follow the delivery of replacement cases, described as light enough for children to carry.",
+      "cues": [
+        {
+          "start": 0.14,
+          "end": 5.9668,
+          "text": "The factory will take back several robot sets after reports of broken carrying cases."
+        },
+        {
+          "start": 6.8879,
+          "end": 10.1317,
+          "text": "Inspectors say the key issue is handle strength."
+        },
+        {
+          "start": 10.9727,
+          "end": 18.3213,
+          "text": "Further tests will follow the delivery of replacement cases, described as light enough for children to carry."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M07_PowerCut_01",
+      "source": "Assets/Audio/Voice/M07_Sheila_ProductRecall.mp3",
+      "source_sha256": "8220a74fe7bc7b8166f6347d9af34ff3bd8970219aaca76e096fad8a9bf8fb13",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_01.wav",
+      "duration": 8.7716,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -3.0,
+      "transcript": "Take back several robot sets … the key issue is … follow the delivery … light enough for children.",
+      "removed_speech_ratio": 0.64,
+      "source_spans": [
+        {
+          "start": 1.0462,
+          "end": 3.1686,
+          "words": [
+            3,
+            7
+          ],
+          "text": "Take back several robot sets"
+        },
+        {
+          "start": 7.9093,
+          "end": 9.1557,
+          "words": [
+            16,
+            19
+          ],
+          "text": "the key issue is"
+        },
+        {
+          "start": 12.1543,
+          "end": 13.3005,
+          "words": [
+            25,
+            27
+          ],
+          "text": "follow the delivery"
+        },
+        {
+          "start": 16.1791,
+          "end": 17.6456,
+          "words": [
+            33,
+            36
+          ],
+          "text": "light enough for children."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.35,
+          "end": 2.4724,
+          "text": "Take back several robot sets"
+        },
+        {
+          "start": 3.0924,
+          "end": 4.3388,
+          "text": "the key issue is"
+        },
+        {
+          "start": 5.0788,
+          "end": 6.225,
+          "text": "follow the delivery"
+        },
+        {
+          "start": 6.885,
+          "end": 8.3516,
+          "text": "light enough for children."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M07_PowerCut_02",
+      "source": "Assets/Audio/Voice/M07_Sheila_ProductRecall.mp3",
+      "source_sha256": "8220a74fe7bc7b8166f6347d9af34ff3bd8970219aaca76e096fad8a9bf8fb13",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_02.wav",
+      "duration": 7.0693,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -1.99,
+      "transcript": "Take back several … the key issue … follow the delivery … light enough.",
+      "removed_speech_ratio": 0.7556,
+      "source_spans": [
+        {
+          "start": 1.0462,
+          "end": 2.2476,
+          "words": [
+            3,
+            5
+          ],
+          "text": "Take back several"
+        },
+        {
+          "start": 7.9093,
+          "end": 8.8954,
+          "words": [
+            16,
+            18
+          ],
+          "text": "the key issue"
+        },
+        {
+          "start": 12.1543,
+          "end": 13.3005,
+          "words": [
+            25,
+            27
+          ],
+          "text": "follow the delivery"
+        },
+        {
+          "start": 16.1791,
+          "end": 16.8848,
+          "words": [
+            33,
+            34
+          ],
+          "text": "light enough."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.38,
+          "end": 1.5814,
+          "text": "Take back several"
+        },
+        {
+          "start": 2.2914,
+          "end": 3.2774,
+          "text": "the key issue"
+        },
+        {
+          "start": 4.0574,
+          "end": 5.2036,
+          "text": "follow the delivery"
+        },
+        {
+          "start": 5.9436,
+          "end": 6.6493,
+          "text": "light enough."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M07_PowerCut_03",
+      "source": "Assets/Audio/Voice/M07_Sheila_ProductRecall.mp3",
+      "source_sha256": "8220a74fe7bc7b8166f6347d9af34ff3bd8970219aaca76e096fad8a9bf8fb13",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_03.wav",
+      "duration": 5.1974,
+      "integrated_lufs": -19.0,
+      "true_peak_dbtp": -1.84,
+      "transcript": "Take … the key issue … follow the … light.",
+      "removed_speech_ratio": 0.8711,
+      "source_spans": [
+        {
+          "start": 1.0462,
+          "end": 1.3466,
+          "words": [
+            3,
+            3
+          ],
+          "text": "Take"
+        },
+        {
+          "start": 7.9093,
+          "end": 8.8954,
+          "words": [
+            16,
+            18
+          ],
+          "text": "the key issue"
+        },
+        {
+          "start": 12.1543,
+          "end": 12.72,
+          "words": [
+            25,
+            26
+          ],
+          "text": "follow the"
+        },
+        {
+          "start": 16.1791,
+          "end": 16.5243,
+          "words": [
+            33,
+            33
+          ],
+          "text": "light."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.34,
+          "end": 0.6404,
+          "text": "Take"
+        },
+        {
+          "start": 1.3804,
+          "end": 2.3664,
+          "text": "the key issue"
+        },
+        {
+          "start": 3.8864,
+          "end": 4.7974,
+          "text": "follow the light."
+        }
+      ],
+      "profile": "Sheila"
+    },
+    {
+      "id": "M07_PowerCut_04",
+      "source": "Assets/Audio/Voice/M07_Sheila_ProductRecall.mp3",
+      "source_sha256": "8220a74fe7bc7b8166f6347d9af34ff3bd8970219aaca76e096fad8a9bf8fb13",
+      "file": "Assets/Audio/Voice/Processed/PowerCut/M07_PowerCut_04.wav",
+      "duration": 3.8168,
+      "integrated_lufs": -19.01,
+      "true_peak_dbtp": -1.78,
+      "transcript": "Take … the key. … Follow the … light.",
+      "removed_speech_ratio": 0.8978,
+      "source_spans": [
+        {
+          "start": 1.0462,
+          "end": 1.3466,
+          "words": [
+            3,
+            3
+          ],
+          "text": "Take"
+        },
+        {
+          "start": 7.9093,
+          "end": 8.3948,
+          "words": [
+            16,
+            17
+          ],
+          "text": "the key."
+        },
+        {
+          "start": 12.1543,
+          "end": 12.72,
+          "words": [
+            25,
+            26
+          ],
+          "text": "Follow the"
+        },
+        {
+          "start": 16.1791,
+          "end": 16.5243,
+          "words": [
+            33,
+            33
+          ],
+          "text": "light."
+        }
+      ],
+      "cues": [
+        {
+          "start": 0.28,
+          "end": 0.5804,
+          "text": "Take"
+        },
+        {
+          "start": 0.8604,
+          "end": 1.3458,
+          "text": "the key."
+        },
+        {
+          "start": 2.5258,
+          "end": 3.4368,
+          "text": "Follow the light."
+        }
+      ],
+      "profile": "Sheila"
+    }
+  ]
+}

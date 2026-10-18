@@ -1,5 +1,13 @@
 # LocalFog — Unity 2021.3 / Built-in + URP 12.1
 
+## Scene / Game 深度一致性（Unity 2022.3 / URP 14）
+
+`TapTapRenderer` 中的 `Local Fog Depth` Feature 在游戏相机能看到有效雾体时请求 URP DepthOnly 预渲染，与 Scene View 使用相同的深度路径。仅设置相机的 Depth Texture 开关仍可能走不透明物深度复制，两条路径会令雾的遮挡结果不同，在 `World_Character_Play` 第 10 区域表现为 Game 背景偏暗、立柱像是出现了更粗的阴影。
+
+雾体不可见、停用、浓度为 0 或被相机 Layer 排除时不请求这次预渲染。代价是有可见雾体的游戏相机增加一次不透明物深度绘制；灯光、材质、雾浓度与屏幕滤镜参数保持原有配置。其他 Renderer 使用这套雾时，也应添加 `LocalFogDepthFeature`。
+
+验证入口（独立项目副本、有图形设备）：`-batchmode -executeMethod LocalFogDepthValidation.RunBatch`。结果与保留原笔刷效果的前后对比图输出到 `Logs/SceneRendering/`；验证包括 Scene/Game 对比、连续渲染、MSAA 开关、分辨率变化及不可见雾不请求预渲染。
+
 ## 前景保护性能
 
 - URP 只为当前摄像机视锥内、有实际浓度的雾生成保护遮罩；遮罩只提交视锥内启用的 MeshRenderer/SkinnedMeshRenderer。

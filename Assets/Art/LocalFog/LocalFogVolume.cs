@@ -205,6 +205,16 @@ namespace TapTap.Art.LocalFog
         static readonly Dictionary<UniversalAdditionalCameraData, CameraOverrideOption> savedDepth = new Dictionary<UniversalAdditionalCameraData, CameraOverrideOption>();
         static readonly HashSet<int> warnedCameras = new HashSet<int>();
         static readonly int depthAvailable = Shader.PropertyToID("_LocalFogDepthAvailable");
+        // The renderer feature uses the same visibility rule as the fog coordinator.
+        public static bool HasVisibleVolumes(Camera camera)
+        {
+            if (camera == null || active.Count == 0) return false;
+            GeometryUtility.CalculateFrustumPlanes(camera, cameraPlanes);
+            foreach (var fog in active)
+                if (fog != null && fog.VisibleTo(camera)) return true;
+            return false;
+        }
+
         static void BeginURP(ScriptableRenderContext context, Camera cam)
         {
             if (!(GraphicsSettings.currentRenderPipeline is UniversalRenderPipelineAsset)) return;

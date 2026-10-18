@@ -21,13 +21,14 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
         if (camera.cameraType != CameraType.Game || renderingData.cameraData.renderType != CameraRenderType.Base) return;
         var rewind = camera.GetComponent<RewindScreenEffect>();
         if (rewind == null || !rewind.isActiveAndEnabled || !rewind.HasActiveEffect) rewind = null;
+        var journey = ReturnJourneyPresentation.ForCamera(camera);
         var pixelation = camera.GetComponent<CrispPixelation>();
         if (pixelation == null || !pixelation.isActiveAndEnabled || pixelation.PixelSize <= 1) pixelation = null;
         // A camera migrated to the shared profile must not run pixelation twice.
         var filters = camera.GetComponent<ScreenFilterCamera>();
         if (filters != null && filters.HasPixelation) pixelation = null;
-        if (rewind == null && pixelation == null) return;
-        pass.Setup(rewind, pixelation);
+        if (rewind == null && pixelation == null && journey == null) return;
+        pass.Setup(rewind, pixelation, journey);
         renderer.EnqueuePass(pass);
     }
 
@@ -36,11 +37,13 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
         private static readonly int SourceId = Shader.PropertyToID("_TapTapScreenEffectsSource");
         private RewindScreenEffect rewind;
         private CrispPixelation pixelation;
+        private ReturnJourneyPresentation journey;
 
-        public void Setup(RewindScreenEffect rewindEffect, CrispPixelation pixelEffect)
+        public void Setup(RewindScreenEffect rewindEffect, CrispPixelation pixelEffect, ReturnJourneyPresentation journeyEffect)
         {
             rewind = rewindEffect;
             pixelation = pixelEffect;
+            journey = journeyEffect;
         }
 
         public override void OnCameraSetup(CommandBuffer commands, ref RenderingData renderingData)
@@ -61,6 +64,11 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
                 // when this pass executes, so rewind/pixelation reach the final image.
                 RenderTargetIdentifier cameraColor = renderingData.cameraData.renderer.cameraColorTarget;
                 var source = new RenderTargetIdentifier(SourceId);
+                if (journey != null)
+                {
+                    commands.Blit(cameraColor, source);
+                    journey.Render(commands, source, cameraColor);
+                }
                 if (rewind != null)
                 {
                     commands.Blit(cameraColor, source);
@@ -78,4 +86,5 @@ public sealed class TapTapScreenEffectsFeature : ScriptableRendererFeature
 
         public override void OnCameraCleanup(CommandBuffer commands) => commands.ReleaseTemporaryRT(SourceId);
     }
+
 }

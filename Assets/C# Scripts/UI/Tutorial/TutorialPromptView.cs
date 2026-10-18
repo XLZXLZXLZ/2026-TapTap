@@ -31,19 +31,17 @@ namespace TapTap
 
         private Tween transition;
         public bool IsEntering { get; private set; }
-        public bool ExitFinished => !IsEntering && (transition == null || !transition.IsActive())
-            && (Shatter == null || !Shatter.IsPlaying);
+        public bool IsExiting => !IsEntering && transition != null && transition.IsActive();
+        public bool ExitFinished => !IsEntering && !IsExiting;
         public string RichText => Prefix + "<sprite name=\"" + Key + "\">" + Suffix;
 
         public void Enter()
         {
             transition?.Kill();
-            Shatter.StopAndRestore();
+            Shatter?.StopAndRestore();
             Label.text = RichText;
             Label.enabled = true;
-            // Mesh colors must be cached at full alpha; fade through the CanvasGroup instead.
             Label.ForceMeshUpdate();
-            Shatter.Rebuild();
             PanelGroup.alpha = TextGroup.alpha = 0f;
             AnimatedRoot.localScale = Vector3.zero;
             IsEntering = true;
@@ -59,18 +57,12 @@ namespace TapTap
             transition?.Kill();
             IsEntering = false;
             AnimatedRoot.localScale = Vector3.one;
-            TextGroup.alpha = 1f;
-            Canvas canvas = Label.canvas != null ? Label.canvas.rootCanvas : null;
-            if (canvas != null)
-            {
-                RectTransform canvasRect = (RectTransform)canvas.transform;
-                Vector3 bottom = canvasRect.TransformPoint(new Vector3(0f, canvasRect.rect.yMin, 0f));
-                float localBottom = Label.transform.InverseTransformPoint(bottom).y;
-                Shatter.ShatterBelow(localBottom - 32f);
-            }
-            else Shatter.Shatter();
-            transition = Fade(PanelGroup, 0f, PanelFadeDuration).SetUpdate(true)
-                .OnComplete(() => transition = null);
+            Shatter?.StopAndRestore();
+            PanelGroup.alpha = TextGroup.alpha = 1f;
+            Sequence sequence = DOTween.Sequence().SetUpdate(true);
+            sequence.Join(Fade(PanelGroup, 0f, PanelFadeDuration));
+            sequence.Join(Fade(TextGroup, 0f, PanelFadeDuration));
+            transition = sequence.OnComplete(() => transition = null);
         }
 
         private static Tween Fade(CanvasGroup group, float alpha, float duration) =>

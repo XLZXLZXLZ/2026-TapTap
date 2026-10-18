@@ -1,0 +1,516 @@
+{
+  "world": "Assets/Runtime/WorldMaps/World_Character.asset",
+  "outline_source": "Design/LevelStructure/RobotConcept/robot-level-map-white-v2.svg",
+  "included_brush_counts": {
+    "Terrain": 3937,
+    "SquarePlatform": 66,
+    "Platform": 382
+  },
+  "source_placement_count": 4385,
+  "merged_wall_cell_count": 3432,
+  "wall_contour_area": 3432.0,
+  "wall_contour_count": 72,
+  "merged_platform_strip_count": 96,
+  "intentionally_omitted_counts": {
+    "Spikes": 44,
+    "Checkpoint": 20,
+    "Endpoint": 20,
+    "IndicatorLight": 11,
+    "Conveyor": 160,
+    "MechanismSwitch": 24,
+    "Piston": 34,
+    "Spring": 9
+  },
+  "coordinate_mapping": "One uniform XY projection for all levels; no per-room distortion. Geometry is clipped to the approved robot silhouette.",
+  "wall_style": "White boundaries and diagonal section hatching; thin platforms shown as solid white strips.",
+  "room_outline_width": 2.5,
+  "room_boundary_count": 20,
+  "visible_text_count": 0,
+  "levels": [
+    {
+      "sequence": 1,
+      "source": "Assets/Runtime/Levels/Level_Test_1.asset",
+      "origin": [
+        11,
+        113
+      ],
+      "counts": {
+        "Terrain": 199,
+        "SquarePlatform": 3,
+        "Platform": 30
+      },
+      "sha256": "32d637cc540721e12526ce0f6681359ac6d7907c4bd62c6fe1de5be4c95190bd"
+    },
+    {
+      "sequence": 2,
+      "source": "Assets/Runtime/Levels/Demo_GroundConnect 1.asset",
+      "origin": [
+        40,
+        95
+      ],
+      "counts": {
+        "Terrain": 158,
+        "Platform": 17
+      },
+      "sha256": "67dba022373bfe61f8b51acfd4df214c70ee7d3d8e03b50563a394aa041c8526"
+    },
+    {
+      "sequence": 3,
+      "source": "Assets/Runtime/Levels/Level_Test_2.asset",
+      "origin": [
+        11,
+        96
+      ],
+      "counts": {
+        "Terrain": 178,
+        "SquarePlatform": 15,
+        "Platform": 24
+      },
+      "sha256": "3996e52edcc46b0ec36fc1632eb5758a2cc0f3b191a966ea8f05bd41b184d1ab"
+    },
+    {
+      "sequence": 4,
+      "source": "Assets/Runtime/Levels/Demo_LowerHead.asset",
+      "origin": [
+        40,
+        122
+      ],
+      "counts": {
+        "Terrain": 214,
+        "Platform": 6
+      },
+      "sha256": "33236dd21ba7c6b35f10e789fc21a777f07ab9f76a542bb0d46330f7533c3870"
+    },
+    {
+      "sequence": 5,
+      "source": "Assets/Runtime/Levels/Level_Test_3.asset",
+      "origin": [
+        53,
+        106
+      ],
+      "counts": {
+        "Terrain": 250,
+        "Platform": 34
+      },
+      "sha256": "564f781bda3887394873df3121d59f1a3edbefbaf332b87673758f255faeb985"
+    },
+    {
+      "sequence": 6,
+      "source": "Assets/Runtime/Levels/Level_Test_4.asset",
+      "origin": [
+        54,
+        84
+      ],
+      "counts": {
+        "Terrain": 194,
+        "Platform": 29
+      },
+      "sha256": "d3ff1e346acf165d19c6daa920edb5e47b15be42992953b685caaa9959bed286"
+    },
+    {
+      "sequence": 7,
+      "source": "Assets/Runtime/Levels/Level_Test_5Maybe.asset",
+      "origin": [
+        22,
+        84
+      ],
+      "counts": {
+        "Terrain": 248,
+        "Platform": 31,
+        "SquarePlatform": 4
+      },
+      "sha256": "4f0d40fb4aca31971b8552538f950b62f2e3e79838079f6189e2e2a31edff62e"
+    },
+    {
+      "sequence": 8,
+      "source": "Assets/Runtime/Levels/Level_Test_7.asset",
+      "origin": [
+        57,
+        73
+      ],
+      "counts": {
+        "Terrain": 131,
+        "Platform": 14
+      },
+      "sha256": "bc6e125b523ae3a609152e67032eac46d45bdfc8f92b2403f0db88b69aa88775"
+    },
+    {
+      "sequence": 9,
+      "source": "Assets/Runtime/Levels/Demo_PickHead.asset",
+      "origin": [
+        22,
+        76
+      ],
+      "counts": {
+        "Terrain": 258,
+        "SquarePlatform": 10,
+        "Platform": 19
+      },
+      "sha256": "d5d865f44948aa90b300baadc3c7d8c044a370a831f30329d56957544e7c3651"
+    },
+    {
+      "sequence": 10,
+      "source": "Assets/Runtime/Levels/Level_Test_6.asset",
+      "origin": [
+        53,
+        48
+      ],
+      "counts": {
+        "Terrain": 165,
+        "SquarePlatform": 8,
+        "Platform": 32
+      },
+      "sha256": "8985b9800c1c3a03719a25ca77c8033b95ed6b03722bbc6a2608185b79f940de"
+    },
+    {
+      "sequence": 11,
+      "source": "Assets/Runtime/Levels/Demo_DownPlatformOfHead.asset",
+      "origin": [
+        5,
+        50
+      ],
+      "counts": {
+        "Terrain": 232,
+        "Platform": 16
+      },
+      "sha256": "f49d1514fb1e960725f61d616cf5a812e19fc5dbaf8f0e6333900af12a2467d0"
+    },
+    {
+      "sequence": 12,
+      "source": "Assets/Runtime/Levels/Demo_HighJump.asset",
+      "origin": [
+        25,
+        38
+      ],
+      "counts": {
+        "Terrain": 256,
+        "Platform": 15
+      },
+      "sha256": "5eded5d509afe6a413af211459351934139d7b80dbcf2b30caa0c7b57bf3ccc6"
+    },
+    {
+      "sequence": 13,
+      "source": "Assets/Runtime/Levels/Level_Test_10.asset",
+      "origin": [
+        40,
+        38
+      ],
+      "counts": {
+        "Terrain": 235,
+        "Platform": 25,
+        "SquarePlatform": 9
+      },
+      "sha256": "368c3fc6648f1e48f2ffcd2c2d4592c1c56d2c956270e43567d09ec5110f8e4f"
+    },
+    {
+      "sequence": 14,
+      "source": "Assets/Runtime/Levels/Demo_HeadSpring.asset",
+      "origin": [
+        10,
+        25
+      ],
+      "counts": {
+        "Terrain": 94,
+        "Platform": 7
+      },
+      "sha256": "b08b8796f5f49174faf7de09bb25192f4dc01fda2838fcefed9a80dd632f448c"
+    },
+    {
+      "sequence": 15,
+      "source": "Assets/Runtime/Levels/Level_Test_13.asset",
+      "origin": [
+        38,
+        26
+      ],
+      "counts": {
+        "Terrain": 157
+      },
+      "sha256": "f61dcbbb1f8f5d925af37e2508b25313497e1a6aa6c4959a5a5cd9832a5ebb51"
+    },
+    {
+      "sequence": 16,
+      "source": "Assets/Runtime/Levels/Level_New_17.asset",
+      "origin": [
+        11,
+        8
+      ],
+      "counts": {
+        "Terrain": 134,
+        "Platform": 8
+      },
+      "sha256": "19e7128dbdcbb78472e06829ad8599326f091afdd50acfd2c7d25eb05bda0d50"
+    },
+    {
+      "sequence": 17,
+      "source": "Assets/Runtime/Levels/Level_Test_14 1.asset",
+      "origin": [
+        69,
+        26
+      ],
+      "counts": {
+        "Terrain": 142,
+        "SquarePlatform": 5,
+        "Platform": 15
+      },
+      "sha256": "d5b4d3cdc79e6145c9206a52f52372d2c9b47c23730afb2d64e76ddbc4494e46"
+    },
+    {
+      "sequence": 18,
+      "source": "Assets/Runtime/Levels/Level_New_15.asset",
+      "origin": [
+        55,
+        8
+      ],
+      "counts": {
+        "Terrain": 321,
+        "SquarePlatform": 5,
+        "Platform": 29
+      },
+      "sha256": "816391be1040f6756e164731f8e9a58396fcc7446df6429af862718a98ec3b90"
+    },
+    {
+      "sequence": 19,
+      "source": "Assets/Runtime/Levels/Level_Test_16.asset",
+      "origin": [
+        25,
+        17
+      ],
+      "counts": {
+        "Terrain": 213,
+        "SquarePlatform": 5,
+        "Platform": 25
+      },
+      "sha256": "3e7a690e1da94f7dff3920bfed8eb03dc05cf4e1e3a67b77739404aa0d293083"
+    },
+    {
+      "sequence": 20,
+      "source": "Assets/Runtime/Levels/Level_New_18.asset",
+      "origin": [
+        26,
+        4
+      ],
+      "counts": {
+        "Terrain": 158,
+        "Platform": 6,
+        "SquarePlatform": 2
+      },
+      "sha256": "89a017bbcee832c5326ba86533cbd97979483de52a2ba4e6049215242cb67aa0"
+    }
+  ],
+  "base_artifact": "robot-blueprint-v6.svg",
+  "base_svg_sha256": "aadc62298982405f1787d95da740eaccf22f0a9f46850e07b91c1a90a28c157d",
+  "guidance": {
+    "base_svg": "robot-blueprint-v5.svg",
+    "reference_image": "codex-clipboard-33243fd8-61de-4b38-b2e5-634fb0a53b7e.png",
+    "reference_to_svg": {
+      "scale_x": 1.02,
+      "scale_y": 1.01968503937,
+      "offset_x": -15.5,
+      "offset_y": -17.5275590551
+    },
+    "color": "#FF633D",
+    "stroke_width": 1.9,
+    "head_length": 8,
+    "head_half_width": 4.2,
+    "arrows": [
+      {
+        "id": "guide-01",
+        "direction": "left",
+        "start": [
+          193.627,
+          249.124
+        ],
+        "end": [
+          147.549,
+          249.124
+        ],
+        "reference_bounds": [
+          135,
+          225,
+          182,
+          248
+        ]
+      },
+      {
+        "id": "guide-02",
+        "direction": "up",
+        "start": [
+          390.686,
+          382.988
+        ],
+        "end": [
+          390.686,
+          348.664
+        ],
+        "reference_bounds": [
+          372,
+          338,
+          394,
+          373
+        ]
+      },
+      {
+        "id": "guide-03",
+        "direction": "up",
+        "start": [
+          245.588,
+          528.131
+        ],
+        "end": [
+          245.588,
+          487.923
+        ],
+        "reference_bounds": [
+          224,
+          480,
+          246,
+          521
+        ]
+      },
+      {
+        "id": "guide-04",
+        "direction": "down",
+        "start": [
+          273.039,
+          580.108
+        ],
+        "end": [
+          273.039,
+          623.259
+        ],
+        "reference_bounds": [
+          252,
+          574,
+          274,
+          618
+        ]
+      },
+      {
+        "id": "guide-05",
+        "direction": "up",
+        "start": [
+          522.549,
+          618.355
+        ],
+        "end": [
+          522.549,
+          581.089
+        ],
+        "reference_bounds": [
+          506,
+          575,
+          529,
+          613
+        ]
+      },
+      {
+        "id": "guide-06",
+        "direction": "up",
+        "start": [
+          471.569,
+          768.402
+        ],
+        "end": [
+          471.569,
+          676.216
+        ],
+        "reference_bounds": [
+          455,
+          672,
+          476,
+          766
+        ]
+      },
+      {
+        "id": "guide-07",
+        "direction": "down",
+        "start": [
+          616.667,
+          873.336
+        ],
+        "end": [
+          616.667,
+          920.409
+        ],
+        "reference_bounds": [
+          602,
+          873,
+          625,
+          921
+        ]
+      },
+      {
+        "id": "guide-08",
+        "direction": "up",
+        "start": [
+          701.961,
+          915.506
+        ],
+        "end": [
+          701.961,
+          867.452
+        ],
+        "reference_bounds": [
+          689,
+          867,
+          712,
+          916
+        ]
+      },
+      {
+        "id": "guide-09",
+        "direction": "up",
+        "start": [
+          510.294,
+          1108.703
+        ],
+        "end": [
+          510.294,
+          1070.456
+        ],
+        "reference_bounds": [
+          494,
+          1074,
+          516,
+          1113
+        ]
+      },
+      {
+        "id": "guide-10",
+        "direction": "up",
+        "start": [
+          740.196,
+          1136.162
+        ],
+        "end": [
+          740.196,
+          1089.089
+        ],
+        "reference_bounds": [
+          728,
+          1093,
+          751,
+          1141
+        ]
+      },
+      {
+        "id": "guide-11",
+        "direction": "up",
+        "start": [
+          509.804,
+          1161.66
+        ],
+        "end": [
+          509.804,
+          1127.336
+        ],
+        "reference_bounds": [
+          493,
+          1132,
+          516,
+          1167
+        ]
+      }
+    ]
+  }
+}

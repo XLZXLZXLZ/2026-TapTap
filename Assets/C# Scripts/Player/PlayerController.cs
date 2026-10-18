@@ -86,6 +86,9 @@ namespace TapTap
         public Vector2 PresentationPosition => respawn != null && body != null
             ? respawn.FollowPosition(body) : body != null ? (Vector2)body.transform.position : (Vector2)transform.position;
         public bool HasMagneticConnection => phase != PlayerPhase.Detached;
+        public bool IsHangingFromHead => HasMagneticConnection && body != null && head != null
+            && !body.IsReturning && !head.IsReturning
+            && head.Motor.HasPartGroundSupport(body) && !body.Motor.HasPartGroundSupport(head);
         public bool IsDistantPull => phase == PlayerPhase.Pulling && distantPull;
         public bool GuideVisible => guideActive || clock < failedGuideUntil;
         public bool CanRecall => !body.IsReturning && !head.IsReturning

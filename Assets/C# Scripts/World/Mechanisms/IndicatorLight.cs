@@ -8,8 +8,9 @@ namespace TapTap
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class IndicatorLight : MonoBehaviour
     {
-        [Tooltip("场景首次开始时的状态。进入钥匙阶段后，重置会统一打开。")]
+        [Tooltip("场景首次开始时的状态。第三个触发点进入返程后统一淡入，不再由钥匙控制。")]
         public bool InitiallyOn;
+        [Min(0f)] public float StageFadeDuration = 0.65f;
         [Tooltip("梯形短边宽度（格），只能是 2 或 3。短边中心为旋转轴。")]
         [Range(2, 3)] public int ShortWidth = 2;
         [Min(3f)] public float LongWidth = 6f;
@@ -21,18 +22,33 @@ namespace TapTap
         private Mesh mesh;
         private MeshRenderer visual;
         private bool visualDirty;
+        private float opacity, targetOpacity;
+        private Color[] baseColors, fadedColors;
         public bool IsOn { get; private set; }
 
         private void OnEnable()
         {
             RebuildVisual();
-            SetOn(InitiallyOn || Application.isPlaying && GameStageProgression.HasProgressedIn(gameObject.scene));
-            if (Application.isPlaying) EventManager.Subscribe<LightsStateRequested>(ReceiveState);
+            ApplyStage(true);
+            if (Application.isPlaying)
+            {
+                EventManager.Subscribe<LightsStateRequested>(ReceiveState);
+                EventManager.Subscribe<GameStageChanged>(ReceiveStage);
+            }
         }
 
         private void OnDisable()
         {
             EventManager.Unsubscribe<LightsStateRequested>(ReceiveState);
+            EventManager.Unsubscribe<GameStageChanged>(ReceiveStage);
+        }
+
+        public void ApplyStage(bool immediate) => SetOn(InitiallyOn
+            || Application.isPlaying && GameStageProgression.HasProgressedIn(gameObject.scene), immediate);
+
+        private void ReceiveStage(GameStageChanged message)
+        {
+            if (message.Scene == gameObject.scene && message.Previous == GameStage.Outbound) SetOn(true, false);
         }
 
         private void ReceiveState(LightsStateRequested message)
@@ -40,12 +56,29 @@ namespace TapTap
             if (message.Scene == gameObject.scene) SetOn(message.IsOn);
         }
 
-        public void SetOn(bool value)
+        public void SetOn(bool value) => SetOn(value, true);
+
+        public void SetOn(bool value, bool immediate)
         {
             IsOn = value;
+            targetOpacity = value ? 1f : 0f;
+            if (immediate || !Application.isPlaying || StageFadeDuration <= 0f) opacity = targetOpacity;
             if (visual == null) visual = GetComponent<MeshRenderer>();
             // Authoring preview stays visible even when the game starts with this light off.
-            visual.enabled = !Application.isPlaying || value;
+            visual.enabled = !Application.isPlaying || value || opacity > 0f;
+            ApplyOpacity();
+        }
+
+        private void ApplyOpacity()
+        {
+            if (mesh == null || baseColors == null) return;
+            float alpha = Application.isPlaying ? opacity : 1f;
+            for (int i = 0; i < baseColors.Length; i++)
+            {
+                fadedColors[i] = baseColors[i];
+                fadedColors[i].a *= alpha;
+            }
+            mesh.colors = fadedColors;
         }
 
         public void RebuildVisual()
@@ -81,18 +114,27 @@ namespace TapTap
                 }
             }
             mesh.Clear(); mesh.vertices = vertices; mesh.colors = colors; mesh.triangles = triangles;
+            baseColors = colors;
+            fadedColors = new Color[colors.Length];
             mesh.RecalculateBounds();
             GetComponent<MeshFilter>().sharedMesh = mesh;
             visual = GetComponent<MeshRenderer>();
             if (visual.sharedMaterial == null) visual.sharedMaterial = Resources.Load<Material>("Materials/IndicatorVisual");
             // Draw above terrain (0/1) and mechanisms (2), below the player (10/12).
             visual.sortingOrder = 5;
+            ApplyOpacity();
         }
 
         private void OnValidate() => visualDirty = true;
 
         private void Update()
         {
+            if (Application.isPlaying && Time.timeScale > 0f && opacity != targetOpacity)
+            {
+                opacity = Mathf.MoveTowards(opacity, targetOpacity, StageFadeDuration > 0f ? Time.unscaledDeltaTime / StageFadeDuration : 1f);
+                ApplyOpacity();
+                visual.enabled = IsOn || opacity > 0f;
+            }
             if (!visualDirty) return;
             visualDirty = false;
             RebuildVisual();

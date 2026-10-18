@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: H01_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: 223c508b54a953dbbbdc66dfcd1bbc85, type: 3}
+    Subtitles:
+    - Start: 0.14
+      End: 3.6645
+      Chinese: "\u78C1\u5438\u62FC\u88C5\u673A\u5668\u4EBA\uFF0C\u968F\u76D2\u9644\u6709\u57FA\u7840\u73A9\u6CD5\u56FE\u518C\u3002"
+      English: Each magnetic robot comes with a booklet of basic activities.
+    - Start: 4.2456
+      End: 9.6526
+      Chinese: "\u4E0D\u5C11\u5B69\u5B50\u5728\u8BD5\u73A9\u65F6\u53D1\u73B0\u4E86\u65B0\u82B1\u6837\uFF0C\u56FE\u518C\u8FD8\u6765\u4E0D\u53CA\u6536\u5F55\u3002"
+      English: Children at our demonstration counter have already found ways to play
+        that haven't made it into the booklet yet.
+    - Start: 10.1937
+      End: 11.7755
+      Chinese: "\u5468\u672B\u6B22\u8FCE\u5230\u73A9\u5177\u4E13\u67DC\uFF0C\u4EB2\u81EA\u8BD5\u8BD5\u3002"
+      English: Come and try one this weekend.
+    - Start: 12.2164
+      End: 16.4619
+      Chinese: "\u67DC\u53F0\u65C1\u8FD8\u4F1A\u5C55\u51FA\u5F80\u671F\u8BD5\u73A9\u7167\u7247\uFF01"
+      English: Photos from earlier demonstrations will also be on display beside
+        the counter.
+    Chinese: 
+    English: 
+    GapAfter: 0

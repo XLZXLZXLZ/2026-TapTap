@@ -1,0 +1,4 @@
+PASS: Map only: 20 numbers, no captions/controls; 20 nested prefabs with fixed positions and supplied font; URP-only HDR outline/number materials and Bloom
+PASS: Both scene instances inherit the four room-owned flanges and preserve the 20 authored room bindings: World_Character_Select
+PASS: Both scene instances inherit the four room-owned flanges and preserve the 20 authored room bindings: World_Character_Play
+PASS: Actual HDR renders retain every visible polygon vertex within the viewport at landscape and portrait sizes

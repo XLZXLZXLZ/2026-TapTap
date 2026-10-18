@@ -260,6 +260,7 @@ namespace TapTap.Editor
             AnimatorState walk = EnsureState(machine, "Walk");
             idle.motion = AnimationClipAt(IdlePath);
             walk.motion = AnimationClipAt(WalkPath);
+            walk.speed = 1.3f;
             machine.defaultState = idle;
             // PlayerView crossfades both machines with the same starting phase.
             // Separate transitions would restart the upper gait when it reconnects.

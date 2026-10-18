@@ -1,0 +1,20 @@
+Unity 2022.3.62f3c1 — isolated Radio project
+
+Timeline regression:
+PASS: 18 real imported sequences, valid bilingual timelines, M07 five passes sharing final clip
+PASS: Half-open cue boundaries, silent gaps, language fallback, legacy data, malformed timeline rejection
+PASS: Actual audio sample clock, pause/resume, slow motion, timed gaps, adjacent cues, runtime language, mute/interruption
+PASS: M07 pass 1: 召回几套机器人套装……关键问题是……在送达之后……轻得孩子也能……
+PASS: M07 pass 2: 召回几套……关键问题……在送达之后……足够轻……
+PASS: M07 pass 3: 拿起……关键问题……跟着光走。
+PASS: M07 pass 4: 拿起钥匙。跟着光走。
+PASS: M07 pass 5: 拿起钥匙。跟着光走。
+PASS: Five real M07 passes completed with clean subtitle release
+
+Existing radio regression:
+PASS: Trigger, bilingual subtitles/fades, pause/Z, distance gain, interruption/reentry and sequential segments
+PASS: Independent one-shot stages, same-trigger return, late restoration, subtitle ownership and incomplete config rejection
+PASS: Clean fade-out; asset builder preserves configured assets; no production voice clips used
+
+PASS: 18 sequence assets / 22 playback segments / 59 bilingual subtitle cues.
+PASS: all 21 audio master SHA-256 hashes unchanged.

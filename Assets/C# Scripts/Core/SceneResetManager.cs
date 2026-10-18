@@ -16,7 +16,7 @@ namespace TapTap
 
         private void Update()
         {
-            // Key progression is session-persistent; disable only the R shortcut after pickup.
+            // The third departure trigger starts the session-persistent return stage and disables only R.
             if (!PauseMenu.BlocksInput && !GameStageProgression.HasProgressedIn(SceneManager.GetActiveScene())
                 && Input.GetKeyDown(KeyCode.R)) ResetCurrentScene();
         }

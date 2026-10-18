@@ -72,8 +72,7 @@ namespace TapTap.Editor
                     Object.DestroyImmediate(view.gameObject);
                 }
                 Pass("All four TMP prompts and key sprites rendered at 1080p; Ctrl prompt also rendered at 720p and ultrawide");
-                VerifyFallTrajectory(preview, 1920, 1080);
-                VerifyFallTrajectory(preview, 1080, 1920);
+                VerifyFade(preview);
                 Object.DestroyImmediate(preview.gameObject);
                 SessionState.SetBool(Pending, true);
                 EditorApplication.isPlaying = true;
@@ -173,63 +172,24 @@ namespace TapTap.Editor
             Pass("Body overlap, fast swept crossing, rotated/scaled trigger accuracy");
         }
 
-        private static void VerifyFallTrajectory(TutorialPromptPresenter root, int width, int height)
+        private static void VerifyFade(TutorialPromptPresenter root)
         {
-            var cameraRoot = new GameObject("Fall Boundary Camera", typeof(Camera));
-            Camera camera = cameraRoot.GetComponent<Camera>();
-            camera.enabled = false;
-            var target = new RenderTexture(width, height, 24);
-            target.Create(); camera.targetTexture = target;
-            Canvas canvas = root.GetComponent<Canvas>();
-            CanvasScaler scaler = root.GetComponent<CanvasScaler>();
-            scaler.enabled = false; canvas.renderMode = RenderMode.ScreenSpaceCamera;
-            canvas.worldCamera = camera; canvas.planeDistance = 1f;
-            canvas.scaleFactor = Mathf.Min(width / 1920f, height / 1080f);
             TutorialPromptView view = Object.Instantiate(Prompt(0), root.transform, false);
-            RectTransform rect = (RectTransform)view.transform;
-            rect.anchorMin = rect.anchorMax = root.ScreenAnchor;
-            rect.anchoredPosition = Vector2.zero;
             Canvas.ForceUpdateCanvases();
             view.Label.ForceMeshUpdate(true, true);
-            TMP_CharacterInfo[] glyphs = view.Label.textInfo.characterInfo
-                .Take(view.Label.textInfo.characterCount).Where(glyph => glyph.isVisible).ToArray();
-            float[] originalCenters = glyphs.Select(glyph =>
-                view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices
-                    .Skip(glyph.vertexIndex).Take(4).Average(vertex => vertex.y)).ToArray();
-            RectTransform canvasRect = (RectTransform)canvas.transform;
-            float bottom = view.Label.transform.InverseTransformPoint(canvasRect.TransformPoint(
-                new Vector3(0f, canvasRect.rect.yMin, 0f))).y;
+            Vector3[] original = view.Label.textInfo.meshInfo[0].vertices.ToArray();
             view.Exit();
-            MethodInfo render = view.Shatter.GetType().GetMethod("RenderFrame", BindingFlags.NonPublic | BindingFlags.Instance);
-            render.Invoke(view.Shatter, new object[] { 0.05f });
-            for (int i = 0; i < glyphs.Length; i++)
-            {
-                TMP_CharacterInfo glyph = glyphs[i];
-                float center = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices
-                    .Skip(glyph.vertexIndex).Take(4).Average(vertex => vertex.y);
-                Check(center > originalCenters[i], "Glyph did not toss upward before falling");
-            }
-            render.Invoke(view.Shatter, new object[] { 0.35f });
-            foreach (TMP_CharacterInfo glyph in glyphs)
-            {
-                TMP_MeshInfo mesh = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex];
-                Check(mesh.colors32[glyph.vertexIndex].a == 255, "Falling glyph faded before leaving the screen");
-                Check(mesh.vertices[glyph.vertexIndex].y < originalCenters[Array.IndexOf(glyphs, glyph)] - 100f,
-                    "Fall is not fast enough");
-            }
-            render.Invoke(view.Shatter, new object[] { view.Shatter.TotalDuration });
-            foreach (TMP_CharacterInfo glyph in glyphs)
-                for (int corner = 0; corner < 4; corner++)
-                    Check(view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices[glyph.vertexIndex + corner].y < bottom,
-                        "Prompt ends before all glyphs leave the screen");
-            if (height == 1080) Check(view.Shatter.TotalDuration < 0.85f, "1080p exit is too slow");
-            Pass("Upward toss, fast opaque fall and all glyphs below screen before completion: " + width + "x" + height
-                + ", duration=" + view.Shatter.TotalDuration.ToString("F3"));
+            Tween fade = (Tween)view.GetType().GetField("transition", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(view);
+            fade.Goto(view.PanelFadeDuration * 0.5f, false);
+            Check(view.PanelGroup.alpha > 0f && view.PanelGroup.alpha < 1f, "Panel does not fade");
+            Check(Mathf.Abs(view.PanelGroup.alpha - view.TextGroup.alpha) < 0.0001f, "Text and panel do not fade together");
+            Check(view.Shatter == null || !view.Shatter.IsPlaying, "Exit still plays the shatter effect");
+            Check(original.SequenceEqual(view.Label.textInfo.meshInfo[0].vertices), "Exit moves glyphs");
+            fade.Complete();
+            Check(view.ExitFinished && view.PanelGroup.alpha == 0f && view.TextGroup.alpha == 0f, "Fade does not finish cleanly");
             Object.DestroyImmediate(view.gameObject);
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.worldCamera = null; scaler.enabled = true;
-            target.Release(); Object.DestroyImmediate(target); Object.DestroyImmediate(cameraRoot);
+            Pass("Text, key sprite and panel fade together without glyph motion");
         }
-
         private static void Tick()
         {
             try
@@ -255,7 +215,7 @@ namespace TapTap.Editor
                     since = EditorApplication.timeSinceStartup;
                     stage = 2;
                 }
-                else if (stage == 2 && view != null && view.Shatter.IsPlaying)
+                else if (stage == 2 && view != null && view.IsExiting)
                 {
                     if (!buffered)
                     {
@@ -263,14 +223,13 @@ namespace TapTap.Editor
                         presenter.SubmitInput(TutorialPromptKey.Space, false, false, true);
                         buffered = true;
                     }
-                    if (EditorApplication.timeSinceStartup < since + 0.22) return;
                     int index = Array.FindIndex(view.Label.textInfo.characterInfo, c => c.isVisible);
                     TMP_CharacterInfo glyph = view.Label.textInfo.characterInfo[index];
                     Vector3 vertex = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices[glyph.vertexIndex];
-                    Check((vertex - intactVertex).sqrMagnitude > 1f, "Shatter did not move glyph mesh");
-                    Check(view.TextGroup.alpha > 0.99f, "Root fade hides the falling text");
-                    Capture(presenter, 1920, 1080, "05_Shatter");
-                    Pass("Real TMP glyph mesh falls while panel fades; next input buffered during exit");
+                    Check((vertex - intactVertex).sqrMagnitude < 0.001f, "Fade moved glyph mesh");
+                    Check(Mathf.Abs(view.TextGroup.alpha - view.PanelGroup.alpha) < 0.0001f, "Text and panel fade are not synchronized");
+                    Capture(presenter, 1920, 1080, "05_Fade");
+                    Pass("Text and panel fade together; next input buffered during exit");
                     stage = 3;
                 }
                 else if (stage == 3 && view != null && view.Prefix == "再按 ") stage = 4;
@@ -286,7 +245,7 @@ namespace TapTap.Editor
                 }
                 else if (stage == 5 && EditorApplication.timeSinceStartup > since + 0.45)
                 {
-                    Check(view != null && view.Key == TutorialPromptKey.Z && !view.Shatter.IsPlaying, "Blocked input completed Z prompt");
+                    Check(view != null && view.Key == TutorialPromptKey.Z && !view.IsExiting, "Blocked input completed Z prompt");
                     GameplayActionLocks.Release(presenter);
                     presenter.SubmitInput(TutorialPromptKey.Z, true, true, false);
                     rewind = RewindManager.Current != null ? RewindManager.Current
@@ -298,7 +257,7 @@ namespace TapTap.Editor
                     presenter.SubmitInput(TutorialPromptKey.Z, false, false, true);
                     stage = 6;
                 }
-                else if (stage == 6 && view != null && view.Shatter.IsPlaying)
+                else if (stage == 6 && view != null && view.IsExiting)
                 {
                     rewind.EndRewind();
                     Pass("Input lock ignores press/release; Z release completes even during actual rewind");
@@ -372,22 +331,12 @@ namespace TapTap.Editor
             canvas.worldCamera = camera; canvas.planeDistance = 1f;
             canvas.scaleFactor = Mathf.Min(width / 1920f, height / 1080f);
             Canvas.ForceUpdateCanvases();
-            // Switching an overlay Canvas to a preview camera rebuilds TMP geometry.
-            // Reapply the live effect after that preview-only layout change, before rendering.
-            foreach (TutorialPromptView view in root.GetComponentsInChildren<TutorialPromptView>())
-                if (view.Shatter.IsPlaying)
-                {
-                    Type effect = view.Shatter.GetType();
-                    float elapsed = (float)effect.GetField("elapsed", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(view.Shatter);
-                    effect.GetMethod("RenderFrame", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .Invoke(view.Shatter, new object[] { elapsed });
-                }
             camera.Render();
             RenderTexture previous = RenderTexture.active; RenderTexture.active = target;
             var image = new Texture2D(width, height, TextureFormat.RGB24, false);
             image.ReadPixels(new Rect(0, 0, width, height), 0, 0); image.Apply();
             File.WriteAllBytes(Output + "/" + name + ".png", image.EncodeToPNG());
-            if (name != "05_Shatter")
+            if (name != "05_Fade")
             {
                 float scale = Mathf.Min(width / 1920f, height / 1080f);
                 int centerY = Mathf.RoundToInt(height * root.ScreenAnchor.y);

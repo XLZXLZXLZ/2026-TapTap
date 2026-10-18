@@ -851,15 +851,15 @@ MonoBehaviour:
     Happy: {fileID: 8202534488139514555}
     Sad: {fileID: 8899504238787527077}
     NormalScale: {x: 1, y: 1.0000001, z: 1.0000001}
-    HappyScale: {x: 1, y: 1.0000001, z: 1.0000001}
-    SadScale: {x: 1, y: 1.0000001, z: 1.0000001}
+    HappyScale: {x: 1.15, y: 1.1500001, z: 1.0000001}
+    SadScale: {x: 1.15, y: 1.1500001, z: 1.0000001}
   upperEyes:
     Normal: {fileID: 4939798253204452321}
     Happy: {fileID: 7582002627679538762}
     Sad: {fileID: 4330948565282623377}
     NormalScale: {x: 1, y: 1.0000001, z: 1.0000001}
-    HappyScale: {x: 1, y: 1.0000001, z: 1.0000001}
-    SadScale: {x: 1, y: 1.0000001, z: 1.0000001}
+    HappyScale: {x: 1.15, y: 1.1500001, z: 1.0000001}
+    SadScale: {x: 1.15, y: 1.1500001, z: 1.0000001}
   transitionDuration: 0.12
   happyHoldDuration: 0.5
   sadHoldDuration: 0.5

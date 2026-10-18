@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M01_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: f1dace080fbb5c5e85773c135fb60d14, type: 3}
+    Subtitles:
+    - Start: 0.14
+      End: 2.3018
+      Chinese: "\u65B0\u6B3E\u78C1\u529B\u673A\u5668\u4EBA\u4E0A\u5E02\u4E86\uFF01"
+      English: The new magnetic robots are here!
+    - Start: 2.6423
+      End: 7.3463
+      Chinese: "\u5934\u90E8\u548C\u673A\u8EAB\u91C7\u7528\u78C1\u5438\u8FDE\u63A5\uFF0C\u62C6\u88C5\u4E0D\u7528\u5DE5\u5177\u3002"
+      English: The head and body connect magnetically, with no tools needed for assembly.
+    - Start: 7.8069
+      End: 12.3508
+      Chinese: "\u6B22\u8FCE\u5230\u73A9\u5177\u4E13\u67DC\u4EB2\u624B\u8BD5\u8BD5\uFF0C\u6311\u4E00\u4E2A\u559C\u6B22\u7684\u5E26\u56DE\u5BB6\u3002"
+      English: Visit the toy counter, try one out, and pick your favorite to take
+        home!
+    - Start: 12.8915
+      End: 14.9332
+      Chinese: "\u611F\u8C22\u6536\u542C\uFF0C\u6211\u4EEC\u4E0B\u6B21\u518D\u89C1\uFF01"
+      English: Thanks for listening! Take care!
+    Chinese: 
+    English: 
+    GapAfter: 0

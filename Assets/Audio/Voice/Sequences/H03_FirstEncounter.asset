@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: H03_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: 36e0db9a8f0f5407be2bca5b64d1435d, type: 3}
+    Subtitles:
+    - Start: 0.1051
+      End: 4.9093
+      Chinese: "拆下的头部请放入周转盘，禁止抛掷。"
+      English: "Detached heads must be placed in the parts tray, not thrown."
+    - Start: 5.5301
+      End: 11.2151
+      Chinese: "本周已有数台样机被落下的头部击中，跌下承载平台。"
+      English: "Several units struck by falling heads have dropped off their support platforms this week."
+    - Start: 11.8159
+      End: 17.2407
+      Chinese: "受损外壳请单独送检，不要混回待包装区。"
+      English: "Send damaged casings for inspection rather than returning them to the packing area."
+    - Start: 17.5411
+      End: 21.4445
+      Chinese: "损失将计入对应班组。"
+      English: "The resulting losses will be charged to the responsible shift."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M07_ReturnJourney
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: ebec1dba30da5a6897b6a4e14850b923, type: 3}
+    Subtitles:
+    - Start: 0.35
+      End: 8.7616
+      Chinese: "\u2026\u2026\u53EC\u56DE\u51E0\u5957\u673A\u5668\u4EBA\u5957\u88C5\u2026\u2026\u5173\u952E\u95EE\u9898\u662F\u2026\u2026\u5728\u9001\u8FBE\u4E4B\u540E\u2026\u2026\u8F7B\u5F97\u5B69\u5B50\u4E5F\u80FD\u2026\u2026"
+      English: "Take back several robot sets \u2026 the key issue is \u2026 follow
+        the delivery \u2026 light enough for children."
+    Chinese: 
+    English: 
+    GapAfter: 1
+  - Clip: {fileID: 8300000, guid: 330697d2f1935775a22d2d3f08d3ba6f, type: 3}
+    Subtitles:
+    - Start: 0.38
+      End: 7.0593
+      Chinese: "\u53EC\u56DE\u51E0\u5957\u2026\u2026\u5173\u952E\u95EE\u9898\u2026\u2026\u5728\u9001\u8FBE\u4E4B\u540E\u2026\u2026\u8DB3\u591F\u8F7B\u2026\u2026"
+      English: "Take back several \u2026 the key issue \u2026 follow the delivery
+        \u2026 light enough."
+    Chinese: 
+    English: 
+    GapAfter: 1
+  - Clip: {fileID: 8300000, guid: b1a4de53a6d152caac3bffc2ba8e8881, type: 3}
+    Subtitles:
+    - Start: 0.34
+      End: 5.1874
+      Chinese: "\u62FF\u8D77\u2026\u2026\u5173\u952E\u95EE\u9898\u2026\u2026\u8DDF\u7740\u5149\u8D70\u3002"
+      English: "Take \u2026 the key issue \u2026 follow the \u2026 light."
+    Chinese: 
+    English: 
+    GapAfter: 1
+  - Clip: {fileID: 8300000, guid: 1a30a98372d45605a2699f1a6cb16644, type: 3}
+    Subtitles:
+    - Start: 0.28
+      End: 3.8068
+      Chinese: "\u62FF\u8D77\u94A5\u5319\u3002\u8DDF\u7740\u5149\u8D70\u3002"
+      English: "Take \u2026 the key. \u2026 Follow the \u2026 light."
+    Chinese: 
+    English: 
+    GapAfter: 1
+  - Clip: {fileID: 8300000, guid: 1a30a98372d45605a2699f1a6cb16644, type: 3}
+    Subtitles:
+    - Start: 0.28
+      End: 3.8068
+      Chinese: "\u62FF\u8D77\u94A5\u5319\u3002\u8DDF\u7740\u5149\u8D70\u3002"
+      English: "Take \u2026 the key. \u2026 Follow the \u2026 light."
+    Chinese: 
+    English: 
+    GapAfter: 0

@@ -51,7 +51,7 @@ namespace TapTap.Editor
                 Check(piece.Sequence>=1 && piece.Sequence<=20,"Extra region in screen");
                 Check(piece.Number.text==piece.Sequence.ToString("00"),"Number mismatch");
                 var rect=(RectTransform)piece.transform;
-                Vector2 label=rect.anchoredPosition+piece.Number.rectTransform.anchoredPosition+new Vector2(11,4);
+                Vector2 label=rect.anchoredPosition+piece.Number.rectTransform.anchoredPosition+new Vector2(5,4);
                 Check(Vector2.Distance(label,piece.DiagramLabelPosition)<0.001f,"Diagram number position was lost: "+piece.Sequence);
                 Check(piece.Outline.ContainsLocalPoint(piece.Number.rectTransform.anchoredPosition),"Number outside cleaned region: "+piece.Sequence);
                 Check(piece.Outline.material.shader.name=="TapTap/UI/Neon Level Outline","Wrong glow material");
@@ -90,6 +90,47 @@ namespace TapTap.Editor
                 deadline=EditorApplication.timeSinceStartup+180d;
                 EditorApplication.update-=Tick; EditorApplication.update+=Tick;
                 EditorApplication.EnterPlaymode();
+            }
+            catch (Exception exception) { Fail(exception); }
+        }
+
+        public static void RunCornerFlangesBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("Run validation in an isolated batch project.");
+            try
+            {
+                Directory.CreateDirectory(Output);
+                File.WriteAllText(Path.Combine(Output,"results.txt"),"");
+                ValidateAssets();
+                var map=AssetDatabase.LoadAssetAtPath<WorldMapDefinition>("Assets/Runtime/WorldMaps/World_Character.asset");
+                int[] numbers={8,9,10,11};
+                Vector2[] centers={new Vector2(88,76),new Vector2(8,76),new Vector2(88,63),new Vector2(8,63)};
+                foreach (string path in new[]{map.SelectionScenePath,map.PlayScenePath})
+                {
+                    var scene=EditorSceneManager.OpenScene(path,OpenSceneMode.Single);
+                    var screen=scene.GetRootGameObjects().SelectMany(root=>root.GetComponentsInChildren<NeonWorldMapScreen>(true)).Single();
+                    screen.Initialize(false);
+                    Check(screen.gameObject.activeInHierarchy && screen.Canvas.enabled && screen.UICamera.enabled,"Authored inactive screen did not become visible when prepared");
+                    Check(screen.MapSize==new Vector2(86,127),"Camera framing does not include the restored flanges");
+                    for (int i=0;i<numbers.Length;i++)
+                    {
+                        NeonLevelPiece owner=screen.Pieces.Single(piece=>piece.Sequence==numbers[i]);
+                        Vector3 point=screen.Board.TransformPoint(centers[i]-new Vector2(5,4));
+                        foreach (NeonLevelPiece piece in screen.Pieces)
+                        {
+                            Vector2 local=piece.Outline.rectTransform.InverseTransformPoint(point);
+                            Check(piece.Outline.ContainsLocalPoint(local)==(piece==owner),"Missing or overlapping corner flange in room "+numbers[i]+": "+path);
+                        }
+                    }
+                    Pass("Both scene instances inherit the four room-owned flanges and preserve the 20 authored room bindings: "+scene.name);
+                    if (path==map.SelectionScenePath)
+                    {
+                        Capture(screen,"selection-corner-flanges.png");
+                        Capture(screen,"selection-corner-flanges-portrait.png",400,1000);
+                    }
+                }
+                Pass("Actual HDR renders retain every visible polygon vertex within the viewport at landscape and portrait sizes");
+                EditorApplication.Exit(0);
             }
             catch (Exception exception) { Fail(exception); }
         }
@@ -277,13 +318,19 @@ namespace TapTap.Editor
             catch (Exception exception) { Fail(exception); }
         }
 
-        private static byte[] Capture(NeonWorldMapScreen screen,string name)
+        private static byte[] Capture(NeonWorldMapScreen screen,string name,int width=1600,int height=1000)
         {
             Camera camera=screen.UICamera;
             RenderTexture previous=camera.targetTexture;
-            var target=new RenderTexture(1600,1000,24,RenderTextureFormat.DefaultHDR);
+            var target=new RenderTexture(width,height,24,RenderTextureFormat.DefaultHDR);
             target.Create(); camera.targetTexture=target;
             Canvas.ForceUpdateCanvases(); screen.SendMessage("FitBoard"); Canvas.ForceUpdateCanvases();
+            foreach (NeonLevelPiece piece in screen.Pieces.Where(piece=>piece.gameObject.activeInHierarchy))
+                foreach (Vector2 vertex in piece.Outline.Polygon)
+                {
+                    Vector3 point=camera.WorldToViewportPoint(piece.Outline.rectTransform.TransformPoint(vertex));
+                    Check(point.x>=0f && point.x<=1f && point.y>=0f && point.y<=1f,"Map polygon is clipped: "+piece.Sequence+" at "+width+"x"+height);
+                }
             camera.Render();
             RenderTexture active=RenderTexture.active; RenderTexture.active=target;
             var readback=new Texture2D(target.width,target.height,TextureFormat.RGBAFloat,false,true);

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: M07_FirstEncounter
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: 174602e8477056d8909be312705a94b3, type: 3}
+    Subtitles:
+    - Start: 0.14
+      End: 6.1468
+      Chinese: "工厂因便携收纳盒破损报告，将召回部分机器人套装。"
+      English: "The factory will take back several robot sets after reports of broken carrying cases."
+    - Start: 6.8879
+      End: 10.3117
+      Chinese: "检查人员称，主要问题是提手强度。"
+      English: "Inspectors say the key issue is handle strength."
+    - Start: 10.9727
+      End: 18.5013
+      Chinese: "替换收纳盒送达后将继续测试，据称新盒体足够轻巧，儿童也能携带。"
+      English: "Further tests will follow the delivery of replacement cases, described as light enough for children to carry."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

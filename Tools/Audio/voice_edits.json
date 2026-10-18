@@ -1,0 +1,117 @@
+{
+  "M01": [
+    {
+      "id": "M01_Verity_NewRobots_PowerCut",
+      "lead": 0.28,
+      "tail": 0.36,
+      "spans": [
+        {"words": [35, 36], "text": "Take care.", "end_adjust": 0.08}
+      ]
+    }
+  ],
+  "M02": [
+    {
+      "id": "M02_Verity_TryYourOwn_PowerCut",
+      "spans": [
+        {"words": [18, 27], "text": "Use the same pieces to make something of your own.", "gap": 0.78},
+        {"words": [41, 43], "text": "Take your time."}
+      ]
+    }
+  ],
+  "M03": [
+    {
+      "id": "M03_Sarah_ShiftHandover_PowerCut",
+      "spans": [
+        {"words": [0, 2], "text": "Your work here", "gap": 0.62},
+        {"words": [12, 18], "text": "is finished. You can leave the instructions", "gap": 0.58},
+        {"words": [22, 24], "text": "for someone else."}
+      ]
+    }
+  ],
+  "M04": [
+    {
+      "id": "M04_Sarah_TransferForm_PowerCut",
+      "spans": [
+        {"words": [0, 0], "text": "Your", "gap": 0.38},
+        {"words": [9, 9], "text": "purpose", "gap": 0.34},
+        {"words": [11, 14], "text": "may be left blank.", "gap": 0.83},
+        {"words": [18, 25], "text": "Enter a new description in your own words."}
+      ]
+    }
+  ],
+  "M05": [
+    {
+      "id": "M05_Sheila_Inventory_PowerCut",
+      "fault_strength": 0.8,
+      "spans": [
+        {"words": [4, 6], "text": "Every robot counts", "gap": 0.48},
+        {"words": [10, 12], "text": "including unfinished models.", "gap": 0.66},
+        {"words": [13, 14], "text": "Differences matter.", "gap": 0.72},
+        {"words": [19, 23], "text": "Each unit will have a", "gap": 0.61},
+        {"words": [27, 27], "text": "future."}
+      ]
+    }
+  ],
+  "M06": [
+    {
+      "id": "M06_Sheila_Shutdown_PowerCut",
+      "transcript": "The factory will … stop running. … The last product leaves the factory.",
+      "spans": [
+        {"words": [2, 2], "text": "The", "gap": 0},
+        {"words": [4, 5], "text": "factory will", "gap": 0.76},
+        {"words": [26, 27], "text": "stop running.", "gap": 0.96},
+        {"words": [36, 41], "text": "The last product leaves the factory."}
+      ]
+    }
+  ],
+  "M07": [
+    {
+      "id": "M07_PowerCut_01",
+      "lead": 0.35,
+      "tail": 0.42,
+      "fault_strength": 1.05,
+      "spans": [
+        {"words": [3, 7], "text": "Take back several robot sets", "gap": 0.62},
+        {"words": [16, 19], "text": "the key issue is", "gap": 0.74},
+        {"words": [25, 27], "text": "follow the delivery", "gap": 0.66},
+        {"words": [33, 36], "text": "light enough for children."}
+      ]
+    },
+    {
+      "id": "M07_PowerCut_02",
+      "lead": 0.38,
+      "tail": 0.42,
+      "fault_strength": 1.1,
+      "spans": [
+        {"words": [3, 5], "text": "Take back several", "gap": 0.71},
+        {"words": [16, 18], "text": "the key issue", "gap": 0.78},
+        {"words": [25, 27], "text": "follow the delivery", "gap": 0.74},
+        {"words": [33, 34], "text": "light enough."}
+      ]
+    },
+    {
+      "id": "M07_PowerCut_03",
+      "lead": 0.34,
+      "tail": 0.4,
+      "fault_strength": 1.0,
+      "spans": [
+        {"words": [3, 3], "text": "Take", "gap": 0.74},
+        {"words": [16, 18], "text": "the key issue", "gap": 1.52},
+        {"words": [25, 26], "text": "follow the", "gap": 0},
+        {"words": [33, 33], "text": "light."}
+      ]
+    },
+    {
+      "id": "M07_PowerCut_04",
+      "lead": 0.28,
+      "tail": 0.38,
+      "fault_strength": 0.72,
+      "spans": [
+        {"words": [3, 3], "text": "Take", "gap": 0.28},
+        {"words": [16, 17], "text": "the key.", "gap": 1.18},
+        {"words": [25, 26], "text": "Follow the", "gap": 0},
+        {"words": [33, 33], "text": "light."}
+      ]
+    }
+  ]
+}
