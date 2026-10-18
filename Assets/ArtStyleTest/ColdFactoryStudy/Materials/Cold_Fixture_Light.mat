@@ -8,7 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Cold_Fixture_Light
-  m_Shader: {fileID: 4800000, guid: 79f0c2538e81d534a9b1435c30fe9e0c, type: 3}
+  m_Shader: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -17,11 +19,12 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _Color: {r: 0.9, g: 0.96, b: 1, a: 0.45}
+    - _Color: {r: 0.19045925, g: 0.29665202, b: 0.3773585, a: 1}
   m_BuildTextureStacks: []
