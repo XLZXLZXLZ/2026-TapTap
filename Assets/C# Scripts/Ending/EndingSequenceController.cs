@@ -83,6 +83,8 @@ namespace TapTap
 
         private IEnumerator Intro()
         {
+            if (IntroWaypoints.Length > 0 && IntroWaypoints[0] != null)
+                Player.PlaceAt(IntroWaypoints[0].position);
             Player.SnapToGround(GroundLayers);
             yield return Wait(IntroHold);
             foreach (Transform waypoint in IntroWaypoints)
@@ -160,12 +162,13 @@ namespace TapTap
         [ContextMenu("归还操作权")]
         public void ReturnControl()
         {
-            if (!Application.isPlaying || !isActiveAndEnabled || Player == null || State == EndingState.Transition) return;
+            if (!Application.isPlaying || !isActiveAndEnabled || Player == null
+                || State == EndingState.Transition || State == EndingState.ReturningControl) return;
             StopFlow();
             VoicePlayer voice = subscribedVoice;
             UnsubscribeVoice();
             if (voice != null && voice.IsPlaying) { voice.Stop(); Radio.ResetTrigger(); }
-            Player.StopMotion();
+            AcquireControl();
             State = EndingState.ReturningControl;
             flow = StartCoroutine(RestoreControl());
         }
@@ -199,12 +202,12 @@ namespace TapTap
         private IEnumerator Leave()
         {
             yield return Wait(AfterVoiceHold);
+            flow = null;
             if (!EndingWhiteFade.TryLoad(MainMenuScenePath, FadeToWhiteDuration, WhiteHoldDuration, RevealMainMenuDuration))
             {
                 State = EndingState.Broadcast;
                 ReturnControl();
             }
-            flow = null;
         }
 
         // Called by the persistent cover if loading fails after the fade has started.

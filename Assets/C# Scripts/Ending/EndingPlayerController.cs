@@ -83,6 +83,17 @@ namespace TapTap
             SetWalking(false);
         }
 
+        public void PlaceAt(Vector3 position)
+        {
+            if (motor == null) motor = GetComponent<CharacterController>();
+            bool wasEnabled = motor.enabled;
+            motor.enabled = false;
+            transform.position = position;
+            motor.enabled = wasEnabled;
+            verticalSpeed = 0f;
+            StopMotion();
+        }
+
         public void SnapToGround(LayerMask groundLayers, float searchHeight = 3f)
         {
             if (motor == null) motor = GetComponent<CharacterController>();
@@ -93,7 +104,9 @@ namespace TapTap
             Vector3 ground = transform.position;
             foreach (RaycastHit hit in hits)
             {
-                if (hit.collider.transform.IsChildOf(transform) || hit.distance >= distance) continue;
+                // Start inside the fortress: a downward ray must not snap us onto its roof.
+                if (hit.collider.transform.IsChildOf(transform) || hit.distance >= distance
+                    || hit.point.y > transform.position.y + motor.stepOffset) continue;
                 distance = hit.distance;
                 ground = hit.point;
             }
@@ -120,7 +133,8 @@ namespace TapTap
                 float next = Mathf.Clamp(coordinate + horizontal * MoveSpeed * dt,
                     Mathf.Min(WalkLimits.x, WalkLimits.y), Mathf.Max(WalkLimits.x, WalkLimits.y));
                 Vector3 target = lineOrigin + lineRight * next;
-                velocity = Vector3.ProjectOnPlane(target - transform.position, Vector3.up) / Mathf.Max(dt, 0.0001f);
+                velocity = blocked ? Vector3.zero
+                    : Vector3.ProjectOnPlane(target - transform.position, Vector3.up) / Mathf.Max(dt, 0.0001f);
             }
             if (motor.isGrounded && verticalSpeed < 0f) verticalSpeed = -2f;
             verticalSpeed = Mathf.Max(verticalSpeed - Gravity * dt, -30f);
@@ -166,5 +180,14 @@ namespace TapTap
         }
 
         private void OnDisable() { HasControl = false; StopMotion(); }
+
+        private void OnDrawGizmosSelected()
+        {
+            Vector3 origin = WalkLine != null ? WalkLine.position : transform.position;
+            Vector3 right = ViewCamera != null
+                ? Vector3.ProjectOnPlane(ViewCamera.transform.right, Vector3.up).normalized : Vector3.right;
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawLine(origin + right * WalkLimits.x, origin + right * WalkLimits.y);
+        }
     }
 }

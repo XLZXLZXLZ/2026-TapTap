@@ -4,6 +4,15 @@
 
 公共配置：`Profiles/DefaultScreenFilters.asset`。初始为原画，各滤镜已有可用参数；开启对应项即可生效。
 `GameplayRuntime.prefab` 的主相机引用这份资源，测试场景和大地图共用配置，无需重新生成关卡。
+`MainMenu.unity` 和 `Ending.unity` 的主相机 `Camera` 也引用同一份配置，调整后一起生效。
+
+主菜单／结局的接入方式：
+1. 选中带 `MainCamera` 标签、实际启用的 `Camera`，添加 **Rendering → Screen Filter Camera** 组件。
+2. 将 `Profiles/DefaultScreenFilters.asset` 拖到组件的 **Profile** 字段。
+3. 在相机使用的 Renderer 资源中添加 **Screen Filters** Renderer Feature。这两个场景使用
+   `URP-HighFidelity-Renderer.asset`（Renderer 索引 1），已在原有 SSAO 和雾效之后补上。
+   只挂相机组件而没有 Renderer Feature，滤镜不会执行。
+4. 在 Game 视图或 Play 模式查看效果；Scene 视图不显示此滤镜。Screen Space Overlay 的 UI 保持清晰。
 
 ## 调整和预览
 
