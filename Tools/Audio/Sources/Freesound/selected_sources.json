@@ -1,0 +1,102 @@
+[
+  {
+    "id": 321482,
+    "title": "Metal Hit 2",
+    "author": "dslrguide",
+    "page": "https://freesound.org/people/dslrguide/sounds/321482/",
+    "url": "https://cdn.freesound.org/previews/321/321482_5485024-hq.mp3",
+    "file": "321482__dslrguide__metal-hit-2-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_format": "Public HQ MP3 preview; original WAV requires login",
+    "sha256": "b518e6e80eadfb2efe8a169fea1cc655ce99b6cd96c9cb1b374a09391aa09f55",
+    "edit": {
+      "onset_seconds": 0.18179138321995464,
+      "speed": 0.9,
+      "highpass_hz": 45,
+      "lowpass_hz": 2100,
+      "lowpass_order": 3,
+      "output_seconds": 0.9,
+      "peak": 0.58,
+      "fade_in_ms": 3,
+      "fade_out_ms": 120
+    },
+    "output": "Assets/Audio/SFX/ReturnJourney/Platform/PlatformBreak_MetalHit2.wav",
+    "cue_id": 23
+  },
+  {
+    "id": 403252,
+    "title": "Taser/High Voltage discharge",
+    "author": "The_Chemical_Workshop",
+    "page": "https://freesound.org/people/The_Chemical_Workshop/sounds/403252/",
+    "url": "https://cdn.freesound.org/previews/403/403252_7809148-hq.mp3",
+    "file": "403252__the_chemical_workshop__high-voltage-discharge-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_format": "Public HQ MP3 preview; original WAV requires login",
+    "sha256": "b090ee16b3b8a5afd02480ecfcf3a3e705d3d6dec122e84858a5cada1a41a0e3",
+    "edit": {
+      "start_seconds": 2.247392290249433,
+      "output_seconds": 0.16,
+      "highpass_hz": 120,
+      "lowpass_hz": 1600,
+      "lowpass_order": 3,
+      "peak": 0.28,
+      "fade_in_ms": 8,
+      "fade_out_ms": 30
+    },
+    "output": "Assets/Audio/SFX/ReturnJourney/Power/PowerFlicker_Discharge.wav",
+    "cue_id": 21
+  },
+  {
+    "id": 405534,
+    "title": "Door Lock.wav",
+    "author": "nebulasnails",
+    "page": "https://freesound.org/people/nebulasnails/sounds/405534/",
+    "url": "https://cdn.freesound.org/previews/405/405534_2723982-hq.mp3",
+    "file": "405534__nebulasnails__door-lock-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_format": "Public HQ MP3 preview; original WAV requires login",
+    "sha256": "68de8eefa1c97fc98caf174a535c84b1b23e0f9fa71bb0f2c902a85446ddf181",
+    "edit": {
+      "start_seconds": 0.18188208616780047,
+      "output_seconds": 0.25,
+      "highpass_hz": 120,
+      "lowpass_hz": 2600,
+      "lowpass_order": 3,
+      "peak": 0.4,
+      "fade_in_ms": 3,
+      "fade_out_ms": 40,
+      "secondary_click_delay_ms": 72,
+      "secondary_click_gain": 0.55,
+      "secondary_speed": 0.9
+    },
+    "output": "Design/Audio/DoorUnlock-Crisp-Preview.wav",
+    "usage": "Audition only; not selected by user"
+  },
+  {
+    "id": 160215,
+    "title": "Unlocking Door Lock",
+    "author": "qubodup",
+    "page": "https://freesound.org/people/qubodup/sounds/160215/",
+    "url": "https://cdn.freesound.org/previews/160/160215_71257-hq.mp3",
+    "file": "160215__qubodup__unlocking-door-lock-hq.mp3",
+    "license": "CC0 1.0",
+    "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "source_format": "Public HQ MP3 preview; original WAV requires login",
+    "sha256": "55f049d004f4e07ddd04d54b757086add77331eb4a4e892f724205214d69a654",
+    "edit": {
+      "start_seconds": 0.4146485260770975,
+      "output_seconds": 0.24,
+      "highpass_hz": 120,
+      "lowpass_hz": 2400,
+      "lowpass_order": 3,
+      "peak": 0.4,
+      "fade_in_ms": 3,
+      "fade_out_ms": 40
+    },
+    "output": "Design/Audio/DoorUnlock-Short-Alternative-Preview.wav",
+    "usage": "Audition alternative only"
+  }
+]
