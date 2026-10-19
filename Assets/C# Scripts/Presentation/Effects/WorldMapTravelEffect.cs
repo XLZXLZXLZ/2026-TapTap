@@ -15,6 +15,7 @@ namespace TapTap
         private float travelDuration;
         private float pauseDuration;
         private const float TrailLifetime = 0.24f;
+        private const float ArrivalHoldDuration = 0.5f;
         private bool emitting;
 
         public static WorldMapTravelEffect Create(RectTransform board, Transform origin, Transform destination,
@@ -82,8 +83,10 @@ namespace TapTap
             {
                 Trail.Record(Destination);
                 emitting = false;
-                phase(NeonWorldMapScreen.TransitionPhase.OrbDisappearing);
+                phase(NeonWorldMapScreen.TransitionPhase.OrbArrived);
             });
+            timeline.AppendInterval(ArrivalHoldDuration);
+            timeline.AppendCallback(() => phase(NeonWorldMapScreen.TransitionPhase.OrbDisappearing));
             timeline.Append(Orb.DOScale(Vector3.zero, 0.14f).SetEase(Ease.InQuad));
             timeline.AppendCallback(() => phase(NeonWorldMapScreen.TransitionPhase.TrailFading));
             timeline.AppendInterval(TrailLifetime);

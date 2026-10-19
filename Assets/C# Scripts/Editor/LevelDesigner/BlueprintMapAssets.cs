@@ -176,7 +176,7 @@ namespace TapTap.Editor
                 screen.Role = selection ? BlueprintWorldMapScreen.ScreenRole.Selection : BlueprintWorldMapScreen.ScreenRole.Transition;
                 screen.ShowOnSceneStart = selection;
                 screen.PreviewInEditor = selection;
-                screen.WidthFill = 0.88f;
+                screen.WidthFill = selection ? 0.75f : 0.88f;
                 RectTransform background = CreateRect("Blueprint Background", canvas.transform);
                 Stretch(background, -64f);
                 var backgroundImage = background.gameObject.AddComponent<RawImage>();

@@ -10,7 +10,7 @@ namespace TapTap
     public sealed class NeonWorldMapScreen : MonoBehaviour
     {
         public enum TransitionPhase { None, Preparing, CoverReveal, Delay, Drawing, Holding, Complete,
-            OrbAppearing, OrbTravelling, OrbDisappearing, TrailFading, OrbHolding }
+            OrbAppearing, OrbTravelling, OrbDisappearing, TrailFading, OrbHolding, OrbArrived }
         public const string ResourcePath = "WorldMapSelection/WorldCharacterSelection";
         public WorldMapDefinition Source;
         public Camera UICamera;
