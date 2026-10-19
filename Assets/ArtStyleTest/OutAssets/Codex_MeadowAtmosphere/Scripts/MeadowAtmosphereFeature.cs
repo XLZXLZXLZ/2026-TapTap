@@ -1,0 +1,21 @@
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
+public sealed class MeadowAtmosphereFeature:ScriptableRendererFeature {
+ public Material fogMaterial;
+ public static int added,executed;public static string last;
+ FogPass pass;
+ public override void Create(){pass=new FogPass{renderPassEvent=RenderPassEvent.BeforeRenderingTransparents};}
+ public override void AddRenderPasses(ScriptableRenderer renderer,ref RenderingData data){var v=MeadowAtmosphere.active;var c=data.cameraData.camera;if(!v||!v.isActiveAndEnabled||!v.fogEnabled||v.density<=0||!fogMaterial||data.cameraData.isPreviewCamera||c.cameraType==CameraType.Reflection)return;if(c.cameraType==CameraType.SceneView){if(!v.showInSceneView)return;}else if(v.viewCamera&&c!=v.viewCamera&&c.name!="CodexAtmospherePreview")return;added++;last=c.name;pass.Setup(fogMaterial,v);renderer.EnqueuePass(pass);}
+ sealed class FogPass:ScriptableRenderPass{
+  RenderTargetIdentifier source;Material mat;MeadowAtmosphere volume;
+  readonly int fog=Shader.PropertyToID("_MeadowFogBuffer"),copy=Shader.PropertyToID("_MeadowFogComposite");
+  public void Setup(Material m,MeadowAtmosphere v){mat=m;volume=v;ConfigureInput(ScriptableRenderPassInput.Depth|ScriptableRenderPassInput.Color);}
+  public override void OnCameraSetup(CommandBuffer cmd,ref RenderingData data){source=data.cameraData.renderer.cameraColorTargetHandle.nameID;var d=data.cameraData.cameraTargetDescriptor;d.depthBufferBits=0;d.msaaSamples=1;d.colorFormat=RenderTextureFormat.ARGBHalf;cmd.GetTemporaryRT(copy,d,FilterMode.Bilinear);d.width=Mathf.Max(1,d.width/2);d.height=Mathf.Max(1,d.height/2);cmd.GetTemporaryRT(fog,d,FilterMode.Bilinear);}
+  public override void Execute(ScriptableRenderContext context,ref RenderingData data){if(!volume||!mat)return;executed++;var v=volume;mat.SetMatrix("_FogInverseViewProjection",(data.cameraData.GetGPUProjectionMatrix()*data.cameraData.GetViewMatrix()).inverse);mat.SetVector("_FogCameraPosition",data.cameraData.camera.transform.position);mat.SetMatrix("_FogWorldToLocal",v.transform.worldToLocalMatrix);mat.SetVector("_FogHalfSize",v.fogSize*.5f);mat.SetVector("_FogParams",new Vector4(v.density,v.edgeSoftness,v.heightFalloff,v.baseHeight));mat.SetVector("_FogDetail",new Vector4(v.clearNearCamera,v.noiseAmount,v.noiseScale,v.scattering));mat.SetVector("_FogAnimation",new Vector4(v.CurrentTime*.12f,v.CurrentTime*.035f,v.steps,0));mat.SetVector("_FogLighting",new Vector4(v.anisotropy,v.ambientScattering,0,0));mat.SetVector("_ReferenceShafts",new Vector4(v.preserveReferenceLighting?1:0,v.extraSunShafts,v.sunShaftHeight,v.sunShaftElevation));var shaftRotation=Quaternion.Euler(v.sunShaftDirection);mat.SetMatrix("_ShaftWorldToLight",Matrix4x4.TRS(v.sunlight?v.sunlight.transform.position:Vector3.zero,shaftRotation,Vector3.one).inverse);mat.SetVector("_ShaftLightDirection",-(shaftRotation*Vector3.forward));mat.SetTexture("_ShaftCloudCookie",v.sunShaftCookie?v.sunShaftCookie:Texture2D.whiteTexture);var shaftMotion=v.animateClouds&&(Application.isPlaying||v.freezePreview)?v.cloudVelocity*v.CurrentTime/100:Vector2.zero;mat.SetVector("_ShaftCookieMotion",new Vector4(shaftMotion.x,shaftMotion.y,0,0));mat.SetColor("_FogColour",v.fogColour.linear);mat.SetColor("_SunScatterColour",v.sunScatterColour.linear);
+   var focus=MeadowCameraFocus.active;bool aerial=focus&&focus.isActiveAndEnabled&&focus.aerialPerspective&&(focus.GetComponent<Camera>()==data.cameraData.camera||data.cameraData.camera.name=="CodexAtmospherePreview");mat.SetVector("_MeadowAerialParams",aerial?new Vector4(focus.hazeStart,focus.hazeEnd,focus.hazeStrength,1):Vector4.zero);mat.SetColor("_MeadowAerialColour",aerial?focus.hazeColour.linear:Color.clear);
+   var cmd=CommandBufferPool.Get("Meadow local volumetric mist");Blit(cmd,source,fog,mat,0);cmd.SetGlobalTexture("_MeadowFogBuffer",fog);var d=data.cameraData.cameraTargetDescriptor;cmd.SetGlobalVector("_MeadowFogBuffer_TexelSize",new Vector4(2f/d.width,2f/d.height,d.width/2,d.height/2));Blit(cmd,source,copy,mat,1);Blit(cmd,copy,source);context.ExecuteCommandBuffer(cmd);CommandBufferPool.Release(cmd);}
+  public override void OnCameraCleanup(CommandBuffer cmd){cmd.ReleaseTemporaryRT(fog);cmd.ReleaseTemporaryRT(copy);}
+ }
+}
