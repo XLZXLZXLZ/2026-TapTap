@@ -46,7 +46,7 @@ namespace TapTap.Editor
                     errors.Add("布局存在空的放置记录。");
                     continue;
                 }
-                if (placement.Brush != null && placement.Brush.HandlerId == "annotation") continue;
+                if (placement.Brush != null && placement.Brush.IsEditorIgnored) continue;
                 string location = "格子 " + placement.Cell + "：";
                 if (!LevelPlacementGeometry.Fits(placement, layout.CanvasBounds))
                     errors.Add(location + "位于区域边界外；请先移除或扩大区域。");
@@ -67,7 +67,8 @@ namespace TapTap.Editor
                 LevelBrushHandler handler = LevelBrushHandlers.Get(placement.Brush.HandlerId);
                 if (handler == null)
                     errors.Add(location + "找不到处理器 " + placement.Brush.HandlerId + "。");
-                if (placement.Brush.Prefab == null || !PrefabUtility.IsPartOfPrefabAsset(placement.Brush.Prefab))
+                if ((handler == null || handler.GeneratesSceneObject) &&
+                    (placement.Brush.Prefab == null || !PrefabUtility.IsPartOfPrefabAsset(placement.Brush.Prefab)))
                 {
                     errors.Add(location + "画笔需要一个已保存的 Prefab。");
                     continue;
@@ -106,7 +107,8 @@ namespace TapTap.Editor
             if (existing != null && existing.GetComponent<LevelRegion>() == null)
                 throw new InvalidOperationException("该路径已经存在普通 Prefab，请选择其他路径。只有 LevelRegion 可被更新。");
             foreach (LevelPlacement placement in layout.Placements)
-                if (AssetDatabase.GetAssetPath(placement.Brush.Prefab) == path)
+                if (!placement.Brush.IsEditorIgnored && LevelBrushHandlers.Get(placement.Brush.HandlerId).GeneratesSceneObject
+                    && AssetDatabase.GetAssetPath(placement.Brush.Prefab) == path)
                     throw new InvalidOperationException("区域不能把自己作为画笔 Prefab。");
 
             EnsureFolder(Path.GetDirectoryName(path).Replace('\\', '/'));
@@ -136,14 +138,16 @@ namespace TapTap.Editor
                 Transform generated = FindChild(root.transform, "Generated");
                 if (generated == null)
                     generated = Child(root.transform, "Generated");
+                Transform custom = FindChild(root.transform, "Custom") ?? Child(root.transform, "Custom");
+                // Preserve legacy scene-authored lights before replacing generated content.
+                Transform lights = FindChild(generated, "Layer lights");
+                if (lights != null) lights.SetParent(custom, true);
                 // Generated is owned by the builder; Custom is left for hand placed scene content.
                 for (int index = generated.childCount - 1; index >= 0; index--)
                     UnityEngine.Object.DestroyImmediate(generated.GetChild(index).gameObject);
                 generated.localPosition = Vector3.zero;
                 generated.localRotation = Quaternion.identity;
                 generated.localScale = Vector3.one;
-                if (FindChild(root.transform, "Custom") == null)
-                    Child(root.transform, "Custom");
 
                 var layers = new Dictionary<string, Transform>(StringComparer.Ordinal)
                 {
@@ -153,7 +157,9 @@ namespace TapTap.Editor
                 var context = new LevelBuildContext(layout, region);
                 foreach (LevelPlacement placement in layout.Placements)
                 {
-                    if (placement.Brush.HandlerId == "annotation" || LevelBrushHandlers.Get(placement.Brush.HandlerId).TestOnly) continue;
+                    if (placement.Brush.IsEditorIgnored) continue;
+                    LevelBrushHandler handler = LevelBrushHandlers.Get(placement.Brush.HandlerId);
+                    if (!handler.GeneratesSceneObject || handler.TestOnly) continue;
                     string layerId = placement.Brush.LayerId;
                     if (!layers.TryGetValue(layerId, out Transform layer))
                     {
@@ -171,7 +177,7 @@ namespace TapTap.Editor
                     instance.transform.localScale = new Vector3(context.UnitSize, context.UnitSize, 1f);
                     TerrainTileVisual terrainVisual = instance.GetComponent<TerrainTileVisual>();
                     if (terrainVisual != null) terrainVisual.PlacementId = placement.Id;
-                    LevelBrushHandlers.Get(placement.Brush.HandlerId).ConfigureInstance(instance, placement, context);
+                    handler.ConfigureInstance(instance, placement, context);
                     RecordInstanceOverrides(instance);
                 }
 

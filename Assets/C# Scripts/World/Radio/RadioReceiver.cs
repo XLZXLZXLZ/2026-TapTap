@@ -20,10 +20,22 @@ namespace TapTap
         [Tooltip("超出最大收听范围即中断；未播完不计入已收听，再进入可重新播放。")]
         public bool StopOutsideListeningRange = true;
 
+        [Header("播放时的模型呼吸")]
+        public bool BreatheWhilePlaying = true;
+        [Tooltip("只缩放模型子节点。留空时自动寻找 RadioModel，不改变触发区。")]
+        public Transform BreathingTarget;
+        [Range(0f, 0.5f), Tooltip("最大放大比例，例如 0.06 表示放大到原尺寸的 106%。")]
+        public float BreathingAmount = 0.06f;
+        [Min(0.1f), Tooltip("完成一次放大、恢复的秒数。")]
+        public float BreathingDuration = 1.2f;
+
         private BoxCollider2D area;
         private VoicePlayer playback;
         private bool returning, playingReturn, wasInside, warnedConfiguration;
         private float nextPlayerSearch;
+        private Transform breathingModel;
+        private Vector3 restingScale;
+        private float breathingPhase;
         public bool FirstEncounterCompleted { get; private set; }
         public bool ReturnJourneyCompleted { get; private set; }
         public bool IsReturning => returning;
@@ -53,7 +65,37 @@ namespace TapTap
                 playback.Ended -= PlaybackEnded;
                 playback.Stop(VoiceStopReason.Disabled);
             }
+            RestoreBreathing();
             wasInside = false;
+        }
+
+        private void LateUpdate()
+        {
+            Transform target = BreathingTarget != null ? BreathingTarget : transform.Find("RadioModel");
+            // Never animate the receiver root or an ancestor: doing so also scales the trigger.
+            if (target == transform || target != null && !target.IsChildOf(transform)) target = null;
+            if (target != breathingModel)
+            {
+                RestoreBreathing();
+                breathingModel = target;
+                if (breathingModel != null) restingScale = breathingModel.localScale;
+            }
+            if (breathingModel == null) return;
+            if (!BreatheWhilePlaying || !playback.IsPlaying)
+            {
+                RestoreBreathing();
+                return;
+            }
+            if (playback.IsPaused) return;
+            breathingPhase = Mathf.Repeat(breathingPhase + Time.unscaledDeltaTime / Mathf.Max(0.1f, BreathingDuration), 1f);
+            float swell = 0.5f - 0.5f * Mathf.Cos(breathingPhase * Mathf.PI * 2f);
+            breathingModel.localScale = restingScale * (1f + Mathf.Clamp(BreathingAmount, 0f, 0.5f) * swell);
+        }
+
+        private void RestoreBreathing()
+        {
+            if (breathingModel != null) breathingModel.localScale = restingScale;
+            breathingPhase = 0f;
         }
 
         private void ResolvePlayer()
@@ -105,6 +147,7 @@ namespace TapTap
 
         private void PlaybackEnded(VoicePlayer player, VoiceSequence sequence, VoiceStopReason reason)
         {
+            RestoreBreathing();
             if (reason != VoiceStopReason.Completed) return;
             if (playingReturn) ReturnJourneyCompleted = true;
             else FirstEncounterCompleted = true;

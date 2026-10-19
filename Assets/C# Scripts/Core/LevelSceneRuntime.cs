@@ -46,7 +46,7 @@ namespace TapTap
                 respawn, player.GetComponent<PlayerView>());
             if (placePlayerAtSpawn && region != null)
             {
-                Vector2 spawn = region.EntryCheckpoint != null ? region.EntrySpawnPosition :
+                Vector2 spawn = region.ResolveEntryCheckpoint() != null || region.Source?.EntryPlacement != null ? region.EntrySpawnPosition :
                     (Vector2)region.transform.TransformPoint(fallbackSpawnLocal);
                 player.TeleportJoined(spawn);
             }

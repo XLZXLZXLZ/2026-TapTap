@@ -21,6 +21,9 @@ namespace TapTap.Editor
         private static int step, frame;
         private static double since, deadline;
         private static float pausedAt;
+        private static Transform model;
+        private static Vector3 modelRest, pausedScale;
+        private static Vector2 triggerSize;
         static RadioRegressionTests()
         {
             EditorApplication.playModeStateChanged += state =>
@@ -44,6 +47,9 @@ namespace TapTap.Editor
                 RadioAssets.Build();
                 Check(before == File.ReadAllText(RadioAssets.RadioPath), "Builder overwrote existing prefab");
                 EditorSceneManager.OpenScene(RadioAssets.DemoPath, OpenSceneMode.Single);
+                Object.FindObjectOfType<RadioReceiver>().transform.Find("RadioModel").localScale = new Vector3(0.9f, 1.1f, 1f);
+                // Radios are placed at different visual depths in the production world.
+                Object.FindObjectOfType<RadioReceiver>().transform.position = new Vector3(0f, 0f, 4f);
                 Object.FindObjectOfType<PlayerInput>().UseKeyboard = false;
                 Directory.CreateDirectory("Assets/RadioValidation");
                 EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), "Assets/RadioValidation/Runtime.unity");
@@ -78,17 +84,31 @@ namespace TapTap.Editor
                     if (player == null || player.Body?.Motor == null || RewindManager.Current == null) return;
                     RewindManager.Current.UseKeyboard = false;
                     radio.Player = player;
+                    model = radio.transform.Find("RadioModel");
+                    modelRest = model.localScale;
+                    triggerSize = radio.GetComponent<BoxCollider2D>().bounds.size;
                     radio.FirstEncounter = Sequence(3f, true);
                     radio.ReturnJourney = Sequence(0.65f);
                     Check(SubtitleLanguageSettings.Language == SubtitleLanguage.Chinese, "Default language");
                     Check(RadioReceiver.Attenuation(2, 3, 10) == 1 && RadioReceiver.Attenuation(10, 3, 10) == 0
                         && Mathf.Abs(RadioReceiver.Attenuation(6.5f, 3, 10) - 0.5f) < 0.001f, "Attenuation curve");
                     player.TeleportJoined(new Vector2(0, 0.7f));
+                    Physics2D.SyncTransforms();
+                    Check(ReturnJourneyContact.TouchesBody(radio.GetComponent<BoxCollider2D>(), player),
+                        "Positive visual Z offset prevented planar body contact");
+                    radio.transform.position = new Vector3(0f, 0f, -4f);
+                    Physics2D.SyncTransforms();
+                    Check(ReturnJourneyContact.TouchesBody(radio.GetComponent<BoxCollider2D>(), player),
+                        "Negative visual Z offset prevented planar body contact");
                     Next();
                 }
                 else if (step == 1 && radio.Playback.SegmentElapsed > 0.4f)
                 {
                     Check(radio.Playback.IsPlaying, "Body entering square trigger did not start");
+                    Check(model.localScale.x > modelRest.x + 0.001f && model.localScale.x <= modelRest.x * 1.061f,
+                        "Playing radio should breathe relative to its original scale");
+                    Check(Vector2.Distance(radio.GetComponent<BoxCollider2D>().bounds.size, triggerSize) < 0.0001f,
+                        "Breathing scaled the trigger");
                     subtitles = Object.FindObjectOfType<VoiceSubtitlePresenter>();
                     Check(subtitles != null && subtitles.DisplayedText == radio.FirstEncounter.Segments[0].Chinese && subtitles.Group.alpha > 0.9f,
                         "Chinese subtitle/fade: text=" + subtitles?.DisplayedText + "; alpha=" + subtitles?.Group.alpha
@@ -104,12 +124,14 @@ namespace TapTap.Editor
                     Check(subtitles.DisplayedText == radio.FirstEncounter.Segments[0].English && subtitles.Group.alpha > 0.9f, "Runtime English switch");
                     Capture("english");
                     pausedAt = radio.Playback.SegmentElapsed;
+                    pausedScale = model.localScale;
                     Time.timeScale = 0;
                     Next();
                 }
                 else if (step == 3 && elapsed > 0.35)
                 {
                     Check(radio.Playback.IsPaused && Mathf.Abs(radio.Playback.SegmentElapsed - pausedAt) < 0.08f, "Pause advanced segment");
+                    Check(Vector3.Distance(model.localScale, pausedScale) < 0.0001f, "Pause advanced breathing");
                     Time.timeScale = 1;
                     Check(RewindManager.Current.BeginRewind(), "Could not begin rewind");
                     Next();
@@ -132,6 +154,7 @@ namespace TapTap.Editor
                 else if (step == 6 && elapsed > 0.15)
                 {
                     Check(!radio.Playback.IsPlaying && !radio.FirstEncounterCompleted, "Interrupted broadcast consumed completion");
+                    Check(model.localScale == modelRest, "Interruption failed to restore model scale");
                     SubtitleLanguageSettings.SetLanguage(SubtitleLanguage.Chinese);
                     player.TeleportJoined(new Vector2(0, 0.7f));
                     Next();
@@ -144,12 +167,13 @@ namespace TapTap.Editor
                 else if (step == 8 && radio.Playback.SegmentIndex == 1 && !radio.Playback.IsInGap && radio.Playback.SegmentElapsed > 0.35f)
                 {
                     Check(subtitles.DisplayedText == radio.FirstEncounter.Segments[1].Chinese, "Second segment subtitle");
-                    Pass("Trigger, bilingual subtitles/fades, pause/Z, distance gain, interruption/reentry and sequential segments");
+                    Pass("XY trigger ignores positive/negative visual Z; bilingual subtitles/fades, pause/Z, distance gain, interruption/reentry and sequential segments");
                     Next();
                 }
                 else if (step == 9 && radio.FirstEncounterCompleted)
                 {
                     Check(!radio.TryPlay(), "Completed outbound replayed");
+                    Check(model.localScale == modelRest, "Completion failed to restore model scale");
                     Check(GameStageProgression.ForScene(radio.gameObject.scene).BeginReturn(), "Stage switch");
                     Next();
                 }

@@ -62,13 +62,22 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier:
   TargetCamera: {fileID: 0}
-  Darkness: 0.16
-  FadeDuration: 0.65
-  TearPixels: 2.5
-  ChromaticPixels: 0.7
+  Darkness: 0.22
+  FadeDuration: 0.25
+  TearPixels: 7
+  TearFrequency: 2
+  TearDuration: 0.08
+  ChromaticPixels: 2.5
+  Saturation: 0.85
+  VignetteStrength: 0.18
+  VignetteStart: 0.55
   WarningDarkness: 0.2
   FlashDuration: 0.24
   FlashGap: 0.24
+  EntryPeakDarkness: 0.62
+  EntryDarkenDuration: 0.18
+  EntryHoldDuration: 0.08
+  EntryRecoveryDuration: 0.32
   SignalShader: {fileID: 4800000, guid: 9bed5bf0a4693b54e8545dd9fa486722, type: 3}
 --- !u!1 &851689164519077186
 GameObject:
@@ -260,6 +269,9 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   Cue: 1
   CueId: departure-3
+  CollapseShakeStrength: 0.3
+  CollapseShakeDuration: 0.35
+  CollapseShakeViewportMultiplier: 3
   Presentation: {fileID: 3106122747994890461}
   Platform: {fileID: 645540874021826185}
   Player: {fileID: 0}

@@ -68,6 +68,7 @@ namespace TapTap.Editor
 
         private static void PlayerMagneticExpressions()
         {
+            PlayerSupportedRecallExpressions();
             using (var f = new Fixture())
             {
                 PlayerExpressionView expressions = ExpressionFixture(f);
@@ -153,6 +154,44 @@ namespace TapTap.Editor
             }
             File.AppendAllText(Path.Combine(Application.dataPath, "../player-expression-results.txt"),
                 "PASS: Real short/long recalls, success, blocked recall, rewind freeze/restore, disable and respawn.\n");
+        }
+
+        private static void PlayerSupportedRecallExpressions()
+        {
+            foreach (bool distant in new[] { false, true })
+            using (var f = new Fixture())
+            {
+                PlayerExpressionView expressions = ExpressionFixture(f);
+                var lower = ExpressionField<PlayerExpressionView.EyeSet>(expressions, "lowerEyes");
+                float distance = distant ? f.Config.DistantThreshold + 2f : 3f;
+                f.Detach(f.Spawn, f.Spawn + Vector2.up * distance);
+                f.Box("Recall head support", f.Head.Motor.Position
+                    + Vector2.down * (f.Head.Motor.Size.y * 0.5f + 0.1f + f.Config.Skin), new Vector2(2f, 0.2f))
+                    .AddComponent<WorldSurface>().Kind = SurfaceKind.OneWay;
+                f.Input.SetExternalInput(0f, true); f.Step();
+                Check(f.Player.Phase == PlayerPhase.Pulling && f.Player.IsDistantPull == distant,
+                    "Supported recall was not classified correctly");
+                for (int i = 0; i < 400 && f.Player.Phase == PlayerPhase.Pulling; i++)
+                {
+                    Check(!f.Player.IsHangingFromHead, "Active recall was mistaken for hanging");
+                    expressions.Simulate(Time.fixedDeltaTime);
+                    Check(expressions.SadPhase == PlayerExpressionView.SadPlaybackPhase.None,
+                        "Supported recall started sustained crying");
+                    if (!distant)
+                        Check(expressions.Current == PlayerExpressionView.Expression.Normal && !lower.Sad.gameObject.activeSelf,
+                            "Short supported recall incorrectly showed sad eyes");
+                    f.Step();
+                }
+                Check(f.Player.Phase == PlayerPhase.Joined && f.Body.Velocity.y > 0f,
+                    "Supported recall did not join and launch");
+                Check(!f.Player.IsHangingFromHead && expressions.Current == PlayerExpressionView.Expression.Happy,
+                    "Head support swallowed the successful recall smile");
+                // The launch still overlaps the support probe on its first presentation frame.
+                expressions.Simulate(0.3f);
+                Check(expressions.Current == PlayerExpressionView.Expression.Happy
+                    && lower.Happy.gameObject.activeSelf && !lower.Sad.gameObject.activeSelf,
+                    "Launch support replaced the smile with crying eyes");
+            }
         }
 
         private static void PlayerHangingExpressions()

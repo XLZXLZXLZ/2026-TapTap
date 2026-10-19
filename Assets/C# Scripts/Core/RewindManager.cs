@@ -14,6 +14,7 @@ namespace TapTap
         {
             MonoBehaviour Owner { get; }
             int Order { get; }
+            bool Sample();
             void Capture(long tick);
             void Restore(long tick);
             void DiscardFuture(long lastTick);
@@ -57,6 +58,8 @@ namespace TapTap
         {
             private readonly IRewindable<TState> participant;
             private readonly FrameHistory<TState> frames = new FrameHistory<TState>();
+            private TState sample;
+            private bool hasSample;
             public MonoBehaviour Owner { get; }
             public int Order { get; }
 
@@ -67,18 +70,23 @@ namespace TapTap
                 Order = order;
             }
 
-            public void Capture(long tick)
+            public bool Sample()
             {
-                TState state = participant.CaptureState();
-                frames.Store(tick, in state);
+                TState previous = sample;
+                sample = participant.CaptureState();
+                bool idle = hasSample && participant.CanSkipRecording(in previous, in sample);
+                hasSample = true;
+                return idle;
             }
+            public void Capture(long tick) => frames.Store(tick, in sample);
             public void Restore(long tick)
             {
-                TState state = frames.Read(tick);
-                participant.RestoreState(in state);
+                sample = frames.Read(tick);
+                hasSample = true;
+                participant.RestoreState(in sample);
             }
             public void DiscardFuture(long lastTick) => frames.Truncate(lastTick + 1);
-            public void ClearHistory() => frames.Clear();
+            public void ClearHistory() { frames.Clear(); sample = default; hasSample = false; }
         }
 
         [Header("回溯速度")]
@@ -102,11 +110,14 @@ namespace TapTap
         private bool discovered;
         private bool historyDirty = true;
         private bool hasHistory;
+        private const double IdleRecordingDelay = 10d;
+        private double idleSeconds;
 
         public static RewindManager Current => current;
         public static bool DrivesSimulation => current != null && current.isActiveAndEnabled;
         public static bool Rewinding => DrivesSimulation && current.IsRewinding;
         public bool IsRewinding { get; private set; }
+        public bool IsRecordingSuspended { get; private set; }
         public double SimulationTime { get; private set; }
         public long CurrentTick => currentTick;
         public long OldestTick => 0;
@@ -196,6 +207,7 @@ namespace TapTap
             newestTick = currentTick = 0;
             historyDirty = true;
             hasHistory = false;
+            ResetIdleRecording();
         }
 
         public void ClearHistory() => InvalidateHistory();
@@ -207,6 +219,7 @@ namespace TapTap
             if (!historyDirty) return true;
             historyDirty = false;
             newestTick = currentTick = 0;
+            SampleFrame();
             CaptureFrame();
             hasHistory = true;
             return true;
@@ -274,9 +287,28 @@ namespace TapTap
                 if (!entity.ControlledExternally && !entity.IsReturning) entity.SimulateFree(dt, 0f);
             foreach (MechanismSwitch button in switches) button.SimulateStep();
             foreach (MovableEntity entity in entities) entity.Motor.Commit();
-            currentTick++;
+            bool idle = SampleFrame();
+            // Refresh the endpoint without growing history during a long wait.
+            // Its predecessor retains the start of the gap for rewinding past it.
+            if (!idle || !IsRecordingSuspended) currentTick++;
             newestTick = currentTick;
             CaptureFrame();
+            idleSeconds = idle ? idleSeconds + dt : 0d;
+            IsRecordingSuspended = idleSeconds + 0.00001d >= IdleRecordingDelay;
+        }
+
+        private bool SampleFrame()
+        {
+            bool idle = players.Count > 0;
+            foreach (ITrack track in tracks)
+                if (!track.Sample()) idle = false;
+            return idle;
+        }
+
+        private void ResetIdleRecording()
+        {
+            idleSeconds = 0d;
+            IsRecordingSuspended = false;
         }
 
         private void CaptureFrame()
@@ -291,6 +323,8 @@ namespace TapTap
             if (IsRewinding) return true;
             if (Blocked || !PrepareHistory()) return false;
             IsRewinding = true;
+            ResetIdleRecording();
+            AudioManager.Instance?.BeginRewindAudio();
             rewindRemainder = 0d;
             rewindHeldSeconds = 0d;
             EffectManager.Instance.ClearTransientEffects();
@@ -335,6 +369,8 @@ namespace TapTap
             times.Truncate(currentTick + 1);
             foreach (ITrack track in tracks) track.DiscardFuture(currentTick);
             IsRewinding = false;
+            ResetIdleRecording();
+            AudioManager.Existing?.EndRewindAudio();
             rewindRemainder = 0d;
             rewindHeldSeconds = 0d;
             if (EffectManager.Existing != null) EffectManager.Existing.SetRewindVisual(false);

@@ -160,8 +160,12 @@ namespace TapTap
         }
 
         public void ShakeCamera(float strength) => Shake(strength);
+        public float ShakeViewportMultiplier => shakeRemaining > 0f ? shakeViewportMultiplier : 1f;
+        private float shakeViewportMultiplier = 1f;
+        public void ShakeCamera(float strength, float duration, float viewportMultiplier = 1f) => Shake(strength, duration, viewportMultiplier);
 
-        private void Shake(float strength)
+        private void Shake(float strength) => Shake(strength, shakeDuration);
+        private void Shake(float strength, float duration, float viewportMultiplier = 1f)
         {
             if (strength <= 0f) return;
             bool active = shakeRemaining > 0f;
@@ -170,7 +174,8 @@ namespace TapTap
                 Mathf.Pow(Mathf.Clamp01(shakeRemaining / activeShakeDuration), shakeDecayPower) : 0f;
             shakeStrength = Mathf.Max(currentStrength, strength);
             if (!active) shakeClock = 0f;
-            activeShakeDuration = Mathf.Max(0.001f, shakeDuration);
+            shakeViewportMultiplier = Mathf.Max(active ? shakeViewportMultiplier : 1f, viewportMultiplier);
+            activeShakeDuration = Mathf.Max(0.001f, Mathf.Max(duration, active ? shakeRemaining : 0f));
             shakeRemaining = activeShakeDuration;
         }
 

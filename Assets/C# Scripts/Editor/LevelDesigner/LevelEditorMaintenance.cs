@@ -17,9 +17,10 @@ namespace TapTap.Editor
                 LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(AssetDatabase.GUIDToAssetPath(guid));
                 LevelEditorAssets.EnsureSpringInPalette(palette);
                 LevelEditorAssets.EnsureSquarePlatformInPalette(palette);
+                LevelEditorAssets.EnsureGhostBlockInPalette(palette);
                 SmartTileAssets.EnsureInPalette(palette);
                 ProgressionEditorAssets.EnsureInPalette(palette);
-                if (palette.Brushes.RemoveAll(brush => brush != null && brush.HandlerId == "annotation") > 0)
+                if (palette.Brushes.RemoveAll(brush => brush != null && brush.IsEditorIgnored) > 0)
                 {
                     EditorUtility.SetDirty(palette);
                     AssetDatabase.SaveAssetIfDirty(palette);

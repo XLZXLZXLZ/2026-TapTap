@@ -9,29 +9,18 @@ namespace TapTap.Editor
     {
         public const string LightPath = "Assets/Prefabs/Interactables/Grid/GridIndicatorLight.prefab";
         public const string KeyPath = "Assets/Prefabs/Interactables/ProgressKey.prefab";
-        private const string BrushPath = "Assets/Runtime/LevelDesigner/Brushes/IndicatorLight.asset";
 
         public static void EnsureInPalette(LevelPalette palette)
         {
             if (palette == null) return;
-            bool hasLight = palette.Brushes != null && palette.Brushes.Exists(item => item != null && item.HandlerId == "indicator-light");
-            if (hasLight && AssetDatabase.LoadAssetAtPath<GameObject>(KeyPath) != null) return;
+            if (palette.Brushes != null && palette.Brushes.RemoveAll(item => item != null && item.HandlerId == "indicator-light") > 0)
+            {
+                EditorUtility.SetDirty(palette);
+                AssetDatabase.SaveAssetIfDirty(palette);
+            }
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(KeyPath) != null) return;
             EnsureMaterial();
             EnsurePrefab<ProgressKey>(KeyPath);
-            if (hasLight) return;
-            GameObject prefab = EnsurePrefab<IndicatorLight>(LightPath);
-            LevelPrefabBuilder.EnsureFolder("Assets/Runtime/LevelDesigner/Brushes");
-            LevelBrush brush = AssetDatabase.LoadAssetAtPath<LevelBrush>(BrushPath);
-            if (brush == null)
-            {
-                brush = ScriptableObject.CreateInstance<LevelBrush>();
-                brush.DisplayName = "指示灯光"; brush.HandlerId = "indicator-light"; brush.LayerId = "lights";
-                brush.Anchor = new Vector2(0.5f, 0.5f); brush.PreviewRect = new Rect(0.1f, 0.25f, 0.8f, 0.5f);
-                brush.Color = new Color(1f, 0.88f, 0.58f); brush.Prefab = prefab;
-                AssetDatabase.CreateAsset(brush, BrushPath);
-            }
-            if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
-            palette.Brushes.Add(brush); EditorUtility.SetDirty(palette); AssetDatabase.SaveAssetIfDirty(palette);
         }
 
         private static void EnsureMaterial()

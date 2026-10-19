@@ -72,7 +72,7 @@ namespace TapTap
             var cells = new HashSet<Vector2Int>();
             if (level.Placements != null)
                 foreach (LevelPlacement placement in level.Placements)
-                    if (placement?.Brush != null && placement.Brush.HandlerId != "annotation")
+                    if (placement?.Brush != null && !placement.Brush.IsEditorIgnored)
                         cells.UnionWith(LevelPlacementGeometry.Cells(placement));
             return cells;
         }

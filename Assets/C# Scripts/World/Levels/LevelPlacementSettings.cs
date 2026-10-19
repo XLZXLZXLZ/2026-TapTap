@@ -78,6 +78,7 @@ namespace TapTap
     }
 
     [Serializable]
+    // Deserialization compatibility only. Indicator lights are now authored under each region's Custom.
     public sealed class LightPlacementSettings : LevelPlacementSettings
     {
         public bool InitiallyOn;

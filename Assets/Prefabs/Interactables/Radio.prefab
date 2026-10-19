@@ -209,6 +209,10 @@ MonoBehaviour:
   FullVolumeRadius: 3
   ListeningRadius: 10
   StopOutsideListeningRange: 1
+  BreatheWhilePlaying: 1
+  BreathingTarget: {fileID: 6185454402083003146}
+  BreathingAmount: 0.06
+  BreathingDuration: 0.4
 --- !u!1001 &1584613603945541629
 PrefabInstance:
   m_ObjectHideFlags: 0

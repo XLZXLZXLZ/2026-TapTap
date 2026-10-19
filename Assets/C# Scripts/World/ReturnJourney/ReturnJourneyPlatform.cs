@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 
@@ -13,15 +14,35 @@ namespace TapTap
         [Min(0.01f)] public float DropDuration = 0.45f;
         public ParticleSystem CollapseBurst;
         private Tween drop;
+        private Coroutine pendingCollapse;
         public bool HasCollapsed { get; private set; }
+        public bool IsDropping => drop != null && drop.IsActive();
         private void OnEnable()
         {
             EventManager.Subscribe<GameStageChanged>(StageChanged);
-            if (Application.isPlaying && GameStageProgression.HasProgressedIn(gameObject.scene)) SetFallen();
+            if (Application.isPlaying && GameStageProgression.HasProgressedIn(gameObject.scene))
+            {
+                var presentation = ReturnJourneyPresentation.InScene(gameObject.scene);
+                if (presentation != null && presentation.IsEntryPlaying) pendingCollapse = StartCoroutine(CollapseAfterEntry());
+                else SetFallen();
+            }
         }
         private void StageChanged(GameStageChanged message)
         {
-            if (message.Scene == gameObject.scene && message.Previous == GameStage.Outbound) Collapse();
+            if (message.Scene == gameObject.scene && message.Previous == GameStage.Outbound && pendingCollapse == null)
+                pendingCollapse = StartCoroutine(CollapseAfterEntry());
+        }
+        private IEnumerator CollapseAfterEntry()
+        {
+            // Let all stage listeners receive the event before checking the presentation.
+            yield return null;
+            var presentation = ReturnJourneyPresentation.InScene(gameObject.scene);
+            while (presentation != null && presentation.IsEntryPlaying) yield return null;
+            pendingCollapse = null;
+            foreach (ReturnJourneyTrigger trigger in FindObjectsOfType<ReturnJourneyTrigger>())
+                if (trigger.gameObject.scene == gameObject.scene && trigger.Cue == ReturnJourneyCue.BeginReturn
+                    && trigger.Platform == this && trigger.IsPlaying) yield break;
+            Collapse();
         }
         public void Collapse()
         {
@@ -42,6 +63,8 @@ namespace TapTap
         private void OnDisable()
         {
             EventManager.Unsubscribe<GameStageChanged>(StageChanged);
+            if (pendingCollapse != null) StopCoroutine(pendingCollapse);
+            pendingCollapse = null;
             drop?.Kill(); drop = null;
             if (HasCollapsed) SetFallen();
         }

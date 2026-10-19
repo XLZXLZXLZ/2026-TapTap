@@ -50,6 +50,9 @@ namespace TapTap.Editor
             try
             {
                 Test("Unlimited history spans chunks, restores the beginning, and discards old futures", HistoryBranches);
+                Test("Ten seconds idle suspends history growth, keeps the live endpoint, and resumes branches", IdleRecordingHistory);
+                Test("Detached head, other actors, and phase changes resume idle recording", IdleRecordingWorldChanges);
+                Test("Stationary respawn tasks and cooldowns keep recording", IdleRecordingTasks);
                 Test("Spring velocity and one-way suppression restore", SpringAndOneWay);
                 Test("Downward head contact drops through only its supporting platform and rewinds", SinglePlatformDrop);
                 Test("Extension replays identically and a historical hold can release", ExtensionAndInput);

@@ -88,6 +88,8 @@ namespace TapTap
         public bool HasMagneticConnection => phase != PlayerPhase.Detached;
         public bool IsHangingFromHead => HasMagneticConnection && body != null && head != null
             && !body.IsReturning && !head.IsReturning
+            // Recall and its upward launch can still touch the head's platform without hanging.
+            && phase != PlayerPhase.Pulling && body.Velocity.y <= 0f
             && head.Motor.HasPartGroundSupport(body) && !body.Motor.HasPartGroundSupport(head);
         public bool IsDistantPull => phase == PlayerPhase.Pulling && distantPull;
         public bool GuideVisible => guideActive || clock < failedGuideUntil;
@@ -127,6 +129,12 @@ namespace TapTap
                 respawn.SetCheckpoint(body.Motor.Position);
             if (view != null) view.Configure(this, body, head, config);
             initialized = true;
+            if (Application.isPlaying)
+            {
+                PlayerAudioFeedback audio = GetComponent<PlayerAudioFeedback>();
+                if (audio == null) audio = gameObject.AddComponent<PlayerAudioFeedback>();
+                audio.Bind(this);
+            }
         }
 
         private void OnEnable()
@@ -211,6 +219,37 @@ namespace TapTap
             Respawn = respawn.CaptureState(),
             Facing = view != null ? view.CaptureFacing() : default
         };
+
+        public bool CanSkipRecording(in Snapshot previous, in Snapshot current)
+        {
+            if (current.Phase != PlayerPhase.Joined && current.Phase != PlayerPhase.Detached
+                && current.Phase != PlayerPhase.Holding) return false;
+            if (previous.Respawn.Count != 0 || current.Respawn.Count != 0
+                || current.RetractPending || current.RecallBuffered || current.BufferedRelease
+                || current.Clock < current.RecallReadyAt || current.Clock < current.FailedGuideUntil) return false;
+            // Clock advances even when standing still. Every other gameplay field must match.
+            return previous.Phase == current.Phase
+                && previous.RetractPending == current.RetractPending
+                && previous.RecallBuffered == current.RecallBuffered
+                && previous.BufferedRelease == current.BufferedRelease
+                && previous.GuideActive == current.GuideActive
+                && previous.RecallReadyAt.Equals(current.RecallReadyAt)
+                && previous.FailedGuideUntil.Equals(current.FailedGuideUntil)
+                && previous.ActionTime.Equals(current.ActionTime)
+                && previous.RetractStartExtra.Equals(current.RetractStartExtra)
+                && previous.PullStartX.Equals(current.PullStartX)
+                && previous.PendingLaunchHeight.Equals(current.PendingLaunchHeight)
+                && previous.PullBodyTarget.Equals(current.PullBodyTarget)
+                && previous.PickupStartOffset.Equals(current.PickupStartOffset)
+                && previous.BodyGroundContact == current.BodyGroundContact
+                && previous.HeadGroundContact == current.HeadGroundContact
+                && previous.SpaceHeld == current.SpaceHeld
+                && previous.DistantPull == current.DistantPull
+                && previous.Respawn.HasCheckpoint == current.Respawn.HasCheckpoint
+                && previous.Respawn.Checkpoint.Equals(current.Respawn.Checkpoint)
+                && previous.Facing.BodyYaw.Equals(current.Facing.BodyYaw)
+                && previous.Facing.HeadYaw.Equals(current.Facing.HeadYaw);
+        }
 
         public void RestoreState(in Snapshot state)
         {

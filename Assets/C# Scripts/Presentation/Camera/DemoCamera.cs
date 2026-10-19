@@ -161,7 +161,7 @@ namespace TapTap
                 currentShot.Rotation * Vector3.forward)));
             float height = 2f * distance * Mathf.Tan(viewCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
             Vector2 shake = Vector2.ClampMagnitude(effects.ShakeOffset * fixedShakeMultiplier,
-                height * fixedShakeViewportLimit);
+                height * fixedShakeViewportLimit * effects.ShakeViewportMultiplier);
             Vector3 worldOffset = viewCamera.transform.right * shake.x + viewCamera.transform.up * shake.y;
             shakeRoot.localPosition = shakeOrigin + (shakeRoot.parent != null
                 ? shakeRoot.parent.InverseTransformVector(worldOffset) : worldOffset);

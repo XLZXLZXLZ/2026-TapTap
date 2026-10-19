@@ -17,6 +17,7 @@ namespace TapTap.Editor
         public const string PlatformPath = Folder + "/ReturnJourneyPlatform.prefab";
         public const string DoorPath = Folder + "/ReturnJourneyDoor.prefab";
         public const string FeedbackPath = Folder + "/KeyPickupFeedback.prefab";
+        public const string RadioFocusPath = Folder + "/ReturnJourneyRadio.prefab";
         public const string PreviewPath = "Assets/Scenes/ReturnJourneyMechanicsPreview.unity";
         public const string WorldPreviewPath = "Assets/Scenes/ReturnJourneyPreview.unity";
         public const string PausePath = "Assets/Prefabs/UI/PauseMenu.prefab";
@@ -35,6 +36,7 @@ namespace TapTap.Editor
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(PlatformPath) == null) CreatePlatform(preview, material);
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(DoorPath) == null) CreateDoor(preview, material);
                 if (AssetDatabase.LoadAssetAtPath<GameObject>(DeparturePath) == null) CreateDeparture(preview);
+                EnsureRadioFocus(preview);
                 ConfigureKey();
                 ConfigurePause();
             }
@@ -45,6 +47,24 @@ namespace TapTap.Editor
         {
             if (!Application.isBatchMode) throw new InvalidOperationException("Use an isolated batch project.");
             Build();
+        }
+
+        private static void EnsureRadioFocus(Scene scene)
+        {
+            if (AssetDatabase.LoadAssetAtPath<GameObject>(RadioFocusPath) != null) return;
+            GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Interactables/Radio.prefab");
+            if (source == null) throw new InvalidOperationException("缺少基础收音机预制体。");
+            var root = (GameObject)PrefabUtility.InstantiatePrefab(source, scene);
+            root.name = "ReturnJourneyRadio";
+            var focus = root.AddComponent<ReturnJourneyRadioFocus>();
+            var target = new GameObject("Closeup Focus").transform;
+            target.SetParent(root.transform, false);
+            target.localPosition = Vector3.up * 0.45f;
+            focus.FocusTarget = target;
+            var receiver = root.GetComponent<RadioReceiver>();
+            receiver.FirstEncounter = AssetDatabase.LoadAssetAtPath<VoiceSequence>("Assets/Audio/Voice/Sequences/M07_FirstEncounter.asset");
+            receiver.ReturnJourney = AssetDatabase.LoadAssetAtPath<VoiceSequence>("Assets/Audio/Voice/Sequences/M07_ReturnJourney.asset");
+            PrefabUtility.SaveAsPrefabAsset(root, RadioFocusPath);
         }
 
         [MenuItem("TapTap/维护/返程/创建独立演示场景")]
@@ -190,16 +210,9 @@ namespace TapTap.Editor
         private static void CreateDoor(Scene scene, Material material)
         {
             GameObject root = Root("ReturnJourneyDoor", scene);
-            root.AddComponent<BoxCollider2D>().size = Vector2.one;
+            root.AddComponent<BoxCollider2D>();
             root.AddComponent<WorldSurface>();
-            Transform view = Child("View", root.transform, Vector3.zero);
-            Cube(view, new Vector3(0f, 0f, 0.5f), new Vector3(0.96f, 1f, 1f), material);
-            Transform socket = Child("KeySocket", root.transform, new Vector3(0.22f, 0f, -0.1f));
-            Transform sensor = Child("Body Proximity", root.transform, new Vector3(0.9f, 0f, 0f));
-            var trigger = sensor.gameObject.AddComponent<BoxCollider2D>();
-            trigger.isTrigger = true; trigger.size = new Vector2(2.5f, 2f);
-            var door = root.AddComponent<ReturnJourneyDoor>();
-            door.View = view; door.KeySocket = socket; door.Proximity = trigger;
+            GoldenDoorAssets.ConfigureDoor(root);
             PrefabUtility.SaveAsPrefabAsset(root, DoorPath);
             Object.DestroyImmediate(root);
         }
@@ -264,7 +277,7 @@ namespace TapTap.Editor
                 rect.SetParent(menu.LeftArt, false);
                 var image = owner.GetComponent<Image>();
                 PlaceBlueprint(image, original.gameObject.layer);
-                image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/RobotLevelBlueprint.png");
+                image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(AssetDatabase.GUIDToAssetPath("74830c13907d429d965607a4a3e04ae7"));
                 image.preserveAspect = true; image.raycastTarget = false;
                 owner.SetActive(false);
                 var portrait = root.AddComponent<ReturnJourneyPausePortrait>();

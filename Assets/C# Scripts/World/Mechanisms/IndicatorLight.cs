@@ -17,7 +17,7 @@ namespace TapTap
         [Min(0.1f)] public float Length = 8f;
         public Color Tint = new Color(1f, 0.88f, 0.58f, 0.3f);
         [Min(0.1f)] public float GradientPower = 1.5f;
-        [Tooltip("手动放置时每格的世界尺寸；关卡编辑器笔刷通过 Transform 缩放处理。")]
+        [Tooltip("每格的本地尺寸，可配合 Transform 缩放调整场景中的指示灯。")]
         [Min(0.01f)] public float GridUnit = 1f;
         private Mesh mesh;
         private MeshRenderer visual;

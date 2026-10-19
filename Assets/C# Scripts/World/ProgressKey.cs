@@ -9,13 +9,11 @@ namespace TapTap
     [RequireComponent(typeof(BoxCollider2D), typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class ProgressKey : MonoBehaviour
     {
-        [Header("拾取强调（真实秒数）")]
-        [Range(0.05f, 0.6f)] public float ZoomAmount = 0.35f;
-        [Min(0.01f)] public float ZoomInDuration = 0.28f;
-        [Min(0f)] public float ZoomHoldDuration = 0.4f;
-        [Min(0.01f)] public float ZoomOutDuration = 0.75f;
-        [Min(0f)] public float HitStopDuration = 0.16f;
-        [Range(0.01f, 1f)] public float SlowMotionScale = 0.06f;
+        [Header("拾取轻推镜头（真实秒数，不改变游戏速度）")]
+        [Range(0.01f, 0.6f)] public float ZoomAmount = 0.06f;
+        [Min(0.01f)] public float ZoomInDuration = 0.22f;
+        [Min(0f)] public float ZoomHoldDuration = 0.05f;
+        [Min(0.01f)] public float ZoomOutDuration = 0.3f;
         public Color Tint = Color.white;
         [Header("正弦浮动")]
         [Min(0f)] public float FloatAmplitude = 0.06f;

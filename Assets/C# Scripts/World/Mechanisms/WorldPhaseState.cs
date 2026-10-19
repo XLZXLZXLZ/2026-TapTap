@@ -27,6 +27,7 @@ namespace TapTap
         {
             if (active == value) return;
             active = value;
+            AudioManager.Instance?.Play(SoundId.PhaseChange, null, 0.8f, active ? 1.05f : 0.9f, this);
             Changed?.Invoke(active);
             Physics2D.SyncTransforms();
             ResolveMaterialization();
@@ -34,6 +35,8 @@ namespace TapTap
         }
 
         public bool CaptureState() => active;
+
+        public bool CanSkipRecording(in bool previous, in bool current) => previous == current;
 
         public void RestoreState(in bool value)
         {

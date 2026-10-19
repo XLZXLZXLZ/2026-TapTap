@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 namespace TapTap
 {
     [Flags]
-    public enum GameplayAction { Rewind = 1, Input = 2, DebugCamera = 4 }
+    public enum GameplayAction { Rewind = 1, Input = 2, DebugCamera = 4, PlayerControls = 8 }
 
     // Scene-scoped leases. Systems depend on actions, never on the sequence requesting them.
     public static class GameplayActionLocks
@@ -24,10 +24,10 @@ namespace TapTap
 
         public static void Release(Component owner) { if (owner != null) entries.Remove(owner); }
 
-        public static bool IsLocked(GameplayAction action, Scene scene)
+        public static bool IsLocked(GameplayAction action, Scene scene, Component exceptOwner = null)
         {
             foreach (var entry in entries)
-                if (entry.Key != null && entry.Value.Scene == scene.handle && (entry.Value.Actions & action) != 0)
+                if (entry.Key != null && entry.Key != exceptOwner && entry.Value.Scene == scene.handle && (entry.Value.Actions & action) != 0)
                     return true;
             return false;
         }

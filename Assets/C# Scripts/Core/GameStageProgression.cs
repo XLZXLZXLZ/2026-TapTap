@@ -29,8 +29,8 @@ namespace TapTap
         private static GameStageProgression transitioning;
         private Sequence emphasis;
         private DemoCamera cameraRig;
-        private PlayerController player;
         private ProgressKey pendingKey, carriedKey;
+        // Resets, menus and stage transitions wait for pickup; movement keeps running.
         public static bool InputBlocked => transitioning != null;
         public GameStage Stage => StageIn(gameObject.scene);
         public bool HasProgressed => Stage >= GameStage.Returning;
@@ -77,7 +77,8 @@ namespace TapTap
         }
         public bool BeginReturn()
         {
-            if (HasProgressed || InputBlocked || WorldMapProgression.InputBlocked || RewindManager.Rewinding) return false;
+            if (HasProgressed || InputBlocked || WorldMapProgression.InputBlocked || RewindManager.Rewinding
+                || GameplayActionLocks.IsLocked(GameplayAction.PlayerControls, gameObject.scene)) return false;
             CommitStage(GameStage.Returning);
             return true;
         }
@@ -102,14 +103,15 @@ namespace TapTap
         {
             if (key == null || character == null || key.gameObject.scene != gameObject.scene || Stage != GameStage.Returning
                 || InputBlocked || WorldMapProgression.InputBlocked || RewindManager.Rewinding
+                || GameplayActionLocks.IsLocked(GameplayAction.PlayerControls, gameObject.scene)
                 || Time.timeScale <= 0f || character.Body.IsReturning || character.Head.IsReturning
                 || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting)) return false;
             pendingKey = key;
-            player = character;
+            AudioManager.Instance?.Play(SoundId.KeyPickup, character.Body.Motor.Position);
             transitioning = this;
-            GameplayActionLocks.Acquire(this, GameplayAction.Input | GameplayAction.Rewind);
+            // Keep movement and simulation running during the gentle camera push.
+            GameplayActionLocks.Acquire(this, GameplayAction.Rewind);
             key.BeginCarry(character);
-            player.GetComponent<PlayerInput>()?.ResetForTransition();
             StartCoroutine(CollectSequence());
             return true;
         }
@@ -121,7 +123,7 @@ namespace TapTap
             effects.ClearTransientEffects();
             RewindManager.Current?.ClearHistory();
             cameraRig = FindCamera();
-            effects.BeginProgressEmphasis(pendingKey.HitStopDuration > 0f ? 0f : pendingKey.SlowMotionScale);
+            pendingKey.PlayPickupBurst();
             float closeSize = 1f - pendingKey.ZoomAmount;
             emphasis = DOTween.Sequence().SetUpdate(true);
             emphasis.Append(DOVirtual.Float(1f, closeSize, pendingKey.ZoomInDuration,
@@ -129,23 +131,15 @@ namespace TapTap
             emphasis.AppendInterval(pendingKey.ZoomHoldDuration);
             emphasis.Append(DOVirtual.Float(closeSize, 1f, pendingKey.ZoomOutDuration,
                 value => cameraRig?.SetProgressZoom(value)).SetEase(Ease.InOutSine));
-            emphasis.InsertCallback(pendingKey.HitStopDuration, () =>
-            {
-                effects.EndProgressEmphasis();
-                effects.BeginProgressEmphasis(pendingKey.SlowMotionScale);
-                pendingKey.PlayPickupBurst();
-            });
             yield return emphasis.WaitForCompletion();
             emphasis = null;
-            effects.EndProgressEmphasis();
             cameraRig?.SetProgressZoom(1f);
             carriedKey = pendingKey;
             CommitStage(GameStage.CarryingKey);
-            player.GetComponent<PlayerInput>()?.ResetForTransition();
             pendingKey = null;
             transitioning = null;
             GameplayActionLocks.Release(this);
-            // Open only after restoring the original game speed and releasing the pickup lock.
+            // Open after the gentle push finishes and the pickup lock is released.
             PauseMenu menu = PauseMenu.Current;
             if (menu != null && menu.gameObject.scene == gameObject.scene && menu.Open())
                 menu.GetComponent<ReturnJourneyPausePortrait>()?.Reveal();
@@ -174,9 +168,7 @@ namespace TapTap
             emphasis?.Kill();
             emphasis = null;
             cameraRig?.SetProgressZoom(1f);
-            EffectManager.Existing?.EndProgressEmphasis();
             if (pendingKey != null) pendingKey.SetCollected(false);
-            player?.GetComponent<PlayerInput>()?.ResetForTransition();
             pendingKey = null;
             transitioning = null;
             GameplayActionLocks.Release(this);

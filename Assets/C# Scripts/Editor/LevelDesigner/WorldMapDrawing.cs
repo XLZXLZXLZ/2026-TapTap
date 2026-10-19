@@ -30,7 +30,7 @@ namespace TapTap.Editor
             if (level.Placements != null)
                 foreach (LevelPlacement placement in level.Placements)
                 {
-                    if (placement?.Brush == null || placement.Brush.HandlerId == "annotation") continue;
+                    if (placement?.Brush == null || placement.Brush.IsEditorIgnored) continue;
                     Color color = level.Style != null ? level.Style.BrushColor(placement.Brush) : placement.Brush.Color;
                     if (placement.Settings is PhaseBlockPlacementSettings phase && phase.SolidWhenActive) color.a *= 0.3f;
                     if (placement.Settings is PistonPlacementSettings piston && piston.ExtendedWhenActive) color.a *= 0.3f;

@@ -2,6 +2,12 @@
 
 把 `Assets/Prefabs/Interactables/Radio.prefab` 拖入关卡。模型使用纯色 URP Unlit 材质；根节点的 BoxCollider2D 是触发区，默认 4×4，只检测玩家身体，支持高速经过。
 
+## 触发区与播放呼吸
+
+选中收音机根节点，在 BoxCollider2D 中保持 Is Trigger 开启，用 Size 设置宽、高，Offset 设置区域相对收音机的位置；也可点击 Edit Collider 在 Scene 视图中拖动边框。正方形区域让 Size 的 X、Y 相等。默认 Size 为 (4, 4)、Offset 为 (0, 1)。不要通过缩放根节点来调触发范围；收听距离由 RadioReceiver 的 Full Volume Radius / Listening Radius 单独控制。
+
+RadioReceiver 的 Breathe While Playing 默认开启：模型播放时平滑放大再恢复，循环进行。Breathing Amount 默认 0.06（最大 106%），Breathing Duration 默认 1.2 秒（一轮）。Breathing Target 指向 RadioModel 子节点；现有实例未指定时会自动查找同名子节点。仅缩放模型，触发区不变。暂停或按 Z 时定格，继续播放后接着呼吸；播完、中断、禁用时恢复原尺寸。替换模型时可把新的模型子节点拖到 Breathing Target。
+
 ## 配置音频
 
 在 Project 右键选择 **Create → TapTap → Audio → Voice Sequence**，为每组播报建立初见、返程两份独立 SO，分别赋给 RadioReceiver 的 FirstEncounter 和 ReturnJourney。同内容可共用只读 SO，各收音机的收听记录仍按实例独立保存。
@@ -48,7 +54,9 @@ Sequence 的 Volume 控制整组音量。所有段都有有效 Clip，且字幕�
 
 返程取自 GameStageProgression；进入 Returning 时中断初见广播，并允许播放返程配置。携带钥匙、开门不会再次重置。暂停菜单、输入锁定、按 Z 撤销期间暂停播放；Z 不切换初见/返程、不撤销已听完的记录。临时禁用后再启用会保留记录，销毁或重新载入场景则开始新的收听记录，叙事阶段由现有流程系统恢复。
 
-后续演出可关闭 Trigger Automatically，调用 `RadioReceiver.TryPlay()`；`ResetPlaybackHistory()` 清除该实例的两阶段收听记录。M07 五段语音已配置，专属场景演出未在本次添加。
+后续演出可关闭 Trigger Automatically，调用 `RadioReceiver.TryPlay()`；`ResetPlaybackHistory()` 清除该实例的两阶段收听记录。M07 五段语音已配置。
+
+需要返程广播特写时，使用 `Assets/Prefabs/ReturnJourney/ReturnJourneyRadio.prefab`，或在现有收音机根节点增加 `ReturnJourneyRadioFocus`。它在返程语音开始时推进到 3 格高的近景，禁止玩家操作，但玩家动画、时间和场景模拟继续运行，同时锁定 Z 与调试镜头；全部语音和间隔播完后退回当前区域的正常镜头，初见广播不接管镜头。可调整 Closeup Height、Focus Target、Approach Duration、Restore Duration，或由外部调用 `TryActivate()`。暂停菜单和其他系统的锁仍会正常暂停它。详见 `../ReturnJourney/README.md`。
 
 ## 字幕
 

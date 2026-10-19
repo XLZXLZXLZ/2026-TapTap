@@ -5,5 +5,8 @@ namespace TapTap
     {
         TState CaptureState();
         void RestoreState(in TState state);
+        // True only when gameplay is unchanged and no ongoing task needs a timeline.
+        // Ignore an advancing clock itself, but keep recording its active timers.
+        bool CanSkipRecording(in TState previous, in TState current);
     }
 }

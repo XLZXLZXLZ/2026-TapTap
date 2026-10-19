@@ -34,8 +34,10 @@ namespace TapTap
         private static WorldMapProgression current;
 
         public static WorldMapProgression Current => current;
-        public static bool InputBlocked => PauseMenu.BlocksInput || GameplayActionLocks.IsLocked(GameplayAction.Input, UnityEngine.SceneManagement.SceneManager.GetActiveScene())
-            || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen || GameStageProgression.InputBlocked
+        public static bool InputBlocked => IsInputBlocked();
+        public static bool IsInputBlocked(Component exceptOwner = null) => PauseMenu.BlocksInput
+            || GameplayActionLocks.IsLocked(GameplayAction.Input, UnityEngine.SceneManagement.SceneManager.GetActiveScene(), exceptOwner)
+            || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen
             || (current != null && (current.IsTransitioning || current.IsComplete));
         public bool IsTransitioning { get; private set; }
         public bool IsComplete { get; private set; }
@@ -135,6 +137,7 @@ namespace TapTap
         }
 
         public Snapshot CaptureState() => new Snapshot { CurrentIndex = CurrentIndex };
+        public bool CanSkipRecording(in Snapshot previous, in Snapshot current) => previous.CurrentIndex == current.CurrentIndex;
         public void RestoreState(in Snapshot state)
         {
             if (!initialized || state.CurrentIndex < 0 || state.CurrentIndex >= ordered.Count) return;
@@ -154,6 +157,8 @@ namespace TapTap
         }
 
         private bool CanTransition => initialized && !PauseMenu.IsOpen && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading
+            && !GameplayActionLocks.IsLocked(GameplayAction.Input, gameObject.scene)
+            && !GameplayActionLocks.IsLocked(GameplayAction.PlayerControls, gameObject.scene)
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         public bool CompleteCurrent(LevelEndpoint endpoint)
@@ -195,6 +200,8 @@ namespace TapTap
 
         private void StartTransition(int nextIndex, bool passed, LevelEndpoint endpoint = null)
         {
+            AudioManager.Existing?.StopGameplay();
+            if (passed) AudioManager.Instance?.Play(SoundId.Complete);
             CancelPlayerExit();
             IsTransitioning = true;
             RewindManager.Current?.ClearHistory();

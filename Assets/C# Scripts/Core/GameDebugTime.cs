@@ -43,6 +43,7 @@ namespace TapTap
         }
 
         private bool CanControl => player != null && !WorldMapProgression.InputBlocked
+            && !GameplayActionLocks.IsLocked(GameplayAction.PlayerControls, player.gameObject.scene)
             && !RewindManager.Rewinding && !(SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         private void Update()
@@ -58,6 +59,7 @@ namespace TapTap
         {
             if (!CanControl || Time.timeScale <= 0f) return;
             bulletTimeActive = !bulletTimeActive;
+            AudioManager.Instance?.Play(bulletTimeActive ? SoundId.BulletTimeOn : SoundId.BulletTimeOff);
             if (bulletTimeActive) ScreenFadeOverlay.Instance.enabled = true;
             ApplySpeed();
         }

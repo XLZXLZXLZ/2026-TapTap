@@ -173,7 +173,7 @@ namespace TapTap.Editor
                 region.transform.localPosition = (Vector2)module.Position * module.Level.Palette.UnitSize;
                 region.Source = module.Level; region.Size = module.Level.Size; region.UnitSize = module.Level.Palette.UnitSize;
                 region.WorldModuleId = module.Id; region.SequenceNumber = map.SequenceNumber(module);
-                if (region.EntryCheckpoint == null) region.EntryCheckpoint = region.GetComponentInChildren<CheckpointFlag>(true);
+                region.ResolveEntryCheckpoint();
                 PrefabUtility.RecordPrefabInstancePropertyModifications(region);
                 PrefabUtility.RecordPrefabInstancePropertyModifications(region.transform);
             }

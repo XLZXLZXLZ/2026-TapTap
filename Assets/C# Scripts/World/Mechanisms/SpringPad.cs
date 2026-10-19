@@ -31,6 +31,7 @@ namespace TapTap
             if (spring == null || !spring.isActiveAndEnabled || spring.BounceHeight <= 0f || gravity <= 0f) return false;
             speed = Mathf.Sqrt(2f * gravity * spring.BounceHeight);
             spring.Animate();
+            AudioManager.Instance?.Play(SoundId.Bounce, spring.transform.position, 1f, 0.9f, spring);
             return true;
         }
 

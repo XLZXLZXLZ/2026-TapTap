@@ -240,7 +240,8 @@ namespace TapTap.Editor
 
         private static Vector2 FindSpawn(LevelRegion region, PlayerController player, PlayerConfig config)
         {
-            if (region.EntryCheckpoint != null) return region.EntrySpawnPosition;
+            if (region.ResolveEntryCheckpoint() != null || region.Source?.EntryPlacement != null)
+                return region.EntrySpawnPosition;
             CheckpointFlag flag = region.GetComponentInChildren<CheckpointFlag>();
             if (flag != null) return flag.SpawnPosition;
             BoxCollider2D body = player.Body.GetComponent<BoxCollider2D>();

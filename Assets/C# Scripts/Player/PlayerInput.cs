@@ -15,11 +15,13 @@ namespace TapTap
         private bool waitForSpaceRelease;
         private float externalHorizontal;
         private bool externalHeld;
+        private bool ControlsBlocked => WorldMapProgression.InputBlocked
+            || GameplayActionLocks.IsLocked(GameplayAction.PlayerControls, gameObject.scene);
 
         private void Update()
         {
             if (RewindManager.Rewinding) { Horizontal = 0f; edges.Clear(); return; }
-            if (WorldMapProgression.InputBlocked)
+            if (ControlsBlocked)
             {
                 Horizontal = 0f;
                 SpaceHeld = false;
@@ -44,7 +46,7 @@ namespace TapTap
             externalHorizontal = horizontal;
             externalHeld = held;
             if (RewindManager.Rewinding) { edges.Clear(); return; }
-            if (WorldMapProgression.InputBlocked) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
+            if (ControlsBlocked) { Horizontal = 0f; SpaceHeld = false; edges.Clear(); return; }
             if (waitForSpaceRelease) { if (!held) waitForSpaceRelease = false; held = false; }
             Sample(horizontal, held);
         }

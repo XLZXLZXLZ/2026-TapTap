@@ -69,9 +69,11 @@ namespace TapTap.Editor
         private static string PreferenceKey => "TapTap.LevelDesigner.LastLayout." + Application.dataPath;
         private bool SelectionMode => tool == GridTool.Select;
         private bool RectangleStroke => rectangleStart.HasValue;
-        private LevelBrush Brush => sampledBrush != null ? sampledBrush :
+        private LevelBrush CurrentBrush => sampledBrush != null ? sampledBrush :
             palette != null && palette.Brushes != null && brushIndex >= 0 && brushIndex < palette.Brushes.Count
                 ? palette.Brushes[brushIndex] : null;
+
+        private LevelBrush Brush => CurrentBrush != null && !CurrentBrush.IsEditorIgnored ? CurrentBrush : null;
 
         [MenuItem("TapTap/Level Designer", false, 100)]
         public static void Open()
@@ -446,7 +448,7 @@ namespace TapTap.Editor
                 for (int i = 0; i < palette.Brushes.Count; i++)
                 {
                     LevelBrush brush = palette.Brushes[i];
-                    if (brush == null || brush.HandlerId == "annotation") continue;
+                    if (brush == null || brush.IsEditorIgnored) continue;
                     if (!string.IsNullOrEmpty(brushSearch) && BrushName(brush).IndexOf(brushSearch, StringComparison.OrdinalIgnoreCase) < 0
                         && brush.LayerId.IndexOf(brushSearch, StringComparison.OrdinalIgnoreCase) < 0) continue;
                     bool selected = brush == Brush;
@@ -745,17 +747,13 @@ namespace TapTap.Editor
             GUI.BeginGroup(canvas);
             Rect bounds = new Rect(pan.x, pan.y, layout.Size.x * cellPixels, layout.Size.y * cellPixels);
             EditorGUI.DrawRect(bounds, new Color(0.17f, 0.2f, 0.24f));
-            // Render lighting after the map, so a wide beam is not covered by later grid cells.
-            for (int pass = 0; pass < 2; pass++)
             foreach (LevelPlacement item in layout.Placements)
             {
                 if (!Visible(item)) continue;
                 Rect cell = CellRect(item.Cell);
-                bool light = item.Brush != null && item.Brush.HandlerId == "indicator-light";
-                if (light != (pass == 1)) continue;
                 if (movingSelection && selectionMoveDelta != Vector2Int.zero &&
                     (LevelPlacementGeometry.Intersects(item, selectionArea) || LevelPlacementGeometry.Intersects(item, MovePreviewArea()))) continue;
-                if (!light && !PlacementRect(item).Overlaps(new Rect(Vector2.zero, canvas.size))) continue;
+                if (!PlacementRect(item).Overlaps(new Rect(Vector2.zero, canvas.size))) continue;
                 DrawPlacement(item, cell, false);
             }
             DrawGrid(canvas, bounds);
@@ -859,7 +857,7 @@ namespace TapTap.Editor
         private void DrawPlacement(LevelPlacement placement, Rect cell, bool ghost)
         {
             LevelBrush brush = placement.Brush;
-            if (brush == null || brush.HandlerId == "annotation") return;
+            if (brush == null || brush.IsEditorIgnored) return;
             if (placement.Settings is PistonPlacementSettings piston)
             { DrawPiston(placement, cell, piston, ghost); return; }
             var handler = LevelBrushHandlers.Get(brush.HandlerId);
@@ -869,28 +867,11 @@ namespace TapTap.Editor
                 preview.width * cell.width, preview.height * cell.height);
             Color color = layout != null && layout.Style != null ? layout.Style.BrushColor(brush) : brush.Color;
             if (ghost) color.a *= 0.45f;
-            if (placement.Settings is LightPlacementSettings light)
+            if (brush.HandlerId == GhostBlockLevelBrushHandler.HandlerId)
             {
-                Vector2 origin = cell.center;
-                float radians = -light.RotationDegrees * Mathf.Deg2Rad;
-                float cos = Mathf.Cos(radians), sin = Mathf.Sin(radians);
-                Vector2 TransformPoint(float x, float y) => origin + new Vector2(x * cos - y * sin, x * sin + y * cos) * cell.width;
-                Color previous = Handles.color;
-                Handles.BeginGUI();
-                for (int row = 0; Event.current.type == EventType.Repaint && row < 16; row++)
-                {
-                    float t = row / 16f, next = (row + 1) / 16f;
-                    float width = Mathf.Lerp(light.ShortWidth, light.LongWidth, t) * 0.5f;
-                    float nextWidth = Mathf.Lerp(light.ShortWidth, light.LongWidth, next) * 0.5f;
-                    Color tint = light.Tint;
-                    tint.a *= Mathf.Pow(1f - t, light.GradientPower) * (ghost ? 0.45f : 1f);
-                    Handles.color = tint;
-                    Handles.DrawAAConvexPolygon(TransformPoint(-width, t * light.Length), TransformPoint(width, t * light.Length),
-                        TransformPoint(nextWidth, next * light.Length), TransformPoint(-nextWidth, next * light.Length));
-                }
-                Handles.EndGUI();
-                Handles.color = previous;
+                EditorGUI.DrawRect(shape, new Color(color.r, color.g, color.b, color.a * 0.12f));
                 Outline(shape, color, 1f);
+                if (cell.width >= 14f) GUI.Label(shape, "◇", CenterStyle());
             }
             else if (handler != null && handler.IsCheckpoint)
             {
@@ -1244,7 +1225,7 @@ namespace TapTap.Editor
         private LevelPlacement SelectedPlacement()
         {
             if (layout == null || layout.Placements == null || string.IsNullOrEmpty(selectedPlacementId)) return null;
-            return layout.Placements.Find(item => item != null && item.Id == selectedPlacementId);
+            return layout.Placements.Find(item => item?.Brush != null && !item.Brush.IsEditorIgnored && item.Id == selectedPlacementId);
         }
 
         private void RebuildCache()
@@ -1255,7 +1236,7 @@ namespace TapTap.Editor
             {
                 foreach (LevelPlacement item in layout.Placements)
                 {
-                    if (item == null) continue;
+                    if (item == null || item.Brush != null && item.Brush.IsEditorIgnored) continue;
                     foreach (Vector2Int cell in LevelPlacementGeometry.Cells(item))
                     {
                         if (!cells.TryGetValue(cell, out var contents))
@@ -1273,13 +1254,13 @@ namespace TapTap.Editor
         private int OutsideCount()
         {
             return layout.Placements == null ? 0 : layout.Placements.FindAll(item =>
-                item != null && !LevelPlacementGeometry.Fits(item, layout.CanvasBounds)).Count;
+                item != null && !(item.Brush?.IsEditorIgnored ?? false) && !LevelPlacementGeometry.Fits(item, layout.CanvasBounds)).Count;
         }
 
         private void RemoveOutside()
         {
             RecordLayoutUndo("删除越界物体");
-            layout.Placements.RemoveAll(item => item != null && !LevelPlacementGeometry.Fits(item, layout.CanvasBounds));
+            layout.Placements.RemoveAll(item => item != null && !(item.Brush?.IsEditorIgnored ?? false) && !LevelPlacementGeometry.Fits(item, layout.CanvasBounds));
             if (layout.EntryPlacement == null) layout.EntryPlacementId = null;
             Changed();
         }
@@ -1295,7 +1276,7 @@ namespace TapTap.Editor
             Repaint();
         }
 
-        private bool Visible(LevelPlacement item) => item?.Brush != null && item.Brush.HandlerId != "annotation" && (!isolateLayer ||
+        private bool Visible(LevelPlacement item) => item?.Brush != null && !item.Brush.IsEditorIgnored && (!isolateLayer ||
             item.Brush != null && item.Brush.LayerId == (Brush != null ? Brush.LayerId : "geometry"));
 
         private void HandleShortcuts()

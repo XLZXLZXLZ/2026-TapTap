@@ -70,6 +70,8 @@ namespace TapTap
 
         public void SetExtended(bool extended, bool immediate)
         {
+            if (!immediate && !Mathf.Approximately(target, extended ? 1f : 0f))
+                AudioManager.Instance?.Play(SoundId.PistonMove, transform.position, 1f, extended ? 1f : 0.88f, this);
             target = extended ? 1f : 0f;
             if (immediate || AnimationDuration <= 0f || !Application.isPlaying) extension = target;
             ApplyVisual();

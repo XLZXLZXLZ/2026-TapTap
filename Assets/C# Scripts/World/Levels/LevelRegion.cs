@@ -32,9 +32,39 @@ namespace TapTap
             }
         }
 
-        public Vector2 EntrySpawnPosition => EntryCheckpoint != null
-            ? EntryCheckpoint.SpawnPosition
-            : (Vector2)transform.position;
+        // Prefab rebuilds can invalidate scene overrides. Recover the authored entry by
+        // placement ID, never by hierarchy order (a level may have several checkpoints).
+        public CheckpointFlag ResolveEntryCheckpoint()
+        {
+            if (EntryCheckpoint != null && EntryCheckpoint.GetComponentInParent<LevelRegion>() == this)
+                return EntryCheckpoint;
+            EntryCheckpoint = null;
+            LevelPlacement entry = Source != null ? Source.EntryPlacement : null;
+            if (entry?.Brush == null || entry.Brush.HandlerId != "checkpoint") return null;
+            foreach (CheckpointFlag checkpoint in GetComponentsInChildren<CheckpointFlag>(true))
+            {
+                if (checkpoint.GetComponentInParent<LevelRegion>() != this) continue;
+                for (Transform owner = checkpoint.transform; owner != transform; owner = owner.parent)
+                    if (owner.name.EndsWith(" " + entry.Id, System.StringComparison.Ordinal))
+                        return EntryCheckpoint = checkpoint;
+            }
+            return null;
+        }
+
+        public Vector2 EntrySpawnPosition
+        {
+            get
+            {
+                CheckpointFlag entry = ResolveEntryCheckpoint();
+                if (entry != null) return entry.SpawnPosition;
+                LevelPlacement placement = Source != null ? Source.EntryPlacement : null;
+                if (placement?.Brush != null && placement.Brush.HandlerId == "checkpoint"
+                    && placement.Settings is CheckpointPlacementSettings settings)
+                    return (Vector2)transform.TransformPoint(((Vector2)placement.Cell + placement.Brush.Anchor) * UnitSize)
+                        + settings.SpawnOffset * UnitSize;
+                return transform.position;
+            }
+        }
 
         // The buffer is measured in authored grid units, including around concave boundaries.
         public bool ContainsWorldPoint(Vector2 point, float buffer = 0f)

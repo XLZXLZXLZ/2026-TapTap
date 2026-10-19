@@ -1,0 +1,262 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ed5b0c050ac594da60c6ec42623313a, type: 3}
+  m_Name: GameplaySoundLibrary
+  m_EditorClassIdentifier: 
+  Sounds:
+  - Id: 0
+    Clips:
+    - {fileID: 8300000, guid: 861170479410584e89d361d68d3821ae, type: 3}
+    - {fileID: 8300000, guid: 86f50f6494fd5f2ca00ba07c2254a128, type: 3}
+    - {fileID: 8300000, guid: c5090cf08ca5510aa4cf0d9b7322086c, type: 3}
+    Volume: 0.45
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 1
+    Clips:
+    - {fileID: 8300000, guid: eebde3e8065a543d882581479a82e41d, type: 3}
+    - {fileID: 8300000, guid: 40b92cd413655e0f9a1838fd8d58a66d, type: 3}
+    - {fileID: 8300000, guid: 83a70255751c5befa7424f5489dd441c, type: 3}
+    Volume: 0.62
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 95
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 2
+    Clips:
+    - {fileID: 8300000, guid: 2e87c1653f195f619fb32cc044b744d5, type: 3}
+    - {fileID: 8300000, guid: a9cbe5e10f295d80b4728a5837636caa, type: 3}
+    - {fileID: 8300000, guid: 860fef282ec65cfab069b8be7a7a315c, type: 3}
+    Volume: 0.38
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 3
+    Clips:
+    - {fileID: 8300000, guid: ed2ce73ee56e52459b83d475ae135afb, type: 3}
+    - {fileID: 8300000, guid: 3d173aeb441c58f38076e3eabb7d0c47, type: 3}
+    - {fileID: 8300000, guid: a069726fefcd5e79b91da3cf2011b42a, type: 3}
+    Volume: 0.55
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 4
+    Clips:
+    - {fileID: 8300000, guid: 1220c501b60c5bedb0f37b3570fded8f, type: 3}
+    - {fileID: 8300000, guid: fb74893928505c3fa8d95f987e3a1644, type: 3}
+    - {fileID: 8300000, guid: 165b88a35f615e7fafdc33fe09030b27, type: 3}
+    Volume: 0.54
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.12
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 5
+    Clips:
+    - {fileID: 8300000, guid: b6cec01970e151f88a0b89ddb191381d, type: 3}
+    - {fileID: 8300000, guid: 27ee36aac9955cc88571533e8712e323, type: 3}
+    Volume: 0.35
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.12
+    MaxVoices: 3
+    Priority: 70
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 6
+    Clips:
+    - {fileID: 8300000, guid: 0d5619d8fa6a5eca860354ff691a80f4, type: 3}
+    - {fileID: 8300000, guid: ae2a93d6c74b51ca84ab38812f59acae, type: 3}
+    Volume: 0.5
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 7
+    Clips:
+    - {fileID: 8300000, guid: 0085c0d47eac5c84af0477d638cabcca, type: 3}
+    Volume: 0.32
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 8
+    Clips:
+    - {fileID: 8300000, guid: 39f5b967ebac524ab7b4ad4d7961c6a9, type: 3}
+    - {fileID: 8300000, guid: ccbaa7565daf5dadb5d7d82db78aa1c4, type: 3}
+    Volume: 0.34
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.12
+    MaxVoices: 2
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 9
+    Clips:
+    - {fileID: 8300000, guid: 67e4a635a5945df09d664b9c15b9f5b0, type: 3}
+    - {fileID: 8300000, guid: a0dc3a8266635c1693341f1d84500b40, type: 3}
+    Volume: 0.6
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.12
+    MaxVoices: 3
+    Priority: 95
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 10
+    Clips:
+    - {fileID: 8300000, guid: 678d1562c6c75d389dc3563bdd34cec7, type: 3}
+    Volume: 0.48
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.12
+    MaxVoices: 3
+    Priority: 95
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 11
+    Clips:
+    - {fileID: 8300000, guid: 7d9865d56f2656b5bdf3bc029ac91e54, type: 3}
+    Volume: 0.42
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 70
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 1
+  - Id: 12
+    Clips:
+    - {fileID: 8300000, guid: 78344473bf135011a435385657c85936, type: 3}
+    Volume: 0.38
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 70
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 1
+  - Id: 13
+    Clips:
+    - {fileID: 8300000, guid: 865e16ee4f2154eeacfd341968b95d93, type: 3}
+    Volume: 0.32
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 0
+  - Id: 14
+    Clips:
+    - {fileID: 8300000, guid: 95f662fd36035920b2154d9988a6d786, type: 3}
+    Volume: 0.32
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 0
+  - Id: 15
+    Clips:
+    - {fileID: 8300000, guid: 7e93ed32d0244194385032df6c105c95, type: 3}
+    Volume: 0.7
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 0
+  - Id: 16
+    Clips:
+    - {fileID: 8300000, guid: eebde3e8065a543d882581479a82e41d, type: 3}
+    - {fileID: 8300000, guid: 40b92cd413655e0f9a1838fd8d58a66d, type: 3}
+    - {fileID: 8300000, guid: 83a70255751c5befa7424f5489dd441c, type: 3}
+    Volume: 0.62
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 95
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 0
+  - Id: 17
+    Clips:
+    - {fileID: 8300000, guid: 678d1562c6c75d389dc3563bdd34cec7, type: 3}
+    Volume: 0.48
+    Pitch: {x: 0.97, y: 1.03}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 0
+    PauseWithGameplay: 0
+    AllowDuringRewind: 0
+  - Id: 18
+    Clips:
+    - {fileID: 8300000, guid: c5d45348a87c51a0a46d05d9e57240e7, type: 3}
+    Volume: 0.12
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 1
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+  - Id: 19
+    Clips:
+    - {fileID: 8300000, guid: 29e0f7b5460e5efdb6bcc349aa7937f9, type: 3}
+    Volume: 0.18
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 1
+    PauseWithGameplay: 1
+    AllowDuringRewind: 1
+  - Id: 20
+    Clips:
+    - {fileID: 8300000, guid: 0977bdaf799552ae878f776938c6e6d5, type: 3}
+    Volume: 0.1
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.04
+    MaxVoices: 3
+    Priority: 40
+    Loop: 1
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0

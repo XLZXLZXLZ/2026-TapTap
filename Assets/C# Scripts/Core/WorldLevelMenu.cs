@@ -54,6 +54,7 @@ namespace TapTap
             if (module != null && (view == null || !CanSelect(module))) return;
             if (selected == module) return;
             selected = module;
+            if (module != null) AudioManager.Instance?.Play(SoundId.Click, null, 0.5f, 1.05f);
             view.SetMenuSelection(selected, notice ?? "");
         }
 
@@ -65,6 +66,7 @@ namespace TapTap
             if (!CanSelect(selected))
             { notice = "先通过前一关，或按 P 解锁全部关卡"; view.SetMenuSelection(selected, notice); return false; }
             bool result = WorldMapSceneRouter.Instance.Enter(World, selected);
+            if (result) AudioManager.Instance?.Play(SoundId.Click);
             notice = result ? "正在进入第 " + World.SequenceNumber(selected) + " 关…" : WorldMapSceneRouter.Instance.LastError;
             view.SetMenuSelection(selected, notice);
             return result;

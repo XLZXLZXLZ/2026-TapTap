@@ -7,6 +7,8 @@ namespace TapTap
     {
         public string DisplayName;
         public string HandlerId = "default";
+        // Retain old serialized brushes so legacy layouts load, but never edit or generate them.
+        public bool IsEditorIgnored => HandlerId == "annotation" || HandlerId == "indicator-light";
         public string LayerId = "geometry";
         public GameObject Prefab;
         public Texture2D Thumbnail;

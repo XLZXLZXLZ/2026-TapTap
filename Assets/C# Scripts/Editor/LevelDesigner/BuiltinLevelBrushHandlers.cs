@@ -3,6 +3,18 @@ using UnityEngine;
 
 namespace TapTap.Editor
 {
+    public sealed class GhostBlockLevelBrushHandler : LevelBrushHandler
+    {
+        public const string HandlerId = "ghost-block";
+        public override string Id => HandlerId;
+        public override bool GeneratesSceneObject => false;
+
+        public override void DrawSettings(LevelPlacement placement)
+        {
+            EditorGUILayout.HelpBox("幽灵方块只标记关卡范围，游戏中没有模型或碰撞。可用笔刷、矩形填充或矩形边框扩展绿色轮廓和遮罩范围；超出蓝色画布时先扩展画布。", MessageType.None);
+        }
+    }
+
     public sealed class SpringLevelBrushHandler : LevelBrushHandler
     {
         public override string Id => "spring";

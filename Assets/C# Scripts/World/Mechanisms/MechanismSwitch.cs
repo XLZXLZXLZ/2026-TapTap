@@ -83,6 +83,7 @@ namespace TapTap
             if (touching && !occupied && now >= readyAt)
             {
                 readyAt = now + retriggerDelay;
+                AudioManager.Instance?.Play(SoundId.SwitchPress, transform.position, 1f, 1f, this);
                 state.Toggle();
             }
             if (occupied != touching) SetCapPressed(touching, false);
@@ -90,6 +91,10 @@ namespace TapTap
         }
 
         public Snapshot CaptureState() => new Snapshot { Occupied = occupied, ReadyAt = readyAt };
+
+        public bool CanSkipRecording(in Snapshot previous, in Snapshot current) =>
+            previous.Occupied == current.Occupied && previous.ReadyAt.Equals(current.ReadyAt)
+            && (RewindManager.Current == null || RewindManager.Current.SimulationTime >= current.ReadyAt);
 
         public void RestoreState(in Snapshot snapshot)
         {

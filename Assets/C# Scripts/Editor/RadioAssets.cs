@@ -223,6 +223,7 @@ namespace TapTap.Editor
             source.volume = 0f;
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ModelPath), scene);
             model.transform.SetParent(root.transform, false);
+            receiver.BreathingTarget = model.transform;
             PrefabUtility.SaveAsPrefabAsset(root, RadioPath);
             Object.DestroyImmediate(root);
         }

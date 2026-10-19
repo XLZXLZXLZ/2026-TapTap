@@ -123,12 +123,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62a2f66d90a44ee41a95ccc709483248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ZoomAmount: 0.35
-  ZoomInDuration: 0.28
-  ZoomHoldDuration: 0.4
-  ZoomOutDuration: 0.75
-  HitStopDuration: 0.16
-  SlowMotionScale: 0.06
+  ZoomAmount: 0.06
+  ZoomInDuration: 0.22
+  ZoomHoldDuration: 0.05
+  ZoomOutDuration: 0.3
   Tint: {r: 1, g: 1, b: 1, a: 1}
   FloatAmplitude: 0.06
   FloatPeriod: 2.4

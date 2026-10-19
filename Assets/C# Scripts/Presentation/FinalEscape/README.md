@@ -21,6 +21,7 @@
 - `GameplayActionLocks` 提供场景范围的回溯、输入、调试镜头锁；玩法系统不引用终局类。回溯锁不会禁止正常模拟。
 - `DemoCamera.TryAcquireControl/ReleaseControl` 提供独占镜头控制，正常镜头和直接 SetRegion 调用不会覆盖演出镜头。
 - `RegionRevealView.SetVisibilityOverride` 与 `VisibleOpacity` 提供临时显示覆盖，独立于 Discovered；遮罩填充使用最大值合并，保证已探索部分不被淡入区域再次盖黑。
+- 演出在物理触发检测前和镜头更新前检查关卡绑定。通关、跳关或重开使 `Generated` 重建后，清理旧演出的步数、镜头控制、操作锁及显示覆盖，通过当前大世界重新绑定关卡、触发组和区域显示组件。已停用但尚未销毁的旧关卡与初始状态模板不参与绑定；新关卡暂不可用时等待恢复。
 - 演出代码、预制体和结局画面集中存放，原有滤镜、Volume、Post Processing 配置不变。
 
-未执行游戏测试或视觉验收。
+回归入口：`TapTap.Editor.FinalEscapeRegressionTests.RunBatch`，只在隔离项目以 batchmode 执行，覆盖重建前后触发、引用与显示覆盖更新、镜头和输入锁释放、禁用恢复，以及第 8 步到达最终镜头位姿。视觉效果仍需在游戏中验收。

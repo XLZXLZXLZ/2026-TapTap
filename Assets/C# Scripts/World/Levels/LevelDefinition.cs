@@ -65,7 +65,7 @@ namespace TapTap
 
         public LevelPlacement Put(Vector2Int cell, LevelBrush brush, LevelPlacementSettings settings)
         {
-            if (!Contains(cell) || brush == null)
+            if (!Contains(cell) || brush == null || brush.IsEditorIgnored)
                 return null;
 
             if (Placements == null)
@@ -94,6 +94,7 @@ namespace TapTap
             {
                 LevelPlacement placement = Placements[i];
                 if (placement == null || !LevelPlacementGeometry.Contains(placement, cell) ||
+                    (placement.Brush != null && placement.Brush.IsEditorIgnored) ||
                     (!allLayers && !Matches(placement, cell, layerId)))
                     continue;
 

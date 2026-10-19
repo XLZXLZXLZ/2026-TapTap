@@ -31,6 +31,9 @@ namespace TapTap
         public string CurrentSubtitle => IsPlaying && started && !IsInGap && !IsPaused && IsAudible
             ? CurrentSegment.SubtitleAt(elapsed, SubtitleLanguageSettings.Language) : "";
         public bool HasSubtitle => !string.IsNullOrWhiteSpace(CurrentSubtitle);
+        // A radio close-up ignores its own input lease; other locks and pause still suspend audio.
+        public Component InputLockOwner { get; set; }
+        public event Action<VoicePlayer, VoiceSequence> Began;
         public event Action<VoicePlayer, VoiceSequence, VoiceStopReason> Ended;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -60,6 +63,7 @@ namespace TapTap
             subtitles = VoiceSubtitlePresenter.Ensure(gameObject.scene, SubtitlePrefab);
             subtitles?.Bind(this);
             BeginSegment(0);
+            Began?.Invoke(this, sequence);
             return true;
         }
 
@@ -93,7 +97,7 @@ namespace TapTap
         }
 
         private bool GameplayPaused => Time.timeScale <= 0f || RewindManager.Rewinding
-            || WorldMapProgression.InputBlocked || WorldMapSceneRouter.IsLoading
+            || WorldMapProgression.IsInputBlocked(InputLockOwner) || WorldMapSceneRouter.IsLoading
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
 
         private void BeginSegment(int index)

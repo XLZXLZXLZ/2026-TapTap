@@ -13,6 +13,23 @@ namespace TapTap.Editor
         private const string TerrainFolder = "Assets/Prefabs/Terrain/Grid";
         private const string MarkerFolder = "Assets/Prefabs/Interactables/Grid";
 
+        public static LevelBrush EnsureGhostBlockBrush()
+        {
+            LevelPrefabBuilder.EnsureFolder(BrushFolder);
+            return EnsureBrush("GhostBlock", "幽灵方块（遮罩占位）", GhostBlockLevelBrushHandler.HandlerId, "boundary", null,
+                new Vector2(0.5f, 0.5f), new Rect(0f, 0f, 1f, 1f), new Color(0.74f, 0.6f, 1f));
+        }
+
+        public static void EnsureGhostBlockInPalette(LevelPalette palette)
+        {
+            if (palette == null || palette.Brushes != null && palette.Brushes.Exists(brush => brush != null
+                && brush.HandlerId == GhostBlockLevelBrushHandler.HandlerId)) return;
+            if (palette.Brushes == null) palette.Brushes = new System.Collections.Generic.List<LevelBrush>();
+            palette.Brushes.Add(EnsureGhostBlockBrush());
+            EditorUtility.SetDirty(palette);
+            AssetDatabase.SaveAssetIfDirty(palette);
+        }
+
         public static LevelBrush EnsureSquarePlatformBrush()
         {
             LevelPrefabBuilder.EnsureFolder(BrushFolder);
@@ -117,7 +134,8 @@ namespace TapTap.Editor
                     new Vector2(0.5f, 0f), new Rect(0.1f, 0f, 0.8f, 0.4f), new Color(0.42f, 0.8f, 0.97f)),
                 EnsureEndpointBrush(),
                 EnsureSpringBrush(),
-                EnsureSquarePlatformBrush()
+                EnsureSquarePlatformBrush(),
+                EnsureGhostBlockBrush()
             };
             LevelPalette palette = AssetDatabase.LoadAssetAtPath<LevelPalette>(DefaultPalettePath);
             if (palette == null)

@@ -32,7 +32,11 @@ namespace TapTap
         public bool SpringEnabled = true;
         public event Action<MovableEntity> SpringBounced;
 
-        public void NotifySpringBounce(MovableEntity bouncingEntity) => SpringBounced?.Invoke(bouncingEntity);
+        public void NotifySpringBounce(MovableEntity bouncingEntity)
+        {
+            SpringBounced?.Invoke(bouncingEntity);
+            AudioManager.Instance?.Play(SoundId.Bounce, Motor.Position, 0.8f, 1.08f, this);
+        }
 
         public static IReadOnlyList<MovableEntity> ActiveEntities => activeEntities;
         public KinematicMotor2D Motor { get { Initialize(); return motor; } }
@@ -76,6 +80,15 @@ namespace TapTap
             IsReturning = IsReturning, SpringEnabled = SpringEnabled,
             ApexGraceRemaining = apexGraceRemaining
         };
+
+        public bool CanSkipRecording(in Snapshot previous, in Snapshot current) =>
+            !previous.IsReturning && !current.IsReturning
+            && previous.Position.Equals(current.Position) && previous.Velocity.Equals(current.Velocity)
+            && previous.IgnoreOneWayRemaining.Equals(current.IgnoreOneWayRemaining)
+            && previous.ApexGraceRemaining.Equals(current.ApexGraceRemaining)
+            && previous.IgnoredOneWayPlatform == current.IgnoredOneWayPlatform
+            && previous.CollisionsEnabled == current.CollisionsEnabled
+            && previous.SpringEnabled == current.SpringEnabled;
 
         public void RestoreState(in Snapshot state)
         {

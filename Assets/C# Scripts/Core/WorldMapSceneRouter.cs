@@ -44,6 +44,7 @@ namespace TapTap
             if (!Application.CanStreamedLevelBeLoaded(path)) { LastError = "场景未加入构建列表：" + path; return false; }
 #endif
             loading = true;
+            AudioManager.Existing?.StopGameplay();
             StartCoroutine(ChangeScene(path));
             return true;
         }

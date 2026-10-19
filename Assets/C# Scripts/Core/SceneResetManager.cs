@@ -24,7 +24,7 @@ namespace TapTap
         public bool ResetCurrentScene()
         {
             if (PauseMenu.BlocksInput || IsResetting || GameStageProgression.InputBlocked || WorldMapSceneRouter.IsLoading || WorldLevelMenu.IsOpen
-                || GameplayActionLocks.IsLocked(GameplayAction.Input, SceneManager.GetActiveScene())) return false;
+                || GameplayActionLocks.IsLocked(GameplayAction.Input | GameplayAction.PlayerControls, SceneManager.GetActiveScene())) return false;
             if (WorldMapProgression.Current != null) return WorldMapProgression.Current.RestartCurrent();
             Scene scene = SceneManager.GetActiveScene();
             if (!scene.IsValid() || string.IsNullOrEmpty(scene.path))
@@ -40,6 +40,7 @@ namespace TapTap
             }
 #endif
             IsResetting = true;
+            AudioManager.Existing?.StopGameplay();
             if (RewindManager.Current != null) RewindManager.Current.ClearHistory();
             StartCoroutine(Reload(scene));
             return true;

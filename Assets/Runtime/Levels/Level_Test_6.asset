@@ -1171,6 +1171,16 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188462374879585
+  - Id: 6051e9a2dc3840be824d36b227017f1b
+    Cell: {x: 11, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188486044385280
+  - Id: ecfdf57c6eb641f28b2e3e01fb909be8
+    Cell: {x: 12, y: 11}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188486044385281
   EntryPlacementId: 6c8c5a9a97da4a74b145f8a50286cb60
   OutputPrefab: {fileID: 7233534188566855133, guid: 4a682c58963343d428334e2c2676a326, type: 3}
   Outline: {fileID: 11400000, guid: c4016b52415a9594a942fdc7dee5755a, type: 2}
@@ -1882,5 +1892,11 @@ MonoBehaviour:
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
     - rid: 5387188462374879585
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188486044385280
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188486044385281
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 

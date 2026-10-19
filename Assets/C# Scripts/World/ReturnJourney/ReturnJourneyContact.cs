@@ -13,6 +13,7 @@ namespace TapTap
         }
         public static bool CanTrigger(PlayerController player) => player != null && player.Body != null
             && player.Body.Motor != null && !player.Body.IsReturning && !WorldMapProgression.InputBlocked
+            && !GameplayActionLocks.IsLocked(GameplayAction.PlayerControls, player.gameObject.scene)
             && !RewindManager.Rewinding && Time.timeScale > 0f
             && (SceneResetManager.Existing == null || !SceneResetManager.Existing.IsResetting);
 
@@ -23,6 +24,8 @@ namespace TapTap
             KinematicMotor2D motor = player.Body.Motor;
             Bounds body = new Bounds(motor.Position + motor.CenterOffset, motor.Size);
             Bounds trigger = area.bounds;
+            // Collider2D contact is planar. Visual placement may use a different Z from the player.
+            trigger.center = (Vector2)trigger.center;
             trigger.Expand(new Vector3(0f, 0f, 1f));
             if (trigger.Intersects(body)) return true;
             trigger.Expand(body.size);

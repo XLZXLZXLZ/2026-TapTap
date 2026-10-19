@@ -1,5 +1,4 @@
 using System.Collections;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,27 +10,29 @@ namespace TapTap
         public BoxCollider2D Proximity;
         public Transform KeySocket;
         public Transform View;
-        public Vector3 OpenLocalOffset = Vector3.up;
+        public GoldenDoorVisual DoorVisual;
+        [Tooltip("钥匙模型中齿尖的局部坐标，用于准确对准锁孔。")]
+        public Vector3 KeyTipLocalOffset = new Vector3(0.43f, 0.12f, 0f);
         [Min(0.01f)] public float KeyTravelDuration = 0.55f;
-        [Min(0.01f)] public float OpenDuration = 0.45f;
+        [Min(0.01f)] public float OpenDuration = 0.9f;
         public PlayerController Player;
         public UnityEvent OnOpened = new UnityEvent();
         private BoxCollider2D barrier;
         private Coroutine opening;
-        private Tween doorTween;
         private ProgressKey key;
-        private Vector3 closedPosition;
         public bool IsOpen { get; private set; }
+        public bool IsOpening => opening != null;
 
         private void Awake()
         {
             barrier = GetComponent<BoxCollider2D>();
-            if (View != null) closedPosition = View.localPosition;
+            if (DoorVisual == null && View != null) DoorVisual = View.GetComponent<GoldenDoorVisual>();
             if (Proximity != null) Proximity.isTrigger = true;
         }
         private void OnEnable()
         {
             if (GameStageProgression.StageIn(gameObject.scene) == GameStage.DoorOpened) SetOpen();
+            else DoorVisual?.ResetClosed();
         }
         private void FixedUpdate()
         {
@@ -55,28 +56,45 @@ namespace TapTap
         }
         private IEnumerator OpenSequence(GameStageProgression stage)
         {
-            Vector3 from = key.CarryVisual.position;
+            Transform flyingKey = key.CarryVisual;
+            Vector3 from = flyingKey.position;
+            Vector3 originalScale = flyingKey.localScale;
             float elapsed = 0f;
             while (elapsed < KeyTravelDuration)
             {
                 elapsed += Time.deltaTime;
                 Vector3 target = KeySocket != null ? KeySocket.position : transform.position;
-                key.CarryVisual.position = Vector3.Lerp(from, target, Mathf.SmoothStep(0f, 1f, elapsed / KeyTravelDuration));
+                float t = Mathf.Clamp01(elapsed / Mathf.Max(0.01f, KeyTravelDuration));
+                float blend = Mathf.SmoothStep(0f, 1f, t);
+                flyingKey.localScale = originalScale * Mathf.Lerp(1f, 0.25f, Mathf.SmoothStep(0f, 1f, t));
+                Vector3 tipOffset = flyingKey.TransformVector(KeyTipLocalOffset);
+                flyingKey.position = Vector3.Lerp(from, target - tipOffset, blend);
                 yield return null;
             }
             key.PlayUnlockBurst(KeySocket != null ? KeySocket.position : transform.position);
-            stage.CompleteDoor();
-            // Collision opens immediately; only the view slides away.
-            IsOpen = true;
-            barrier.enabled = false;
-            if (View != null)
+            // Commit consumption before the dissolve so disabling/reloading cannot restore a spent key.
+            if (!stage.CompleteDoor())
             {
-                doorTween = View.DOLocalMove(closedPosition + OpenLocalOffset, OpenDuration).SetEase(Ease.InOutSine);
-                yield return doorTween.WaitForCompletion();
-                doorTween = null;
+                flyingKey.localScale = originalScale;
+                key.ResumeCarry();
+                GameplayActionLocks.Release(this);
+                key = null;
+                opening = null;
+                yield break;
             }
+            IsOpen = true;
+            key = null;
+            DoorVisual?.BeginDissolve();
+            elapsed = 0f;
+            while (elapsed < OpenDuration)
+            {
+                elapsed += Time.deltaTime;
+                DoorVisual?.SetProgress(elapsed / Mathf.Max(0.01f, OpenDuration));
+                yield return null;
+            }
+            SetOpen();
             RewindManager.Current?.ClearHistory();
-            Player.GetComponent<PlayerInput>()?.ResetForTransition();
+            if (Player != null) Player.GetComponent<PlayerInput>()?.ResetForTransition();
             GameplayActionLocks.Release(this);
             opening = null;
             key = null;
@@ -87,17 +105,27 @@ namespace TapTap
             IsOpen = true;
             if (barrier == null) barrier = GetComponent<BoxCollider2D>();
             barrier.enabled = false;
-            if (View != null) View.localPosition = closedPosition + OpenLocalOffset;
+            if (DoorVisual != null) DoorVisual.SetOpen();
+            else if (View != null) View.gameObject.SetActive(false);
         }
         private void OnDisable()
         {
             if (opening != null) StopCoroutine(opening);
             opening = null;
-            doorTween?.Kill(); doorTween = null;
-            if (key != null) key.ResumeCarry();
+            if (key != null)
+            {
+                // A pre-insertion interruption keeps the carried key at its original scale.
+                if (key.CarryVisual != null) key.CarryVisual.localScale = key.transform.lossyScale;
+                key.ResumeCarry();
+            }
             key = null;
             GameplayActionLocks.Release(this);
-            if (IsOpen) SetOpen();
+            if (IsOpen)
+            {
+                SetOpen();
+                RewindManager.Current?.ClearHistory();
+            }
+            else DoorVisual?.ResetClosed();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace TapTap.Editor
             if (layout.Placements != null)
                 foreach (LevelPlacement item in layout.Placements)
                 {
-                    if (item == null) continue;
+                    if (item == null || item.Brush != null && item.Brush.IsEditorIgnored) continue;
                     item.Cell = MirrorCell(bounds, item.Cell, horizontal);
                     if (item.Brush != null) LevelBrushHandlers.Get(item.Brush.HandlerId)?.MirrorSettings(item, horizontal);
                 }
@@ -81,7 +81,7 @@ namespace TapTap.Editor
             if (layout.Placements == null) layout.Placements = new List<LevelPlacement>();
             if (erase)
             {
-                Predicate<LevelPlacement> matches = item => item != null && targets.Overlaps(LevelPlacementGeometry.Cells(item)) &&
+                Predicate<LevelPlacement> matches = item => item != null && !(item.Brush?.IsEditorIgnored ?? false) && targets.Overlaps(LevelPlacementGeometry.Cells(item)) &&
                     (allLayers || item.Brush != null && string.Equals(item.Brush.LayerId, layerId, StringComparison.Ordinal));
                 if (!layout.Placements.Exists(matches)) return false;
                 beforeChange?.Invoke();
@@ -90,7 +90,7 @@ namespace TapTap.Editor
                 if (removed > 0) layout.InvalidateFootprint();
                 return removed > 0;
             }
-            if (brush == null) return false;
+            if (brush == null || brush.IsEditorIgnored) return false;
             Dictionary<Vector2Int, LevelPlacement> layer = IndexLayer(layout, brush.LayerId);
             List<LevelPlacement> blockers = layout.Placements.FindAll(item => item?.Brush != null &&
                 (settings is PistonPlacementSettings ? item.Brush.LayerId == "geometry" : brush.LayerId == "geometry" && item.Settings is PistonPlacementSettings));

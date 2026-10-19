@@ -32,6 +32,7 @@ namespace TapTap.Editor
         public abstract string Id { get; }
         public virtual bool IsCheckpoint => false;
         public virtual bool TestOnly => false;
+        public virtual bool GeneratesSceneObject => true;
         public virtual LevelPlacementSettings CreateSettings(LevelBrush brush) => new EmptyPlacementSettings();
         public virtual void DrawSettings(LevelPlacement placement) { }
         public virtual Rect GetPreviewRect(LevelPlacement placement) => placement.Brush.PreviewRect;
