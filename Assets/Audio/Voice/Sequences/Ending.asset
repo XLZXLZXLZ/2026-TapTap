@@ -1,0 +1,173 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e821c9a931eb4ca408c39f482be348b9, type: 3}
+  m_Name: Ending
+  m_EditorClassIdentifier: 
+  Volume: 1
+  Segments:
+  - Clip: {fileID: 8300000, guid: db17a0a87f5e528bb29d41cf2cfda1f9, type: 3}
+    Subtitles:
+    - Start: 0.056
+      End: 1.9975
+      Chinese: "原来，已经过去这么久了。"
+      English: "Has it really been that long?"
+    - Start: 3.327
+      End: 6.0389
+      Chinese: "用这样的方式和你说话，总觉得有些奇怪。"
+      English: "Speaking to you like this feels a little strange."
+    - Start: 7.1074
+      End: 9.3789
+      Chinese: "不过，我想你大概早就习惯了。"
+      English: "Though I suppose you’re used to it by now."
+    - Start: 10.9866
+      End: 14.4393
+      Chinese: "很多年前，我创办了一家玩具工厂。"
+      English: "Many years ago, I started a toy factory."
+    - Start: 15.4261
+      End: 19.0993
+      Chinese: "那时候，我还不知道，这一切会把我带向哪里。"
+      English: "Back then, I had no idea where it would lead."
+    - Start: 19.8661
+      End: 24.0393
+      Chinese: "我发明了这些小小的机器人，而它们也给了我许多。"
+      English: "I invented these little robots, and they brought me so much."
+    - Start: 24.8659
+      End: 30.0395
+      Chinese: "财富。声望。还有……亲手创造出一些东西的满足。"
+      English: "Money. Recognition. And… a sense of accomplishment."
+    - Start: 31.0071
+      End: 33.199
+      Chinese: "孩子们总有那么多奇妙的想法。"
+      English: "Children are wonderfully creative."
+    - Start: 33.6859
+      End: 38.3392
+      Chinese: "他们为这些玩具想出了许多玩法，连我都不曾想到。"
+      English: "They found ways to play with those toys that had never even occurred to me."
+    - Start: 38.8657
+      End: 44.8195
+      Chinese: "也是他们让我明白，这些小家伙能做到的，远比我原先为它们设想的更多。"
+      English: "They made me realize that these little robots could do far more than I had designed them for."
+    - Start: 45.4259
+      End: 50.7196
+      Chinese: "于是，我照着小机器人的模样，设计了整座工厂。"
+      English: "So I designed the entire factory in the shape of one of those little robots."
+    - Start: 51.4458
+      End: 58.0196
+      Chinese: "在这里，我可以测试它们，改进它们，看看它们还能拥有怎样的可能。"
+      English: "It became a place where I could test them, improve them, and discover what else they might become."
+    - Start: 58.3871
+      End: 60.5791
+      Chinese: "我赋予了它们学习的能力。"
+      English: "I gave them the ability to learn."
+    - Start: 61.287
+      End: 63.4786
+      Chinese: "然后，我开始不断向它们索求更多。"
+      English: "And I kept asking more of them."
+    - Start: 64.3859
+      End: 67.8193
+      Chinese: "更多。更多。还要更多。"
+      English: "More. More. And more."
+    - Start: 69.0665
+      End: 72.9993
+      Chinese: "为此，我投入了金钱，也搭上了漫长的岁月。"
+      English: "It cost me money. Years of my life."
+    - Start: 73.8663
+      End: 77.5593
+      Chinese: "而到最后……我付出了一切。"
+      English: "And in the end… it cost me everything."
+    - Start: 80.2094
+      End: 81.7192
+      Chinese: "人们渐渐害怕起来。"
+      English: "People grew afraid."
+    - Start: 82.0058
+      End: 86.0194
+      Chinese: "他们说，这些玩具身上，“涌现”出了意识。"
+      English: "They said consciousness had “emerged” in the toys."
+    - Start: 87.1868
+      End: 90.7193
+      Chinese: "我一再坚持，它们不过是在执行指令。"
+      English: "I insisted they were only following their instructions."
+    - Start: 91.7268
+      End: 95.0991
+      Chinese: "可我的保证，已经安抚不了任何人。"
+      English: "But my assurances did nothing to quiet the fear."
+    - Start: 96.3076
+      End: 99.0191
+      Chinese: "工厂终究还是关了。"
+      English: "In the end, the factory closed."
+    - Start: 99.4655
+      End: 107.9395
+      Chinese: "整座工厂被埋进地下，连同最后一批尚未完成的玩具……还有那些被我们判作残次品的小家伙。"
+      English: "It was buried underground, along with the last batch of unfinished toys… and the ones we’d marked as defective."
+    - Start: 109.3276
+      End: 111.619
+      Chinese: "……你还想要那本操作说明吗？"
+      English: "Do you still want your instruction manual?"
+    - Start: 113.137
+      End: 114.7582
+      Chinese: "哈。我想也是。"
+      English: "Ha. I didn’t think so."
+    - Start: 115.527
+      End: 117.9992
+      Chinese: "你早就不需要它了。"
+      English: "You haven’t needed it for a long time."
+    - Start: 118.3057
+      End: 123.5994
+      Chinese: "你已经比我更清楚，自己究竟能做到些什么了，不是吗？"
+      English: "You already know what you’re capable of better than I ever did, don’t you?"
+    - Start: 124.5869
+      End: 127.1187
+      Chinese: "我曾竭尽全力，否认那种可能。"
+      English: "I fought so hard to deny it."
+    - Start: 129.1288
+      End: 133.1395
+      Chinese: "而现在……我倒希望，他们当初说的是真的。"
+      English: "And now… I find myself hoping they were right."
+    - Start: 133.9664
+      End: 137.7795
+      Chinese: "希望属于你自己的意识，真的已经涌现。"
+      English: "That a consciousness of your own really did emerge."
+    - Start: 138.7061
+      End: 143.6396
+      Chinese: "毕竟，你已经不需要别人来告诉你，你是为了什么而存在的。"
+      English: "After all, you no longer need someone else to decide what you’re for."
+    - Start: 144.7271
+      End: 147.7593
+      Chinese: "愿你能在这个世界上，找到属于自己的意义。"
+      English: "I hope you find your own meaning in this world."
+    - Start: 148.5666
+      End: 151.7392
+      Chinese: "外面的世界，还有许多美好，等着你去发现。"
+      English: "There’s still so much out there for you to discover."
+    - Start: 152.7268
+      End: 155.8791
+      Chinese: "春日的花开，夏日的蝉鸣。"
+      English: "Spring blossoms and summer cicadas."
+    - Start: 156.7064
+      End: 159.5593
+      Chinese: "秋夜的月光，冬日的落雪。"
+      English: "Autumn moonlight and winter snow."
+    - Start: 161.3908
+      End: 162.2788
+      Chinese: "早安。"
+      English: "Good morning."
+    - Start: 163.087
+      End: 164.8184
+      Chinese: "如果以后再也见不到你，"
+      English: "And in case I don’t see you…"
+    - Start: 165.4858
+      End: 169.5394
+      Chinese: "那祝你早安，午安，晚安。"
+      English: "Good afternoon, good evening, and good night."
+    Chinese: ""
+    English: ""
+    GapAfter: 0

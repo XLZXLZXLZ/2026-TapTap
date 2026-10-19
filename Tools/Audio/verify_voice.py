@@ -47,7 +47,8 @@ def main():
     assert all(b < a for a, b in zip(sets, sets[1:]))
     assert manifest["m07_playback"][-1] == manifest["m07_playback"][-2]
     assert len(checks) == 21
-    assert len(list((ROOT / "Assets/Audio/Voice/Processed").rglob("*.wav"))) == 21
+    assert sum(len(list((ROOT / "Assets/Audio/Voice/Processed" / folder).glob("*.wav")))
+               for folder in ["Full", "PowerCut"]) == 21
     report = dict(passed=True, unique_files=len(checks),
                   full_files=sum(e["id"].endswith("_Full") for e in manifest["files"]),
                   powercut_files=10, m07_nested_deletions=True,

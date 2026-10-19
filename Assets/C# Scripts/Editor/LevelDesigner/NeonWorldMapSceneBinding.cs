@@ -8,6 +8,17 @@ namespace TapTap.Editor
     {
         public static void BindExisting(Scene scene, GameObject owner, WorldMapDefinition map)
         {
+            foreach (GameObject root in scene.GetRootGameObjects())
+                foreach (var candidate in root.GetComponentsInChildren<BlueprintWorldMapScreen>(true))
+                    if (candidate.Source == map)
+                    {
+                        var binding = owner.GetComponent<WorldMapAssemblyView>();
+                        if (binding == null) binding = owner.AddComponent<WorldMapAssemblyView>();
+                        if (binding.BlueprintScreen == candidate) return;
+                        binding.BlueprintScreen = candidate;
+                        LevelPrefabBuilder.RecordInstanceOverrides(binding.gameObject);
+                        return;
+                    }
             NeonWorldMapScreen screen = null;
             foreach (GameObject root in scene.GetRootGameObjects())
                 foreach (NeonWorldMapScreen candidate in root.GetComponentsInChildren<NeonWorldMapScreen>(true))

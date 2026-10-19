@@ -35,6 +35,10 @@ namespace TapTap
             Material glow = Resources.Load<Material>("WorldMapSelection/TravelOrb");
             if (glow == null) throw new InvalidOperationException("Missing WorldMapSelection/TravelOrb material.");
             effect.Trail = effect.Graphic("White Trail", glow);
+            // The trail's vertices are in board coordinates. Its bounds must also
+            // cover the board so a scrolling viewport's RectMask2D will not cull it.
+            effect.Trail.rectTransform.pivot = Vector2.zero;
+            effect.Trail.rectTransform.sizeDelta = board.rect.size;
             effect.Trail.IsTrail = true;
             effect.Trail.TrailWidth = size * 0.52f;
             effect.Trail.Lifetime = TrailLifetime;

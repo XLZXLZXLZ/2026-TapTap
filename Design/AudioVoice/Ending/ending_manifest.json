@@ -1,0 +1,287 @@
+{
+  "source": "Assets/Audio/Voice/Ending.mp3",
+  "source_sha256": "e4d3dc8f2341a1dd6e3f54414e97cda852656eb2774eb7be2a8fd488a5ea9e11",
+  "output": "Assets/Audio/Voice/Processed/Ending/Ending_Soft.wav",
+  "output_sha256": "b640d0b66ff724612a5356ba26e9327adad1d3ba9b0624de876f0bf0b35e4396",
+  "sequence": "Assets/Audio/Voice/Sequences/Ending.asset",
+  "duration": 169.95266666666666,
+  "sample_rate": 48000,
+  "channels": 1,
+  "encoding": "PCM 24-bit",
+  "filters": "highpass=f=75,highshelf=f=2800:g=-2.5,equalizer=f=5600:t=q:w=1.2:g=-2,lowpass=f=7200,acompressor=threshold=0.08:ratio=1.6:attack=15:release=160:makeup=1",
+  "target_lufs": -19,
+  "integrated_lufs": -19.06,
+  "true_peak_dbtp": -1.57,
+  "lra": 3.8,
+  "pitch_and_timing_preserved": true,
+  "original_and_other_21_masters_unchanged": true,
+  "subtitle_count": 38,
+  "subtitles": [
+    {
+      "start": 0.056,
+      "end": 1.9975,
+      "chinese": "原来，已经过去这么久了。",
+      "english": "Has it really been that long?",
+      "ctc_score": 0.95795
+    },
+    {
+      "start": 3.327,
+      "end": 6.0389,
+      "chinese": "用这样的方式和你说话，总觉得有些奇怪。",
+      "english": "Speaking to you like this feels a little strange.",
+      "ctc_score": 0.96587
+    },
+    {
+      "start": 7.1074,
+      "end": 9.3789,
+      "chinese": "不过，我想你大概早就习惯了。",
+      "english": "Though I suppose you’re used to it by now.",
+      "ctc_score": 0.98567
+    },
+    {
+      "start": 10.9866,
+      "end": 14.4393,
+      "chinese": "很多年前，我创办了一家玩具工厂。",
+      "english": "Many years ago, I started a toy factory.",
+      "ctc_score": 0.9751
+    },
+    {
+      "start": 15.4261,
+      "end": 19.0993,
+      "chinese": "那时候，我还不知道，这一切会把我带向哪里。",
+      "english": "Back then, I had no idea where it would lead.",
+      "ctc_score": 0.96613
+    },
+    {
+      "start": 19.8661,
+      "end": 24.0393,
+      "chinese": "我发明了这些小小的机器人，而它们也给了我许多。",
+      "english": "I invented these little robots, and they brought me so much.",
+      "ctc_score": 0.96104
+    },
+    {
+      "start": 24.8659,
+      "end": 30.0395,
+      "chinese": "财富。声望。还有……亲手创造出一些东西的满足。",
+      "english": "Money. Recognition. And… a sense of accomplishment.",
+      "ctc_score": 0.97125
+    },
+    {
+      "start": 31.0071,
+      "end": 33.199,
+      "chinese": "孩子们总有那么多奇妙的想法。",
+      "english": "Children are wonderfully creative.",
+      "ctc_score": 0.98292
+    },
+    {
+      "start": 33.6859,
+      "end": 38.3392,
+      "chinese": "他们为这些玩具想出了许多玩法，连我都不曾想到。",
+      "english": "They found ways to play with those toys that had never even occurred to me.",
+      "ctc_score": 0.98298
+    },
+    {
+      "start": 38.8657,
+      "end": 44.8195,
+      "chinese": "也是他们让我明白，这些小家伙能做到的，远比我原先为它们设想的更多。",
+      "english": "They made me realize that these little robots could do far more than I had designed them for.",
+      "ctc_score": 0.97234
+    },
+    {
+      "start": 45.4259,
+      "end": 50.7196,
+      "chinese": "于是，我照着小机器人的模样，设计了整座工厂。",
+      "english": "So I designed the entire factory in the shape of one of those little robots.",
+      "ctc_score": 0.96373
+    },
+    {
+      "start": 51.4458,
+      "end": 58.0196,
+      "chinese": "在这里，我可以测试它们，改进它们，看看它们还能拥有怎样的可能。",
+      "english": "It became a place where I could test them, improve them, and discover what else they might become.",
+      "ctc_score": 0.97345
+    },
+    {
+      "start": 58.3871,
+      "end": 60.5791,
+      "chinese": "我赋予了它们学习的能力。",
+      "english": "I gave them the ability to learn.",
+      "ctc_score": 0.96761
+    },
+    {
+      "start": 61.287,
+      "end": 63.4786,
+      "chinese": "然后，我开始不断向它们索求更多。",
+      "english": "And I kept asking more of them.",
+      "ctc_score": 0.99278
+    },
+    {
+      "start": 64.3859,
+      "end": 67.8193,
+      "chinese": "更多。更多。还要更多。",
+      "english": "More. More. And more.",
+      "ctc_score": 0.94208
+    },
+    {
+      "start": 69.0665,
+      "end": 72.9993,
+      "chinese": "为此，我投入了金钱，也搭上了漫长的岁月。",
+      "english": "It cost me money. Years of my life.",
+      "ctc_score": 0.98825
+    },
+    {
+      "start": 73.8663,
+      "end": 77.5593,
+      "chinese": "而到最后……我付出了一切。",
+      "english": "And in the end… it cost me everything.",
+      "ctc_score": 0.97557
+    },
+    {
+      "start": 80.2094,
+      "end": 81.7192,
+      "chinese": "人们渐渐害怕起来。",
+      "english": "People grew afraid.",
+      "ctc_score": 0.92204
+    },
+    {
+      "start": 82.0058,
+      "end": 86.0194,
+      "chinese": "他们说，这些玩具身上，“涌现”出了意识。",
+      "english": "They said consciousness had “emerged” in the toys.",
+      "ctc_score": 0.9796
+    },
+    {
+      "start": 87.1868,
+      "end": 90.7193,
+      "chinese": "我一再坚持，它们不过是在执行指令。",
+      "english": "I insisted they were only following their instructions.",
+      "ctc_score": 0.98695
+    },
+    {
+      "start": 91.7268,
+      "end": 95.0991,
+      "chinese": "可我的保证，已经安抚不了任何人。",
+      "english": "But my assurances did nothing to quiet the fear.",
+      "ctc_score": 0.98023
+    },
+    {
+      "start": 96.3076,
+      "end": 99.0191,
+      "chinese": "工厂终究还是关了。",
+      "english": "In the end, the factory closed.",
+      "ctc_score": 0.9853
+    },
+    {
+      "start": 99.4655,
+      "end": 107.9395,
+      "chinese": "整座工厂被埋进地下，连同最后一批尚未完成的玩具……还有那些被我们判作残次品的小家伙。",
+      "english": "It was buried underground, along with the last batch of unfinished toys… and the ones we’d marked as defective.",
+      "ctc_score": 0.97788
+    },
+    {
+      "start": 109.3276,
+      "end": 111.619,
+      "chinese": "……你还想要那本操作说明吗？",
+      "english": "Do you still want your instruction manual?",
+      "ctc_score": 0.98889
+    },
+    {
+      "start": 113.137,
+      "end": 114.7582,
+      "chinese": "哈。我想也是。",
+      "english": "Ha. I didn’t think so.",
+      "ctc_score": 0.92719
+    },
+    {
+      "start": 115.527,
+      "end": 117.9992,
+      "chinese": "你早就不需要它了。",
+      "english": "You haven’t needed it for a long time.",
+      "ctc_score": 0.95713
+    },
+    {
+      "start": 118.3057,
+      "end": 123.5994,
+      "chinese": "你已经比我更清楚，自己究竟能做到些什么了，不是吗？",
+      "english": "You already know what you’re capable of better than I ever did, don’t you?",
+      "ctc_score": 0.97145
+    },
+    {
+      "start": 124.5869,
+      "end": 127.1187,
+      "chinese": "我曾竭尽全力，否认那种可能。",
+      "english": "I fought so hard to deny it.",
+      "ctc_score": 0.95939
+    },
+    {
+      "start": 129.1288,
+      "end": 133.1395,
+      "chinese": "而现在……我倒希望，他们当初说的是真的。",
+      "english": "And now… I find myself hoping they were right.",
+      "ctc_score": 0.95183
+    },
+    {
+      "start": 133.9664,
+      "end": 137.7795,
+      "chinese": "希望属于你自己的意识，真的已经涌现。",
+      "english": "That a consciousness of your own really did emerge.",
+      "ctc_score": 0.98443
+    },
+    {
+      "start": 138.7061,
+      "end": 143.6396,
+      "chinese": "毕竟，你已经不需要别人来告诉你，你是为了什么而存在的。",
+      "english": "After all, you no longer need someone else to decide what you’re for.",
+      "ctc_score": 0.96439
+    },
+    {
+      "start": 144.7271,
+      "end": 147.7593,
+      "chinese": "愿你能在这个世界上，找到属于自己的意义。",
+      "english": "I hope you find your own meaning in this world.",
+      "ctc_score": 0.95651
+    },
+    {
+      "start": 148.5666,
+      "end": 151.7392,
+      "chinese": "外面的世界，还有许多美好，等着你去发现。",
+      "english": "There’s still so much out there for you to discover.",
+      "ctc_score": 0.97219
+    },
+    {
+      "start": 152.7268,
+      "end": 155.8791,
+      "chinese": "春日的花开，夏日的蝉鸣。",
+      "english": "Spring blossoms and summer cicadas.",
+      "ctc_score": 0.89749
+    },
+    {
+      "start": 156.7064,
+      "end": 159.5593,
+      "chinese": "秋夜的月光，冬日的落雪。",
+      "english": "Autumn moonlight and winter snow.",
+      "ctc_score": 0.95093
+    },
+    {
+      "start": 161.3908,
+      "end": 162.2788,
+      "chinese": "早安。",
+      "english": "Good morning.",
+      "ctc_score": 0.9285
+    },
+    {
+      "start": 163.087,
+      "end": 164.8184,
+      "chinese": "如果以后再也见不到你，",
+      "english": "And in case I don’t see you…",
+      "ctc_score": 0.9475
+    },
+    {
+      "start": 165.4858,
+      "end": 169.5394,
+      "chinese": "那祝你早安，午安，晚安。",
+      "english": "Good afternoon, good evening, and good night.",
+      "ctc_score": 0.97392
+    }
+  ]
+}

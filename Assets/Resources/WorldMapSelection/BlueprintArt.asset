@@ -1,0 +1,426 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff6219e99ed422292ab124bf0e1203e, type: 3}
+  m_Name: BlueprintArt
+  m_EditorClassIdentifier: 
+  Source: {fileID: 11400000, guid: 68ee005a21b54a878b9a8faa9e7ccba0, type: 2}
+  Background: {fileID: 2800000, guid: 8244afe597f5a98479c0faa08448b9dc, type: 3}
+  Shade: {fileID: 2800000, guid: 3ce758727f7fc014ca6d309e32494ff6, type: 3}
+  Title: {fileID: 2800000, guid: 0483ce1f86680bc4b8977f78041ec0b2, type: 3}
+  CanvasSize: {x: 1920, y: 2160}
+  ContentBounds:
+    serializedVersion: 2
+    x: 308
+    y: 58
+    width: 1302
+    height: 2036
+  Pieces:
+  - Sequence: 1
+    ModuleId: e3d4dc65b67d431cb4a96331e6e6e586
+    Normal: {fileID: 2800000, guid: 201e66dbe5613bc449dbe9980c4d17b5, type: 3}
+    Glow: {fileID: 2800000, guid: a9b5b50fb82da1f4ab95f5775cd34159, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 415
+      y: 1718
+      width: 428
+      height: 248
+    GlowBounds:
+      serializedVersion: 2
+      x: 390
+      y: 1692
+      width: 478
+      height: 300
+    TravelPoint: {x: 629, y: 1844}
+    MaskWidth: 107
+    MaskHeight: 62
+    HitMask: fcfffffffffffffffffffffffff1ffffffffffffffffffffffffdfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffff3ffeffffffffffffffffffffff7f00
+  - Sequence: 2
+    ModuleId: 7d2861e155f94be491b6c5437f229f83
+    Normal: {fileID: 2800000, guid: 70d23b60998a7d04095e050dcfdb08f9, type: 3}
+    Glow: {fileID: 2800000, guid: d879b96c5d8f0374ca73f91926c3ffc4, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 855
+      y: 1443
+      width: 193
+      height: 382
+    GlowBounds:
+      serializedVersion: 2
+      x: 832
+      y: 1420
+      width: 238
+      height: 428
+    TravelPoint: {x: 951.5, y: 1635.9896}
+    MaskWidth: 49
+    MaskHeight: 96
+    HitMask: fcffffffff7ffcfffffffffffdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff9fffffffffff3ffeffffffff3f
+  - Sequence: 3
+    ModuleId: a0cadc7204034720ab7eff930c366903
+    Normal: {fileID: 2800000, guid: abdbf60cf0c10ec4497d34817128d41c, type: 3}
+    Glow: {fileID: 2800000, guid: 3ed46da9b648fdf40928aaa2868e5dc3, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 417
+      y: 1443
+      width: 426
+      height: 265
+    GlowBounds:
+      serializedVersion: 2
+      x: 394
+      y: 1420
+      width: 472
+      height: 310
+    TravelPoint: {x: 630, y: 1571.5448}
+    MaskWidth: 107
+    MaskHeight: 67
+    HitMask: fcfffffffffffffffffffffffff1ffffffffffffffffffffffffdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffff1fffffffffffffffffffffffff3f00
+  - Sequence: 4
+    ModuleId: d8b0a52796e04e4bbddd92188c1c4808
+    Normal: {fileID: 2800000, guid: 988a1e79a1a95e040b6fb316ce8d88ce, type: 3}
+    Glow: {fileID: 2800000, guid: 875580f2b3f53e045b071a56a3c294ec, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 855
+      y: 1838
+      width: 642
+      height: 128
+    GlowBounds:
+      serializedVersion: 2
+      x: 832
+      y: 1816
+      width: 688
+      height: 172
+    TravelPoint: {x: 1168.0249, y: 1904}
+    MaskWidth: 161
+    MaskHeight: 32
+    HitMask: fcffffffffffffffffffffffffffffffffffff7ffcfffffffffffffffffffffffffffffffffffffffdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbfffffffffffffffffffffffffffffffffffffff3ffcffffffffffffffffffffffffffffffffffff3f
+  - Sequence: 5
+    ModuleId: 76fbb97aa8144e238fbd9ae00d5f1283
+    Normal: {fileID: 2800000, guid: b218b761414d8b044ae8b8a664001bd5, type: 3}
+    Glow: {fileID: 2800000, guid: 664b9ba556a86d248822b5dc0d0a89c0, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 1060
+      y: 1611
+      width: 437
+      height: 215
+    GlowBounds:
+      serializedVersion: 2
+      x: 1038
+      y: 1588
+      width: 482
+      height: 260
+    TravelPoint: {x: 1280.4863, y: 1720.4907}
+    MaskWidth: 110
+    MaskHeight: 54
+    HitMask: fcffffffffffffffffffffffff8ffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbfffffffffffffffffffffffffffeffffffffffffffffffffffff1ffeffffffffffffffffffffffff01
+  - Sequence: 6
+    ModuleId: d1f89e7af7a6404299db80c1d30b56cb
+    Normal: {fileID: 2800000, guid: fe72070662633ad43893e69357f54752, type: 3}
+    Glow: {fileID: 2800000, guid: 4227e9a3db9957d4e926e77ac22a8e39, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 1060
+      y: 1299
+      width: 437
+      height: 300
+    GlowBounds:
+      serializedVersion: 2
+      x: 1038
+      y: 1276
+      width: 482
+      height: 346
+    TravelPoint: {x: 1403.6409, y: 1469}
+    MaskWidth: 110
+    MaskHeight: 75
+    HitMask: 0000000000000000c0ffffffff0f0000000000000000f8ffffffff070000000000000000feffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0ffffffffff0000000000000000f0ffffffff3f0000000000000000fcffffffff0f0000000000000000ffffffffff0300000000000000c0fffffffffffcffffffffffffffffffffffffbfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbfffffffffffffffffffffffffffc7ffffffffffffffffffffffffff00
+  - Sequence: 7
+    ModuleId: d739a00201634759a77941122e7335c5
+    Normal: {fileID: 2800000, guid: 8023d6eecc37d884bbad977ed3dd0d27, type: 3}
+    Glow: {fileID: 2800000, guid: 6c679d91d9c40c9448e1746c6b30ccf6, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 603
+      y: 1298
+      width: 718
+      height: 133
+    GlowBounds:
+      serializedVersion: 2
+      x: 580
+      y: 1276
+      width: 764
+      height: 178
+    TravelPoint: {x: 960.00555, y: 1370.3677}
+    MaskWidth: 180
+    MaskHeight: 34
+    HitMask: fcffffffffffffffffffffffffffffffffffffffffffe1ffffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffc7ffffffffffffffffffffffffffffffffffffffffff3f
+  - Sequence: 8
+    ModuleId: 412005a821984653ab3b0a215fe811ba
+    Normal: {fileID: 2800000, guid: ae541995eabfbca45850cab423657820, type: 3}
+    Glow: {fileID: 2800000, guid: 894e37a41253a634688e83109f0bd72d, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 1100
+      y: 1116
+      width: 486
+      height: 170
+    GlowBounds:
+      serializedVersion: 2
+      x: 1078
+      y: 1094
+      width: 530
+      height: 214
+    TravelPoint: {x: 1360.9263, y: 1201}
+    MaskWidth: 122
+    MaskHeight: 43
+    HitMask: fcfffffffffffffffffffffffffffff8fffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfffffffffffffffffffffffffffff3fffffffffffffffffffffffff0f0000fcffffffffffffffffffffff3f0000f0ffffffffffffffffffffffff0000c0ffffffffffffffffffffffff030000ffffffffffffffffffffffff0f0000fcffffffffffffffffffffff3f0000f0ffffffffffffffffffffffff0000c0ffffffffffffffffffffffff030000ffffffffffffffffffffffff0f0000fcffffffffffffffffffffff3f0000f0ffffffffffffffffffffffff0000c0ffffffffffffffffffffffff030000ffffffffffffffffffffffff0f0000fcffffffffffffffffffffff3f0000f0ffffffffffffffffffffffff0000c0ffffffffffffffffffffffff030000ffffffffffffffffffffffff0f0000fcffffffffffffffffffffff3f0000f0ffffffffffffffffffffffff0000c0ffffffffffffffffffffffff030000ffffffffffffffffffffffff070000f8ffffffffffffffffffffff1f0000c0ffffffffffffffffffffff1f000000
+  - Sequence: 9
+    ModuleId: 30a4ad492bd142e8aaf02cc9e42103fc
+    Normal: {fileID: 2800000, guid: 6fc1871d0efa0264d80b74264a40de17, type: 3}
+    Glow: {fileID: 2800000, guid: 627fcf121dc0b974a838e99f51cac79b, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 332
+      y: 1116
+      width: 754
+      height: 314
+    GlowBounds:
+      serializedVersion: 2
+      x: 308
+      y: 1092
+      width: 802
+      height: 362
+    TravelPoint: {x: 868.5767, y: 1169.6582}
+    MaskWidth: 189
+    MaskHeight: 79
+    HitMask: fcffffffffffffffffffffffffffffffffffffffffffffc7fffffffffffffffffffffffffffffffffffffffffffffffdfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbffffffffffffffffffffffffffffffffffffffffffff7ffeffffffffffffffffffffffffffffffffffffffffffff0f0000ffffffffffffffffffffffffffffffffffffffffff0100c0ffffffffffffffffffffffffffffffffffffffff3f0000f8ffffffffffffffffffffffffffffffffffffffff070000ffffffffffffffffffffffffffffffffffffffffff0000e0ffffffffffffffffffffffffffffffffffffffff1f0000fcffffffffffffffffffffffffffffffffffffffff030080ffffffffffffffffffffffffffffffffffffffff7f0000f0ffffffffffffffffffffffffffffffffffffffff0f0000feffffffffffffffffffffffffffffffffffffffff0100c0ffffffffffffffffffffffffffffffffffffffff3f0000f8ffffffffffffffffffffffffffffffffffffffff070000ffffffffffffffffffffffffffffffffffffffffff0000e0ffffffffffffffffffffffffffffffffffffffff1f0000fcffffffffffffffffffffffffffffffffffffffff030080ffffffffffffffffffffffffffffffffffffffff7f0000f0ffffffffffffffffffffffffffffffffffffffff0f0000feffffffffffffffffffffffffffffffffffffffff0100c0ffffffffffffffffffffffffffffffffffffffff3f0000f8ffffffffffffffffffffffffffffffffffffffff070000ffffffffffffffffffffffffffffffffffffffffff0000e0ffffffffffffffffffffffffffffffffffffffff0f0000fcffffffffffffffffffffffffffffffffffffffff010080ffffffffffffffffffffffffffffffffffffffff0f0000f0ffffffffff000000000000000000000000000000000000feffffffff1f0000000000000000000000000000000000c0ffffffffff030000000000000000000000000000000000f8ffffffff7f000000000000000000000000000000000000ffffffffff0f0000000000000000000000000000000000e0ffffffffff010000000000000000000000000000000000fcffffffff3f000000000000000000000000000000000080ffffffffff070000000000000000000000000000000000f0ffffffffff000000000000000000000000000000000000feffffffff1f0000000000000000000000000000000000c0ffffffffff030000000000000000000000000000000000f8ffffffff7f000000000000000000000000000000000000ffffffffff0f0000000000000000000000000000000000e0ffffffffff010000000000000000000000000000000000fcffffffff3f000000000000000000000000000000000080ffffffffff070000000000000000000000000000000000f0ffffffffff000000000000000000000000000000000000feffffffff1f0000000000000000000000000000000000c0ffffffffff030000000000000000000000000000000000f8ffffffff7f000000000000000000000000000000000000ffffffffff0f0000000000000000000000000000000000e0ffffffffff010000000000000000000000000000000000fcffffffff3f000000000000000000000000000000000080ffffffffff070000000000000000000000000000000000f0ffffffffff000000000000000000000000000000000000feffffffff1f0000000000000000000000000000000000c0ffffffffff030000000000000000000000000000000000f8ffffffff7f000000000000000000000000000000000000ffffffffff0f0000000000000000000000000000000000e0ffffffffff010000000000000000000000000000000000fcffffffff3f000000000000000000000000000000000080ffffffffff070000000000000000000000000000000000f0ffffffffff000000000000000000000000000000000000feffffffff1f000000000000000000000000000000000080ffffffffff010000000000000000000000000000000000e0ffffffff1f00000000000000000000000000000000
+  - Sequence: 10
+    ModuleId: 704d4109545f4f288c9048b4c8a679a7
+    Normal: {fileID: 2800000, guid: 386a7840c534e2b4b95a3bfe5f638c46, type: 3}
+    Glow: {fileID: 2800000, guid: 2d8a51e302732b047af553791751114e, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 1062
+      y: 733
+      width: 525
+      height: 248
+    GlowBounds:
+      serializedVersion: 2
+      x: 1040
+      y: 710
+      width: 570
+      height: 294
+    TravelPoint: {x: 1306.6023, y: 871}
+    MaskWidth: 132
+    MaskHeight: 62
+    HitMask: 00000000ffffffffffffffffff0f000000000000f8ffffffffffffffffff010000000000c0ffffffffffffffffff1f000000000000fcffffffffffffffffff010000000000c0ffffffffffffffffff3f000000000000fcffffffffffffffffff030000000000c0ffffffffffffffffff3f000000000000fcffffffffffffffffff030000000000c0ffffffffffffffffff3f000000000000fcffffffffffffffffff030000000000c0ffffffffffffffffff3f000000000000fcffffffffffffffffff030000000000e0ffffffffffffffffff3f0000c0ffffffffffffffffffffffffff030000feffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffff030000ffffffffffffffffffffffffff3f0000f0ffffffffffffffffffffffffffffff0ffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffffffffffffffffffffffffffff7ffeffffffffffffffffffffffffffffff87ffffffffffffffffffffffffffffff1f
+  - Sequence: 11
+    ModuleId: 1249a37049554f77a3bd3cc1c1fbfe4e
+    Normal: {fileID: 2800000, guid: de18c874458a53d4ba54e4105e59eab0, type: 3}
+    Glow: {fileID: 2800000, guid: d9b59cecd7c519f4390fcd338df1e4f7, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 331
+      y: 559
+      width: 286
+      height: 422
+    GlowBounds:
+      serializedVersion: 2
+      x: 310
+      y: 538
+      width: 328
+      height: 464
+    TravelPoint: {x: 515.7083, y: 764.0283}
+    MaskWidth: 72
+    MaskHeight: 106
+    HitMask: 000000feffffffff1f000080ffffffffff7f000080ffffffffff7f000080ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0ffffffffffff0000c0fffffffffffff0fffffffffffffffffefffffffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffeffffffffffffff7ffeffffffffffffff7ff8ffffffffffffff1f
+  - Sequence: 12
+    ModuleId: 8e53708b328042ad8235f2eac0808179
+    Normal: {fileID: 2800000, guid: 037aa2af74258fb4db093e44d95aba4c, type: 3}
+    Glow: {fileID: 2800000, guid: 098d5f66d7ecf4e4086edb4fb6a689de, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 631
+      y: 590
+      width: 212
+      height: 391
+    GlowBounds:
+      serializedVersion: 2
+      x: 608
+      y: 568
+      width: 258
+      height: 436
+    TravelPoint: {x: 737, y: 783.5051}
+    MaskWidth: 53
+    MaskHeight: 98
+    HitMask: f8ffffffffffc3fffffffffffffdffffffffffbfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffeffffffffff0fffffffffff7f00
+  - Sequence: 13
+    ModuleId: c56ef1126bb941f5aa90ad28f3b62dcd
+    Normal: {fileID: 2800000, guid: 4e2819971a5a30c4eb0ea4446bb76a03, type: 3}
+    Glow: {fileID: 2800000, guid: dbd5e2c3676e83e4a940d1071e1bda3c, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 854
+      y: 590
+      width: 415
+      height: 391
+    GlowBounds:
+      serializedVersion: 2
+      x: 832
+      y: 568
+      width: 460
+      height: 436
+    TravelPoint: {x: 975.7067, y: 691.7398}
+    MaskWidth: 104
+    MaskHeight: 98
+    HitMask: f8ffffffffffffffffffffff1ffeffffffffffffffffffffff7ffeffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffffffffffffffff3fffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffffff000000ffffffffffffffffff7f000000ffffffffffffffffff7f000000ffffffffffffffffff7f000000ffffffffffffffffff3f000000ffffffffffff03000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000ffffffffffff01000000000000feffffffffff01000000000000feffffffffff00000000000000f8ffffffff7f00000000000000
+  - Sequence: 14
+    ModuleId: 58d3f3cac75f407a8c2b193aecebc6b9
+    Normal: {fileID: 2800000, guid: 10d318b3f3788604b8159810266132ad, type: 3}
+    Glow: {fileID: 2800000, guid: 7ccd0a9673246c64c957e652d8225e45, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 420
+      y: 389
+      width: 197
+      height: 157
+    GlowBounds:
+      serializedVersion: 2
+      x: 398
+      y: 366
+      width: 242
+      height: 202
+    TravelPoint: {x: 516.53, y: 481.2375}
+    MaskWidth: 50
+    MaskHeight: 40
+    HitMask: f8ffffffff7ff8ffffffffffe7ffffffffffdffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbffffffffffe7ffffffffff1ffeffffffff1f
+  - Sequence: 15
+    ModuleId: 83f81c461527499dbef1314c6a6086a3
+    Normal: {fileID: 2800000, guid: 398d25d5e70fa354f80baadb801292a1, type: 3}
+    Glow: {fileID: 2800000, guid: 26cc1674378ebd447866f833ad678b6d, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 882
+      y: 435
+      width: 387
+      height: 142
+    GlowBounds:
+      serializedVersion: 2
+      x: 860
+      y: 412
+      width: 432
+      height: 188
+    TravelPoint: {x: 1067.5206, y: 500.08334}
+    MaskWidth: 97
+    MaskHeight: 36
+    HitMask: f8ffffffffffffffffffff3ffcfffffffffffffffffffffff9fffffffffffffffffffffffbfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffdfffffffffffffffffffffff9ffffffffffffffffffffffc3ffffffffffffffffffffff01
+  - Sequence: 16
+    ModuleId: 1aa84240b1db41b4a30440c429a675a4
+    Normal: {fileID: 2800000, guid: adf7840e046169b4080ec73347693b9c, type: 3}
+    Glow: {fileID: 2800000, guid: 3e80bdacfcdc6f345a66095362decd8a, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 420
+      y: 81
+      width: 197
+      height: 295
+    GlowBounds:
+      serializedVersion: 2
+      x: 398
+      y: 58
+      width: 242
+      height: 340
+    TravelPoint: {x: 516.53, y: 222.52026}
+    MaskWidth: 50
+    MaskHeight: 74
+    HitMask: f8ffffffff7ff8ffffffffffe7ffffffffffdfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbfffffffffff7ffeffffffffffe1ffffffffff01
+  - Sequence: 17
+    ModuleId: 0d82da05cf0149f3a34b263f051f9da6
+    Normal: {fileID: 2800000, guid: 2563a48cf1c98934ead40601b5805813, type: 3}
+    Glow: {fileID: 2800000, guid: a1751a6fd58564c469dd24892fbfc316, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 1281
+      y: 325
+      width: 217
+      height: 397
+    GlowBounds:
+      serializedVersion: 2
+      x: 1256
+      y: 300
+      width: 266
+      height: 446
+    TravelPoint: {x: 1393.4454, y: 513.575}
+    MaskWidth: 55
+    MaskHeight: 100
+    HitMask: f8ffffffffff0fffffffffffff9fffffffffffffefffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7fffffffffffff9fffffffffffff0fffffffffffff01
+  - Sequence: 18
+    ModuleId: 16e4d0ba687846938cc39173dbe4c164
+    Normal: {fileID: 2800000, guid: aa99a5631670f624daaca97f6797397a, type: 3}
+    Glow: {fileID: 2800000, guid: 241d6577125ad6b48a523a3322adf068, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 937
+      y: 81
+      width: 561
+      height: 341
+    GlowBounds:
+      serializedVersion: 2
+      x: 914
+      y: 58
+      width: 606
+      height: 386
+    TravelPoint: {x: 1285.1383, y: 233.65698}
+    MaskWidth: 141
+    MaskHeight: 86
+    HitMask: 00000000f0ffffffffffffffffffffffff0300000080ffffffffffffffffffffffffff01000000f0ffffffffffffffffffffffff3f00000000feffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff1f000000c0ffffffffffffffffffffffffff03000000f8ffffffffffffffffffffffff7f00000000ffffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff1f000000c0ffffffffffffffffffffffffff03000000f8ffffffffffffffffffffffff7f00000000ffffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff1f000000c0ffffffffffffffffffffffffff03000000f8ffffffffffffffffffffffff7f00000000ffffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff1f000000c0ffffffffffffffffffffffffff03000000f8ffffffffffffffffffffffff7f00000000ffffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff1f000000c0ffffffffffffffffffffffffff03000000f8ffffffffffffffffffffffff7f00000000ffffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff1f000000c0ffffffffffffffffffffffffff03000000f8ffffffffffffffffffffffff7f00000000ffffffffffffffffffffffffff0f000000e0ffffffffffffffffffffffffff01000000fcffffffffffffffffffffffff3f00000080ffffffffffffffffffffffffff07000000f0ffffffffffffffffffffffffff00000000feffffffffffffffffffffffff0f000000c0ffffffffffffffffffffffffff01000000f8ffffffffffffffffffffffff0700000000ffffffffffff0700000000000000000000e0ffffffffff7f0000000000000000000000fcffffffffff0f0000000000000000000080ffffffffffff0100000000000000000000f0ffffffffff3f0000000000000000000000feffffffffff0700000000000000000000c0ffffffffffff0000000000000000000000f8ffffffffff1f0000000000000000000000ffffffffffff0300000000000000000000e0ffffffffff7f0000000000000000000000fcffffffffff0f00000000000000000000c0ffffffffffff01000000000000e0ffffffffffffffffff3f00000000000000feffffffffffffffffff07000000000000e0ffffffffffffffffffff00000000000000fcffffffffffffffffff1f00000000000080ffffffffffffffffffff03000000000000f0ffffffffffffffffff7f00000000000000feffffffffffffffffff0f000000000000c0ffffffffffffffffffff01000000000000f8ffffffffffffffffff3f00000000000000ffffffffffffffffffff07000000000000e0ffffffffffffffffffff00000000000000fcffffffffffffffffff1f00000000000000ffffffffffffffffffff03000000000000e0ffffffffffffffffff3f00000000000000f0ffffffffffffffffff0300000000000000
+  - Sequence: 19
+    ModuleId: debbcc0b7b4047a1baff7945de02234e
+    Normal: {fileID: 2800000, guid: 7e5187dac68fe994aa0fb0db798ed49b, type: 3}
+    Glow: {fileID: 2800000, guid: 2982ffbcf10deef4eb52523638cef432, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 631
+      y: 258
+      width: 429
+      height: 319
+    GlowBounds:
+      serializedVersion: 2
+      x: 608
+      y: 236
+      width: 474
+      height: 364
+    TravelPoint: {x: 748.18054, y: 391.58124}
+    MaskWidth: 108
+    MaskHeight: 80
+    HitMask: f8ffffffffffffffffffffffffe1ffffffffffffffffffffffff7ffefffffffffffffffffffffffff7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffffffffffffffffffffffff7ffffffffffffffffffffffffffff1ffffffffffffffff7f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff3f00000000ffffffffffffffffff03000000f0ffffffffffffffff1f00000000ffffffffffffffffff00000000f0ffffffffffffff010000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000f0ffffffffffffff000000000000ffffffffffffff0f0000000000e0ffffffffffffff000000000000feffffffffffff07000000000080ffffffffffff3f000000000000
+  - Sequence: 20
+    ModuleId: 58a00ac9703d478badf56eefbfbfe6d1
+    Normal: {fileID: 2800000, guid: 232f4c9b9493b8d4e90748d8c7fbcf13, type: 3}
+    Glow: {fileID: 2800000, guid: 63d4f050bd8bb1c41bae0c455f5bc4a4, type: 3}
+    NormalBounds:
+      serializedVersion: 2
+      x: 632
+      y: 81
+      width: 428
+      height: 166
+    GlowBounds:
+      serializedVersion: 2
+      x: 610
+      y: 60
+      width: 472
+      height: 208
+    TravelPoint: {x: 846, y: 162.0238}
+    MaskWidth: 107
+    MaskHeight: 42
+    HitMask: f8fffffffffffffffffffffffff0ffffffffffffffffffffffffdffffffffffffffffffffffffffffeffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff7ffeffffffffffffffffffffffffc3ffffffffffffffffffffffff07

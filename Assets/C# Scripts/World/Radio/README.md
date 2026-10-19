@@ -22,6 +22,8 @@ RadioReceiver 的 Breathe While Playing 默认开启：模型播放时平滑放�
 
 `FirstEncounter.asset` 和 `ReturnJourney.asset` 仍保留为空白模板。正式关卡的摆放和引用由关卡配置决定，本次没有自动替换场景中的收音机。
 
+结尾独白另有 `Ending.asset`：一条完整的 `Processed/Ending/Ending_Soft.wav`，配 38 条中英字幕时间轴，默认中文。可赋给收音机字段，或在结尾演出中调用 `VoicePlayer.Play(endingSequence)`。此资源与 18 份广播序列独立维护。
+
 按播放顺序添加 Segments，每段配置：
 
 - Clip：一段完整音频。正常播报和 M01—M06 返程均为一个播放段，换字幕不会切换音频。

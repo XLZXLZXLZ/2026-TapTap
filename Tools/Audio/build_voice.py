@@ -292,6 +292,8 @@ def write_srt(path, cues):
 
 
 def write_audition(manifest):
+    ending = ('<h2>最终独白</h2><p><a style="color:#b8d8c7" href="Ending/Audition.html">'
+              '打开柔化成品与中文字幕时间轴试听</a></p>') if (REPORT / "Ending/Audition.html").exists() else ""
     rows = []
     for entry in manifest["files"]:
         version = entry.get("revision", 2)
@@ -303,7 +305,7 @@ def write_audition(manifest):
         ("工厂 · 去底噪、略增回音", "../../Assets/Audio/Voice/Processed/Full/M04_Sarah_TransferForm_Full.wav?revision=4"),
     ]:
         comparison += f'<p>{label}</p><audio controls preload="none" src="{path}"></audio>'
-    page = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>广播试听 · 第 4 版</title><style>body{font:16px/1.7 system-ui;background:#101a20;color:#e6e6dd;max-width:900px;margin:40px auto;padding:0 24px}h1{color:#b8d8c7}h2{font-size:17px}article{border-top:1px solid #37474b;padding:16px 0}audio{width:100%}small{color:#a3b2b5}</style><h1>广播试听 · 第 4 版 · 21 个独立文件</h1>' + comparison + '<h2>M07 五遍连续预览 · 沿用第 2 版</h2><audio controls preload="none" src="M07_FivePass_Preview.wav?revision=2"></audio>' + ''.join(rows) + '</html>'
+    page = '<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>广播试听 · 第 4 版</title><style>body{font:16px/1.7 system-ui;background:#101a20;color:#e6e6dd;max-width:900px;margin:40px auto;padding:0 24px}h1{color:#b8d8c7}h2{font-size:17px}article{border-top:1px solid #37474b;padding:16px 0}audio{width:100%}small{color:#a3b2b5}</style><h1>广播试听 · 第 4 版 · 21 个独立文件</h1>' + ending + comparison + '<h2>M07 五遍连续预览 · 沿用第 2 版</h2><audio controls preload="none" src="M07_FivePass_Preview.wav?revision=2"></audio>' + ''.join(rows) + '</html>'
     (REPORT / "Audition.html").write_text(page, encoding="utf-8")
 
 
@@ -324,7 +326,7 @@ def main():
                     fault_model="sustained irregular electrical arc, mains harmonics and power sag",
                     sample_rate=SR, channels=1, encoding="PCM 24-bit", target_lufs=TARGET_LUFS,
                     language="en", m07_playback=["M07_PowerCut_01", "M07_PowerCut_02", "M07_PowerCut_03", "M07_PowerCut_04", "M07_PowerCut_04"], files=[])
-    sources = sorted(SOURCE.glob("*.mp3"))
+    sources = sorted(p for p in SOURCE.glob("*.mp3") if re.match(r"^[MH]\d{2}_", p.stem))
     if args.only:
         sources = [p for p in sources if p.stem.split("_")[0] == args.only]
     if args.actors:
