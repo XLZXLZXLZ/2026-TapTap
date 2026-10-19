@@ -8,7 +8,8 @@ namespace TapTap
         MagnetRelease, MagnetJoin, ImpactLight, ImpactHeavy, Bounce, RecallFailed,
         SwitchPress, PhaseChange, PistonMove, Death, Respawn,
         RewindStart, RewindEnd, BulletTimeOn, BulletTimeOff, Click, KeyPickup, Complete,
-        MagnetHum, RewindLoop, ConveyorLoop
+        MagnetHum, RewindLoop, ConveyorLoop,
+        PowerFlicker, PowerDown, PlatformDetach, DoorUnlock, SawLoop
     }
 
     [Serializable]
@@ -24,6 +25,8 @@ namespace TapTap
         public bool Loop;
         public bool PauseWithGameplay = true;
         public bool AllowDuringRewind;
+        [Tooltip("允许在开门等输入锁定的演出中播放；暂停菜单仍会暂停此音效。")]
+        public bool AllowDuringCinematic;
     }
 
     [CreateAssetMenu(menuName = "TapTap/Audio/Sound Library")]

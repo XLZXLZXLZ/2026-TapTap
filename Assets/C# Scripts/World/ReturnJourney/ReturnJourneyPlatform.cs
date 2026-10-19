@@ -48,6 +48,7 @@ namespace TapTap
         {
             if (HasCollapsed || View == null) return;
             HasCollapsed = true;
+            AudioManager.Instance?.Play(SoundId.PlatformDetach, transform.position, owner: this);
             CollapseBurst?.Play(true);
             drop = DOTween.Sequence()
                 .Append(View.DOLocalMove(FallenLocalPosition, DropDuration).SetEase(Ease.InQuad))

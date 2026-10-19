@@ -4,7 +4,7 @@
 
 ## 编辑配置
 
-- `Final Camera Target` 的世界坐标为 `(26.5, -38.9, -227.9)`。开启 Scene Gizmos 可见黄色目标与视锥。默认自动朝向大世界中心；关闭 Aim At World Center 后使用目标 Transform 的旋转。默认继承进入演出时的 FOV；需要独立镜头角度时开启 Override Field Of View。
+- `Final Camera Target` 的世界坐标为 `(26.5, -38.9, -227.9)`。开启 Scene Gizmos 可见黄色位置标记。整个拉远过程保持进入演出时的相机世界旋转，不转向大世界中心，也不使用目标 Transform 的旋转。默认继承进入演出时的 FOV；需要独立视野大小时开启 Override Field Of View。
 - `Escape Triggers (Level Local Grid)` 下有 8 个 BoxCollider2D 触发区，按 Step 1–8 排序，覆盖最后平台通道的宽度，局部高度分别为 1、5.5、9.5、13.5、17.5、21.5、25.5、30.9。触发组运行时自动对齐 Level 引用对应的区域。可直接调整触发区子对象的位置和 Box Collider 尺寸，保持第一步为 1、最后一步等于 Step Count。
 - 每次触发推进目标进度：`(CurrentStep / StepCount)^2`。起点固定为首个触发区处的实际镜头，每段默认平滑过渡 0.65 秒。连续跨越多个触发区时只前进、不重复累计。
 - 首次触发后，默认用 0.85 秒显示全部子区域。通过表现覆盖显示模型和灯光、渐退区域内部遮罩；区域外遮罩保持，未写入探索和解锁存档。
@@ -24,4 +24,4 @@
 - 演出在物理触发检测前和镜头更新前检查关卡绑定。通关、跳关或重开使 `Generated` 重建后，清理旧演出的步数、镜头控制、操作锁及显示覆盖，通过当前大世界重新绑定关卡、触发组和区域显示组件。已停用但尚未销毁的旧关卡与初始状态模板不参与绑定；新关卡暂不可用时等待恢复。
 - 演出代码、预制体和结局画面集中存放，原有滤镜、Volume、Post Processing 配置不变。
 
-回归入口：`TapTap.Editor.FinalEscapeRegressionTests.RunBatch`，只在隔离项目以 batchmode 执行，覆盖重建前后触发、引用与显示覆盖更新、镜头和输入锁释放、禁用恢复，以及第 8 步到达最终镜头位姿。视觉效果仍需在游戏中验收。
+回归入口：`TapTap.Editor.FinalEscapeRegressionTests.RunBatch`，只在隔离项目以 batchmode 执行，覆盖重建前后触发、引用与显示覆盖更新、镜头和输入锁释放、禁用恢复、第 8 步到达最终镜头位置，以及所有步骤的过渡、连续触发和暂停期间保持入场旋转。视觉效果仍需在游戏中验收。

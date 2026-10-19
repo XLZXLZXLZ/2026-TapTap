@@ -37,6 +37,7 @@ namespace TapTap
         public int ActiveLoopCount => loops.Count;
         public int PlayedCount { get; private set; }
         public SoundId LastPlayed { get; private set; }
+        public event Action<SoundId> SoundPlayed;
 
         private sealed class Voice
         {
@@ -101,7 +102,6 @@ namespace TapTap
             for (int i = 0; i < voices.Length; i++)
                 voices[i] = new Voice { Source = NewSource("SFX " + i, true) };
             SceneManager.sceneLoaded += SceneLoaded;
-            EventManager.Subscribe<GameStageChanged>(StageChanged);
             RefreshListener();
         }
 
@@ -152,18 +152,21 @@ namespace TapTap
         public void SaveVolumes() => PlayerPrefs.Save();
         public void SetListener(PlayerController player) { listener = player; RefreshListener(); }
 
-        private static bool Transitioning => WorldMapSceneRouter.IsLoading
+        private static bool SceneTransitioning => WorldMapSceneRouter.IsLoading
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting)
-            || (WorldMapProgression.Current != null && (WorldMapProgression.Current.IsTransitioning || WorldMapProgression.Current.IsComplete))
-            || GameplayActionLocks.IsLocked(GameplayAction.Input, SceneManager.GetActiveScene());
+            || (WorldMapProgression.Current != null && (WorldMapProgression.Current.IsTransitioning || WorldMapProgression.Current.IsComplete));
+        private static bool CinematicInputLocked => GameplayActionLocks.IsLocked(GameplayAction.Input, SceneManager.GetActiveScene());
+        private static bool Transitioning => SceneTransitioning || CinematicInputLocked;
         private static bool Frozen => PauseMenu.IsOpen || Time.timeScale <= 0f || Transitioning;
+        private static bool FrozenFor(SoundDefinition sound) => PauseMenu.IsOpen || Time.timeScale <= 0f
+            || SceneTransitioning || CinematicInputLocked && !sound.AllowDuringCinematic;
         public bool CanPlayGameplay => !Frozen && !RewindManager.Rewinding;
 
         public bool Play(SoundId id, Vector2? position = null, float gain = 1f, float pitch = 1f, Object owner = null)
         {
             SoundDefinition sound = Library != null ? Library.Find(id) : null;
             if (sound == null || sound.Loop || sound.Clips == null || sound.Clips.Length == 0
-                || RewindManager.Rewinding && !sound.AllowDuringRewind || sound.PauseWithGameplay && Frozen) return false;
+                || RewindManager.Rewinding && !sound.AllowDuringRewind || sound.PauseWithGameplay && FrozenFor(sound)) return false;
             float volume = sound.Volume * Mathf.Max(0f, gain) * (position.HasValue ? DistanceGain(position.Value) : 1f);
             if (volume <= 0.0001f) return false;
             Key key = new Key(id, owner);
@@ -198,6 +201,7 @@ namespace TapTap
             lastPlayed[key] = now;
             LastPlayed = id;
             PlayedCount++;
+            SoundPlayed?.Invoke(id);
             return true;
         }
 
@@ -266,11 +270,10 @@ namespace TapTap
             if (listener == null && Time.unscaledTime >= nextListenerSearch)
             { listener = FindObjectOfType<PlayerController>(); nextListenerSearch = Time.unscaledTime + 0.5f; }
             if (RewindManager.Rewinding) BeginRewindAudio(); else EndRewindAudio();
-            bool frozen = Frozen;
             foreach (Voice voice in voices)
             {
                 if (voice.Sound == null) continue;
-                bool pause = voice.Sound.PauseWithGameplay && frozen;
+                bool pause = voice.Sound.PauseWithGameplay && FrozenFor(voice.Sound);
                 if (pause && !voice.Paused) { voice.Source.Pause(); voice.Paused = true; }
                 else if (!pause && voice.Paused) { voice.Source.UnPause(); voice.Paused = false; }
                 if (!voice.Paused && !voice.Source.isPlaying) voice.Sound = null;
@@ -281,11 +284,12 @@ namespace TapTap
                 rewind != null && rewind.AtOldestHistory ? 0.2f : 0.65f + (rewind != null ? rewind.RewindSpeedProgress * 0.35f : 0f),
                 rewind != null ? Mathf.Lerp(0.85f, 1.3f, rewind.RewindSpeedProgress) : 1f);
             UpdateConveyors();
+            UpdateSaws();
             expiredLoops.Clear();
             foreach (KeyValuePair<Key, LoopVoice> item in loops)
             {
                 LoopVoice loop = item.Value;
-                bool pause = loop.Sound.PauseWithGameplay && frozen;
+                bool pause = loop.Sound.PauseWithGameplay && FrozenFor(loop.Sound);
                 bool suppress = rewinding && !loop.Sound.AllowDuringRewind;
                 if (loop.Owner == null || suppress || Transitioning) loop.Target = 0f;
                 if (pause && !loop.Paused) { loop.Source.Pause(); loop.Paused = true; }
@@ -328,6 +332,21 @@ namespace TapTap
                 Mathf.Clamp(0.85f + speed * 0.06f / UnitSize, 0.85f, 1.2f));
         }
         private float UnitSize => listener != null && listener.Config != null ? Mathf.Max(0.01f, listener.Config.UnitSize) : 1f;
+        private void UpdateSaws()
+        {
+            float gain = 0f;
+            Vector2 nearest = default;
+            if (listener != null && listener.Body != null && CanPlayGameplay)
+                foreach (SawAudioEmitter saw in SawAudioEmitter.ActiveEmitters)
+                {
+                    if (saw == null) continue;
+                    float candidate = saw.GainAt(listener.Body.Motor.Position, UnitSize, out Vector2 point);
+                    if (candidate <= gain) continue;
+                    gain = candidate;
+                    nearest = point;
+                }
+            SetLoop(SoundId.SawLoop, this, gain > 0f, nearest, gain);
+        }
         private float DistanceGain(Vector2 position)
         {
             if (listener == null || listener.Body == null) return 1f;
@@ -337,12 +356,6 @@ namespace TapTap
         private float Pan(Vector2 position) => listener != null && listener.Body != null
             ? Mathf.Clamp((position.x - listener.Body.Motor.Position.x) / (14f * UnitSize), -0.65f, 0.65f) : 0f;
 
-        private void StageChanged(GameStageChanged change)
-        {
-            if (change.Scene != SceneManager.GetActiveScene()) return;
-            if (change.Stage == GameStage.Returning || change.Stage == GameStage.DoorOpened)
-                Play(SoundId.PhaseChange, null, 0.8f, change.Stage == GameStage.Returning ? 0.8f : 1.1f);
-        }
         private void SceneLoaded(Scene scene, LoadSceneMode mode)
         {
             StopGameplay();
@@ -366,7 +379,6 @@ namespace TapTap
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= SceneLoaded;
-            EventManager.Unsubscribe<GameStageChanged>(StageChanged);
             if (current == this) current = null;
         }
     }

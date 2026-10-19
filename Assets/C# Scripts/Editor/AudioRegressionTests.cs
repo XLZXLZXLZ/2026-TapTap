@@ -73,7 +73,7 @@ namespace TapTap.Editor
                         foreach (AudioClip clip in sound.Clips)
                             Check(clip != null && clip.length > .01f, "Missing imported clip: " + id);
                     }
-                    Pass("All 21 resource catalog entries resolve imported clips");
+                    Pass("All " + Enum.GetValues(typeof(SoundId)).Length + " resource catalog entries resolve imported clips");
                     new GameObject("Duplicate Audio Manager").AddComponent<AudioManager>();
                     var floor = new GameObject("Audio Test Floor");
                     floor.transform.position = Vector3.down * .5f;

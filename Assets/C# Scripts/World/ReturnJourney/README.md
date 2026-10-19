@@ -7,6 +7,7 @@
 - `Assets/Prefabs/ReturnJourney/ReturnJourneyDeparture.prefab`：阶段管理器、氛围参数、三个触发区和一个嵌套演出平台。将三个触发区分别移动到第20关所需位置；前两个各闪暗两次，第三个开启返程。警告的 Cue Id 在同场景中保持唯一。
 - `Assets/Prefabs/ReturnJourney/ReturnJourneyPlatform.prefab`：外观初始高于碰撞一格，掉落后带轻微倾斜。碰撞始终固定。可替换 View 下的模型，或将 `ReturnJourneyPlatform` 挂到已经摆好的平台上，绑定 View、掉落后的局部位置／旋转和粒子。第三触发区的 Platform 槽可以引用它。
 - `Assets/Prefabs/Interactables/ProgressKey.prefab`：原有钥匙已接入弱拾取粒子、携带跟随与开门消耗。放在第19关，沿用身体接触拾取；进入返程前不能拾取。
+- `Assets/Resources/Prefabs/CarriedProgressKey.prefab`：携带状态的独立外观，运行时对象名为 `Carried Progress Key`。在 Prefab Mode 中编辑 `Particle Effects/White Glow`，或在 `Particle Effects` 下增加自己的粒子；拾取时会实例化整棵子层级，开门消耗／重置时一并销毁。原钥匙的 `Carry Visual Prefab` 已指向此资源，旧场景实例的空引用也会自动加载它。`CarriedProgressKeyGlow.mat` 的 `Glow Intensity (HDR)` 默认为 3，沿用原钥匙穿透遮挡的前景渲染；光晕使用游戏现有的 HDR、Post Processing 与 Bloom。默认携带微粒为每秒 8 个。
 - `Assets/Prefabs/ReturnJourney/ReturnJourneyDoor.prefab`：宽 1 格、高 3 格的卡通圆角金色门，根节点仍为底部一格的中心（下沿 y=-0.5、上沿 y=2.5），保持原有落地位置。Body Proximity 放在来路一侧，中央 KeySocket 为钥匙齿尖飞向的位置。Unlit 材质使用固定顶点配色，不含金属、高光或灯光阴影；锁孔为实际凹槽。钥匙飞行默认 0.55 秒，随后从锁孔向外溶解 0.9 秒，交界呈金色荧光并伴随碎光，整门及边框全部消散后解除碰撞。仅身体能触发。
 - `Assets/Scenes/GoldenDoorPreview.unity`：独立的金色门预览，含参照砖块、钥匙与角色。Play 后向左移动拾取钥匙并靠近门即可查看完整动画。预览自带 Bloom；正式场景的荧光晕由其相机 Post Processing 与 Volume 的 Bloom 配置控制。
 - `Assets/Prefabs/UI/PauseMenu.prefab`：原菜单新增 `ReturnJourneyPausePortrait`。Return Art 为预先隐藏的子图片，已引用 `Assets/Art/Sprite/UI/PausePanel/RobotLevelBlueprint.png`，可直接换图。
@@ -48,6 +49,10 @@ Departure 建议作为独立场景根节点；放在区域 Custom 下也可使�
 ## 跟随、显隐与暂停
 
 钥匙的携带外观独立放在场景根目录，原拾取区域的显隐不会隐藏它。头身分离仍跟身体；运动方向改变时平滑换边；死亡返回、传送或跨区不丢失。远距离传送立即跟上，Z 时直接对齐历史中的身体。跟随偏移以角色配置的单格长度为单位，浮动使用模拟时钟。
+
+钥匙原地、携带与飞向锁孔的外观均使用专用前景材质 `ProgressKeyOverlay`：Transparent+150、ZTest Always、不写深度，外观关闭动态遮挡剔除；墙体不再盖住钥匙。逻辑位置、拾取碰撞和锁孔齿尖对齐保持原规则。
+
+返程前两次警告的每次闪暗开始播放 PowerFlicker，第三次压暗开始播放 PowerDown；平台实际掉落时播放一次 PlatformDetach。钥匙抵达锁孔并成功消耗后播放一次 DoorUnlock。音效经 AudioManager 统一管理，演出输入锁不屏蔽这些声音；暂停菜单仍会冻结音源。恢复阶段、已落下的平台和已开启的门不会重播音效。素材、音量配置及第二批生成入口见 `Assets/Audio/SFX/README.md`。
 
 引导光在第三触发点统一淡入，恢复场景或延迟启用时直接恢复当前阶段的状态。灯光不揭示未发现区域，继续遵从 `RegionRevealView`。暂停冻结平台掉落、灯光淡入和开门，暂停面板与图片撕裂使用真实时间。返程滤镜和 Z 滤镜分别控制，可叠加。
 

@@ -260,3 +260,66 @@ MonoBehaviour:
     Loop: 1
     PauseWithGameplay: 1
     AllowDuringRewind: 0
+  - Id: 21
+    Clips:
+    - {fileID: 8300000, guid: 7cf0d89fdefd5b0591b879421bd6af44, type: 3}
+    - {fileID: 8300000, guid: 0a741f6d0528510897dadc3311a3ef24, type: 3}
+    - {fileID: 8300000, guid: 4fb4b4d6a17f52829968ad926397a27a, type: 3}
+    Volume: 0.46
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0
+    MaxVoices: 4
+    Priority: 75
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+    AllowDuringCinematic: 1
+  - Id: 22
+    Clips:
+    - {fileID: 8300000, guid: 1ab840653f1d51a981248a2a53758ecc, type: 3}
+    Volume: 0.58
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.12
+    MaxVoices: 2
+    Priority: 92
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+    AllowDuringCinematic: 1
+  - Id: 23
+    Clips:
+    - {fileID: 8300000, guid: 7d883ba9d82f5ded9d1a0709dee5ffb6, type: 3}
+    - {fileID: 8300000, guid: 407d569e276f5bd1b1c35fe98db22936, type: 3}
+    Volume: 0.55
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.12
+    MaxVoices: 2
+    Priority: 85
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+    AllowDuringCinematic: 1
+  - Id: 24
+    Clips:
+    - {fileID: 8300000, guid: b5af2bc238625655af529c380170f0e5, type: 3}
+    Volume: 0.52
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.12
+    MaxVoices: 2
+    Priority: 95
+    Loop: 0
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+    AllowDuringCinematic: 1
+  - Id: 25
+    Clips:
+    - {fileID: 8300000, guid: 8caa560357fd567db0fc275e355eee89, type: 3}
+    Volume: 0.08
+    Pitch: {x: 1, y: 1}
+    MinimumInterval: 0.12
+    MaxVoices: 2
+    Priority: 30
+    Loop: 1
+    PauseWithGameplay: 1
+    AllowDuringRewind: 0
+    AllowDuringCinematic: 0

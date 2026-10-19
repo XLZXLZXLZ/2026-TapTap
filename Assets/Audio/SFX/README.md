@@ -1,6 +1,6 @@
 # 玩法音效
 
-当前为原创程序合成的柔和、克制的机械与磁吸音色。共 32 个 WAV（29 个短音效、3 个循环），由 21 个 SoundId 事件复用。菜单点击继续引用 `Assets/Audio/SoftClick.wav`；音乐、收音机语音保留原目录。
+当前为原创程序合成的柔和、克制的机械与磁吸音色。第一批 32 个 WAV（29 个短音效、3 个循环），第二批 8 个 WAV（7 个短音效、1 个循环），合计 40 个 WAV，由 26 个 SoundId 事件复用。菜单点击继续引用 `Assets/Audio/SoftClick.wav`；音乐、收音机语音保留原目录。
 
 柔和版降低了主体音高、噪声亮度和峰值，使用 14 毫秒圆滑起音、30 毫秒收尾与两级 1250 Hz 低通。弹跳改为短促、阻尼较强的回弹；磁吸与时间操作使用小幅音高变化，复活改为单次温和重组声。循环降低高次谐波和节奏起伏。当前试听为 `Design/Audio/SFX-Preview-Soft.wav`，原试听保留作对照。
 
@@ -41,3 +41,21 @@ AudioManager.Instance.SetLoop(SoundId.MagnetHum, this, active, position);
 在项目根目录运行 `python Tools/Audio/generate_sfx.py`。WAV 固定种子生成，Unity GUID 保持稳定。默认保留已存在的配置；加 `--reset-library` 才重建配置音量和映射。
 
 合成参数报告输出至 `Logs/Audio/synthesis-report.json`。Unity 回归入口为 `TapTap.Editor.AudioRegressionTests.RunBatch`，应在独立项目副本中以 batchmode 运行，不加 `-quit`；结果输出至该副本的 `Logs/Audio/regression-results.txt`。
+
+## 第二批：返程、电力、门与锯齿轮
+
+`python Tools/Audio/generate_return_journey_sfx.py` 生成 8 个新 WAV，并向配置追加 SoundId 21～25；保留已有事件的素材映射、音量与播放参数。若先执行第一批脚本的 `--reset-library`，随后再执行第二批脚本补齐配置。
+
+| 事件 | 资源 | 调用点 |
+| --- | --- | --- |
+| PowerFlicker | ReturnJourney/Power/PowerFlicker_01～03 | 前两个警告的每次闪暗开始；默认总共四次 |
+| PowerDown | ReturnJourney/Power/PowerDown_01 | 第三触发点的压暗演出开始；电机从约 380 Hz 降至 45 Hz |
+| PlatformDetach | ReturnJourney/Platform/PlatformDetach_01～02 | 实际平台脱落一次，含老化、脱钩与短促火花细节；恢复已落下状态时不播 |
+| DoorUnlock | ReturnJourney/Door/DoorUnlock_01 | 钥匙抵达锁孔并成功提交消耗时播放一次 |
+| SawLoop | Loops/SawLoop | 真正的 GridSpikes/Gear 预制体上的 SawAudioEmitter；玩家靠近时轻度淡入 |
+
+前四项允许在演出的输入锁期间播放，暂停菜单和时间暂停仍冻结音源。它们替代原有阶段变化的通用电路声，避免断电与开门时重复叠音。锯齿轮默认 1.5 格内满幅、6 格外无声，按实际危险碰撞体与玩家身体的 XY 距离衰减；未发现区域、停转或停用的锯齿轮不发声，多片相邻锯齿轮只保留一条轻度底声。
+
+第二批串试听位于 `Design/Audio/ReturnJourney-SFX-Preview.wav`。对应回归入口为 `TapTap.Editor.ReturnJourneyAudioRegressionTests.RunBatch`，需在独立副本、带图形设备的 batchmode 中运行；结果与钥匙遮挡截图输出至 `Logs/Audio/ReturnJourney/`。
+
+钥匙使用独立的 `Resources/Materials/ProgressKeyOverlay` 材质（Transparent+150、ZTest Always、ZWrite Off），拾取前、携带中与飞向锁孔时共用。材质只用于钥匙；不移动逻辑碰撞体，不影响拾取或锁孔对齐。关闭钥匙外观的动态遮挡剔除，携带时继续遵从既有区域发现与显隐规则。

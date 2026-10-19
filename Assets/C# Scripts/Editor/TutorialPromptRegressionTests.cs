@@ -7,6 +7,7 @@ using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -311,6 +312,43 @@ namespace TapTap.Editor
                 {
                     Check(presenter.QueuedCount == 0, "Once-only trigger queued a repeated tutorial");
                     Pass("Actual player prefab: head ignored, body triggers, re-entry remains once-only");
+                    presenter.Request(Prompt(2));
+                    Scene otherScene = SceneManager.CreateScene("Other tutorial stage");
+                    GameStageProgression.ForScene(otherScene).BeginReturn();
+                    Check(presenter.ActiveView != null && presenter.QueuedCount == 1 && triggerProbe.enabled,
+                        "Another scene's return event disabled this scene's tutorials");
+                    Pass("Return events are scoped to the owning scene");
+                    presenter.SubmitInput(TutorialPromptKey.Space, true, true, false);
+                    presenter.SubmitInput(TutorialPromptKey.Space, false, false, true);
+                    stage = 13;
+                }
+                else if (stage == 13 && view != null && view.IsExiting)
+                {
+                    Check(view.NextPromptPrefab != null && presenter.QueuedCount == 1,
+                        "Return cancellation test needs a pending chain and queued prompt");
+                    Check(GameStageProgression.ForScene(presenter.gameObject.scene).BeginReturn(), "Could not enter return stage");
+                    Check(presenter.ActiveView == null && presenter.QueuedCount == 0 && !view.gameObject.activeSelf,
+                        "Return did not immediately hide active UI and clear the queue");
+                    Check(!triggerProbe.enabled && !presenter.Request(Prompt(3)),
+                        "Return left a trigger or direct request enabled");
+                    triggerProbe.enabled = true;
+                    Check(!triggerProbe.enabled, "Re-enabling a trigger bypassed return suppression");
+                    var lateTrigger = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
+                        TutorialPromptAssets.Folder + "/Trigger_04_BulletTime.prefab")).GetComponent<TutorialPromptTrigger2D>();
+                    Check(!lateTrigger.enabled && !lateTrigger.HasTriggered, "Late-created return trigger remains active");
+                    presenter.enabled = false; presenter.enabled = true;
+                    Check(!presenter.Request(Prompt(0)), "Re-enabled presenter accepted a return tutorial");
+                    TutorialPromptPresenter latePresenter = InstantiatePresenter();
+                    Check(!latePresenter.Request(Prompt(0)), "Late-created presenter accepted a return tutorial");
+                    Pass("Return immediately hides exiting UI, cancels chain/queue, and rejects existing, re-enabled and late-created tutorials");
+                    since = EditorApplication.timeSinceStartup;
+                    stage = 14;
+                }
+                else if (stage == 14 && EditorApplication.timeSinceStartup > since + 1.0)
+                {
+                    Check(presenter.ActiveView == null && presenter.QueuedCount == 0,
+                        "A pending chain or queued tutorial reappeared after return");
+                    Pass("Cancelled tutorial chain stays hidden after its original transition and delay");
                     Finish(null);
                 }
             }

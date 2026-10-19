@@ -9,6 +9,8 @@ namespace TapTap
     [RequireComponent(typeof(BoxCollider2D), typeof(MeshFilter), typeof(MeshRenderer))]
     public sealed class ProgressKey : MonoBehaviour
     {
+        public const string OverlayMaterialPath = "Materials/ProgressKeyOverlay";
+        public const string CarryVisualResourcePath = "Prefabs/CarriedProgressKey";
         [Header("拾取轻推镜头（真实秒数，不改变游戏速度）")]
         [Range(0.01f, 0.6f)] public float ZoomAmount = 0.06f;
         [Min(0.01f)] public float ZoomInDuration = 0.22f;
@@ -25,6 +27,8 @@ namespace TapTap
         public ParticleSystem PickupFeedbackPrefab;
         [Min(0f)] public float GlowParticleRate = 12f;
         [Header("携带：相对身体，单位为格")]
+        [Tooltip("携带状态的独立外观预制体，可在其中添加粒子子节点。为空时加载 Resources/Prefabs/CarriedProgressKey。")]
+        public GameObject CarryVisualPrefab;
         public Vector2 FollowOffset = new Vector2(0.8f, 0.65f);
         [Min(0.01f)] public float FollowSmoothTime = 0.16f;
         [Min(0f)] public float CarryFloatAmplitude = 0.08f;
@@ -84,16 +88,30 @@ namespace TapTap
             carrier = player;
             SetCollected(true);
             if (carryVisual != null) return;
-            var owner = new GameObject("Carried Progress Key");
+            GameObject prefab = CarryVisualPrefab != null ? CarryVisualPrefab
+                : Resources.Load<GameObject>(CarryVisualResourcePath);
+            var owner = prefab != null ? Instantiate(prefab) : new GameObject("Carried Progress Key");
+            owner.name = "Carried Progress Key";
             // This renderer is outside region roots, so leaving region 19 cannot hide it.
             UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(owner, gameObject.scene);
             owner.transform.position = transform.position;
             owner.transform.rotation = transform.rotation;
             owner.transform.localScale = transform.lossyScale;
-            owner.AddComponent<MeshFilter>().sharedMesh = mesh;
-            var renderer = owner.AddComponent<MeshRenderer>();
-            renderer.sharedMaterial = visual.sharedMaterial;
-            renderer.sortingOrder = 13;
+            var filter = owner.GetComponent<MeshFilter>();
+            if (filter == null) filter = owner.AddComponent<MeshFilter>();
+            if (filter.sharedMesh == null) filter.sharedMesh = mesh;
+            var renderer = owner.GetComponent<MeshRenderer>();
+            if (renderer == null) renderer = owner.AddComponent<MeshRenderer>();
+            if (renderer.sharedMaterial == null) renderer.sharedMaterial = visual.sharedMaterial;
+            // The authored carry mesh is reusable; retain each key instance's tint.
+            var properties = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(properties);
+            properties.SetColor("_Color", filter.sharedMesh == mesh ? Color.white : Tint);
+            renderer.SetPropertyBlock(properties);
+            renderer.sortingOrder = 30;
+            renderer.allowOcclusionWhenDynamic = false;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
             carryVisual = owner.transform;
         }
 
@@ -229,8 +247,13 @@ namespace TapTap
             mesh.RecalculateBounds();
             GetComponent<MeshFilter>().sharedMesh = mesh;
             visual = GetComponent<MeshRenderer>();
-            if (visual.sharedMaterial == null) visual.sharedMaterial = Resources.Load<Material>("Materials/IndicatorVisual");
-            visual.sortingOrder = 12;
+            Material overlay = Resources.Load<Material>(OverlayMaterialPath);
+            if (overlay != null) visual.sharedMaterial = overlay;
+            else if (visual.sharedMaterial == null) visual.sharedMaterial = Resources.Load<Material>("Materials/IndicatorVisual");
+            visual.sortingOrder = 30;
+            visual.allowOcclusionWhenDynamic = false;
+            visual.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            visual.receiveShadows = false;
             trigger = GetComponent<BoxCollider2D>();
             trigger.isTrigger = true;
             trigger.size = new Vector2(0.94f, 0.52f);

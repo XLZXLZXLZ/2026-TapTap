@@ -26,7 +26,18 @@ namespace TapTap
 
         public static bool GameplayBlocked => WorldMapProgression.InputBlocked
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
-        private bool CanObserve => !GameplayBlocked && (!UseKeyboard || Application.isFocused);
+        private bool CanObserve => !GameStageProgression.HasProgressedIn(gameObject.scene)
+            && !GameplayBlocked && (!UseKeyboard || Application.isFocused);
+
+        private void OnEnable()
+        {
+            EventManager.Subscribe<GameStageChanged>(StageChanged);
+            if (GameStageProgression.HasProgressedIn(gameObject.scene)) ClearPrompts();
+        }
+        private void StageChanged(GameStageChanged message)
+        {
+            if (message.Scene == gameObject.scene && message.Stage >= GameStage.Returning) ClearPrompts();
+        }
 
         private bool CanObserveKey(TutorialPromptKey key) => CanObserve
             && (!RewindManager.Rewinding || key == TutorialPromptKey.Z)
@@ -57,7 +68,7 @@ namespace TapTap
 
         public bool Request(TutorialPromptView prefab)
         {
-            if (prefab == null || !isActiveAndEnabled) return false;
+            if (prefab == null || !isActiveAndEnabled || GameStageProgression.HasProgressedIn(gameObject.scene)) return false;
             queue.Enqueue(prefab);
             return true;
         }
@@ -102,6 +113,12 @@ namespace TapTap
 
         private void LateUpdate()
         {
+            if (GameStageProgression.HasProgressedIn(gameObject.scene))
+            {
+                // Handles presenters moved between scenes after their enable callback, too.
+                if (ActiveView != null || queue.Count != 0 || stage != Stage.Idle) ClearPrompts();
+                return;
+            }
             if (!CanObserve)
             {
                 if (activeInput != null) activeInput.Synchronize(Held(activePrefab.Key));
@@ -177,12 +194,25 @@ namespace TapTap
 
         private void OnDisable()
         {
+            EventManager.Unsubscribe<GameStageChanged>(StageChanged);
+            ClearPrompts();
+        }
+
+        private void ClearPrompts()
+        {
             queue.Clear();
             chain.Clear();
-            if (ActiveView != null) Destroy(ActiveView.gameObject);
+            if (ActiveView != null)
+            {
+                // Destroy is deferred; hide and kill the view's tween immediately on stage change.
+                ActiveView.gameObject.SetActive(false);
+                Destroy(ActiveView.gameObject);
+            }
             ActiveView = null;
             activePrefab = nextPrefab = null;
             activeInput = nextInput = null;
+            gapRemaining = 0f;
+            System.Array.Clear(externalHeld, 0, externalHeld.Length);
             stage = Stage.Idle;
         }
     }

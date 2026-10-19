@@ -82,6 +82,8 @@ namespace TapTap
                 opening = null;
                 yield break;
             }
+            AudioManager.Instance?.Play(SoundId.DoorUnlock,
+                KeySocket != null ? KeySocket.position : transform.position, owner: this);
             IsOpen = true;
             key = null;
             DoorVisual?.BeginDissolve();

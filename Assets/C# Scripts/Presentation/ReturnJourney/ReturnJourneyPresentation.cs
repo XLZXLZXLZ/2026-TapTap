@@ -100,6 +100,8 @@ namespace TapTap
         {
             for (int i = 0; i < 2; i++)
             {
+                while (Time.timeScale <= 0f || PauseMenu.IsOpen) yield return null;
+                AudioManager.Instance?.Play(SoundId.PowerFlicker, owner: this);
                 float elapsed = 0f;
                 while (elapsed < FlashDuration)
                 {
@@ -120,6 +122,7 @@ namespace TapTap
         }
         private IEnumerator ReturnEntry()
         {
+            AudioManager.Instance?.Play(SoundId.PowerDown, owner: this);
             float peak = Mathf.Max(Darkness, EntryPeakDarkness);
             yield return FadeEntry(EffectiveDarkness, peak, EntryDarkenDuration);
             float elapsed = 0f;

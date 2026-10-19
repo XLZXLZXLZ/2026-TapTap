@@ -28,6 +28,7 @@ namespace TapTap.Editor
                 Test("Missing replacement releases control and recovers when the level appears", DelayedReplacement);
                 Test("Disable releases ending/input locks and re-enable can restart", DisableAndRestart);
                 Test("Eight steps reach the target with interruption and pause preserving progress", FinalPose);
+                Test("All escape steps preserve entry rotation during blends, interruptions and pause", PreserveRotation);
             }
             catch (Exception error) { results.Add("FAIL: " + error); Debug.LogException(error); exitCode = 1; }
             finally { File.WriteAllLines("final-escape-regression-results.txt", results); }
@@ -211,6 +212,7 @@ namespace TapTap.Editor
             {
                 f.ReplaceGenerated(true);
                 Call(f.Sequence, "FixedUpdate");
+                Quaternion entryRotation = f.Camera.transform.rotation;
                 f.Sequence.Advance(1); f.Tick(0.1f);
                 f.Sequence.Advance(7); f.Tick(0.1f);
                 Vector3 beforePause = f.Camera.transform.position;
@@ -220,9 +222,38 @@ namespace TapTap.Editor
                 Check(f.Sequence.CurrentStep == 7, "Repeated triggers reversed progress");
                 f.Sequence.Advance(8); f.Tick(f.Sequence.CameraStepDuration);
                 Near(f.Camera.transform.position, f.Sequence.CameraTarget.transform.position, "Final camera target");
-                LevelCameraShot target = f.Sequence.CameraTarget.Evaluate(LevelCameraShot.Read(f.Camera), f.World.WorldBounds.center);
-                Check(Quaternion.Angle(f.Camera.transform.rotation, target.Rotation) < 0.01f, "Final rotation");
+                Check(Quaternion.Angle(f.Camera.transform.rotation, entryRotation) < 0.01f, "Final rotation changed from entry");
                 Check(!f.Camera.orthographic, "Escape changed to orthographic projection");
+            }
+        }
+
+        private static void PreserveRotation()
+        {
+            using (var f = new Fixture())
+            {
+                Quaternion entryRotation = Quaternion.Euler(12f, -17f, 6f);
+                f.Camera.transform.rotation = entryRotation;
+                f.Sequence.CameraTarget.transform.rotation = Quaternion.Euler(-30f, 45f, 20f);
+                for (int step = 1; step <= f.Sequence.StepCount; step++)
+                {
+                    f.Sequence.Advance(step);
+                    f.Tick(f.Sequence.CameraStepDuration * 0.25f);
+                    Check(Quaternion.Angle(f.Camera.transform.rotation, entryRotation) < 0.01f,
+                        "Step " + step + " rotated during the blend");
+                    Vector3 beforePause = f.Camera.transform.position;
+                    f.Tick(0f);
+                    Near(f.Camera.transform.position, beforePause, "Pause advanced step " + step);
+                    Check(Quaternion.Angle(f.Camera.transform.rotation, entryRotation) < 0.01f,
+                        "Pause rotated step " + step);
+                    // Even steps finish; odd steps are interrupted by the following trigger.
+                    if (step % 2 == 0)
+                    {
+                        f.Tick(f.Sequence.CameraStepDuration);
+                        Check(Quaternion.Angle(f.Camera.transform.rotation, entryRotation) < 0.01f,
+                            "Step " + step + " rotated at completion");
+                    }
+                }
+                Near(f.Camera.transform.position, f.Sequence.CameraTarget.transform.position, "Pullback still reaches target");
             }
         }
 

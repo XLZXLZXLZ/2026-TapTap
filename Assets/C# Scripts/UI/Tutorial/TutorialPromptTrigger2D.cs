@@ -18,8 +18,21 @@ namespace TapTap
         private void Awake() { area = GetComponent<BoxCollider2D>(); area.isTrigger = true; }
         private void Reset() { GetComponent<BoxCollider2D>().isTrigger = true; }
 
+        private void OnEnable()
+        {
+            EventManager.Subscribe<GameStageChanged>(StageChanged);
+            if (GameStageProgression.HasProgressedIn(gameObject.scene)) enabled = false;
+        }
+        private void OnDisable() => EventManager.Unsubscribe<GameStageChanged>(StageChanged);
+        private void StageChanged(GameStageChanged message)
+        {
+            if (message.Scene == gameObject.scene && message.Stage >= GameStage.Returning) enabled = false;
+        }
+
         private void FixedUpdate()
         {
+            // Also covers a runtime-created trigger moved into a returning scene after OnEnable.
+            if (GameStageProgression.HasProgressedIn(gameObject.scene)) { enabled = false; return; }
             if (PromptPrefab == null || (PlayOnce && HasTriggered) || !area.enabled
                 || TutorialPromptPresenter.GameplayBlocked || RewindManager.Rewinding) return;
             if (Player == null)

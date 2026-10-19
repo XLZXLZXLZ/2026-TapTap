@@ -4822,6 +4822,7 @@ GameObject:
   m_Component:
   - component: {fileID: 203989099235142997}
   - component: {fileID: 7639399720879440477}
+  - component: {fileID: 8361000000000000025}
   m_Layer: 0
   m_Name: Gear
   m_TagString: Untagged
@@ -5114,3 +5115,19 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6b57f6acbc847ae46aa5eaa4a4b05cad, type: 3}
   m_PrefabInstance: {fileID: 5537852468006439226}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8361000000000000025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8447194003576018874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db93dadaeab4556caa0b23409f842e77, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  FullVolumeRadius: 1.5
+  ListeningRadius: 6
+  SourceCollider: {fileID: 0}
+  MotorAnimation: {fileID: 7639399720879440477}
