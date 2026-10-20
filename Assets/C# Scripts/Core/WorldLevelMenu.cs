@@ -47,6 +47,14 @@ namespace TapTap
             view.SetMenuSelection(selected, notice ?? "");
         }
 
+        public void RefreshProgress()
+        {
+            if (World == null || view == null || modules == null) return;
+            notice = null;
+            Refresh();
+            if (selected == null) Select(modules.Find(CanSelect), true);
+        }
+
         public void Select(WorldMapModule module) => Select(module, false);
 
         private void Select(WorldMapModule module, bool focus)

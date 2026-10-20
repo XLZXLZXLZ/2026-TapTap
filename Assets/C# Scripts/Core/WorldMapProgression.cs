@@ -57,6 +57,14 @@ namespace TapTap
 
         public void SetExitsEnabled(bool enabled) => ExitsEnabled = enabled;
 
+        public void RefreshSavedProgress()
+        {
+            if (!initialized) return;
+            completed.Clear();
+            completed.UnionWith(WorldMapProgressStore.Completed(world.Source));
+            completed.RemoveWhere(id => !ordered.Exists(module => module.Id == id));
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => current = null;
 

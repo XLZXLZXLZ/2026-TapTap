@@ -67,6 +67,7 @@ namespace TapTap
         // Restoration does not re-publish a transition. Late listeners query StageIn on enable.
         public void ApplyStage()
         {
+            AudioManager.Instance?.ApplyStageMusic(gameObject.scene, Stage);
             if (HasProgressed && WorldMapProgression.Current != null
                 && WorldMapProgression.Current.gameObject.scene == gameObject.scene)
                 WorldMapProgression.Current.SetExitsEnabled(false);
@@ -89,6 +90,7 @@ namespace TapTap
             if (next <= state.Stage) return;
             GameStage previous = state.Stage;
             state.Stage = next;
+            AudioManager.Instance?.ApplyStageMusic(gameObject.scene, next);
             RewindManager.Current?.ClearHistory();
             if (WorldMapProgression.Current != null && WorldMapProgression.Current.gameObject.scene == gameObject.scene)
                 WorldMapProgression.Current.SetExitsEnabled(false);

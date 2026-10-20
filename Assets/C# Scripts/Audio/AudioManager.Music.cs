@@ -23,6 +23,7 @@ namespace TapTap
         private readonly HashSet<MusicTrack> warnedMusic = new HashSet<MusicTrack>();
         private AudioClip legacyMenuMusic;
         private int keyMusicScene = -1;
+        private int silentJourneyScene = -1;
         private EndingSequenceController endingMusicOwner;
         private double endingMusicAt;
         private readonly HashSet<Object> musicTransitions = new HashSet<Object>();
@@ -70,7 +71,9 @@ namespace TapTap
 
         private MusicTrack? ResolveLevelMusic(Scene scene, LevelDefinition level, int number)
             => keyMusicScene == scene.handle || GameStageProgression.StageIn(scene) >= GameStage.CarryingKey
-                ? MusicTrack.KeyEscape : MusicLibrary != null ? MusicLibrary.TrackFor(level != null ? level.Style : null, number) : null;
+                ? MusicTrack.KeyEscape
+                : silentJourneyScene == scene.handle || GameStageProgression.StageIn(scene) == GameStage.Returning
+                    ? null : MusicLibrary != null ? MusicLibrary.TrackFor(level != null ? level.Style : null, number) : null;
 
         private void InitializeMusic()
         {
@@ -195,6 +198,9 @@ namespace TapTap
         public void ApplyLevelMusic(Scene scene, LevelDefinition level, int sequenceNumber)
         {
             if (scene != SceneManager.GetActiveScene()) return;
+            // Rewinding snapshots may cross several regions; do not turn those restores into music cues.
+            if (RewindManager.Rewinding) return;
+            if (MusicLibrary != null && sequenceNumber == MusicLibrary.SilentLevelNumber) silentJourneyScene = scene.handle;
             endingMusicOwner = null;
             if (keyMusicScene == scene.handle || GameStageProgression.StageIn(scene) >= GameStage.CarryingKey)
             {
@@ -202,6 +208,18 @@ namespace TapTap
                 return;
             }
             PlayMusic(ResolveLevelMusic(scene, level, sequenceNumber));
+        }
+
+        public void ApplyStageMusic(Scene scene, GameStage stage)
+        {
+            if (scene != SceneManager.GetActiveScene()) return;
+            if (stage >= GameStage.CarryingKey) PlayKeyMusic(scene);
+            else if (stage == GameStage.Returning)
+            {
+                silentJourneyScene = scene.handle;
+                endingMusicOwner = null;
+                PlayMusic(null);
+            }
         }
 
         public void PlayKeyMusic(Scene scene)
@@ -230,6 +248,7 @@ namespace TapTap
         {
             // Includes reloads: a new run must not inherit the previous run's pickup latch or delayed ending cue.
             keyMusicScene = -1;
+            silentJourneyScene = -1;
             endingMusicOwner = null;
             foreach (GameObject root in scene.GetRootGameObjects())
             {
@@ -238,6 +257,7 @@ namespace TapTap
                     || root.GetComponentInChildren<WorldLevelMenu>(true) != null) { PlayMusic(MusicTrack.Menu); return; }
             }
             if (GameStageProgression.StageIn(scene) >= GameStage.CarryingKey) { PlayKeyMusic(scene); return; }
+            if (GameStageProgression.StageIn(scene) == GameStage.Returning) { ApplyStageMusic(scene, GameStage.Returning); return; }
             WorldMapProgression progression = WorldMapProgression.Current;
             if (progression != null && progression.gameObject.scene == scene && progression.CurrentModule != null)
                 ApplyLevelMusic(scene, progression.CurrentModule.Level, progression.CurrentNumber);

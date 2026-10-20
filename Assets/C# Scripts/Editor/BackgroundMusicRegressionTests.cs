@@ -150,6 +150,19 @@ namespace TapTap.Editor
             Check(originalLibrary.FadeInDuration == 2f && originalLibrary.FadeOutDuration == 2f
                 && originalLibrary.EndingMusicDelay == 1f, "Default transition timings changed.");
             Expect(MusicTrack.Menu, originalLibrary.BGM_0);
+            Check(originalLibrary.BGM_3 != null && originalLibrary.BGM_3.name == "BGM_3_Loop"
+                && Mathf.Abs(originalLibrary.BGM_3.length - 115.8f) < 0.1f,
+                "Region 3 still references the recording with a long silent tail.");
+            var loopProbe = new GameObject("BGM 3 loop probe").AddComponent<AudioSource>();
+            loopProbe.clip = originalLibrary.BGM_3;
+            loopProbe.loop = true;
+            loopProbe.volume = 0f;
+            loopProbe.Play();
+            loopProbe.time = loopProbe.clip.length - 0.25f;
+            yield return 0.7f;
+            Check(loopProbe.isPlaying && loopProbe.time < 2f, "Trimmed region 3 track did not loop at its musical end.");
+            Object.Destroy(loopProbe.gameObject);
+            Pass("Region 3 uses the 115.8-second trimmed asset and loops past its end without the original 139-second silent tail.");
             foreach (WorldMapModule module in world.OrderedModules())
             {
                 int number = world.SequenceNumber(module);
@@ -265,8 +278,33 @@ namespace TapTap.Editor
             Check(third.time > 4.8f, "Pause lost the music playhead.");
             Pass("Blue/yellow boundary switches tracks, restart preserves playhead, and level 20 fades out and pauses.");
 
+            // Entering 20 latches silence even before the return-stage trigger fires.
+            audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[18].Level, 19);
+            yield return 0.3f;
+            Check(audio.CurrentMusic == null && audio.IsMusicPaused && !third.isPlaying,
+                "Leaving level 20 before pickup restarted region music.");
+
             GameStageProgression stage = GameStageProgression.ForScene(player.gameObject.scene);
             Check(stage.BeginReturn(), "Cannot begin return journey.");
+            // Region restoration and reload must not bring the outbound music back during the return journey.
+            WorldMapProgression.Snapshot returnSnapshot = new WorldMapProgression.Snapshot { CurrentIndex = 18 };
+            progression.RestoreState(in returnSnapshot);
+            audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[5].Level, 6);
+            yield return 0.3f;
+            Check(audio.CurrentMusic == null && audio.IsMusicPaused && !third.isPlaying,
+                "Return-stage region changes triggered outbound music.");
+            Load(Gameplay);
+            yield return Loaded(Gameplay);
+            yield return 0.3f;
+            Check(GameStageProgression.StageIn(SceneManager.GetActiveScene()) == GameStage.Returning
+                && audio.CurrentMusic == null && audio.IsMusicPaused && !audio.MusicSource.isPlaying,
+                "Reloading a return journey restored outbound music.");
+            progression = WorldMapProgression.Current;
+            progression.UseKeyboard = false;
+            player = Object.FindObjectOfType<PlayerController>();
+            player.GetComponent<PlayerInput>().SetExternalInput(0f, false);
+            stage = GameStageProgression.ForScene(player.gameObject.scene);
+            Pass("Level 20 latches silence until pickup; return-stage region changes, snapshots and reloads stay silent.");
             ProgressKey key = Object.FindObjectOfType<ProgressKey>();
             Check(key != null && key.TryCollect(player), "Cannot pick up key.");
             Check(audio.CurrentMusic == MusicTrack.KeyEscape, "Key music waited for the pickup cinematic to finish.");
