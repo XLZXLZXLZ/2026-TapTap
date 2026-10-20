@@ -16,7 +16,10 @@ namespace TapTap
     {
         public GameObject Content;
         public Button ResumeButton;
+        public Button LevelSelectButton;
         public Button MainMenuButton;
+        [Tooltip("勾选使用窗口模式；取消勾选使用无边框全屏。")]
+        public Toggle WindowedToggle;
         public Slider MusicSlider;
         public Slider EffectsSlider;
         public Text MusicValue;
@@ -36,8 +39,9 @@ namespace TapTap
         [Min(0.05f)] public float FadeDuration = 0.4f;
         public bool IsTransitioning => transition != null && transition.IsActive();
         public bool IsClosing => closing;
-        [Tooltip("没有大世界配置时，主菜单按钮使用此场景路径。")]
-        public string MainMenuScenePath = "Assets/Scenes/WorldMaps/World_Character_Select.unity";
+        public string MainMenuScenePath = "Assets/Scenes/MainMenu/MainMenu.unity";
+        [Tooltip("没有大世界配置时，关卡选择按钮使用此场景路径。")]
+        public string LevelSelectScenePath = "Assets/Scenes/WorldMaps/World_Character_Select.unity";
 
         public static PauseMenu Current { get; private set; }
         public static bool IsOpen => Current != null && Current.open;
@@ -49,6 +53,8 @@ namespace TapTap
         private bool cursorVisible;
         private CursorLockMode cursorLock;
         private GameObject previousSelection;
+        private EventSystem pauseEventSystem;
+        private bool previousNavigationEvents;
         private GameObject ownedEventSystem;
         private MenuAudio audioService;
         private float nextPreview;
@@ -70,10 +76,13 @@ namespace TapTap
             if (OpenButton != null) OpenButton.onClick.AddListener(Toggle);
             EnsureEventSystem(); // The HUD icon must work before the first Escape press.
             ResumeButton.onClick.AddListener(Resume);
+            if (LevelSelectButton != null) LevelSelectButton.onClick.AddListener(ReturnToLevelSelect);
             MainMenuButton.onClick.AddListener(ReturnToMainMenu);
+            if (WindowedToggle != null) WindowedToggle.onValueChanged.AddListener(SetWindowed);
             MusicSlider.onValueChanged.AddListener(SetMusicVolume);
             EffectsSlider.onValueChanged.AddListener(SetEffectsVolume);
             RefreshVolumes();
+            RefreshWindowMode();
         }
 
         private void OnEnable()
@@ -117,18 +126,23 @@ namespace TapTap
             cursorVisible = Cursor.visible;
             cursorLock = Cursor.lockState;
             EnsureEventSystem();
-            previousSelection = EventSystem.current.currentSelectedGameObject;
+            pauseEventSystem = EventSystem.current;
+            previousSelection = pauseEventSystem.currentSelectedGameObject;
+            previousNavigationEvents = pauseEventSystem.sendNavigationEvents;
+            // Only Escape and pointer clicks may activate pause-menu actions.
+            pauseEventSystem.sendNavigationEvents = false;
             open = true;
             Time.timeScale = 0f;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             foreach (PlayerInput input in FindObjectsOfType<PlayerInput>()) input.ResetForTransition();
             RefreshVolumes();
+            RefreshWindowMode();
             if (Notice != null) Notice.text = "";
             Content.SetActive(true);
             if (OpenButton != null) OpenButton.gameObject.SetActive(false);
             AnimateOpen(true);
-            // Keep keyboard navigation; prefab selection feedback must not tint the artwork.
+            // Keep selection feedback without allowing keyboard submit to resume.
             EventSystem.current.SetSelectedGameObject(ResumeButton.gameObject);
             return true;
         }
@@ -167,6 +181,9 @@ namespace TapTap
             Content.SetActive(false);
             PauseBlurFeature.Amount = 0f;
             if (OpenButton != null) OpenButton.gameObject.SetActive(true);
+            if (pauseEventSystem != null)
+                pauseEventSystem.sendNavigationEvents = previousNavigationEvents;
+            pauseEventSystem = null;
             if (EventSystem.current != null)
                 EventSystem.current.SetSelectedGameObject(previousSelection != null && previousSelection.activeInHierarchy
                     ? previousSelection : null);
@@ -229,14 +246,23 @@ namespace TapTap
 
         public void ReturnToMainMenu()
         {
-            if (!open || closing) return;
-            string path = MainMenuScenePath;
+            ReturnToScene(MainMenuScenePath);
+        }
+
+        public void ReturnToLevelSelect()
+        {
+            string path = LevelSelectScenePath;
             WorldMapRoot world = FindObjectOfType<WorldMapRoot>();
             if (world != null && world.Source != null && !string.IsNullOrEmpty(world.Source.SelectionScenePath))
                 path = world.Source.SelectionScenePath;
+            ReturnToScene(path);
+        }
+
+        private void ReturnToScene(string path)
+        {
+            if (!open || closing) return;
             audioService.PlayClick();
-            string destination = path;
-            AnimateClose(() => Navigate(destination));
+            AnimateClose(() => Navigate(path));
         }
 
         private void Navigate(string path)
@@ -271,6 +297,18 @@ namespace TapTap
             EffectsSlider.SetValueWithoutNotify(audioService.EffectsVolume);
             if (MusicValue != null) MusicValue.text = Mathf.RoundToInt(audioService.MusicVolume * 100f) + "%";
             if (EffectsValue != null) EffectsValue.text = Mathf.RoundToInt(audioService.EffectsVolume * 100f) + "%";
+        }
+
+        public void SetWindowed(bool windowed)
+        {
+            DisplaySettings.SetWindowed(windowed);
+            audioService.PlayClick();
+        }
+
+        private void RefreshWindowMode()
+        {
+            if (WindowedToggle != null)
+                WindowedToggle.SetIsOnWithoutNotify(DisplaySettings.IsWindowed);
         }
 
         private void OnDisable()

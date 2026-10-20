@@ -93,7 +93,7 @@ namespace TapTap.Editor
                     MenuAudio menu = MenuAudio.Ensure(AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/QuietWorkshop.wav"),
                         AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/Audio/SoftClick.wav"));
                     menu.SetMusicVolume(.23f); menu.SetEffectsVolume(.41f);
-                    Check(Mathf.Abs(audio.MusicSource.volume-.23f)<.001f && Mathf.Abs(audio.EffectsSource.volume-.41f)<.001f,
+                    Check(Mathf.Abs(audio.MusicVolume-.23f)<.001f && Mathf.Abs(audio.EffectsSource.volume-.41f)<.001f,
                         "Menu facade lost volume routing");
                     Check(menu.MusicSource == audio.MusicSource && audio.MusicSource.loop, "Music source duplicated");
                     Pass("Singleton, automatic player bridge, existing menu/BGM/volume compatibility");
@@ -201,8 +201,9 @@ namespace TapTap.Editor
                 else
                 {
                     Check(audio.ActiveLoopCount == 0, "Loop leaked after scene change/owner destruction");
-                    Check(audio.MusicSource.clip != null && audio.MusicSource.loop, "Persistent music lost");
-                    Pass("Loop cleanup and persistent music across scene lifetime");
+                    Check(AudioManager.Instance == audio && audio.MusicSource.loop && audio.IsMusicPaused
+                        && audio.CurrentMusic == null, "Empty scene replaced the service or selected unrelated music");
+                    Pass("Loop cleanup and persistent audio service across scene lifetime; empty scenes stay silent");
                     Finish(null);
                     return;
                 }

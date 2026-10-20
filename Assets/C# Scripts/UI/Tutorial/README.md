@@ -23,7 +23,9 @@
 
 提示从入场开始观察操作。连续提示在上一条的退出与间隔期间也会记录下一条操作，避免快速按键漏判。动画使用真实时间；暂停、反馈、转场、失焦期间不判定输入，Z 提示可在回溯期间接收松开，其他提示忽略回溯期间的操作。输入只被观察，不消耗 `PlayerInput` 的玩法队列。
 
-第三个返程触发器将阶段切换到 `Returning` 时，教学触发器与播放器通过 `GameStageChanged` 自动停用教学：立即关闭当前提示，清空队列与连续提示，不再接受新请求。返程后才启用或加载的触发器也会检查当前阶段；同一次 Play 中重载场景后仍不播放教学。事件只影响所属场景，普通按 Z 回溯不受此规则影响。现有教学预制体无需额外配置。
+单条提示从入场开始最多显示 15 秒，可通过 `TutorialPromptPresenter.DisplayDuration` 调整。计时使用真实时间，不受 Ctrl 缓时或回溯影响；超时后文字、按键与底板一起淡出。未完成操作而超时，不衔接依赖该操作的 `Next Prompt Prefab`，其他排队提示仍会依次播放。切关、重置或场景加载开始时，当前提示淡出并清空队列与连续提示，转场期间不接受新提示。
+
+第三个返程触发器将阶段切换到 `Returning` 时，教学触发器与播放器通过 `GameStageChanged` 自动停用教学：淡出当前提示，清空队列与连续提示，不再接受新请求。返程后才启用或加载的触发器也会检查当前阶段；同一次 Play 中重载场景后仍不播放教学。事件只影响所属场景，普通按 Z 回溯不受此规则影响。现有教学预制体无需额外配置。
 
 退出时文字、按键图标和 Panel 在 0.16 秒内同步淡出，位置和大小保持固定。淡出完成后进入下一条提示的间隔。
 
@@ -32,10 +34,12 @@
 ## 美术与演示
 
 - 字体：`Assets/Fonts/text(SMALL) SDF.asset`。
-- 背景：保留 `Assets/Art/UI/Panel.jpg`，通过 `TutorialPanel.mat` 的白色转透明材质使用原图的形状与柔边，无白色矩形背景。
+- 背景：使用 `Assets/Art/Sprite/UI/PausePanel/Panel.png`，通过默认 UI 材质保留原图的透明渐变；与文字、按键一同淡出。
 - 按键：`Assets/Art/UI/Tutorial/Key_Space.svg`、`Key_Z.svg`、`Key_Control.svg`。矢量线段同时用于生成 `Keyboard.png`，不依赖 SVG 导入插件。`Keyboard.asset` 是 TMP Sprite Asset。
 - 演示：打开 `Assets/Scenes/Demo/TutorialPrompts_Demo.unity`，向右行走经过三个区域。第一组在悬空平台附近，可实际尝试头部悬浮、松开、再次吸附；Ctrl 再按一次恢复时间速度。
 
 `Tools > TapTap > UI > Tutorial > Build Assets and Demo` 可以显式重建预置资源和演示场景，会覆盖这些预置文件；正常打开 Unity 不会自动重建，也不会改写其他关卡。
 
 回归入口：在独立项目使用 `-batchmode -executeMethod TapTap.Editor.TutorialPromptRegressionTests.RunBatch`（不带 `-quit`）。结果和实际 UI 截图输出到 `Logs/TutorialPrompts`，测试完成后自动退出。
+
+只验证播放与交互逻辑时，可改用 `TapTap.Editor.TutorialPromptRegressionTests.RunInteractionBatch`，覆盖操作完成、连续提示、真实时间超时、转场淡出、队列清理与返程停用；不执行截图和字形网格检查。

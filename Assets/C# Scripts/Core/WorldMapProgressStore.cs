@@ -11,7 +11,6 @@ namespace TapTap
         {
             public List<string> Completed = new List<string>();
             public List<string> Unlocked = new List<string>();
-            public bool UnlockAll;
         }
 
         private static string Key(WorldMapDefinition world) => "TapTap.WorldProgress."
@@ -41,7 +40,7 @@ namespace TapTap
             int index = ordered.IndexOf(module);
             if (index < 0) return false;
             SaveData data = Read(world);
-            return index == 0 || data.UnlockAll || data.Unlocked.Contains(module.Id) || data.Completed.Contains(module.Id)
+            return index == 0 || data.Unlocked.Contains(module.Id) || data.Completed.Contains(module.Id)
                 || data.Completed.Contains(ordered[index - 1].Id);
         }
         public static void Unlock(WorldMapDefinition world, WorldMapModule module)
@@ -59,12 +58,6 @@ namespace TapTap
             int next = ordered.IndexOf(module) + 1;
             if (next > 0 && next < ordered.Count && !data.Unlocked.Contains(ordered[next].Id))
                 data.Unlocked.Add(ordered[next].Id);
-            Write(world, data);
-        }
-        public static void UnlockAll(WorldMapDefinition world)
-        {
-            SaveData data = Read(world);
-            data.UnlockAll = true;
             Write(world, data);
         }
         public static void Clear(WorldMapDefinition world) { PlayerPrefs.DeleteKey(Key(world)); PlayerPrefs.Save(); }

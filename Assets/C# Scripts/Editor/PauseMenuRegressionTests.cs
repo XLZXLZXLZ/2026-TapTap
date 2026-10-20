@@ -21,6 +21,7 @@ namespace TapTap.Editor
     {
         private const string Pending = "TapTap.PauseMenuRegression.Pending";
         private const string InteractionOnly = Pending + ".InteractionOnly";
+        private const string SettingsOnly = Pending + ".SettingsOnly";
         private static int stage, lastFrame, captureFrame;
         private static double deadline, hoverStarted;
         private static string Results => Path.Combine(Application.dataPath, "../Logs/PauseMenu/results.txt");
@@ -33,9 +34,115 @@ namespace TapTap.Editor
                 stage = 0;
                 lastFrame = -1;
                 deadline = EditorApplication.timeSinceStartup + 90;
-                if (SessionState.GetBool(InteractionOnly, false)) EditorApplication.update += TickInteraction;
+                if (SessionState.GetBool(SettingsOnly, false)) EditorApplication.update += TickSettings;
+                else if (SessionState.GetBool(InteractionOnly, false)) EditorApplication.update += TickInteraction;
                 else EditorApplication.update += Tick;
             };
+        }
+
+        public static void RunSettingsBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("Run in an isolated batch project.");
+            Directory.CreateDirectory(Path.GetDirectoryName(Results));
+            File.WriteAllText(Results, "");
+            SavePreference(MenuAudio.MusicPreference, "Music");
+            SavePreference(MenuAudio.EffectsPreference, "Effects");
+            SessionState.SetBool(Pending + ".WindowExists", PlayerPrefs.HasKey(DisplaySettings.WindowedPreference));
+            SessionState.SetInt(Pending + ".Window", PlayerPrefs.GetInt(DisplaySettings.WindowedPreference));
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab"));
+            SessionState.SetBool(SettingsOnly, true);
+            SessionState.SetBool(Pending, true);
+            EditorApplication.isPlaying = true;
+        }
+
+        private static void TickSettings()
+        {
+            try
+            {
+                if (EditorApplication.timeSinceStartup > deadline) throw new TimeoutException("Pause settings regression timed out");
+                if (!EditorApplication.isPlaying || EditorApplication.isCompiling || Time.frameCount == lastFrame) return;
+                lastFrame = Time.frameCount;
+                if (WorldMapSceneRouter.IsLoading) return;
+                PauseMenu menu = PauseMenu.Current;
+                if (stage == 0)
+                {
+                    if (menu == null) return;
+                    Check(menu.LevelSelectButton != null && menu.WindowedToggle != null && menu.RightRows.Length == 5, "New controls or animation row missing");
+                    Check(menu.MainMenuScenePath == "Assets/Scenes/MainMenu/MainMenu.unity", "Main-menu destination is still selection");
+                    Button[] buttons = { menu.ResumeButton, menu.LevelSelectButton, menu.MainMenuButton };
+                    float[] positions = buttons.Select(button => ((RectTransform)button.transform).anchoredPosition.y).ToArray();
+                    Near(positions[0] - positions[1], positions[1] - positions[2], "Button spacing");
+                    Check(positions[0] > positions[1] && positions[1] > positions[2], "Wrong button order");
+                    Check(buttons.All(button => ((RectTransform)button.transform).sizeDelta == new Vector2(280, 108)), "Inconsistent hit boxes");
+                    Time.timeScale = 2f;
+                    Check(menu.Open(), "Cannot open pause menu");
+                    Check(menu.LevelSelectButton.transform.parent.GetComponent<RectTransform>().anchoredPosition.x > 500f, "New button did not start offscreen");
+                    Advance(menu, 0.15f);
+                    Check(menu.RightRows[1].anchoredPosition.x < menu.RightRows[2].anchoredPosition.x
+                        && menu.RightRows[2].anchoredPosition.x < menu.RightRows[3].anchoredPosition.x, "Three actions do not stagger");
+                    Advance(menu, 99f);
+                    Check(menu.RightRows.All(row => row.anchoredPosition == Vector2.zero), "Rows did not settle");
+                    foreach (Selectable control in menu.Content.GetComponentsInChildren<Selectable>())
+                    {
+                        CheckInteraction(control, menu.ContentGroup);
+                    }
+                    // Give the canvas one render after the enable/disable interaction checks.
+                    stage = 10;
+                }
+                else if (stage == 10)
+                {
+                    foreach (Selectable control in menu.Content.GetComponentsInChildren<Selectable>())
+                        CheckHit((RectTransform)control.transform, control.gameObject);
+                    menu.WindowedToggle.SetIsOnWithoutNotify(false);
+                    ExecuteEvents.Execute(menu.WindowedToggle.gameObject,
+                        new PointerEventData(EventSystem.current) { button = PointerEventData.InputButton.Left }, ExecuteEvents.pointerClickHandler);
+                    Check(menu.WindowedToggle.isOn && PlayerPrefs.GetInt(DisplaySettings.WindowedPreference, -1) == 1, "Toggle click did not enable/save windowed mode");
+                    Check(menu.WindowedToggle.graphic.canvasRenderer.GetAlpha() == 1f, "Checkmark not visible");
+                    Near(Time.timeScale, 0f, "Display setting unpaused gameplay");
+                    Capture(menu, 1920, 1080, "settings-windowed");
+                    Capture(menu, 1280, 1024, "settings-5x4");
+                    menu.WindowedToggle.isOn = false;
+                    Check(PlayerPrefs.GetInt(DisplaySettings.WindowedPreference, -1) == 0
+                        && menu.WindowedToggle.graphic.canvasRenderer.GetAlpha() == 0f, "Toggle did not disable/save fullscreen mode");
+                    Capture(menu, 1920, 1080, "settings-fullscreen");
+                    menu.LevelSelectButton.onClick.Invoke();
+                    Check(menu.IsClosing && !menu.ContentGroup.interactable, "Selection did not animate out");
+                    Advance(menu, 99f);
+                    Check(WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Selection button did not navigate");
+                    Pass("Three equally spaced actions, five staggered rows, all controls hit/hover/press, Toggle click/checkmark/preferences, two aspect ratios, selection navigation");
+                    stage = 1;
+                }
+                else if (stage == 1)
+                {
+                    Check(SceneManager.GetActiveScene().path == "Assets/Scenes/WorldMaps/World_Character_Select.unity", "Wrong selection scene");
+                    if (menu == null) menu = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab")).GetComponent<PauseMenu>();
+                    Check(menu.Open(), "Cannot pause in selection");
+                    Advance(menu, 99f);
+                    menu.LevelSelectButton.onClick.Invoke();
+                    Advance(menu, 99f);
+                    Check(!WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen && Time.timeScale == 2f, "Same-scene selection did not resume");
+                    Check(menu.Open(), "Cannot reopen");
+                    Advance(menu, 99f);
+                    menu.MainMenuScenePath = "Assets/Scenes/DoesNotExist.unity";
+                    menu.MainMenuButton.onClick.Invoke();
+                    Advance(menu, 99f);
+                    Check(PauseMenu.IsOpen && !string.IsNullOrEmpty(menu.Notice.text), "Main-menu failure was overridden by world selection");
+                    menu.MainMenuScenePath = "Assets/Scenes/MainMenu/MainMenu.unity";
+                    menu.MainMenuButton.onClick.Invoke();
+                    Advance(menu, 99f);
+                    Check(WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Main-menu navigation did not start");
+                    stage = 2;
+                }
+                else if (stage == 2)
+                {
+                    Check(SceneManager.GetActiveScene().path == "Assets/Scenes/MainMenu/MainMenu.unity"
+                        && Object.FindObjectOfType<MainMenuController>() != null && Time.timeScale > 0f, "Wrong main-menu destination or paused clock");
+                    Pass("Real selection and MainMenu navigation, same-scene resume, missing-scene recovery, time restored");
+                    Finish(null);
+                }
+            }
+            catch (Exception exception) { Finish(exception); }
         }
 
         public static void RunInteractionBatch()
@@ -106,7 +213,7 @@ namespace TapTap.Editor
                     Capture(menu, 1920, 1080, "interaction-normal");
                     menu.Resume();
                     Advance(menu, 99f);
-                    Pass("Five prefab controls: neutral colors; hover/press/release/drag/disable/reset; unscaled paused tween; actual exit, interrupted exit, reopen and time restoration");
+                    Pass("Seven prefab controls: neutral colors; hover/press/release/drag/disable/reset; unscaled paused tween; actual exit, interrupted exit, reopen and time restoration");
                     Finish(null);
                 }
             }
@@ -130,13 +237,14 @@ namespace TapTap.Editor
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab");
                 Check(prefab != null, "Prefab missing");
                 var menu = prefab.GetComponent<PauseMenu>();
-                Check(menu.Content != null && menu.ResumeButton != null && menu.MainMenuButton != null
+                Check(menu.Content != null && menu.ResumeButton != null && menu.LevelSelectButton != null
+                    && menu.MainMenuButton != null && menu.WindowedToggle != null
                     && menu.MusicSlider != null && menu.EffectsSlider != null && menu.BackgroundMusic != null
                     && menu.ClickSound != null, "Prefab references incomplete");
                 Check(prefab.GetComponent<Canvas>().renderMode == RenderMode.ScreenSpaceOverlay, "Canvas needs a scene camera");
                 Check(prefab.GetComponentsInChildren<Camera>(true).Length == 0
                     && prefab.GetComponentsInChildren<EventSystem>(true).Length == 0, "Prefab contains duplicate scene services");
-                Check(menu.OpenButton != null && menu.LeftArt != null && menu.RightRows.Length == 4
+                Check(menu.OpenButton != null && menu.LeftArt != null && menu.RightRows.Length == 5
                     && menu.ContentGroup != null && menu.PanelGroup != null && menu.BackdropGroup != null, "Animation references missing");
                 foreach (Selectable control in prefab.GetComponentsInChildren<Selectable>(true))
                 {
@@ -204,7 +312,9 @@ namespace TapTap.Editor
                     Near(menu.ResumeButton.GetComponent<UIInteractionScale>().Target.localScale.x, 1f,
                         "Automatic selection must not enlarge the resume artwork");
                     CheckInteraction(menu.ResumeButton, menu.ContentGroup);
+                    CheckInteraction(menu.LevelSelectButton, menu.ContentGroup);
                     CheckInteraction(menu.MainMenuButton, menu.ContentGroup);
+                    CheckInteraction(menu.WindowedToggle, menu.ContentGroup);
                     CheckInteraction(menu.MusicSlider, menu.ContentGroup);
                     CheckInteraction(menu.EffectsSlider, menu.ContentGroup);
                     Pass("Auto-selection preserves color/scale; hover, press, release, pointer exit, group disable and reopen preserve artwork colors and hit areas");
@@ -226,7 +336,9 @@ namespace TapTap.Editor
                     Capture(menu, 1920, 1080);
                     Capture(menu, 1280, 1024);
                     CheckHit(menu.ResumeButton.GetComponent<RectTransform>(), menu.ResumeButton.gameObject);
+                    CheckHit(menu.LevelSelectButton.GetComponent<RectTransform>(), menu.LevelSelectButton.gameObject);
                     CheckHit(menu.MainMenuButton.GetComponent<RectTransform>(), menu.MainMenuButton.gameObject);
+                    CheckHit(menu.WindowedToggle.GetComponent<RectTransform>(), menu.WindowedToggle.gameObject);
                     CheckHit(menu.MusicSlider.GetComponent<RectTransform>(), menu.MusicSlider.gameObject);
                     menu.Toggle();
                     Check(menu.IsClosing && PauseMenu.BlocksInput && Time.timeScale == 0f && menu.Content.activeSelf,
@@ -277,10 +389,10 @@ namespace TapTap.Editor
                     menu.ReturnToMainMenu();
                     Advance(menu, 99f);
                     Check(PauseMenu.IsOpen && !string.IsNullOrEmpty(menu.Notice.text), "Missing main scene did not recover with notice");
-                    menu.MainMenuScenePath = "Assets/Scenes/WorldMaps/World_Character_Select.unity";
-                    menu.MainMenuButton.onClick.Invoke();
+                    menu.MainMenuScenePath = "Assets/Scenes/MainMenu/MainMenu.unity";
+                    menu.LevelSelectButton.onClick.Invoke();
                     Advance(menu, 99f);
-                    Check(WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Main menu button did not start scene navigation");
+                    Check(WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Level selection button did not start scene navigation");
                     Pass("Continue button, disable/destroy restoration, portable EventSystem, saved volume reload, duplicate suppression, missing-scene recovery");
                     stage = 2;
                 }
@@ -293,10 +405,10 @@ namespace TapTap.Editor
                     var instance = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/UI/PauseMenu.prefab"));
                     menu = instance.GetComponent<PauseMenu>();
                     Check(menu.Open(), "Cannot pause in selection scene");
-                    menu.ReturnToMainMenu();
+                    menu.ReturnToLevelSelect();
                     Advance(menu, 99f);
-                    Check(!WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Main-menu button reloaded its current scene");
-                    Pass("Real Fqh-to-selection scene navigation restores time, preserves one BGM player, same-scene main-menu action resumes");
+                    Check(!WorldMapSceneRouter.IsLoading && !PauseMenu.IsOpen, "Level-selection button reloaded its current scene");
+                    Pass("Real Fqh-to-selection scene navigation restores time, preserves one BGM player, same-scene selection action resumes");
                     WorldMapSceneRouter.Instance.Load("Assets/Scenes/WorldMaps/World_Character_Play.unity");
                     stage = 3;
                 }
@@ -366,7 +478,8 @@ namespace TapTap.Editor
             Vector2 point = RectTransformUtility.WorldToScreenPoint(null, rect.TransformPoint(rect.rect.center));
             var hits = new List<RaycastResult>();
             EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
-            Check(hits.Count > 0 && hits[0].gameObject == expected,
+            Check(hits.Count > 0 && (hits[0].gameObject == expected
+                || ExecuteEvents.GetEventHandler<IPointerDownHandler>(hits[0].gameObject) == expected),
                 "Wrong click target for " + expected.name + ": " + (hits.Count > 0 ? hits[0].gameObject.name : "none")
                 + ", point=" + point + ", screen=" + Screen.width + "x" + Screen.height
                 + ", canvas=" + rect.GetComponentInParent<Canvas>().pixelRect
@@ -544,6 +657,12 @@ namespace TapTap.Editor
 
         private static void Finish(Exception exception)
         {
+            if (SessionState.GetBool(SettingsOnly, false))
+            {
+                if (SessionState.GetBool(Pending + ".WindowExists", false))
+                    PlayerPrefs.SetInt(DisplaySettings.WindowedPreference, SessionState.GetInt(Pending + ".Window", 0));
+                else PlayerPrefs.DeleteKey(DisplaySettings.WindowedPreference);
+            }
             if (SessionState.GetBool(Pending, false))
             {
                 RestorePreference(MenuAudio.MusicPreference, "Music");
@@ -552,8 +671,10 @@ namespace TapTap.Editor
             }
             SessionState.SetBool(Pending, false);
             SessionState.SetBool(InteractionOnly, false);
+            SessionState.SetBool(SettingsOnly, false);
             EditorApplication.update -= Tick;
             EditorApplication.update -= TickInteraction;
+            EditorApplication.update -= TickSettings;
             if (exception != null) { File.AppendAllText(Results, "FAIL: " + exception + "\n"); Debug.LogException(exception); }
             EditorApplication.Exit(exception == null ? 0 : 1);
         }

@@ -154,15 +154,13 @@ namespace TapTap
             ClearTravel();
             passed.Clear(); passed.UnionWith(completed);
             if (departing != null) passed.Add(departing.Id);
-            Phase=TransitionPhase.Preparing;
+            Phase=TransitionPhase.Preparing; DrawingElapsed=0f;
             NeonLevelPiece arriving = null;
-            // A replay must not reveal later rooms from an older completion record.
-            int lastSequence=incoming!=null?Source.SequenceNumber(incoming)
-                :departing!=null?Source.SequenceNumber(departing):int.MaxValue;
+            bool revealIncoming = incoming != null && !unlocked.Contains(incoming.Id);
             foreach (NeonLevelPiece piece in Pieces)
             {
                 bool current = incoming != null && piece.ModuleId == incoming.Id;
-                piece.gameObject.SetActive(piece.Sequence<=lastSequence && (current || passed.Contains(piece.ModuleId)));
+                piece.gameObject.SetActive(current || unlocked.Contains(piece.ModuleId) || passed.Contains(piece.ModuleId));
                 piece.SetEmphasis(current?1f:0f);
                 piece.SetIntensity(current?0.94f:0.40f); piece.SetReveal(1f);
                 if (current) arriving = piece;
@@ -171,7 +169,7 @@ namespace TapTap
             UnityEngine.Canvas.ForceUpdateCanvases();
             yield return null;
             yield return null;
-            if (arriving != null) { arriving.SetIntensity(0f); arriving.SetReveal(0f); }
+            if (arriving != null && revealIncoming) { arriving.SetIntensity(0f); arriving.SetReveal(0f); }
             Phase=TransitionPhase.CoverReveal;
             yield return ScreenFadeOverlay.Instance.FadeTo(0f, 0.35f);
             yield return null;
@@ -183,27 +181,35 @@ namespace TapTap
                 elapsed+=Mathf.Min(Time.unscaledDeltaTime,1f/30f);
                 yield return null;
             }
-            Phase=TransitionPhase.Drawing; DrawingElapsed=0f;
-            float drawDuration=Mathf.Max(MinimumDrawDuration,duration);
-            if (arriving!=null) arriving.SetIntensity(0.94f);
-            while (arriving!=null && DrawingElapsed<drawDuration)
-            {
-                // A slow loading/render frame must not consume the visible animation.
-                DrawingElapsed+=Mathf.Min(Time.unscaledDeltaTime,1f/30f);
-                arriving.SetReveal(Mathf.SmoothStep(0f,1f,DrawingElapsed/drawDuration));
-                yield return null;
-            }
-            if (arriving != null) { arriving.SetIntensity(0.94f); arriving.SetReveal(1f); }
             if (arriving != null && departing != null && departing != incoming
                 && byId.TryGetValue(departing.Id, out NeonLevelPiece origin))
             {
                 ActiveTravel = WorldMapTravelEffect.Create(Board, origin.Number.transform, arriving.Number.transform,
                     OrbSize, OrbTravelDuration, OrbPauseDuration);
+                Coroutine travel = null;
                 try
                 {
-                    yield return ActiveTravel.Play(stage => Phase = stage);
+                    bool flightStarted = false;
+                    travel = StartCoroutine(ActiveTravel.Play(stage =>
+                    {
+                        Phase = stage;
+                        if (stage == TransitionPhase.OrbTravelling) flightStarted = true;
+                    }));
+                    // Newly unlocked icons appear as the orb starts flying; existing icons stay visible.
+                    while (!flightStarted) yield return null;
+                    if (revealIncoming) yield return DrawIncoming(arriving, duration);
+                    yield return travel;
                 }
-                finally { ClearTravel(); }
+                finally
+                {
+                    if (travel != null) StopCoroutine(travel);
+                    ClearTravel();
+                }
+            }
+            else
+            {
+                Phase=TransitionPhase.Drawing;
+                if (revealIncoming) yield return DrawIncoming(arriving, duration);
             }
             Phase=TransitionPhase.Holding;
             elapsed = 0f;
@@ -219,6 +225,21 @@ namespace TapTap
                 }
                 yield return null;
             }
+        }
+
+        private IEnumerator DrawIncoming(NeonLevelPiece arriving, float duration)
+        {
+            DrawingElapsed=0f;
+            float drawDuration=Mathf.Max(MinimumDrawDuration,duration);
+            if (arriving!=null) arriving.SetIntensity(0.94f);
+            while (arriving!=null && DrawingElapsed<drawDuration)
+            {
+                // A slow loading/render frame must not consume the visible animation.
+                DrawingElapsed+=Mathf.Min(Time.unscaledDeltaTime,1f/30f);
+                arriving.SetReveal(Mathf.SmoothStep(0f,1f,DrawingElapsed/drawDuration));
+                yield return null;
+            }
+            if (arriving != null) { arriving.SetIntensity(0.94f); arriving.SetReveal(1f); }
         }
 
         public void ShowCompletion() => Phase=TransitionPhase.Complete;

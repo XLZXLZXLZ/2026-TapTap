@@ -167,7 +167,8 @@ namespace TapTap.Editor
             panel.anchoredPosition = new Vector2(0f, 64f);
             panel.sizeDelta = new Vector2(0f, 88f);
             Image background = panel.gameObject.AddComponent<Image>();
-            background.color = new Color(0f, 0f, 0f, 0.58f);
+            background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprite/UI/PausePanel/Panel.png");
+            background.color = new Color(0.025f, 0.04f, 0.065f, 0.92f);
             background.raycastTarget = false;
             CanvasGroup group = panel.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 0f;
@@ -180,6 +181,7 @@ namespace TapTap.Editor
             var text = label.gameObject.AddComponent<TextMeshProUGUI>();
             text.font = font;
             text.fontSize = 32f;
+            text.characterSpacing = 5.5f;
             text.alignment = TextAlignmentOptions.Center;
             text.color = Color.white;
             text.enableWordWrapping = true;

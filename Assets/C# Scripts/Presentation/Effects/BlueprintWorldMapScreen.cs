@@ -217,15 +217,14 @@ namespace TapTap
             ClearTravel();
             Phase = NeonWorldMapScreen.TransitionPhase.Preparing;
             BlueprintLevelPiece arriving = null, origin = null;
-            int lastSequence = incoming != null ? Source.SequenceNumber(incoming)
-                : departing != null ? Source.SequenceNumber(departing) : int.MaxValue;
+            bool revealIncoming = incoming != null && !unlocked.Contains(incoming.Id);
             foreach (var piece in Pieces)
             {
                 bool current = incoming != null && piece.ModuleId == incoming.Id;
                 bool finished = departing != null && piece.ModuleId == departing.Id;
-                piece.gameObject.SetActive(piece.Sequence <= lastSequence && (current || finished || passed.Contains(piece.ModuleId)));
+                piece.gameObject.SetActive(current || finished || unlocked.Contains(piece.ModuleId) || passed.Contains(piece.ModuleId));
                 piece.Hover(false);
-                piece.SetOpacity(current ? 0f : 1f);
+                piece.SetOpacity(current && revealIncoming ? 0f : 1f);
                 piece.SetEmphasis(0f);
                 if (current) arriving = piece;
                 if (finished) origin = piece;
@@ -255,27 +254,48 @@ namespace TapTap
             yield return ScreenFadeOverlay.Instance.FadeTo(0f, 0.35f);
             Phase = NeonWorldMapScreen.TransitionPhase.Delay;
             if (arriving != null) yield return Wait(RevealDelay);
-            Phase = NeonWorldMapScreen.TransitionPhase.Drawing; // Legacy phase name; presentation now fades the whole tile.
-            float elapsed = 0f;
-            while (arriving != null && elapsed < RevealDuration)
-            {
-                elapsed += Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
-                arriving.SetOpacity(Mathf.SmoothStep(0f, 1f, elapsed / RevealDuration));
-                yield return null;
-            }
-            if (arriving != null) arriving.SetOpacity(1f);
+            Coroutine travel = null;
             try
             {
                 if (origin != null && arriving != null && origin != arriving)
                 {
                     ActiveTravel = WorldMapTravelEffect.Create(Board, origin.TravelAnchor, arriving.TravelAnchor,
                         OrbSize, OrbTravelDuration, OrbPauseDuration);
-                    yield return ActiveTravel.Play(phase => Phase = phase);
+                    bool flightStarted = false;
+                    travel = StartCoroutine(ActiveTravel.Play(phase =>
+                    {
+                        Phase = phase;
+                        if (phase == NeonWorldMapScreen.TransitionPhase.OrbTravelling) flightStarted = true;
+                    }));
+                    while (!flightStarted) yield return null;
+                    if (revealIncoming) yield return RevealIncoming(arriving);
+                    yield return travel;
+                }
+                else if (arriving != null && revealIncoming)
+                {
+                    Phase = NeonWorldMapScreen.TransitionPhase.Drawing;
+                    yield return RevealIncoming(arriving);
                 }
                 Phase = NeonWorldMapScreen.TransitionPhase.Holding;
                 yield return Wait(hold);
             }
-            finally { ClearTravel(); }
+            finally
+            {
+                if (travel != null) StopCoroutine(travel);
+                ClearTravel();
+            }
+        }
+
+        private IEnumerator RevealIncoming(BlueprintLevelPiece arriving)
+        {
+            float elapsed = 0f;
+            while (elapsed < RevealDuration)
+            {
+                elapsed += Mathf.Min(Time.unscaledDeltaTime, 1f / 30f);
+                arriving.SetOpacity(Mathf.SmoothStep(0f, 1f, elapsed / RevealDuration));
+                yield return null;
+            }
+            arriving.SetOpacity(1f);
         }
 
         private static Rect Union(Rect a, Rect b) => Rect.MinMaxRect(Mathf.Min(a.xMin, b.xMin), Mathf.Min(a.yMin, b.yMin),

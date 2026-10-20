@@ -786,26 +786,11 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188211906511131
-  - Id: 9988cf3b2f5f4eeab57de5561eb1582c
-    Cell: {x: 20, y: 12}
-    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
-    Settings:
-      rid: 5387188211906511137
-  - Id: 30d533abc3ee42b7b2820f175e40be24
-    Cell: {x: 21, y: 12}
-    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
-    Settings:
-      rid: 5387188211906511138
   - Id: f8c1d2655d6a47e7b27cb26077e6250d
     Cell: {x: 22, y: 12}
     Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
     Settings:
       rid: 5387188211906511139
-  - Id: 509687bb0a2541f59dc665e1017d87e4
-    Cell: {x: 23, y: 13}
-    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
-    Settings:
-      rid: 5387188211906511143
   - Id: ada85c345ad3438f97ef9ab03a9c9af5
     Cell: {x: 15, y: 2}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
@@ -1061,11 +1046,6 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188462374879471
-  - Id: a2ff45eba4a64d978b1af751977f4a4d
-    Cell: {x: 19, y: 12}
-    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
-    Settings:
-      rid: 5387188462374879474
   - Id: 093b9066280d4827a32a598e2f7d7c63
     Cell: {x: 26, y: 14}
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
@@ -1161,6 +1141,26 @@ MonoBehaviour:
     Brush: {fileID: 11400000, guid: efbfd5cc26d5a0048bba9a96f18e183d, type: 2}
     Settings:
       rid: 5387188462374879551
+  - Id: 3ac035ba0b424d1aab5d09b448904c90
+    Cell: {x: 21, y: 12}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188497048141859
+  - Id: 9624d7c05fab463385bbccbc5cccf0df
+    Cell: {x: 20, y: 12}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188497048141860
+  - Id: 67c6021795f346e88bd23a80011b86d6
+    Cell: {x: 19, y: 12}
+    Brush: {fileID: 11400000, guid: 5b278f1565abaa54aa31a246010b8767, type: 2}
+    Settings:
+      rid: 5387188497048141861
+  - Id: 3158cae73b744c5caea6f67976613e9b
+    Cell: {x: 23, y: 13}
+    Brush: {fileID: 11400000, guid: 4e0c5101b59bd714c8d1ac218b12f3ec, type: 2}
+    Settings:
+      rid: 5387188497048141864
   EntryPlacementId: fb09e9cbd6834e61ac885637123b23fb
   OutputPrefab: {fileID: 2123849021797790561, guid: 633ac33bbc0f06c48aa8986b686900d2, type: 3}
   Outline: {fileID: 11400000, guid: 05c7fa2e70a05eb4192c289e2039874d, type: 2}
@@ -1488,20 +1488,9 @@ MonoBehaviour:
     - rid: 5387188211906511131
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
-    - rid: 5387188211906511137
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
-    - rid: 5387188211906511138
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188211906511139
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
-    - rid: 5387188211906511143
-      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data:
-        EndpointId: finish
-        Label: "\u7EC8\u70B9"
     - rid: 5387188211906511243
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
@@ -1758,9 +1747,6 @@ MonoBehaviour:
     - rid: 5387188462374879471
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
-    - rid: 5387188462374879474
-      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
-      data: 
     - rid: 5387188462374879475
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
@@ -1824,3 +1810,17 @@ MonoBehaviour:
     - rid: 5387188462374879551
       type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
       data: 
+    - rid: 5387188497048141859
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188497048141860
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188497048141861
+      type: {class: EmptyPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data: 
+    - rid: 5387188497048141864
+      type: {class: EndpointPlacementSettings, ns: TapTap, asm: TapTap.Runtime}
+      data:
+        EndpointId: finish
+        Label: "\u7EC8\u70B9"

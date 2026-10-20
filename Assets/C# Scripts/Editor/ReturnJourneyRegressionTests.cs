@@ -718,9 +718,8 @@ namespace TapTap.Editor
         private static void Next() { step++; stepStarted = EditorApplication.timeSinceStartup; }
         private static void SetGameSpeed(float speed)
         {
-            var debugTime = Object.FindObjectOfType<GameDebugTime>();
-            if (debugTime != null)
-                for (int i = 0; i < 4 && !Mathf.Approximately(debugTime.CurrentSpeed, speed); i++) debugTime.CycleSpeed();
+            var bulletTime = Object.FindObjectOfType<BulletTimeController>();
+            if (bulletTime != null) bulletTime.enabled = false; // This fixture controls simulation speed.
             Time.timeScale = speed;
         }
         private static void Check(bool value, string message) { if (!value) throw new Exception(message); }

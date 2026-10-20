@@ -62,10 +62,15 @@ namespace ScreenFilters
                     cmd.GetTemporaryRT(Horizontal, descriptor, FilterMode.Bilinear);
                     cmd.GetTemporaryRT(Blurred, descriptor, FilterMode.Bilinear);
                     cmd.Blit(source, Original);
-                    cmd.SetGlobalVector(Direction, new Vector4(radius, 0f, 0f, 0f));
-                    cmd.Blit(Original, Horizontal, material, 0);
-                    cmd.SetGlobalVector(Direction, new Vector4(0f, radius * 0.5f, 0f, 0f));
-                    cmd.Blit(Horizontal, Blurred, material, 0);
+                    cmd.Blit(Original, Blurred);
+                    // Shorter repeated kernels avoid sparse sampling streaks in pixelated foliage.
+                    for (int iteration = 0; iteration < 2; iteration++)
+                    {
+                        cmd.SetGlobalVector(Direction, new Vector4(radius * 0.25f, 0f, 0f, 0f));
+                        cmd.Blit(Blurred, Horizontal, material, 0);
+                        cmd.SetGlobalVector(Direction, new Vector4(0f, radius * 0.25f, 0f, 0f));
+                        cmd.Blit(Horizontal, Blurred, material, 0);
+                    }
                     cmd.SetGlobalVector(Mask, new Vector4(Settings.BottomBoundary, Settings.TopBoundary,
                         Mathf.Max(0.001f, Settings.Feather), Settings.Amount));
                     cmd.SetGlobalTexture(Blurred, new RenderTargetIdentifier(Blurred));

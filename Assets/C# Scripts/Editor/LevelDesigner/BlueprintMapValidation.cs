@@ -115,7 +115,7 @@ namespace TapTap.Editor
                     Capture(screen, "selection-first.png");
                     Capture(screen, "selection-wide.png", 1920, 1080);
                     Capture(screen, "selection-portrait.png", 900, 1200);
-                    menu.UnlockAll();
+                    foreach (var unlockedModule in menu.World.OrderedModules()) WorldMapProgressStore.Unlock(menu.World, unlockedModule); menu.SendMessage("Refresh");
                     Check(screen.Pieces.All(piece => piece.gameObject.activeSelf), "Unlock all did not restore all 20 pieces");
                     // Exercise hover without the real menu's physical pointer overwriting it.
                     // The production menu is restored before testing its actual scene load.

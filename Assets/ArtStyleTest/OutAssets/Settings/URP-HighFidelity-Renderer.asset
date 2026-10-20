@@ -42,7 +42,8 @@ MonoBehaviour:
   - {fileID: -1878332245247344467}
   - {fileID: 6388891779594490201}
   - {fileID: 6284593700158837721}
-  m_RendererFeatureMap: adc0de57c6d2eee55991244739e7a958d913a04fac5c3757
+  - {fileID: -1239492166682130179}
+  m_RendererFeatureMap: adc0de57c6d2eee55991244739e7a958d913a04fac5c3757fd4808077170ccee
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -110,3 +111,17 @@ MonoBehaviour:
   m_Name: Screen Filters
   m_EditorClassIdentifier:
   m_Active: 1
+--- !u!114 &-1239492166682130179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dca2a74bcd2be6a41b37368107e7c236, type: 3}
+  m_Name: Main Menu Diagonal Blur
+  m_EditorClassIdentifier:
+  m_Active: 1
+  BlurShader: {fileID: 4800000, guid: ed1d15fb72062f148bd141eb09ab2dd0, type: 3}

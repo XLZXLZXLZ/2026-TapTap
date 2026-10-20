@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 namespace TapTap
 {
     [Flags]
-    public enum GameplayAction { Rewind = 1, Input = 2, DebugCamera = 4, PlayerControls = 8 }
+    public enum GameplayAction { Rewind = 1, Input = 2, PlayerControls = 8 }
 
     // Scene-scoped leases. Systems depend on actions, never on the sequence requesting them.
     public static class GameplayActionLocks

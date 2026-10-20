@@ -24,7 +24,7 @@ namespace TapTap
             public GameStage Stage;
             public readonly HashSet<string> Cues = new HashSet<string>();
         }
-        // Progress survives scene reloads in this Play session only.
+        // Progress survives reloads within a run. Entering from level selection starts a new run.
         private static readonly Dictionary<string, Session> sessions = new Dictionary<string, Session>();
         private static GameStageProgression transitioning;
         private Sequence emphasis;
@@ -39,6 +39,7 @@ namespace TapTap
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetSession() { sessions.Clear(); transitioning = null; }
+        internal static void BeginNewRun(string scenePath) => sessions.Remove(scenePath);
         private static string SceneKey(Scene scene) => string.IsNullOrEmpty(scene.path) ? scene.name : scene.path;
         private static Session State(Scene scene)
         {
@@ -112,6 +113,7 @@ namespace TapTap
             // Keep movement and simulation running during the gentle camera push.
             GameplayActionLocks.Acquire(this, GameplayAction.Rewind);
             key.BeginCarry(character);
+            AudioManager.Instance?.PlayKeyMusic(gameObject.scene);
             StartCoroutine(CollectSequence());
             return true;
         }

@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95470a8bd0c94e14814bff8e719f8d35, type: 3}
+  m_Name: BackgroundMusicLibrary
+  m_EditorClassIdentifier:
+  BGM_0: {fileID: 8300000, guid: 72188296f5f8172479c5128a66d7e710, type: 3}
+  BGM_1: {fileID: 0}
+  BGM_2: {fileID: 0}
+  BGM_3: {fileID: 0}
+  BGM_4: {fileID: 0}
+  BGM_5: {fileID: 0}
+  Regions:
+  - Style: {fileID: 11400000, guid: f5a565f178a69614498abfaf68711fed, type: 2}
+    Track: 1
+  - Style: {fileID: 11400000, guid: 2270a08dc90c48f4eb78a0c59aa37f28, type: 2}
+    Track: 2
+  - Style: {fileID: 11400000, guid: 28e43434333ed4348b48e99bc7244a7d, type: 2}
+    Track: 3
+  SilentLevelNumber: 20
+  FadeInDuration: 1
+  FadeOutDuration: 1
+  EndingMusicDelay: 1

@@ -339,7 +339,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -392,7 +392,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -5088,8 +5088,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79ae0d580719dd04a8571ab15c1c39a5, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Kind: 0
   ConveyorSpeed: 0
 --- !u!114 &2134115720909737799
@@ -5102,8 +5102,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cb2d541f5e768ff4bb693198e09ec298, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Proximity: {fileID: 3748072983780277520}
   KeySocket: {fileID: 8459444849102449771}
   View: {fileID: 4128403702779213266}
@@ -5159,8 +5159,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 676b801e93e34a92876feb7cea791154, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   Renderers:
   - {fileID: 5828275829386196601}
   - {fileID: 5727520971089449369}
@@ -5229,7 +5229,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4657822851499705438, guid: 3261692407b64ed586fcaa3fd338a5d2, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: 1fde3d5e67900cd479cb15f80865b3b2, type: 2}
     - target: {fileID: 6862893410240062398, guid: 3261692407b64ed586fcaa3fd338a5d2, type: 3}
       propertyPath: m_CastShadows
@@ -5241,7 +5241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6862893410240062398, guid: 3261692407b64ed586fcaa3fd338a5d2, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: f7ba12b157dc7b04b8a53d51738d0ef0, type: 2}
     - target: {fileID: 7966155532889117603, guid: 3261692407b64ed586fcaa3fd338a5d2, type: 3}
       propertyPath: m_CastShadows
@@ -5253,7 +5253,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7966155532889117603, guid: 3261692407b64ed586fcaa3fd338a5d2, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value:
+      value: 
       objectReference: {fileID: 2100000, guid: df7f74d976bc3274cac6c4efff620a50, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

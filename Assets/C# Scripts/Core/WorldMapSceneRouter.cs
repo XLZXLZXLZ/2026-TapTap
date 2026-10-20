@@ -28,11 +28,13 @@ namespace TapTap
         {
             if (loading || !WorldMapProgressStore.IsUnlocked(world, module)) return false;
             launchWorld = world; launchModuleId = module.Id;
-            if (Load(world.PlayScenePath)) return true;
+            if (Load(world.PlayScenePath, true)) return true;
             launchWorld = null; launchModuleId = null;
             return false;
         }
-        public bool Load(string path)
+        public bool Load(string path) => Load(path, false);
+
+        private bool Load(string path, bool newRun)
         {
             if (loading) return false;
             LastError = null;
@@ -45,10 +47,10 @@ namespace TapTap
 #endif
             loading = true;
             AudioManager.Existing?.StopGameplay();
-            StartCoroutine(ChangeScene(path));
+            StartCoroutine(ChangeScene(path, newRun));
             return true;
         }
-        private IEnumerator ChangeScene(string path)
+        private IEnumerator ChangeScene(string path, bool newRun)
         {
             ScreenFadeOverlay fade = ScreenFadeOverlay.Instance;
             float resumeScale = Time.timeScale;
@@ -63,6 +65,8 @@ namespace TapTap
                 AsyncOperation operation = null;
                 try
                 {
+                    // Reset before the destination's Awake/OnEnable can restore keys, doors or cues.
+                    if (newRun) GameStageProgression.BeginNewRun(path);
 #if UNITY_EDITOR
                     operation = UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(path,
                         new LoadSceneParameters(LoadSceneMode.Single));

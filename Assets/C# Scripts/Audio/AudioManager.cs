@@ -8,7 +8,7 @@ namespace TapTap
 {
     // Persistent service. Gameplay distances are measured in XY against the body, never the distant perspective camera.
     [DefaultExecutionOrder(1000), DisallowMultipleComponent]
-    public sealed class AudioManager : MonoBehaviour
+    public sealed partial class AudioManager : MonoBehaviour
     {
         public const string MusicPreference = "TapTap.Audio.Music";
         public const string EffectsPreference = "TapTap.Audio.Effects";
@@ -94,15 +94,14 @@ namespace TapTap
             if (Library == null) Debug.LogError("缺少 Resources/Audio/GameplaySoundLibrary 音效配置。", this);
             MusicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicPreference, 0.45f));
             EffectsVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(EffectsPreference, 0.7f));
-            MusicSource = NewSource("Music", true);
-            MusicSource.loop = true;
-            MusicSource.volume = MusicVolume;
+            InitializeMusic();
             EffectsSource = NewSource("UI", true);
             EffectsSource.volume = EffectsVolume;
             for (int i = 0; i < voices.Length; i++)
                 voices[i] = new Voice { Source = NewSource("SFX " + i, true) };
             SceneManager.sceneLoaded += SceneLoaded;
             RefreshListener();
+            RefreshSceneMusic(SceneManager.GetActiveScene());
         }
 
         private AudioSource NewSource(string label, bool ignorePause)
@@ -120,16 +119,14 @@ namespace TapTap
         public void ConfigureMenu(AudioClip music, AudioClip clickSound)
         {
             if (clickSound != null) click = clickSound;
-            if (music != null && MusicSource.clip != music)
-            {
-                MusicSource.clip = music;
-                MusicSource.Play();
-            }
+            // PauseMenu also calls this facade. It must never select menu music during gameplay.
+            if (music != null) legacyMenuMusic = music;
+            if (CurrentMusic == MusicTrack.Menu) PlayMusic(MusicTrack.Menu);
         }
         public void SetMusicVolume(float value)
         {
             MusicVolume = Mathf.Clamp01(value);
-            MusicSource.volume = MusicVolume;
+            ApplyMusicVolumes();
             PlayerPrefs.SetFloat(MusicPreference, MusicVolume);
         }
         public void SetEffectsVolume(float value)
@@ -267,6 +264,7 @@ namespace TapTap
 
         private void LateUpdate()
         {
+            UpdateMusic();
             if (listener == null && Time.unscaledTime >= nextListenerSearch)
             { listener = FindObjectOfType<PlayerController>(); nextListenerSearch = Time.unscaledTime + 0.5f; }
             if (RewindManager.Rewinding) BeginRewindAudio(); else EndRewindAudio();
@@ -364,6 +362,7 @@ namespace TapTap
             nextListenerSearch = 0f;
             wasRewinding = false;
             RefreshListener();
+            if (mode == LoadSceneMode.Single || scene == SceneManager.GetActiveScene()) RefreshSceneMusic(scene);
         }
         private void RefreshListener()
         {

@@ -41,7 +41,7 @@ namespace TapTap.Editor
             string missing = new string(allText.Where(character => !font.HasCharacter(character)).Distinct().ToArray());
             if (missing.Length > 0) throw new InvalidOperationException("指定字体缺少教学字符：" + missing);
             EditorUtility.SetDirty(font);
-            Material panel = PanelMaterial();
+            Material panel = Graphic.defaultGraphicMaterial;
             Scene preview = EditorSceneManager.NewPreviewScene();
             try
             {
@@ -89,7 +89,7 @@ namespace TapTap.Editor
             view.AnimatedRoot = Rect("Animated Content", root, new Vector2(1320f, 198f));
             RectTransform panel = Rect("Panel", view.AnimatedRoot, new Vector2(1320f, 198f));
             Image image = panel.gameObject.AddComponent<Image>();
-            image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/Panel.jpg");
+            image.sprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/Sprite/UI/PausePanel/Panel.png");
             image.material = panelMaterial;
             image.color = new Color(0.025f, 0.04f, 0.065f, 0.92f);
             image.raycastTarget = false;

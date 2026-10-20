@@ -51,7 +51,7 @@ namespace TapTap
             }
             fired = true;
             IsPlaying = true;
-            GameplayActionLocks.Acquire(this, GameplayAction.PlayerControls | GameplayAction.Rewind | GameplayAction.DebugCamera);
+            GameplayActionLocks.Acquire(this, GameplayAction.PlayerControls | GameplayAction.Rewind);
             RewindManager.Current?.EndRewind();
             if (Player != null)
             {

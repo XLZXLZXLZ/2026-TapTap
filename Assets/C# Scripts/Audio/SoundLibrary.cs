@@ -33,6 +33,8 @@ namespace TapTap
     public sealed class SoundLibrary : ScriptableObject
     {
         public const string ResourcePath = "Audio/GameplaySoundLibrary";
+        [Tooltip("旧版主菜单音乐；BGM 配置未指定 BGM_0 时使用此曲目。")]
+        public AudioClip BackgroundMusic;
         public SoundDefinition[] Sounds = Array.Empty<SoundDefinition>();
 
         public SoundDefinition Find(SoundId id)

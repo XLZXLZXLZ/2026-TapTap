@@ -56,9 +56,7 @@ namespace TapTap
         {
             transition?.Kill();
             IsEntering = false;
-            AnimatedRoot.localScale = Vector3.one;
             Shatter?.StopAndRestore();
-            PanelGroup.alpha = TextGroup.alpha = 1f;
             Sequence sequence = DOTween.Sequence().SetUpdate(true);
             sequence.Join(Fade(PanelGroup, 0f, PanelFadeDuration));
             sequence.Join(Fade(TextGroup, 0f, PanelFadeDuration));

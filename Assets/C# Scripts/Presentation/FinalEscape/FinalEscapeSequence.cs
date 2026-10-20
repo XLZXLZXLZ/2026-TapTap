@@ -89,7 +89,7 @@ namespace TapTap
             if (!started)
             {
                 started = true;
-                GameplayActionLocks.Acquire(this, GameplayAction.Rewind | GameplayAction.DebugCamera);
+                GameplayActionLocks.Acquire(this, GameplayAction.Rewind);
                 // A trigger never marks regions discovered or writes progression saves.
             }
             CurrentStep = Mathf.Clamp(step, 1, StepCount);

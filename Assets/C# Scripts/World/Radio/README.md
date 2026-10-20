@@ -62,7 +62,7 @@ Sequence 的 Volume 控制整组音量。所有段都有有效 Clip，且字幕�
 
 ## 字幕
 
-`Assets/Resources/UI/VoiceSubtitles.prefab` 会在首次播放时自动实例化。同场景收音机共享一套字幕，位于屏幕下方，使用 text(SMALL) SDF、白字、半透明黑底，按字幕时间轴显隐并按内容换行、调整底板高度，无鼠标遮挡。
+`Assets/Resources/UI/VoiceSubtitles.prefab` 会在首次播放时自动实例化。同场景收音机共享一套字幕，位于屏幕下方，使用 text(SMALL) SDF、白字、5.5 字间距，底板使用 `Assets/Art/Sprite/UI/PausePanel/Panel.png`，通过默认 UI 材质保留图片的透明渐变。按字幕时间轴显隐并按内容换行、调整底板高度，无鼠标遮挡。
 
 默认中文。切换接口（暂未接菜单）：
 

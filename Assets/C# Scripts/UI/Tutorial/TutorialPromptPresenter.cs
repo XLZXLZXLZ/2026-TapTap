@@ -12,10 +12,12 @@ namespace TapTap
         [Tooltip("屏幕归一化位置；默认位于中部偏上。")]
         public Vector2 ScreenAnchor = new Vector2(0.5f, 0.8f);
         public bool UseKeyboard = true;
+        [Tooltip("单条提示最长显示时间，使用真实时间，不受缓时或回溯影响。")]
+        [Min(0.1f)] public float DisplayDuration = 15f;
         public TutorialPromptView ActiveView { get; private set; }
         public int QueuedCount => queue.Count;
 
-        private enum Stage { Idle, Showing, Exiting, Gap }
+        private enum Stage { Idle, Showing, Exiting, Gap, Dismissing }
         private Stage stage;
         private readonly Queue<TutorialPromptView> queue = new Queue<TutorialPromptView>();
         private readonly HashSet<TutorialPromptView> chain = new HashSet<TutorialPromptView>();
@@ -23,6 +25,12 @@ namespace TapTap
         private TutorialPromptInput activeInput, nextInput;
         private readonly bool[] externalHeld = new bool[3];
         private float gapRemaining;
+        private float displayElapsed;
+
+        private bool Transitioning => WorldMapSceneRouter.IsLoading
+            || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting)
+            || (WorldMapProgression.Current != null && WorldMapProgression.Current.gameObject.scene == gameObject.scene
+                && (WorldMapProgression.Current.IsTransitioning || WorldMapProgression.Current.IsComplete));
 
         public static bool GameplayBlocked => WorldMapProgression.InputBlocked
             || (SceneResetManager.Existing != null && SceneResetManager.Existing.IsResetting);
@@ -36,7 +44,7 @@ namespace TapTap
         }
         private void StageChanged(GameStageChanged message)
         {
-            if (message.Scene == gameObject.scene && message.Stage >= GameStage.Returning) ClearPrompts();
+            if (message.Scene == gameObject.scene && message.Stage >= GameStage.Returning) DismissPrompts();
         }
 
         private bool CanObserveKey(TutorialPromptKey key) => CanObserve
@@ -68,7 +76,8 @@ namespace TapTap
 
         public bool Request(TutorialPromptView prefab)
         {
-            if (prefab == null || !isActiveAndEnabled || GameStageProgression.HasProgressedIn(gameObject.scene)) return false;
+            if (prefab == null || !isActiveAndEnabled || Transitioning || stage == Stage.Dismissing
+                || GameStageProgression.HasProgressedIn(gameObject.scene)) return false;
             queue.Enqueue(prefab);
             return true;
         }
@@ -113,11 +122,19 @@ namespace TapTap
 
         private void LateUpdate()
         {
-            if (GameStageProgression.HasProgressedIn(gameObject.scene))
+            bool suppressed = Transitioning || GameStageProgression.HasProgressedIn(gameObject.scene);
+            if (suppressed) DismissPrompts();
+            if (stage == Stage.Dismissing)
             {
-                // Handles presenters moved between scenes after their enable callback, too.
-                if (ActiveView != null || queue.Count != 0 || stage != Stage.Idle) ClearPrompts();
+                // Finish the fade even while transition locks block gameplay input.
+                if (ActiveView == null || ActiveView.ExitFinished) ClearPrompts();
                 return;
+            }
+            if (suppressed) return;
+            if (stage == Stage.Showing)
+            {
+                displayElapsed += Time.unscaledDeltaTime;
+                if (displayElapsed >= DisplayDuration && !ActiveView.IsEntering) BeginExit(false);
             }
             if (!CanObserve)
             {
@@ -140,16 +157,7 @@ namespace TapTap
             }
             if (stage == Stage.Showing && !ActiveView.IsEntering && activeInput.Completed)
             {
-                ActiveView.Exit();
-                stage = Stage.Exiting;
-                nextPrefab = ActiveView.NextPromptPrefab;
-                if (nextPrefab != null && chain.Contains(nextPrefab))
-                {
-                    Debug.LogWarning("教学提示的 Next 链存在循环，已停止继续衔接。", ActiveView);
-                    nextPrefab = null;
-                }
-                if (nextPrefab != null)
-                    nextInput = new TutorialPromptInput(nextPrefab.Completion, Held(nextPrefab.Key));
+                BeginExit(true);
             }
             else if (stage == Stage.Exiting && ActiveView.ExitFinished)
             {
@@ -179,6 +187,34 @@ namespace TapTap
             }
         }
 
+        private void BeginExit(bool completed)
+        {
+            ActiveView.Exit();
+            stage = Stage.Exiting;
+            // Follow-up instructions depend on completing the preceding operation.
+            nextPrefab = completed ? ActiveView.NextPromptPrefab : null;
+            nextInput = null;
+            if (nextPrefab != null && chain.Contains(nextPrefab))
+            {
+                Debug.LogWarning("教学提示的 Next 链存在循环，已停止继续衔接。", ActiveView);
+                nextPrefab = null;
+            }
+            if (nextPrefab != null)
+                nextInput = new TutorialPromptInput(nextPrefab.Completion, Held(nextPrefab.Key));
+        }
+
+        private void DismissPrompts()
+        {
+            queue.Clear();
+            chain.Clear();
+            nextPrefab = null;
+            nextInput = null;
+            if (ActiveView == null) { ClearPrompts(); return; }
+            if (stage == Stage.Dismissing) return;
+            if (stage != Stage.Exiting) ActiveView.Exit();
+            stage = Stage.Dismissing;
+        }
+
         private void Show(TutorialPromptView prefab, TutorialPromptInput observer)
         {
             chain.Add(prefab);
@@ -189,6 +225,7 @@ namespace TapTap
             rect.anchorMin = rect.anchorMax = ScreenAnchor;
             rect.anchoredPosition = Vector2.zero;
             stage = Stage.Showing;
+            displayElapsed = 0f;
             ActiveView.Enter();
         }
 
@@ -204,7 +241,7 @@ namespace TapTap
             chain.Clear();
             if (ActiveView != null)
             {
-                // Destroy is deferred; hide and kill the view's tween immediately on stage change.
+                // Destroy is deferred; stop rendering and kill any remaining tween immediately.
                 ActiveView.gameObject.SetActive(false);
                 Destroy(ActiveView.gameObject);
             }
@@ -212,6 +249,7 @@ namespace TapTap
             activePrefab = nextPrefab = null;
             activeInput = nextInput = null;
             gapRemaining = 0f;
+            displayElapsed = 0f;
             System.Array.Clear(externalHeld, 0, externalHeld.Length);
             stage = Stage.Idle;
         }

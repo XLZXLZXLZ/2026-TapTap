@@ -30,6 +30,7 @@ namespace TapTap
                 foreach (GameObject legacy in LegacyVisuals) if (legacy != null) legacy.SetActive(false);
             visual = Instantiate(model, transform, false).transform;
             visual.name = "Platform Visual (" + value + ")";
+            GetComponent<SquarePlatform>()?.ApplyTransparency(visual);
         }
     }
 

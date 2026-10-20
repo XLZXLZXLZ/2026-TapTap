@@ -133,6 +133,7 @@ namespace TapTap
             region.GetComponent<RegionRevealView>()?.SetDiscovered(true);
             DemoCamera camera = runtime != null ? runtime.CameraRig : FindObjectOfType<DemoCamera>();
             camera?.SetRegion(region, snapCamera);
+            AudioManager.Instance?.ApplyLevelMusic(gameObject.scene, CurrentModule.Level, CurrentNumber);
             if (notify) LevelChanged?.Invoke(CurrentModule);
         }
 
@@ -149,11 +150,7 @@ namespace TapTap
         {
             if (!initialized || !UseKeyboard || IsTransitioning) return;
             if (WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return;
-            if (Application.isFocused && !WorldLevelMenu.IsOpen && !IsComplete && CanTransition && Input.GetKeyDown(KeyCode.O))
-                ExitsEnabled = !ExitsEnabled;
-            if (Input.GetKeyDown(KeyCode.P)) WorldMapProgressStore.UnlockAll(world.Source);
             if (!PauseMenu.HandlesEscape && Input.GetKeyDown(KeyCode.Escape)) ReturnToSelection();
-            if (Input.GetKeyDown(KeyCode.PageDown)) SkipNext();
         }
 
         private bool CanTransition => initialized && !PauseMenu.IsOpen && !IsTransitioning && !GameStageProgression.InputBlocked && !WorldMapSceneRouter.IsLoading
@@ -166,13 +163,6 @@ namespace TapTap
             if (!ExitsEnabled || !CanTransition || IsComplete || endpoint == null
                 || endpoint.GetComponentInParent<LevelRegion>() != CurrentRegion || player.Body.IsReturning) return false;
             StartTransition(CurrentIndex + 1, true, endpoint);
-            return true;
-        }
-
-        public bool SkipNext()
-        {
-            if (!CanTransition || IsComplete || CurrentIndex + 1 >= LevelCount) return false;
-            StartTransition(CurrentIndex + 1, false);
             return true;
         }
 

@@ -84,7 +84,7 @@ namespace TapTap.Editor
             if (material != null) return material;
             LevelPrefabBuilder.EnsureFolder("Assets/Art/Materials/Prototype");
             material = new Material(settings.EffectsMaterial) { name = "RespawnNeonGreen" };
-            material.SetColor("_Color", new Color(0.2f, 3f, 0.03f, 1f));
+            material.SetColor("_Color", new Color(0.76f, 3f, 0.624f, 1f));
             AssetDatabase.CreateAsset(material, path);
             return material;
         }

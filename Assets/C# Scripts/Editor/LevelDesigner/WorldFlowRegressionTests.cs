@@ -209,7 +209,7 @@ namespace TapTap.Editor
                         Check(sawEntryWalk && sawEntryHold && !player.GetComponent<PlayerView>().ExitPresentation, "Entry did not finish and release before next room.");
                         Pass("Door entry walks and faces camera before completion, blocks input/rewind/repeated triggers, then releases for next room");
                         Pass("Endpoint advances, resets mechanisms/Custom/player and respawn, keeps regions resident, preserves scene identity");
-                        Check(flow.SkipNext(), "Skip failed."); stage = 2;
+                        Check(flow.GoToSequence(flow.GetComponent<WorldMapRoot>().Source.SequenceNumber(flow.Modules[flow.CurrentIndex + 1])), "Skip failed."); stage = 2;
                         break;
                     case 2:
                         Check(flow.CurrentNumber == 30 && flow.CompletedCount == 1, "Skip falsely completed a room.");

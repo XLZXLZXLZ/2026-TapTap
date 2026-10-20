@@ -73,12 +73,11 @@ namespace TapTap.Editor
                 {
                     var first = screen.Pieces.Single(piece => piece.ModuleId == flow.Modules[0].Id);
                     var next = screen.Pieces.Single(piece => piece.ModuleId == flow.Modules[1].Id);
-                    if (screen.Phase == NeonWorldMapScreen.TransitionPhase.Drawing)
+                    if (screen.DrawingElapsed > 0f && next.Outline.Reveal < 1f)
                     {
                         Check(first.gameObject.activeSelf && first.Outline.Reveal == 1f, "Finished outline is being redrawn or hidden");
                         Check(next.gameObject.activeSelf, "Next outline hidden");
                         Check(screen.Pieces.Where(piece => piece.Sequence > 2).All(piece => !piece.gameObject.activeSelf), "Later saved completion leaked into transition");
-                        Check(screen.ActiveTravel == null, "Orb appeared before next outline finished");
                         if (!drewNext && next.Outline.Reveal > 0.25f && next.Outline.Reveal < 0.8f)
                         { Capture(screen, "01-next-outline.png"); drewNext = true; }
                     }
@@ -86,24 +85,26 @@ namespace TapTap.Editor
                     if (travel != null)
                     {
                         Check(Time.timeScale == 0f && WorldMapProgression.InputBlocked, "Travel did not retain gameplay pause");
-                        Check(Mathf.Approximately(next.Outline.Reveal, 1f), "Orb started before full outline reveal: " + next.Outline.Reveal);
                         Vector2 from = screen.Board.InverseTransformPoint(first.Number.transform.position);
                         Vector2 to = screen.Board.InverseTransformPoint(next.Number.transform.position);
                         Check(Vector2.Distance(travel.Origin, from) < 0.001f && Vector2.Distance(travel.Destination, to) < 0.001f, "Orb endpoints differ from label centers");
                         if (screen.Phase == NeonWorldMapScreen.TransitionPhase.OrbAppearing && travel.Orb.localScale.x > 0.4f)
                         {
+                            Check(next.Outline.Reveal == 0f, "Next outline appeared before the orb started flying");
                             Check(Vector2.Distance(travel.Orb.anchoredPosition, from) < 0.001f, "Spawn moved away from current center");
                             if (!spawned) { Capture(screen, "02-orb-spawn.png"); spawned = true; }
                         }
                         float progress = Vector2.Distance(travel.Orb.anchoredPosition, from) / Vector2.Distance(from, to);
                         if (screen.Phase == NeonWorldMapScreen.TransitionPhase.OrbHolding)
                         {
+                            Check(next.Outline.Reveal == 0f, "Next outline appeared during the orb's initial pause");
                             Check(Vector2.Distance(travel.Orb.anchoredPosition, from) < 0.001f
                                 && Mathf.Approximately(travel.Orb.localScale.x, 1f), "Hold moved or rescaled orb");
                             if (!held) { Capture(screen, "02b-orb-hold.png", travel.Orb); held = true; }
                         }
                         if (!travelled && screen.Phase == NeonWorldMapScreen.TransitionPhase.OrbTravelling && progress > 0.4f && progress < 0.8f)
                         {
+                            Check(next.Outline.Reveal > 0f && next.Outline.Reveal < 1f, "Next outline is not revealing during flight");
                             Check(travel.Trail.SampleCount > 2, "Moving orb has no trail history");
                             Capture(screen, "03-white-flight.png", travel.Orb);
                             travelled = true;
@@ -127,7 +128,7 @@ namespace TapTap.Editor
                     Check(screen.ActiveTravel == null, "Restart spawned a travel orb");
                     if (flow.IsTransitioning) return;
                     Check(flow.CurrentIndex == 1 && Time.timeScale > 0f, "Restart changed room or time scale");
-                    Check(flow.SkipNext(), "Skip rejected");
+                    Check(flow.GoToSequence(flow.GetComponent<WorldMapRoot>().Source.SequenceNumber(flow.Modules[flow.CurrentIndex + 1])), "Skip rejected");
                     stage = 3;
                 }
                 else if (stage == 3)

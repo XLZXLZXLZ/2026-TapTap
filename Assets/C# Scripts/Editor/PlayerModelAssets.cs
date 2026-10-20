@@ -31,6 +31,7 @@ namespace TapTap.Editor
                     throw new InvalidOperationException("主角 Prefab 缺少控制器、表现组件或配置。");
                 Transform lower = ReplacePart(player.Body, "down", player.Config, out Animator lowerAnimator, out GameObject lowerEyes);
                 Transform upper = ReplacePart(player.Head, "up", player.Config, out Animator upperAnimator, out GameObject upperEyes);
+                ConfigureAntennaLight(player);
                 view.ConfigureModels(lower, upper, lowerAnimator, upperAnimator);
                 PlayerBlinkView blink = root.GetComponent<PlayerBlinkView>();
                 if (blink == null) blink = root.AddComponent<PlayerBlinkView>();
@@ -45,6 +46,36 @@ namespace TapTap.Editor
                 Debug.Log("主角模型、Idle/Walk、眨眼及磁吸表情已配置；保留现有视觉尺寸、位置与碰撞配置。");
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        [MenuItem("TapTap/维护/素材装配/更新头顶状态灯")]
+        public static void UpdateAntennaLight()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("请先退出 Play Mode，再更新头顶状态灯。");
+            GameObject root = PrefabUtility.LoadPrefabContents(PlayerPath);
+            try
+            {
+                ConfigureAntennaLight(root.GetComponent<PlayerController>());
+                PrefabUtility.SaveAsPrefabAsset(root, PlayerPath, out bool saved);
+                if (!saved) throw new InvalidOperationException("保存主角状态灯失败。");
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+        }
+
+        private static void ConfigureAntennaLight(PlayerController player)
+        {
+            const string bulbName = "ImportedLight_AntennaYellowBall";
+            Renderer bulb = Array.Find(player.Head.Visual.GetComponentsInChildren<Renderer>(true),
+                renderer => renderer.name == bulbName);
+            if (bulb == null) throw new InvalidOperationException("主角模型缺少头顶灯球：" + bulbName);
+            Material joined = AssetDatabase.LoadAssetAtPath<Material>(ModelFolder + "New/Materials/AntennaLight.mat");
+            Material separated = AssetDatabase.LoadAssetAtPath<Material>(ModelFolder + "New/Materials/AntennaLightSeparated.mat");
+            if (joined == null || separated == null) throw new InvalidOperationException("缺少头顶状态灯材质。");
+            PlayerAntennaLight light = bulb.GetComponent<PlayerAntennaLight>();
+            if (light == null) light = bulb.gameObject.AddComponent<PlayerAntennaLight>();
+            light.Configure(player, joined, separated);
+            LevelPrefabBuilder.RecordInstanceOverrides(bulb.gameObject);
         }
 
         private static Transform ReplacePart(MovableEntity entity, string modelName, PlayerConfig config,

@@ -22,42 +22,60 @@ namespace TapTap.Editor
         private static void ExitHeadRules()
         {
             foreach (PlayerPhase phase in System.Enum.GetValues(typeof(PlayerPhase)))
+            foreach (Vector2 offset in new[] { new Vector2(5f, 3f), new Vector2(-40f, -12f), new Vector2(0f, 50f) })
                 using (var f = new Fixture())
                 {
                     f.CreatePlayer(true); PlayerView view = FacingView(f);
                     var state = f.Player.CaptureState(); state.Phase = phase; f.Player.RestoreState(in state);
-                    f.Head.Motor.Teleport(f.Spawn + new Vector2(5f, 3f));
+                    f.Head.Motor.Teleport(f.Spawn + offset);
                     f.Head.transform.position = f.Head.Motor.Position;
                     Vector3 head = f.Head.Visual.position, body = f.Body.Visual.position;
                     LevelEndpoint endpoint = ExitEndpoint(f);
                     var exit = f.Player.gameObject.AddComponent<PlayerExitView>();
                     Check(exit.Begin(endpoint), "Cannot begin " + phase);
-                    bool recall = phase == PlayerPhase.Extending || phase == PlayerPhase.Holding || phase == PlayerPhase.Retracting;
-                    bool included = recall || phase == PlayerPhase.Joined || phase == PlayerPhase.PickingUp;
-                    Check(exit.RecallsHead == recall && exit.IncludesHead == included, "Wrong head rule for " + phase);
-                    if (recall)
-                    {
-                        Check(exit.Stage == PlayerExitStage.Retracting, "Extension must retract first");
-                        exit.Simulate(endpoint.EntryRetractDuration * 0.5f);
-                        Check(Vector3.Distance(f.Head.Visual.position, body + Vector3.up * f.Config.JoinedOffset)
-                            < Vector3.Distance(head, body + Vector3.up * f.Config.JoinedOffset), "Head did not retract smoothly");
-                    }
+                    Check(exit.RecallsHead && exit.IncludesHead, "Head was excluded for " + phase);
+                    Check(exit.Stage == PlayerExitStage.Retracting, "Separated head must return before walking");
+                    PositionNear(f.Head.Visual.position, head, "Recall teleported at entry start");
+                    exit.Simulate(endpoint.EntryRetractDuration * 0.5f);
+                    Vector3 joined = body + Vector3.up * f.Config.ToWorld(f.Config.JoinedOffset);
+                    PositionNear(f.Head.Visual.position, Vector3.Lerp(head, joined, 0.5f), "Recall did not pass smoothly through midpoint");
+                    Vector3 midpoint = f.Head.Visual.position;
+                    view.Simulate(0.1f); view.RenderRewindState();
+                    PositionNear(f.Head.Visual.position, midpoint, "Ordinary presentation overwrote recall");
                     exit.Simulate(exit.Duration + 1f);
                     Check(!exit.IsPlaying && exit.Stage == PlayerExitStage.Complete, "Entry never completes");
                     PositionNear(f.Head.Motor.Position, head, "Entry moved logical head");
                     PositionNear(f.Body.Motor.Position, body, "Entry moved logical body");
-                    if (!included)
-                    {
-                        PositionNear(f.Head.Visual.position, head, "Detached head followed the body");
-                        YawNear(view.CaptureFacing().HeadYaw, 180f, "Detached head turned");
-                    }
-                    else PositionNear(f.Head.Visual.position, f.Body.Visual.position + Vector3.up * f.Config.JoinedOffset, "Joined offset changed");
+                    PositionNear(f.Head.Visual.position, f.Body.Visual.position + Vector3.up * f.Config.ToWorld(f.Config.JoinedOffset), "Recalled head did not follow body");
                     Check(f.Player.Phase == phase, "Presentation changed logical phase");
                     exit.Cancel();
                     PositionNear(f.Body.Visual.position, body, "Cancel left visual body displaced");
                     PositionNear(f.Head.Visual.position, head, "Cancel left visual head displaced");
                     Check(!view.ExitPresentation, "Override leaked on cancel");
                 }
+            using (var f = new Fixture())
+            {
+                f.CreatePlayer(true); FacingView(f);
+                f.Detach(f.Spawn, f.Spawn + new Vector2(-30f, 10f));
+                f.Respawn.BeginSingleReturn(f.Head);
+                RespawnService.Journey journey = f.Respawn.Journeys[0];
+                f.Respawn.Simulate(journey.FlightStart + journey.FlightDuration * 0.5f);
+                RespawnView returns = f.Player.GetComponent<RespawnView>();
+                returns.RefreshAfterRestore();
+                Check(f.Head.Visual.localScale.sqrMagnitude < 0.001f, "Head did not collapse during respawn");
+                var exit = f.Player.gameObject.AddComponent<PlayerExitView>();
+                Check(exit.Begin(ExitEndpoint(f)), "Returning head blocked door entry");
+                exit.Simulate(0.125f);
+                Vector3 head = f.Head.Visual.position;
+                returns.SendMessage("LateUpdate");
+                PositionNear(f.Head.Visual.position, head, "Respawn presentation overwrote recall");
+                Check(f.Head.Visual.localScale.sqrMagnitude > 0.1f, "Recalled head remained hidden");
+                exit.Simulate(exit.Duration);
+                PositionNear(f.Head.Visual.position, f.Body.Visual.position + Vector3.up * f.Config.ToWorld(f.Config.JoinedOffset), "Returning head did not join entry");
+                exit.Cancel();
+                Check(f.Head.IsReturning && f.Respawn.Journeys.Count == 1, "Entry changed logical respawn state");
+                Check(f.Head.Visual.localScale.sqrMagnitude < 0.001f, "Cancel did not restore respawn presentation");
+            }
         }
 
         private static void ExitTimeline()
@@ -137,8 +155,10 @@ namespace TapTap.Editor
                     "Entry machines started out of phase");
                 exit.Cancel();
                 f.Detach(f.Spawn, f.Spawn + Vector2.right * 5f);
-                Check(exit.Begin(endpoint), "Cannot start body-only entry");
-                Check(upper.speed == 0f, "Detached head animation was not frozen");
+                Check(exit.Begin(endpoint), "Cannot start detached-head entry");
+                Check(exit.RecallsHead && exit.IncludesHead && upper.speed == 1f, "Detached head was not included in entry");
+                exit.Simulate(endpoint.EntryRetractDuration + 0.01f);
+                Check(lower.GetBool("Moving") && upper.GetBool("Moving"), "Recalled head did not walk with body");
                 exit.Simulate(exit.Duration + 0.1f);
                 Check(!lower.GetBool("Moving"), "Player still walks after reaching final anchor");
                 exit.Cancel();

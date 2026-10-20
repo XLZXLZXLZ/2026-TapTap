@@ -259,13 +259,11 @@ namespace TapTap.Editor
             using (var f = new Fixture())
             {
                 f.CreatePlayer();
-                var timer = UnityEngine.Object.FindObjectOfType<GameDebugTime>();
-                if (timer == null) timer = f.NewObject("Test Gameplay Time", Vector2.zero).AddComponent<GameDebugTime>();
-                var playerField = typeof(GameDebugTime).GetField("player", BindingFlags.NonPublic | BindingFlags.Instance);
+                var timer = UnityEngine.Object.FindObjectOfType<BulletTimeController>();
+                if (timer == null) timer = f.NewObject("Test Gameplay Time", Vector2.zero).AddComponent<BulletTimeController>();
+                var playerField = typeof(BulletTimeController).GetField("player", BindingFlags.NonPublic | BindingFlags.Instance);
                 var previousPlayer = playerField.GetValue(timer);
-                int previousIndex = (int)typeof(GameDebugTime).GetField("speedIndex", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(timer);
                 playerField.SetValue(timer, f.Player);
-                SetField(timer, "speedIndex", 0);
                 Time.timeScale = 1f;
                 try
                 {
@@ -282,21 +280,20 @@ namespace TapTap.Editor
                     Check(Time.timeScale == 0.5f, "Assembly effect did not restore bullet speed");
                     timer.ToggleBulletTime(); overlay.AdvanceBulletTint(0.2f, false);
                     Check(Time.timeScale == 1f && overlay.BulletOpacity == 0f, "Second toggle did not clear speed/tint");
-                    timer.CycleSpeed(); timer.ToggleBulletTime(); timer.ToggleBulletTime();
-                    Check(Time.timeScale == 2f, "Leaving bullet time lost the previous debug speed");
+                    timer.ToggleBulletTime(); timer.ToggleBulletTime();
+                    Check(Time.timeScale == 1f, "Leaving bullet time did not restore normal speed");
                     Time.timeScale = 0f; timer.ToggleBulletTime();
                     Check(!timer.BulletTimeActive && Time.timeScale == 0f, "Bullet toggle unpaused the game");
-                    Time.timeScale = 2f; timer.ToggleBulletTime();
-                    typeof(GameDebugTime).GetMethod("SceneLoaded", BindingFlags.NonPublic | BindingFlags.Instance)
+                    Time.timeScale = 1f; timer.ToggleBulletTime();
+                    typeof(BulletTimeController).GetMethod("SceneLoaded", BindingFlags.NonPublic | BindingFlags.Instance)
                         .Invoke(timer, new object[] { default(Scene), LoadSceneMode.Single });
                     playerField.SetValue(timer, null);
-                    typeof(GameDebugTime).GetMethod("LateUpdate", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(timer, null);
-                    Check(!timer.BulletTimeActive && Time.timeScale == 2f, "Half-speed leaked into the next menu scene");
+                    typeof(BulletTimeController).GetMethod("LateUpdate", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(timer, null);
+                    Check(!timer.BulletTimeActive && Time.timeScale == 1f, "Half-speed leaked into the next menu scene");
                 }
                 finally
                 {
                     SetField(timer, "bulletTimeActive", false);
-                    SetField(timer, "speedIndex", previousIndex);
                     playerField.SetValue(timer, previousPlayer);
                     ScreenFadeOverlay.Instance.AdvanceBulletTint(1f, false);
                     EffectManager.Instance.ClearTransientEffects();

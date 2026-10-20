@@ -1,10 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ScreenFilters;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using UnityEditor.U2D.Sprites;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -55,6 +58,13 @@ namespace TapTap.Editor
                         selectOnUp = buttons[(i + 2) % 3], selectOnDown = buttons[(i + 1) % 3] };
                 Directory.CreateDirectory(Path.GetDirectoryName(PrefabPath));
                 GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+                // Persistent prefab assets have no Canvas driver; store a useful authoring size here.
+                var prefabRect = (RectTransform)prefab.transform;
+                prefabRect.localScale = Vector3.one;
+                prefabRect.pivot = new Vector2(0.5f, 0.5f);
+                prefabRect.sizeDelta = scaler.referenceResolution;
+                EditorUtility.SetDirty(prefabRect);
+                PrefabUtility.SavePrefabAsset(prefab);
                 foreach (MainMenuController old in Object.FindObjectsOfType<MainMenuController>(true))
                     if (old.gameObject != root && old.gameObject.scene == scene) Object.DestroyImmediate(old.gameObject);
                 PrefabUtility.InstantiatePrefab(prefab, scene);
@@ -91,19 +101,30 @@ namespace TapTap.Editor
             importer.ReadTextureSettings(textureSettings);
             textureSettings.spriteMeshType = SpriteMeshType.FullRect;
             importer.SetTextureSettings(textureSettings);
-            importer.spritesheet = new[]
+            var factories = new SpriteDataProviderFactories();
+            factories.Init();
+            var provider = factories.GetSpriteEditorDataProviderFromObject(importer);
+            provider.InitSpriteEditorDataProvider();
+            var previous = provider.GetSpriteRects().ToDictionary(s => s.name);
+            SpriteRect[] slices =
             {
                 Slice("MainMenu_Logo", new Rect(0, 20, 960, 590)),
                 Slice("MainMenu_Start", new Rect(358, 634, 224, 94)),
                 Slice("MainMenu_Settings", new Rect(368, 750, 214, 93)),
                 Slice("MainMenu_Quit", new Rect(356, 863, 224, 94))
             };
+            foreach (SpriteRect slice in slices)
+                slice.spriteID = previous.TryGetValue(slice.name, out SpriteRect existing) ? existing.spriteID : GUID.Generate();
+            provider.SetSpriteRects(slices);
+            provider.GetDataProvider<ISpriteNameFileIdDataProvider>()
+                .SetNameFileIdPairs(slices.Select(s => new SpriteNameFileIdPair(s.name, s.spriteID)));
+            provider.Apply();
             importer.SaveAndReimport();
         }
 
-        private static SpriteMetaData Slice(string name, Rect topLeftRect)
+        private static SpriteRect Slice(string name, Rect topLeftRect)
         {
-            return new SpriteMetaData { name = name, alignment = (int)SpriteAlignment.Center,
+            return new SpriteRect { name = name, alignment = SpriteAlignment.Center,
                 pivot = new Vector2(0.5f, 0.5f), rect = new Rect(topLeftRect.x, 1080f - topLeftRect.yMax,
                     topLeftRect.width, topLeftRect.height) };
         }
@@ -143,13 +164,17 @@ namespace TapTap.Editor
             if (shader == null) throw new InvalidOperationException("Main menu blur shader is missing.");
             // Install on this camera's renderer in every quality tier, so changing quality keeps the effect.
             int index = new SerializedObject(camera.GetUniversalAdditionalCameraData()).FindProperty("m_RendererIndex").intValue;
-            foreach (string guid in AssetDatabase.FindAssets("t:UniversalRenderPipelineAsset"))
+            var pipelines = new HashSet<RenderPipelineAsset> { GraphicsSettings.defaultRenderPipeline };
+            for (int quality = 0; quality < QualitySettings.names.Length; quality++)
+                pipelines.Add(QualitySettings.GetRenderPipelineAssetAt(quality));
+            foreach (RenderPipelineAsset asset in pipelines)
             {
-                var pipeline = AssetDatabase.LoadAssetAtPath<UniversalRenderPipelineAsset>(AssetDatabase.GUIDToAssetPath(guid));
+                var pipeline = asset as UniversalRenderPipelineAsset;
+                if (pipeline == null) continue;
                 var serialized = new SerializedObject(pipeline);
                 SerializedProperty list = serialized.FindProperty("m_RendererDataList");
-                int selected = index < 0 ? serialized.FindProperty("m_DefaultRendererIndex").intValue : index;
-                if (selected >= list.arraySize) continue;
+                int selected = index < 0 || index >= list.arraySize
+                    ? serialized.FindProperty("m_DefaultRendererIndex").intValue : index;
                 var renderer = list.GetArrayElementAtIndex(selected).objectReferenceValue as ScriptableRendererData;
                 if (renderer == null) continue;
                 MainMenuBlurFeature feature = renderer.rendererFeatures.OfType<MainMenuBlurFeature>().FirstOrDefault();
@@ -163,6 +188,13 @@ namespace TapTap.Editor
                 feature.BlurShader = shader;
                 feature.SetActive(true);
                 feature.Create();
+                var rendererObject = new SerializedObject(renderer);
+                SerializedProperty map = rendererObject.FindProperty("m_RendererFeatureMap");
+                map.arraySize = renderer.rendererFeatures.Count;
+                for (int i = 0; i < renderer.rendererFeatures.Count; i++)
+                    if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(renderer.rendererFeatures[i], out string _, out long localId))
+                        map.GetArrayElementAtIndex(i).longValue = localId;
+                rendererObject.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(feature);
                 EditorUtility.SetDirty(renderer);
                 renderer.SetDirty();

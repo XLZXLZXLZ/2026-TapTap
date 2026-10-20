@@ -18,6 +18,7 @@ namespace TapTap.Editor
     public static class TutorialPromptRegressionTests
     {
         private const string Pending = "TapTap.TutorialPromptTests.Pending";
+        private const string InteractionOnly = Pending + ".InteractionOnly";
         private static string Output => Path.GetFullPath(Path.Combine(Application.dataPath, "../Logs/TutorialPrompts"));
         private static TutorialPromptPresenter presenter;
         private static int stage, lastFrame;
@@ -26,6 +27,7 @@ namespace TapTap.Editor
         private static RewindManager rewind;
         private static PlayerController triggerPlayer;
         private static TutorialPromptTrigger2D triggerProbe;
+        private static WorldMapSceneRouter transitionRouter;
         private static Vector3 intactVertex;
 
         static TutorialPromptRegressionTests()
@@ -34,7 +36,7 @@ namespace TapTap.Editor
             {
                 if (state != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool(Pending, false)) return;
                 stage = 0; lastFrame = -1; buffered = false;
-                deadline = EditorApplication.timeSinceStartup + 45;
+                deadline = EditorApplication.timeSinceStartup + 60;
                 EditorApplication.update += Tick;
             };
         }
@@ -44,6 +46,7 @@ namespace TapTap.Editor
             if (!Application.isBatchMode) throw new InvalidOperationException("请在独立批处理项目运行此验证。");
             Directory.CreateDirectory(Output);
             File.WriteAllText(Output + "/results.txt", "");
+            SessionState.SetBool(InteractionOnly, false);
             try
             {
                 ValidateAssets();
@@ -85,6 +88,17 @@ namespace TapTap.Editor
         {
             TutorialPromptAssets.Build();
             RunBatch();
+        }
+
+        public static void RunInteractionBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("请在独立批处理项目运行此验证。");
+            Directory.CreateDirectory(Output);
+            File.WriteAllText(Output + "/results.txt", "");
+            SessionState.SetBool(InteractionOnly, true);
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            SessionState.SetBool(Pending, true);
+            EditorApplication.isPlaying = true;
         }
 
         private static TutorialPromptView Prompt(int index) => AssetDatabase.LoadAssetAtPath<GameObject>(TutorialPromptAssets.PromptPath(index)).GetComponent<TutorialPromptView>();
@@ -188,6 +202,14 @@ namespace TapTap.Editor
             Check(original.SequenceEqual(view.Label.textInfo.meshInfo[0].vertices), "Exit moves glyphs");
             fade.Complete();
             Check(view.ExitFinished && view.PanelGroup.alpha == 0f && view.TextGroup.alpha == 0f, "Fade does not finish cleanly");
+            view.Enter();
+            Tween entrance = (Tween)view.GetType().GetField("transition", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(view);
+            entrance.Goto(view.EnterDuration * 0.2f, false);
+            float panelAlpha = view.PanelGroup.alpha, textAlpha = view.TextGroup.alpha;
+            Vector3 scale = view.AnimatedRoot.localScale;
+            view.Exit();
+            Check(view.PanelGroup.alpha == panelAlpha && view.TextGroup.alpha == textAlpha
+                && view.AnimatedRoot.localScale == scale, "Interrupted entrance snaps before fading");
             Object.DestroyImmediate(view.gameObject);
             Pass("Text, key sprite and panel fade together without glyph motion");
         }
@@ -208,9 +230,12 @@ namespace TapTap.Editor
                 else if (stage == 1 && view != null && !view.IsEntering)
                 {
                     Check(view.Key == TutorialPromptKey.Space, "Wrong initial prompt");
-                    int index = Array.FindIndex(view.Label.textInfo.characterInfo, c => c.isVisible);
-                    TMP_CharacterInfo glyph = view.Label.textInfo.characterInfo[index];
-                    intactVertex = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices[glyph.vertexIndex];
+                    if (!SessionState.GetBool(InteractionOnly, false))
+                    {
+                        int index = Array.FindIndex(view.Label.textInfo.characterInfo, c => c.isVisible);
+                        TMP_CharacterInfo glyph = view.Label.textInfo.characterInfo[index];
+                        intactVertex = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices[glyph.vertexIndex];
+                    }
                     presenter.SubmitInput(TutorialPromptKey.Space, true, true, false);
                     presenter.SubmitInput(TutorialPromptKey.Space, false, false, true);
                     since = EditorApplication.timeSinceStartup;
@@ -224,12 +249,15 @@ namespace TapTap.Editor
                         presenter.SubmitInput(TutorialPromptKey.Space, false, false, true);
                         buffered = true;
                     }
-                    int index = Array.FindIndex(view.Label.textInfo.characterInfo, c => c.isVisible);
-                    TMP_CharacterInfo glyph = view.Label.textInfo.characterInfo[index];
-                    Vector3 vertex = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices[glyph.vertexIndex];
-                    Check((vertex - intactVertex).sqrMagnitude < 0.001f, "Fade moved glyph mesh");
+                    if (!SessionState.GetBool(InteractionOnly, false))
+                    {
+                        int index = Array.FindIndex(view.Label.textInfo.characterInfo, c => c.isVisible);
+                        TMP_CharacterInfo glyph = view.Label.textInfo.characterInfo[index];
+                        Vector3 vertex = view.Label.textInfo.meshInfo[glyph.materialReferenceIndex].vertices[glyph.vertexIndex];
+                        Check((vertex - intactVertex).sqrMagnitude < 0.001f, "Fade moved glyph mesh");
+                        Capture(presenter, 1920, 1080, "05_Fade");
+                    }
                     Check(Mathf.Abs(view.TextGroup.alpha - view.PanelGroup.alpha) < 0.0001f, "Text and panel fade are not synchronized");
-                    Capture(presenter, 1920, 1080, "05_Fade");
                     Pass("Text and panel fade together; next input buffered during exit");
                     stage = 3;
                 }
@@ -281,6 +309,43 @@ namespace TapTap.Editor
                     Pass("Disable clears active view, queue and chain");
                     Time.timeScale = 1f;
                     presenter.enabled = true;
+                    Check(presenter.DisplayDuration == 15f, "Default tutorial lifetime is not 15 seconds");
+                    presenter.DisplayDuration = 0.8f;
+                    Time.timeScale = 0.1f;
+                    presenter.Request(Prompt(0));
+                    presenter.Request(Prompt(3));
+                    since = EditorApplication.timeSinceStartup;
+                    stage = 20;
+                }
+                else if (stage == 20 && view != null && view.IsExiting)
+                {
+                    Check(EditorApplication.timeSinceStartup - since < 2.5, "Tutorial timeout slowed with gameplay time");
+                    Check(view.TextGroup.alpha > 0f && view.gameObject.activeSelf, "Timeout removed the prompt without fading");
+                    stage = 21;
+                }
+                else if (stage == 21 && view != null && !view.IsEntering && !view.IsExiting)
+                {
+                    Check(view.Key == TutorialPromptKey.Control, "Timed-out hover incorrectly chained into recall");
+                    Pass("Default lifetime is 15 seconds; timeout uses real time, fades, skips incomplete follow-up, and resets for the next prompt");
+                    presenter.Request(Prompt(2));
+                    transitionRouter = WorldMapSceneRouter.Instance;
+                    typeof(WorldMapSceneRouter).GetField("loading", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(transitionRouter, true);
+                    since = EditorApplication.timeSinceStartup;
+                    stage = 22;
+                }
+                else if (stage == 22 && view != null && view.IsExiting)
+                {
+                    Check(presenter.QueuedCount == 0 && !presenter.Request(Prompt(2)), "Transition did not clear and suppress pending prompts");
+                    Check(view.TextGroup.alpha > 0f && view.gameObject.activeSelf, "Transition hid the prompt immediately");
+                    stage = 23;
+                }
+                else if (stage == 23 && view == null)
+                {
+                    Check(EditorApplication.timeSinceStartup - since < 2.5, "Transition lock stalled fade cleanup");
+                    typeof(WorldMapSceneRouter).GetField("loading", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(transitionRouter, false);
+                    presenter.DisplayDuration = 15f;
+                    Time.timeScale = 1f;
+                    Pass("Scene transition fades active UI and clears queued prompts while input is blocked");
                     triggerPlayer = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Characters/Player.prefab")).GetComponent<PlayerController>();
                     triggerPlayer.TeleportJoined(new Vector2(4f, 0f));
                     triggerPlayer.enabled = false;
@@ -327,8 +392,8 @@ namespace TapTap.Editor
                     Check(view.NextPromptPrefab != null && presenter.QueuedCount == 1,
                         "Return cancellation test needs a pending chain and queued prompt");
                     Check(GameStageProgression.ForScene(presenter.gameObject.scene).BeginReturn(), "Could not enter return stage");
-                    Check(presenter.ActiveView == null && presenter.QueuedCount == 0 && !view.gameObject.activeSelf,
-                        "Return did not immediately hide active UI and clear the queue");
+                    Check(presenter.ActiveView == view && presenter.QueuedCount == 0 && view.gameObject.activeSelf && view.IsExiting,
+                        "Return did not preserve the active fade and clear the queue");
                     Check(!triggerProbe.enabled && !presenter.Request(Prompt(3)),
                         "Return left a trigger or direct request enabled");
                     triggerProbe.enabled = true;
@@ -336,11 +401,9 @@ namespace TapTap.Editor
                     var lateTrigger = Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(
                         TutorialPromptAssets.Folder + "/Trigger_04_BulletTime.prefab")).GetComponent<TutorialPromptTrigger2D>();
                     Check(!lateTrigger.enabled && !lateTrigger.HasTriggered, "Late-created return trigger remains active");
-                    presenter.enabled = false; presenter.enabled = true;
-                    Check(!presenter.Request(Prompt(0)), "Re-enabled presenter accepted a return tutorial");
                     TutorialPromptPresenter latePresenter = InstantiatePresenter();
                     Check(!latePresenter.Request(Prompt(0)), "Late-created presenter accepted a return tutorial");
-                    Pass("Return immediately hides exiting UI, cancels chain/queue, and rejects existing, re-enabled and late-created tutorials");
+                    Pass("Return preserves the fade, cancels chain/queue, and rejects existing and late-created tutorials");
                     since = EditorApplication.timeSinceStartup;
                     stage = 14;
                 }
@@ -348,6 +411,8 @@ namespace TapTap.Editor
                 {
                     Check(presenter.ActiveView == null && presenter.QueuedCount == 0,
                         "A pending chain or queued tutorial reappeared after return");
+                    presenter.enabled = false; presenter.enabled = true;
+                    Check(!presenter.Request(Prompt(0)), "Re-enabled presenter accepted a return tutorial");
                     Pass("Cancelled tutorial chain stays hidden after its original transition and delay");
                     Finish(null);
                 }
@@ -397,6 +462,8 @@ namespace TapTap.Editor
             EditorApplication.update -= Tick; SessionState.SetBool(Pending, false);
             if (error != null) { File.AppendAllText(Output + "/results.txt", "FAIL: " + error + "\n"); Debug.LogException(error); }
             Time.timeScale = 1f;
+            if (transitionRouter != null)
+                typeof(WorldMapSceneRouter).GetField("loading", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(transitionRouter, false);
             EditorApplication.Exit(error == null ? 0 : 1);
         }
     }

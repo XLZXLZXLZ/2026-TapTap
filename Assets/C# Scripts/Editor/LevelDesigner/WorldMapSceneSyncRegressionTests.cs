@@ -118,28 +118,25 @@ namespace TapTap.Editor
                 Check(!Attribute.IsDefined(typeof(WorldMapSceneSync), typeof(InitializeOnLoadAttribute)),
                     "Automatic scene sync still initializes on editor reload");
                 results.Add("PASS: Explicit save persists map and scene together; automatic sync initializer removed");
-                clockObject = new GameObject("Debug time check");
-                GameDebugTime clock = clockObject.AddComponent<GameDebugTime>();
-                foreach (float expected in new[] { 2f, 4f, 8f, 1f })
-                { clock.CycleSpeed(); Check(clock.CurrentSpeed == expected, "Incorrect speed cycle"); }
-                actor = new GameObject("Debug input actor");
+                clockObject = new GameObject("Bullet time check");
+                BulletTimeController clock = clockObject.AddComponent<BulletTimeController>();
+                actor = new GameObject("Bullet time actor");
                 const System.Reflection.BindingFlags flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-                typeof(GameDebugTime).GetField("player", flags).SetValue(clock, actor.AddComponent<PlayerController>());
-                clock.CycleSpeed(); clock.CycleSpeed(); // 4x
-                var tick = typeof(GameDebugTime).GetMethod("LateUpdate", flags);
+                typeof(BulletTimeController).GetField("player", flags).SetValue(clock, actor.AddComponent<PlayerController>());
+                var tick = typeof(BulletTimeController).GetMethod("LateUpdate", flags);
                 Time.timeScale = 0f; tick.Invoke(clock, null);
-                Check(Time.timeScale == 0f, "Debug clock unpaused gameplay");
+                Check(Time.timeScale == 0f, "Bullet time unpaused gameplay");
                 Time.timeScale = 1f; tick.Invoke(clock, null);
-                Check(Time.timeScale == 4f, "Debug clock did not apply its base speed");
-                effectsObject = new GameObject("Debug slowdown check");
+                Check(Time.timeScale == 1f, "Bullet time did not restore normal speed");
+                effectsObject = new GameObject("Slowdown check");
                 EffectManager effects = effectsObject.AddComponent<EffectManager>();
                 effects.Play(PlayerEffect.Joined, null);
-                Check(Time.timeScale == 3f, "Join slowdown is not relative to debug speed");
-                effects.SetGameplayTimeScale(8f);
-                Check(Time.timeScale == 6f, "Changing speed during slowdown lost its multiplier");
+                Check(Time.timeScale == 0.75f, "Join slowdown is not relative to gameplay speed");
+                effects.SetGameplayTimeScale(0.5f);
+                Check(Time.timeScale == 0.375f, "Changing speed during slowdown lost its multiplier");
                 effects.Simulate(0.1f);
-                Check(Time.timeScale == 8f, "Slowdown restored an outdated debug speed");
-                results.Add("PASS: 1/2/4/8 clock cycles, preserves pause, and composes with join slowdown and resume speed");
+                Check(Time.timeScale == 0.5f, "Slowdown restored an outdated gameplay speed");
+                results.Add("PASS: Gameplay clock preserves pause and composes with join slowdown and bullet time");
             }
             catch (Exception exception) { results.Add("FAIL: " + exception); Debug.LogException(exception); exit = 1; }
             finally
@@ -149,7 +146,7 @@ namespace TapTap.Editor
                 if (clockObject != null) UnityEngine.Object.DestroyImmediate(clockObject);
                 Time.timeScale = originalScale;
             }
-            File.WriteAllLines(Path.Combine(Application.dataPath, "../manual-sync-debug-time-results.txt"), results);
+            File.WriteAllLines(Path.Combine(Application.dataPath, "../manual-sync-bullet-time-results.txt"), results);
             EditorApplication.Exit(exit);
         }
     }

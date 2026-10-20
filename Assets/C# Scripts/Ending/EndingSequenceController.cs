@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,17 +14,29 @@ namespace TapTap
         public EndingPlayerController Player;
         public EndingRadioTrigger Radio;
         public Camera ViewCamera;
-        [Tooltip("顺序为堡垒内、门口、可左右行走的位置；以 XZ 路径移动，Y 由地面碰撞决定。")]
+        [InspectorName("贝塞尔路径点（按顺序）")]
+        [Tooltip("曲线平滑经过这些锚点，控制柄自动生成。只使用路径点的 X/Z，Y 持续向下检测场景碰撞决定；不会修改路点。")]
         public Transform[] IntroWaypoints = new Transform[0];
+        [Range(0f, 1f), InspectorName("贝塞尔曲率")]
+        public float PathSmoothing = 0.8f;
+        [Range(8, 128), Tooltip("每段用于弧长计算的采样数量，使移动速度不随曲线参数变化。")]
+        public int PathSamplesPerSegment = 32;
+        [InspectorName("最后一个路径点作为水平行走线")]
+        [Tooltip("开启后，最后到达的路径点作为左右移动的原点；关闭后使用 Player 上手动指定的 WalkLine。")]
+        public bool UseLastWaypointAsWalkLine = true;
         public LayerMask GroundLayers = 1;
         public bool PlayIntroOnStart = true;
         [Min(0f)] public float IntroHold = 0.6f;
-        [Min(0.01f)] public float WaypointTolerance = 0.08f;
-        [Min(1f), Tooltip("路线受阻时恢复操作，避免角色一直原地踏步。")]
+        [Min(0.001f), InspectorName("受阻检测的前进距离")]
+        public float WaypointTolerance = 0.08f;
+        [Min(1f), InspectorName("路径受阻超时（秒）"), Tooltip("持续无法前进时恢复操作，长路径正常行走不受总时长限制。")]
         public float WaypointTimeout = 15f;
 
         [Header("镜头推进（保持原旋转与 FOV）")]
         [Min(0f)] public float CameraApproachDistance = 1.2f;
+        [InspectorName("推进时向右偏移（米）")]
+        [Tooltip("沿相机自身的右方向平移，让角色更靠近屏幕中心；正值向右，负值向左。")]
+        public float CameraApproachRightOffset = 0.45f;
         [Min(0f)] public float CameraApproachDuration = 1.5f;
         [Min(0f)] public float CameraRestoreDuration = 0.8f;
 
@@ -42,10 +55,17 @@ namespace TapTap
         public EndingState State { get; private set; }
 
         private Vector3 initialCameraPosition;
+        private MainMenuCameraMotion cameraBreathing;
         private bool capturedCamera;
         private VoicePlayer subscribedVoice;
         private Component previousVoiceLockOwner;
         private Coroutine flow, cameraMotion;
+        private EndingBezierPath introPath;
+        private float introStartHeight;
+        private readonly List<Vector3> previewSamples = new List<Vector3>();
+        private readonly List<bool> previewGrounded = new List<bool>();
+        private readonly List<Vector3> previewAnchors = new List<Vector3>();
+        private readonly Dictionary<Transform, Vector3> previewWaypoints = new Dictionary<Transform, Vector3>();
 
         private void Start()
         {
@@ -55,8 +75,10 @@ namespace TapTap
                 return;
             }
             Player.ViewCamera = ViewCamera;
+            Player.GroundLayers = GroundLayers;
             Radio.Sequence = this;
-            initialCameraPosition = ViewCamera.transform.position;
+            cameraBreathing = ViewCamera.GetComponent<MainMenuCameraMotion>();
+            initialCameraPosition = ReadCameraBasePosition();
             capturedCamera = true;
             if (PlayIntroOnStart) PlayIntro();
             else ReturnControl();
@@ -68,7 +90,7 @@ namespace TapTap
         {
             Player.SetControl(false);
             GameplayActionLocks.Acquire(this, GameplayAction.Input | GameplayAction.PlayerControls
-                | GameplayAction.Rewind | GameplayAction.DebugCamera);
+                | GameplayAction.Rewind);
             RewindManager.Current?.EndRewind();
         }
 
@@ -83,38 +105,55 @@ namespace TapTap
 
         private IEnumerator Intro()
         {
-            if (IntroWaypoints.Length > 0 && IntroWaypoints[0] != null)
-                Player.PlaceAt(IntroWaypoints[0].position);
             Player.SnapToGround(GroundLayers);
+            introStartHeight = Player.transform.position.y;
+            introPath = BuildPath(Player.transform.position);
             yield return Wait(IntroHold);
-            foreach (Transform waypoint in IntroWaypoints)
+            Player.FollowBezier(introPath);
+            float lastProgress = 0f, stalled = 0f;
+            bool interrupted = false;
+            while (Player.IsFollowingPath)
             {
-                if (waypoint == null) continue;
-                float elapsed = 0f;
-                while (elapsed < WaypointTimeout)
+                if (!Paused)
                 {
-                    Vector3 delta = Vector3.ProjectOnPlane(waypoint.position - Player.transform.position, Vector3.up);
-                    if (delta.magnitude <= WaypointTolerance) break;
-                    if (!Paused)
+                    if (Player.PathDistance - lastProgress >= Mathf.Max(0.001f, WaypointTolerance))
                     {
-                        elapsed += Time.deltaTime;
-                        float speed = Mathf.Min(Player.IntroSpeed, delta.magnitude / Mathf.Max(Time.deltaTime, 0.0001f));
-                        Player.SetScriptedMotion(delta.normalized, speed);
+                        lastProgress = Player.PathDistance;
+                        stalled = 0f;
                     }
-                    yield return null;
+                    else stalled += Time.deltaTime;
+                    if (stalled >= WaypointTimeout)
+                    {
+                        Debug.LogWarning("结局贝塞尔路径受阻或前方没有可行走地面，已归还操作权，请检查曲线与场景碰撞。", this);
+                        Player.StopMotion();
+                        Player.WalkLine = null;
+                        interrupted = true;
+                        break;
+                    }
                 }
-                Player.StopMotion();
-                if (elapsed >= WaypointTimeout)
-                {
-                    Debug.LogWarning("结局出场路线受阻，已归还操作权，请检查路点和地面碰撞。", waypoint);
-                    // Rebase a blocked intro rather than pulling the character sideways to an unreachable rail.
-                    Player.WalkLine = null;
-                    break;
-                }
+                yield return null;
             }
+            if (UseLastWaypointAsWalkLine && !interrupted) Player.WalkLine = LastWaypoint();
             flow = null;
             ReturnControl();
             OnIntroCompleted.Invoke();
+        }
+
+        private Transform LastWaypoint()
+        {
+            if (IntroWaypoints == null) return null;
+            for (int index = IntroWaypoints.Length - 1; index >= 0; index--)
+                if (IntroWaypoints[index] != null) return IntroWaypoints[index];
+            return null;
+        }
+
+        private EndingBezierPath BuildPath(Vector3 start)
+        {
+            var points = new List<Vector3> { start };
+            if (IntroWaypoints != null)
+                foreach (Transform point in IntroWaypoints)
+                    if (point != null) points.Add(point.position);
+            return new EndingBezierPath(points, PathSmoothing, PathSamplesPerSegment);
         }
 
         public bool TryBeginBroadcast(EndingRadioTrigger radio, EndingPlayerController player)
@@ -136,7 +175,11 @@ namespace TapTap
                 return false;
             }
             StartCameraMotion(initialCameraPosition + (Player.transform.position + Vector3.up * 0.8f
-                - initialCameraPosition).normalized * CameraApproachDistance, CameraApproachDuration);
+                - initialCameraPosition).normalized * CameraApproachDistance
+                + (cameraBreathing != null && cameraBreathing.isActiveAndEnabled
+                    ? cameraBreathing.BaseWorldRotation * Vector3.right : ViewCamera.transform.right)
+                    * CameraApproachRightOffset, CameraApproachDuration);
+            AudioManager.Instance?.BeginEndingMusic(this);
             OnBroadcastStarted.Invoke();
             return true;
         }
@@ -147,10 +190,12 @@ namespace TapTap
             UnsubscribeVoice();
             if (reason != VoiceStopReason.Completed)
             {
+                AudioManager.Existing?.CancelPendingEndingMusic(this);
                 Radio.ResetTrigger();
                 ReturnControl();
                 return;
             }
+            GameCompletionStore.MarkCompleted();
             OnBroadcastCompleted.Invoke();
             // An event listener can call ReturnControl, or change the default ending policy.
             if (State != EndingState.Broadcast) return;
@@ -167,7 +212,11 @@ namespace TapTap
             StopFlow();
             VoicePlayer voice = subscribedVoice;
             UnsubscribeVoice();
-            if (voice != null && voice.IsPlaying) { voice.Stop(); Radio.ResetTrigger(); }
+            if (voice != null && voice.IsPlaying)
+            {
+                AudioManager.Existing?.CancelPendingEndingMusic(this);
+                voice.Stop(); Radio.ResetTrigger();
+            }
             AcquireControl();
             State = EndingState.ReturningControl;
             flow = StartCoroutine(RestoreControl());
@@ -190,6 +239,7 @@ namespace TapTap
         public void ReturnToMainMenu()
         {
             if (!Application.isPlaying || !isActiveAndEnabled || State == EndingState.Transition || Player == null) return;
+            AudioManager.Existing?.CancelPendingEndingMusic(this);
             StopFlow();
             VoicePlayer voice = subscribedVoice;
             UnsubscribeVoice();
@@ -237,17 +287,26 @@ namespace TapTap
         private IEnumerator MoveCamera(Vector3 target, float duration)
         {
             if (ViewCamera == null) yield break;
-            Vector3 from = ViewCamera.transform.position;
+            Vector3 from = ReadCameraBasePosition();
             float elapsed = 0f;
             while (elapsed < duration && ViewCamera != null)
             {
                 if (!Paused) elapsed += Time.deltaTime;
-                ViewCamera.transform.position = Vector3.Lerp(from, target,
-                    Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / duration)));
+                ApplyCameraBasePosition(Vector3.Lerp(from, target,
+                    Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elapsed / duration))));
                 yield return null;
             }
-            if (ViewCamera != null) ViewCamera.transform.position = target;
+            if (ViewCamera != null) ApplyCameraBasePosition(target);
             cameraMotion = null;
+        }
+
+        private Vector3 ReadCameraBasePosition() => cameraBreathing != null && cameraBreathing.isActiveAndEnabled
+            ? cameraBreathing.BaseWorldPosition : ViewCamera.transform.position;
+
+        private void ApplyCameraBasePosition(Vector3 position)
+        {
+            if (cameraBreathing != null) cameraBreathing.SetBaseWorldPosition(position);
+            else ViewCamera.transform.position = position;
         }
 
         private void StopFlow()
@@ -267,6 +326,7 @@ namespace TapTap
 
         private void OnDisable()
         {
+            AudioManager.Existing?.CancelPendingEndingMusic(this);
             StopAllCoroutines();
             flow = cameraMotion = null;
             VoicePlayer voice = subscribedVoice;
@@ -274,20 +334,95 @@ namespace TapTap
             if (voice != null && voice.IsPlaying) voice.Stop(VoiceStopReason.Disabled);
             GameplayActionLocks.Release(this);
             if (Player != null) Player.SetControl(false);
-            if (capturedCamera && ViewCamera != null) ViewCamera.transform.position = initialCameraPosition;
+            if (capturedCamera && ViewCamera != null) ApplyCameraBasePosition(initialCameraPosition);
             State = EndingState.Inactive;
+            introPath = null;
         }
 
-        private void OnDrawGizmosSelected()
+        public void RefreshPathPreview()
         {
-            Gizmos.color = new Color(1f, 0.75f, 0.2f);
-            Transform previous = null;
+#if UNITY_EDITOR
+            if (!Application.isPlaying) Physics.SyncTransforms();
+#endif
+            previewSamples.Clear();
+            previewGrounded.Clear();
+            previewAnchors.Clear();
+            previewWaypoints.Clear();
+            if (IntroWaypoints == null) return;
+            Vector3 start = Player != null ? Player.transform.position : transform.position;
+            EndingBezierPath path = Application.isPlaying && introPath != null ? introPath : BuildPath(start);
+            if (path.AnchorCount == 0) return;
+            float height = Application.isPlaying && introPath != null ? introStartHeight : start.y;
+            previewAnchors.Add(AddPreviewPoint(path.GetAnchor(0), ref height, true));
+            for (int index = 0; index < path.SegmentCount; index++)
+            {
+                EndingBezierPath.Segment segment = path.GetSegment(index);
+                float length = path.GetAnchorDistance(index + 1) - path.GetAnchorDistance(index);
+                int steps = Mathf.Clamp(Mathf.CeilToInt(length / 0.12f), 8, 128);
+                for (int step = 1; step <= steps; step++)
+                    AddPreviewPoint(segment.Point((float)step / steps), ref height);
+                previewAnchors.Add(previewSamples[previewSamples.Count - 1]);
+            }
+            int anchor = 0;
             foreach (Transform point in IntroWaypoints)
             {
                 if (point == null) continue;
-                Gizmos.DrawWireSphere(point.position, 0.15f);
-                if (previous != null) Gizmos.DrawLine(previous.position, point.position);
-                previous = point;
+                Vector3 flat = new Vector3(point.position.x, 0f, point.position.z);
+                while (anchor + 1 < path.AnchorCount && (path.GetAnchor(anchor) - flat).sqrMagnitude > 0.000001f) anchor++;
+                previewWaypoints[point] = previewAnchors[anchor];
+            }
+        }
+
+        private Vector3 AddPreviewPoint(Vector3 flat, ref float height, bool initial = false)
+        {
+            Vector3 grounded = new Vector3(flat.x, height, flat.z);
+            bool found = Player != null && Player.TryGetGroundPosition(flat, height, GroundLayers, out grounded, initial);
+            if (found) height = grounded.y;
+            previewSamples.Add(grounded);
+            previewGrounded.Add(found);
+            return grounded;
+        }
+
+        public Vector3 WaypointPreviewPosition(Transform point) => previewWaypoints.TryGetValue(point, out Vector3 value)
+            ? value : new Vector3(point.position.x, Player != null ? Player.transform.position.y : transform.position.y, point.position.z);
+
+        private void OnDrawGizmos()
+        {
+            RefreshPathPreview();
+            Color previous = Gizmos.color;
+            for (int index = 1; index < previewSamples.Count; index++)
+            {
+                Gizmos.color = previewGrounded[index - 1] && previewGrounded[index]
+                    ? new Color(1f, 0.75f, 0.2f) : new Color(1f, 0.3f, 0.25f);
+                Gizmos.DrawLine(previewSamples[index - 1], previewSamples[index]);
+            }
+            Gizmos.color = new Color(1f, 0.75f, 0.2f);
+            foreach (Vector3 point in previewWaypoints.Values) Gizmos.DrawWireSphere(point, 0.12f);
+            if (Player != null)
+            {
+                Transform last = UseLastWaypointAsWalkLine ? LastWaypoint() : Player.WalkLine;
+                Vector3 origin = last != null ? WaypointPreviewPosition(last) : Player.transform.position;
+                Vector3 right = ViewCamera != null
+                    ? Vector3.ProjectOnPlane(ViewCamera.transform.right, Vector3.up).normalized : Vector3.right;
+                DrawGroundedRail(origin, right * Player.WalkLimits.x);
+                DrawGroundedRail(origin, right * Player.WalkLimits.y);
+            }
+            Gizmos.color = previous;
+        }
+
+        private void DrawGroundedRail(Vector3 origin, Vector3 delta)
+        {
+            Vector3 previous = origin;
+            float height = origin.y;
+            int steps = Mathf.Clamp(Mathf.CeilToInt(delta.magnitude / 0.15f), 1, 128);
+            for (int index = 1; index <= steps; index++)
+            {
+                Vector3 point = origin + delta * ((float)index / steps);
+                bool found = Player.TryGetGroundPosition(point, height, GroundLayers, out Vector3 grounded);
+                if (found) height = grounded.y;
+                Gizmos.color = found ? Color.cyan : new Color(1f, 0.3f, 0.25f);
+                Gizmos.DrawLine(previous, grounded);
+                previous = grounded;
             }
         }
     }

@@ -36,15 +36,20 @@ namespace TapTap
         }
         private void FixedUpdate()
         {
-            if (opening != null || IsOpen) return;
+            // Keyless proximity must stay cheap: ForScene searches the scene hierarchy.
+            if (opening != null || IsOpen
+                || GameStageProgression.StageIn(gameObject.scene) != GameStage.CarryingKey) return;
             if (Player == null) Player = ReturnJourneyContact.FindPlayer(gameObject.scene);
             if (ReturnJourneyContact.CanTrigger(Player) && ReturnJourneyContact.TouchesBody(Proximity, Player)) TryOpen();
         }
         public bool TryOpen()
         {
-            GameStageProgression stage = GameStageProgression.ForScene(gameObject.scene);
-            if (opening != null || IsOpen || !stage.HasKey || stage.CarriedKey == null
+            // Reject before resolving the scene service, including direct callers.
+            if (opening != null || IsOpen
+                || GameStageProgression.StageIn(gameObject.scene) != GameStage.CarryingKey
                 || !ReturnJourneyContact.CanTrigger(Player)) return false;
+            GameStageProgression stage = GameStageProgression.ForScene(gameObject.scene);
+            if (!stage.HasKey || stage.CarriedKey == null) return false;
             key = stage.CarriedKey;
             if (key.CarryVisual == null) return false;
             GameplayActionLocks.Acquire(this, GameplayAction.Input | GameplayAction.Rewind);

@@ -70,7 +70,7 @@ namespace TapTap
             restoring = false;
             IsActive = true;
             // Block controls without pausing simulation, animation or the broadcast.
-            GameplayActionLocks.Acquire(this, GameplayAction.PlayerControls | GameplayAction.Rewind | GameplayAction.DebugCamera);
+            GameplayActionLocks.Acquire(this, GameplayAction.PlayerControls | GameplayAction.Rewind);
             RewindManager.Current?.EndRewind();
             player.GetComponent<PlayerInput>()?.ResetForTransition();
         }

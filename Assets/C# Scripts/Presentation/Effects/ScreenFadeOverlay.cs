@@ -66,7 +66,7 @@ namespace TapTap
             bulletTint.color=new Color(0.45f,0.75f,1f,BulletOpacity); bulletTint.enabled=BulletOpacity>0f;
         }
 
-        private void Update() => AdvanceBulletTint(Time.unscaledDeltaTime, GameDebugTime.BulletTimeOn);
+        private void Update() => AdvanceBulletTint(Time.unscaledDeltaTime, BulletTimeController.BulletTimeOn);
 
         public void AdvanceBulletTint(float unscaledDt, bool active)
         {

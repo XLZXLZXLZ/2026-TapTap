@@ -2,13 +2,13 @@ using UnityEngine;
 
 namespace TapTap
 {
-    [DisallowMultipleComponent, RequireComponent(typeof(Camera))]
+    [DisallowMultipleComponent, RequireComponent(typeof(Camera)), DefaultExecutionOrder(1000)]
     public sealed class MainMenuCameraMotion : MonoBehaviour
     {
         [Header("Breathing (relative to the authored camera pose)")]
         [Min(0.1f)] public float BreathPeriod = 9f;
-        public Vector2 BreathPosition = new Vector2(0.012f, 0.018f);
-        public Vector3 BreathRotation = new Vector3(0.12f, 0.16f, 0.04f);
+        public Vector2 BreathPosition = new Vector2(0.015f, 0.0225f);
+        public Vector3 BreathRotation = new Vector3(0.15f, 0.2f, 0.05f);
         [Header("Mouse parallax (degrees at the screen edge)")]
         public Vector2 MouseRotation = new Vector2(0.55f, 0.9f);
         [Min(0.01f)] public float MouseSmoothTime = 0.35f;
@@ -17,6 +17,18 @@ namespace TapTap
         private Quaternion homeRotation;
         private Vector2 pointer, pointerVelocity;
         private float startedAt;
+
+        // Cinematics move this base pose; breathing is added in LateUpdate without accumulating drift.
+        public Vector3 BaseWorldPosition => transform.parent != null
+            ? transform.parent.TransformPoint(homePosition) : homePosition;
+        public Quaternion BaseWorldRotation => transform.parent != null
+            ? transform.parent.rotation * homeRotation : homeRotation;
+
+        public void SetBaseWorldPosition(Vector3 position)
+        {
+            homePosition = transform.parent != null ? transform.parent.InverseTransformPoint(position) : position;
+            transform.position = position;
+        }
 
         private void OnEnable()
         {

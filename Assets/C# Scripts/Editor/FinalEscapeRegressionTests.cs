@@ -147,7 +147,7 @@ namespace TapTap.Editor
                 f.ReplaceGenerated();
                 Call(f.Sequence, "FixedUpdate");
                 Check(f.Sequence.CurrentStep == 0 && !f.Rig.HasExternalControl, "Refresh kept the previous escape state");
-                Check(!GameplayActionLocks.IsLocked(GameplayAction.Rewind | GameplayAction.DebugCamera, f.Root.scene), "Refresh kept action locks");
+                Check(!GameplayActionLocks.IsLocked(GameplayAction.Rewind, f.Root.scene), "Refresh kept action locks");
                 Check(oldNeighbor.VisibleOpacity == 0f, "Old visibility override was not removed");
                 f.Sequence.Advance(1); f.Tick(1f);
                 Check(f.Neighbor.VisibleOpacity > 0.99f, "New visibility components were not rebound");

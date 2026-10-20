@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using ScreenFilters;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering.Universal;
@@ -52,11 +53,26 @@ namespace TapTap.Editor
             EditorApplication.isPlaying = true;
         }
 
+        public static void BuildAndRunBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("Use an isolated batch project.");
+            EditorSceneManager.OpenScene(MainMenuAssets.ScenePath);
+            MainMenuAssets.Build();
+            Run();
+        }
+
+        public static void RunExistingBatch()
+        {
+            if (!Application.isBatchMode) throw new InvalidOperationException("Use an isolated batch project.");
+            EditorSceneManager.OpenScene(MainMenuAssets.ScenePath);
+            Run();
+        }
+
         [Serializable] private sealed class PoseData { public Vector3 position; public Quaternion rotation; }
 
         private static void Tick()
         {
-            if (!SessionState.GetBool(Pending, false) || !EditorApplication.isPlaying || EditorApplication.isCompiling) return;
+            if (!SessionState.GetBool(Pending, false) || !EditorApplication.isPlaying || EditorApplication.isCompiling || deadline == 0) return;
             try
             {
                 if (EditorApplication.timeSinceStartup > deadline) throw new TimeoutException("Main menu validation timed out.");
@@ -160,7 +176,18 @@ namespace TapTap.Editor
             Canvas canvas = menu.GetComponent<Canvas>();
             CanvasScaler scaler = menu.GetComponent<CanvasScaler>();
             var target = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.ARGB32);
+            var uiTarget = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.ARGB32);
             GameObject uiObject = new GameObject("Menu validation UI camera", typeof(Camera));
+            GameObject background = new GameObject("Validation scene background", typeof(RectTransform), typeof(RawImage));
+            background.layer = 5;
+            background.transform.SetParent(canvas.transform, false);
+            background.transform.SetAsFirstSibling();
+            var backgroundRect = (RectTransform)background.transform;
+            backgroundRect.anchorMin = Vector2.zero;
+            backgroundRect.anchorMax = Vector2.one;
+            backgroundRect.offsetMin = backgroundRect.offsetMax = Vector2.zero;
+            background.GetComponent<RawImage>().texture = target;
+            background.GetComponent<RawImage>().raycastTarget = false;
             Camera ui = uiObject.GetComponent<Camera>();
             ui.enabled = false;
             ui.clearFlags = CameraClearFlags.Depth;
@@ -179,8 +206,9 @@ namespace TapTap.Editor
                 canvas.worldCamera = ui;
                 canvas.planeDistance = 1f;
                 canvas.scaleFactor = Mathf.Min(width / 1920f, height / 1080f);
-                ui.targetTexture = target;
+                ui.targetTexture = uiTarget;
                 Canvas.ForceUpdateCanvases();
+                ui.Render();
                 foreach (Button button in new[] { menu.StartButton, menu.SettingsButton, menu.QuitButton })
                 {
                     var corners = new Vector3[4];
@@ -189,11 +217,10 @@ namespace TapTap.Editor
                     {
                         Vector3 point = ui.WorldToViewportPoint(corner);
                         Check(point.x >= 0 && point.x <= 1 && point.y >= 0 && point.y <= 1,
-                            button.name + " is clipped at " + width + "x" + height);
+                            button.name + " is clipped at " + width + "x" + height + ": " + point);
                     }
                 }
-                ui.Render();
-                RenderTexture.active = target;
+                RenderTexture.active = uiTarget;
                 var image = new Texture2D(width, height, TextureFormat.RGB24, false);
                 image.ReadPixels(new Rect(0, 0, width, height), 0, 0);
                 image.Apply();
@@ -209,7 +236,9 @@ namespace TapTap.Editor
                 world.targetTexture = oldTarget;
                 RenderTexture.active = oldActive;
                 Object.DestroyImmediate(uiObject);
+                Object.DestroyImmediate(background);
                 RenderTexture.ReleaseTemporary(target);
+                RenderTexture.ReleaseTemporary(uiTarget);
                 Canvas.ForceUpdateCanvases();
             }
         }
@@ -242,6 +271,7 @@ namespace TapTap.Editor
             else Debug.Log("Main menu validation passed. Captures and results: Logs/MainMenu");
             Time.timeScale = 1f;
             EditorApplication.isPlaying = false;
+            if (Application.isBatchMode) EditorApplication.Exit(error == null ? 0 : 1);
         }
     }
 }

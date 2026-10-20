@@ -28,15 +28,16 @@ namespace TapTap
             view = GetComponent<PlayerView>();
             if (view == null || player.Body == null || player.Head == null || player.Body.Visual == null
                 || player.Head.Visual == null || player.Body.IsReturning) return false;
-            // Only the extension family recalls the upper half. A detached head, including a
-            // not-yet-completed pull, stays in the world while the lower half enters on its own.
-            RecallsHead = player.Phase == PlayerPhase.Extending || player.Phase == PlayerPhase.Holding
-                || player.Phase == PlayerPhase.Retracting;
-            IncludesHead = RecallsHead || player.Phase == PlayerPhase.Joined || player.Phase == PlayerPhase.PickingUp;
+            // Entry owns both visuals, so recall ignores distance, alignment and world obstacles.
+            IncludesHead = true;
             initialFacing = view.CaptureFacing();
-            view.BeginExitPresentation(IncludesHead);
             initialBody = player.Body.Visual.position;
             initialHead = player.Head.Visual.position;
+            GetComponent<RespawnView>()?.ClearPresentations();
+            view.BeginExitPresentation(IncludesHead);
+            joinedOffset = Vector3.up * player.Config.ToWorld(player.Config.JoinedOffset);
+            RecallsHead = player.Phase != PlayerPhase.Joined
+                || Vector3.Distance(initialHead, initialBody + joinedOffset) > player.Config.JoinTolerance;
             float footOffset = initialBody.y - player.Body.Motor.CollisionBounds.min.y;
             frontBody = endpoint.FrontFootPosition + Vector3.up * footOffset;
             insideBody = endpoint.InsideFootPosition(player.Config.UnitSize) + Vector3.up * footOffset;
@@ -48,7 +49,6 @@ namespace TapTap
                 settleTime = Mathf.Clamp(Mathf.Sqrt(2f * fall / player.Config.WorldGravity), 0.08f, 0.4f);
             }
             else settleTime = 0f;
-            joinedOffset = Vector3.up * player.Config.ToWorld(player.Config.JoinedOffset);
             retractTime = RecallsHead ? Mathf.Max(0.02f, endpoint.EntryRetractDuration) : 0f;
             float speed = Mathf.Max(0.1f, endpoint.EntryWalkSpeed) * player.Config.UnitSize;
             approachTime = Vector3.Distance(settledBody, frontBody) / speed;
@@ -78,13 +78,13 @@ namespace TapTap
             {
                 Stage = PlayerExitStage.Settling;
                 lower = Vector3.Lerp(initialBody, settledBody, t * t);
-                upper = initialHead + lower - initialBody;
+                upper = RecallsHead ? initialHead : initialHead + lower - initialBody;
             }
             else if (Take(ref remaining, retractTime, out t))
             {
                 Stage = PlayerExitStage.Retracting;
                 lower = settledBody;
-                upper = Vector3.Lerp(initialHead + settledBody - initialBody, lower + joinedOffset, Smooth(t));
+                upper = Vector3.Lerp(initialHead, lower + joinedOffset, Smooth(t));
             }
             else if (Take(ref remaining, approachTime, out t))
             {
@@ -135,6 +135,8 @@ namespace TapTap
             if (!captured) return;
             captured = false;
             if (view != null) { view.EndExitPresentation(); view.RestoreFacing(in initialFacing); }
+            if (player != null && player.TryGetComponent(out RespawnService respawn) && respawn.Journeys.Count > 0)
+                player.GetComponent<RespawnView>()?.RefreshAfterRestore();
             Stage = PlayerExitStage.None;
         }
 

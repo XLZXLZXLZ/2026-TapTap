@@ -8,7 +8,7 @@
 - `Escape Triggers (Level Local Grid)` 下有 8 个 BoxCollider2D 触发区，按 Step 1–8 排序，覆盖最后平台通道的宽度，局部高度分别为 1、5.5、9.5、13.5、17.5、21.5、25.5、30.9。触发组运行时自动对齐 Level 引用对应的区域。可直接调整触发区子对象的位置和 Box Collider 尺寸，保持第一步为 1、最后一步等于 Step Count。
 - 每次触发推进目标进度：`(CurrentStep / StepCount)^2`。起点固定为首个触发区处的实际镜头，每段默认平滑过渡 0.65 秒。连续跨越多个触发区时只前进、不重复累计。
 - 首次触发后，默认用 0.85 秒显示全部子区域。通过表现覆盖显示模型和灯光、渐退区域内部遮罩；区域外遮罩保持，未写入探索和解锁存档。
-- 最后一步镜头到位后，停留 0.25 秒，0.7 秒渐黑，激活可替换的 `Ending Screen`，再渐亮。默认是 THE END / 感谢游玩 的简洁结束画面；`FinalEscapeEndingTransition.OnBlack` 可另接结局逻辑。
+- 最后一步镜头到位后，停留 0.25 秒，0.7 秒渐黑，在全黑时通过持久场景路由加载 `Assets/Scenes/MainMenu/Ending.unity`；载入后渐亮并开始机器人出场。`Ending Scene Path` 可修改目标，清空时才使用旧的 `Ending Screen` 临时画面。`FinalEscapeEndingTransition.OnBlack` 仍在全黑时触发。
 
 ## 操作规则
 
@@ -20,6 +20,7 @@
 
 - `GameplayActionLocks` 提供场景范围的回溯、输入、调试镜头锁；玩法系统不引用终局类。回溯锁不会禁止正常模拟。
 - `DemoCamera.TryAcquireControl/ReleaseControl` 提供独占镜头控制，正常镜头和直接 SetRegion 调用不会覆盖演出镜头。
+- 结局场景加载由 `WorldMapSceneRouter` 接管，负责跨场景遮罩、旧玩法音频清理与时间倍率恢复；旧逃离对象卸载时只释放自己的操作锁，不会提前清除路由持有的黑色遮罩。
 - `RegionRevealView.SetVisibilityOverride` 与 `VisibleOpacity` 提供临时显示覆盖，独立于 Discovered；遮罩填充使用最大值合并，保证已探索部分不被淡入区域再次盖黑。
 - 演出在物理触发检测前和镜头更新前检查关卡绑定。通关、跳关或重开使 `Generated` 重建后，清理旧演出的步数、镜头控制、操作锁及显示覆盖，通过当前大世界重新绑定关卡、触发组和区域显示组件。已停用但尚未销毁的旧关卡与初始状态模板不参与绑定；新关卡暂不可用时等待恢复。
 - 演出代码、预制体和结局画面集中存放，原有滤镜、Volume、Post Processing 配置不变。

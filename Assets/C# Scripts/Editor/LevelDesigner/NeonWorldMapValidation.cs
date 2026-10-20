@@ -165,14 +165,14 @@ namespace TapTap.Editor
                     Check(screen.Pieces.Count(piece=>piece.gameObject.activeSelf)==1,"Locked pieces must be hidden completely");
                     menu.Select(modules[1]); Check(menu.Selected!=modules[1],"Hidden room was selected");
                     Capture(screen,"selection-locked.png");
-                    menu.UnlockAll(); Check(WorldMapProgressStore.Completed(menu.World).Count==0,"Unlock changed completion");
+                    foreach (var unlockedModule in menu.World.OrderedModules()) WorldMapProgressStore.Unlock(menu.World, unlockedModule); menu.SendMessage("Refresh"); Check(WorldMapProgressStore.Completed(menu.World).Count==0,"Unlock changed completion");
                     Check(screen.Pieces.All(piece=>piece.gameObject.activeSelf),"Unlock-all must reveal every authored selection room");
                     foreach (WorldMapModule module in modules)
                         Check(screen.CanSelect(module) && menu.View.TryPick(menu.View.LabelScreenPosition(module),out WorldMapModule picked) && picked==module,"Unlocked room must remain selectable regardless of replay progress");
                     // Replaying room 1 with later rooms already completed must hide them only in its cutscene.
                     WorldMapProgressStore.Complete(menu.World,modules[6]);
                     WorldMapProgressStore.Complete(menu.World,modules[19]);
-                    menu.UnlockAll();
+                    foreach (var unlockedModule in menu.World.OrderedModules()) WorldMapProgressStore.Unlock(menu.World, unlockedModule); menu.SendMessage("Refresh");
                     Pass("Selection shows all unlocked rooms; later completion records do not impose a current-room cutoff");
                     menu.Select(modules[0]);
                     stage=10;
@@ -257,7 +257,7 @@ namespace TapTap.Editor
                             sawDelay=true;
                             Check(ScreenFadeOverlay.Instance.Opacity==0f && screen.Pieces[1].Outline.Reveal==0f,"Reveal delay is hidden or already animated");
                         }
-                        if (phase==NeonWorldMapScreen.TransitionPhase.Drawing)
+                        if (screen.DrawingElapsed>0f && screen.Pieces[1].Outline.Reveal<1f)
                         {
                             if (!sawDrawing) Check(EditorApplication.timeSinceStartup-visibleDelayStart>=screen.AnimationDelay-0.1f,"Drawing delay was consumed during fade-in");
                             sawDrawing=true;

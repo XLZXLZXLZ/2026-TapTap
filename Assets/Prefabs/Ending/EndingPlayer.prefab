@@ -1487,18 +1487,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ViewCamera: {fileID: 0}
-  MoveSpeed: 0.85
-  IntroSpeed: 0.7
+  MoveSpeed: 1
+  IntroSpeed: 0.8
   Gravity: 18
   WalkLine: {fileID: 0}
   WalkLimits: {x: -3, y: 7}
   UseKeyboard: 1
+  GroundLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  GroundProbeHeight: 1.5
+  GroundProbeDepth: 4
+  GroundSnapDistance: 0.5
   FacingPivots:
   - {fileID: 1177461376101991716}
   - {fileID: 8998504441324610700}
   Animators:
   - {fileID: 3125870295664305929}
   - {fileID: 6392912231988914652}
-  WalkAnimationSpeed: 0.5
-  TurnSpeed: 6
-  ModelFrontYaw: 180
+  WalkAnimationSpeed: 0.6
+  TurnSpeed: 4.5
+  TurnLookAhead: 0.2
+  ModelFrontYaw: 0

@@ -7,6 +7,7 @@ namespace TapTap
     public sealed class WorldLevelMenu : MonoBehaviour
     {
         public WorldMapDefinition World;
+        public string MainMenuScenePath = "Assets/Scenes/MainMenu/MainMenu.unity";
         private WorldMapAssemblyView view;
         private List<WorldMapModule> modules;
         private WorldMapModule selected;
@@ -46,15 +47,6 @@ namespace TapTap
             view.SetMenuSelection(selected, notice ?? "");
         }
 
-        public void UnlockAll()
-        {
-            if (World == null) return;
-            WorldMapProgressStore.UnlockAll(World);
-            Refresh();
-            notice = "全部关卡已解锁";
-            view.SetMenuSelection(selected, notice);
-        }
-
         public void Select(WorldMapModule module) => Select(module, false);
 
         private void Select(WorldMapModule module, bool focus)
@@ -68,11 +60,25 @@ namespace TapTap
 
         private bool CanSelect(WorldMapModule module) => view != null && view.CanSelect(module);
 
+        public void ReturnToMainMenu()
+        {
+            if (entering || WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return;
+            CancelPress();
+            if (WorldMapSceneRouter.Instance.Load(MainMenuScenePath))
+                AudioManager.Instance?.PlayClick();
+            else
+            {
+                notice = WorldMapSceneRouter.Instance.LastError;
+                view?.SetMenuSelection(selected, notice);
+                Debug.LogError(notice, this);
+            }
+        }
+
         public bool EnterSelected()
         {
             if (selected == null || entering || WorldMapSceneRouter.IsLoading || PauseMenu.BlocksInput) return false;
             if (!CanSelect(selected))
-            { notice = "先通过前一关，或按 P 解锁全部关卡"; view.SetMenuSelection(selected, notice); return false; }
+            { notice = "请先通过前一关"; view.SetMenuSelection(selected, notice); return false; }
             entering = true;
             StartCoroutine(ConfirmAndEnter(selected));
             return true;
@@ -130,8 +136,8 @@ namespace TapTap
         {
             if (modules == null || entering || WorldMapSceneRouter.IsLoading) return;
             if (PauseMenu.BlocksInput) { CancelPress(); return; }
+            if (Input.GetKeyDown(KeyCode.Escape)) { ReturnToMainMenu(); return; }
             view.HandleNavigation();
-            if (Input.GetKeyDown(KeyCode.P)) UnlockAll();
             int direction = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D) ? 1
                 : Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A) ? -1 : 0;
             if (direction != 0 && modules.Count > 0)
