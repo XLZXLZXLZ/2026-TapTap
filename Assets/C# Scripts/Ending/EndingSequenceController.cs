@@ -48,6 +48,8 @@ namespace TapTap
         [Min(0f)] public float FadeToWhiteDuration = 2f;
         [Min(0f)] public float WhiteHoldDuration = 0.5f;
         [Min(0f)] public float RevealMainMenuDuration = 2f;
+        [Tooltip("全白后播放制作单位、作者与鸣谢，结束后再加载主菜单。留空则直接返回。")]
+        public EndingCreditsSequence CreditsPrefab;
         public UnityEvent OnIntroCompleted = new UnityEvent();
         public UnityEvent OnBroadcastStarted = new UnityEvent();
         public UnityEvent OnBroadcastCompleted = new UnityEvent();
@@ -253,7 +255,8 @@ namespace TapTap
         {
             yield return Wait(AfterVoiceHold);
             flow = null;
-            if (!EndingWhiteFade.TryLoad(MainMenuScenePath, FadeToWhiteDuration, WhiteHoldDuration, RevealMainMenuDuration))
+            if (!EndingWhiteFade.TryLoad(MainMenuScenePath, FadeToWhiteDuration, WhiteHoldDuration,
+                RevealMainMenuDuration, CreditsPrefab))
             {
                 State = EndingState.Broadcast;
                 ReturnControl();

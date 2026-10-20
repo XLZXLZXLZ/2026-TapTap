@@ -20,6 +20,7 @@ namespace TapTap
             if (playing || WorldMapSceneRouter.IsLoading) return;
             playing = true;
             sceneChangeHandedOff = false;
+            AudioManager.Instance?.BeginMusicTransition(this);
             GameplayActionLocks.Acquire(this, GameplayAction.Input | GameplayAction.Rewind);
             RewindManager.Current?.EndRewind();
             foreach (PlayerInput input in FindObjectsOfType<PlayerInput>())
@@ -33,13 +34,18 @@ namespace TapTap
             while (elapsed < HoldDuration) { elapsed += Time.unscaledDeltaTime; yield return null; }
             ScreenFadeOverlay overlay = ScreenFadeOverlay.Instance;
             yield return overlay.FadeTo(1f, FadeDuration);
+            if (AudioManager.Existing != null) yield return AudioManager.Existing.WaitForMusicSilence();
             yield return null;
             if (!string.IsNullOrWhiteSpace(EndingScenePath))
             {
                 OnBlack.Invoke();
                 if (!playing || !isActiveAndEnabled) yield break;
                 WorldMapSceneRouter router = WorldMapSceneRouter.Instance;
-                if (router.Load(EndingScenePath)) sceneChangeHandedOff = true;
+                if (router.Load(EndingScenePath))
+                {
+                    sceneChangeHandedOff = true;
+                    AudioManager.Existing?.EndMusicTransition(this);
+                }
                 else
                 {
                     // Another scene change may already own the cover; never clear its fade.
@@ -51,12 +57,14 @@ namespace TapTap
                 yield break;
             }
             if (EndingScreen != null) EndingScreen.SetActive(true);
+            AudioManager.Existing?.EndMusicTransition(this);
             OnBlack.Invoke();
             yield return overlay.FadeTo(0f, FadeDuration);
         }
 
         public void Cancel()
         {
+            AudioManager.Existing?.EndMusicTransition(this);
             StopAllCoroutines();
             GameplayActionLocks.Release(this);
             // Scene unloading invokes Cancel from both the sequence and OnDisable.

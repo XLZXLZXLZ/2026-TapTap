@@ -33,8 +33,10 @@ namespace TapTap
         public int SilentLevelNumber = 20;
 
         [Header("切换时间（秒）")]
-        [Min(0f)] public float FadeInDuration = 1f;
-        [Min(0f)] public float FadeOutDuration = 1f;
+        [Min(0f)] public float FadeInDuration = 2f;
+        [Min(0f)] public float FadeOutDuration = 2f;
+        [Min(0f), Tooltip("旧音乐完全淡出后，至少保持此时长的静音，再淡入新音乐。")]
+        public float SilenceDuration = 0.35f;
         [Min(0f), Tooltip("结局广播成功开始后，等待此时间再淡入 BGM_5。")]
         public float EndingMusicDelay = 1f;
 

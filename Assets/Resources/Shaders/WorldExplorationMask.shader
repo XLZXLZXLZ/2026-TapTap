@@ -44,6 +44,8 @@ Shader "Hidden/TapTap/World Exploration Mask"
             SAMPLER(sampler_WorldExplorationBackground);
             half _WorldExplorationUseBackground;
             half4 _WorldExplorationMaskColor;
+            half4 _WorldExplorationVignetteColor;
+            float4 _WorldExplorationVignetteParams;
             struct Varyings { float4 positionCS : SV_POSITION; float2 uv : TEXCOORD0; };
             Varyings Vert(uint vertexID : SV_VertexID)
             {
@@ -56,7 +58,16 @@ Shader "Hidden/TapTap/World Exploration Mask"
             {
                 half visible = SAMPLE_TEXTURE2D(_WorldExplorationMask, sampler_WorldExplorationMask, input.uv).r;
                 half3 background = SAMPLE_TEXTURE2D(_WorldExplorationBackground, sampler_WorldExplorationBackground, input.uv).rgb;
-                return half4(lerp(_WorldExplorationMaskColor.rgb, background, _WorldExplorationUseBackground), 1 - visible);
+                half3 replacement = lerp(_WorldExplorationMaskColor.rgb, background, _WorldExplorationUseBackground);
+                if (_WorldExplorationVignetteParams.z > 0)
+                {
+                    // Match URP ApplyVignette without darkening the already processed scene.
+                    float2 dist = abs(input.uv - _WorldExplorationVignetteParams.xy) * _WorldExplorationVignetteParams.z;
+                    dist.x *= _WorldExplorationVignetteColor.w;
+                    float factor = pow(saturate(1.0 - dot(dist, dist)), _WorldExplorationVignetteParams.w);
+                    replacement *= lerp(_WorldExplorationVignetteColor.rgb, (1.0).xxx, factor);
+                }
+                return half4(replacement, 1 - visible);
             }
             ENDHLSL
         }

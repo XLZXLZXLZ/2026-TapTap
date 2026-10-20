@@ -190,6 +190,10 @@ namespace TapTap
 
         private void StartTransition(int nextIndex, bool passed, LevelEndpoint endpoint = null)
         {
+            AudioManager music = AudioManager.Instance;
+            if (nextIndex < ordered.Count && music != null
+                && music.LevelMusicChanges(gameObject.scene, ordered[nextIndex].Level, world.Source.SequenceNumber(ordered[nextIndex])))
+                music.BeginMusicTransition(this);
             AudioManager.Existing?.StopGameplay();
             if (passed) AudioManager.Instance?.Play(SoundId.Complete);
             CancelPlayerExit();
@@ -221,6 +225,8 @@ namespace TapTap
                 }
                 Time.timeScale = 0f;
                 yield return fade.FadeTo(1f, FadeDuration);
+                if (AudioManager.Existing != null && AudioManager.Existing.HasMusicTransition(this))
+                    yield return AudioManager.Existing.WaitForMusicSilence();
                 yield return null;
                 WorldMapModule finished = CurrentModule;
                 bool showBoard = passed || nextIndex != CurrentIndex;
@@ -250,11 +256,13 @@ namespace TapTap
                     // Start/OnEnable callbacks initialize the refreshed room while simulation is paused.
                     yield return null;
                 }
+                AudioManager.Existing?.EndMusicTransition(this);
                 yield return fade.FadeTo(0f, FadeDuration);
                 success = true;
             }
             finally
             {
+                AudioManager.Existing?.EndMusicTransition(this);
                 if (!success) { assembly.Hide(); CancelPlayerExit(); }
                 fade.SetOpacity(0f);
                 Time.timeScale = resumeTimeScale;
@@ -302,6 +310,7 @@ namespace TapTap
 
         private void OnDisable()
         {
+            AudioManager.Existing?.EndMusicTransition(this);
             CancelPlayerExit();
             RewindManager.Current?.Unregister(this);
             StopAllCoroutines();

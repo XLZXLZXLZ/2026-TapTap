@@ -45,7 +45,8 @@ namespace TapTap.Editor
                 readyAt = 0;
                 waiting = null;
                 deadline = EditorApplication.timeSinceStartup + 480;
-                flow = Validate();
+                flow = SessionState.GetBool(Pending + ".RoutesOnly", false) ? ValidateTransitionRoutes() : Validate();
+                SessionState.SetBool(Pending + ".RoutesOnly", false);
                 EditorApplication.update += Tick;
             };
         }
@@ -74,6 +75,56 @@ namespace TapTap.Editor
             EditorApplication.isPlaying = true;
         }
 
+        public static void RunTransitionRoutesBatch()
+        {
+            SessionState.SetBool(Pending + ".RoutesOnly", true);
+            RunBatch();
+        }
+
+        private static IEnumerator ValidateTransitionRoutes()
+        {
+            yield return 4.7f;
+            audio = AudioManager.Instance;
+            originalLibrary = audio.MusicLibrary;
+            testLibrary = Object.Instantiate(originalLibrary);
+            testLibrary.BGM_5 = Clip(5);
+            audio.MusicLibrary = testLibrary;
+            Expect(MusicTrack.Menu, testLibrary.BGM_0);
+            bool silentOnLoad = true;
+            UnityEngine.Events.UnityAction<Scene, LoadSceneMode> observe = (scene, mode) =>
+            {
+                if (mode != LoadSceneMode.Single) return;
+                foreach (AudioSource source in audio.GetComponentsInChildren<AudioSource>())
+                    if (source.name.StartsWith("Music ") && source.volume > 0f) silentOnLoad = false;
+            };
+            SceneManager.sceneLoaded += observe;
+            var escape = new GameObject("BGM escape handoff").AddComponent<FinalEscapeEndingTransition>();
+            escape.HoldDuration = escape.FadeDuration = 0.01f;
+            escape.Play();
+            yield return Loaded(Ending);
+            var ending = Object.FindObjectOfType<EndingSequenceController>();
+            ending.Radio.enabled = false;
+            ending.ReturnToMainMenuAfterBroadcast = false;
+            ending.ReturnControl();
+            yield return (Func<bool>)(() => ending.State == EndingState.Exploration);
+            Check(audio.IsMusicPaused && !audio.MusicSource.isPlaying && silentOnLoad,
+                "Escape/router handoff loaded Ending before music was silent.");
+            ending.Radio.enabled = true;
+            Check(ending.Radio.TryActivate(ending.Player), "Ending radio did not start after escape handoff.");
+            yield return 3.5f;
+            Expect(MusicTrack.Ending, testLibrary.BGM_5);
+            Pass("Escape black cover hands music ownership to the router; Ending loads in silence and its radio can fade music back in.");
+            ending.AfterVoiceHold = 0f;
+            ending.FadeToWhiteDuration = ending.WhiteHoldDuration = ending.RevealMainMenuDuration = 0.01f;
+            ending.ReturnToMainMenu();
+            yield return Loaded(MainMenuAssets.ScenePath);
+            yield return 3.5f;
+            Expect(MusicTrack.Menu, testLibrary.BGM_0);
+            Check(silentOnLoad, "White fade loaded the main menu before music was silent.");
+            SceneManager.sceneLoaded -= observe;
+            Pass("Ending white cover waits for fade-out and silence, then releases menu music for fade-in after loading.");
+        }
+
         private static void Tick()
         {
             try
@@ -92,11 +143,11 @@ namespace TapTap.Editor
 
         private static IEnumerator Validate()
         {
-            yield return 1.2f;
+            yield return 4.7f;
             audio = AudioManager.Instance;
             originalLibrary = audio.MusicLibrary;
             Check(originalLibrary != null && originalLibrary.BGM_0 == audio.Library.BackgroundMusic, "Menu track migration failed.");
-            Check(originalLibrary.FadeInDuration == 1f && originalLibrary.FadeOutDuration == 1f
+            Check(originalLibrary.FadeInDuration == 2f && originalLibrary.FadeOutDuration == 2f
                 && originalLibrary.EndingMusicDelay == 1f, "Default transition timings changed.");
             Expect(MusicTrack.Menu, originalLibrary.BGM_0);
             foreach (WorldMapModule module in world.OrderedModules())
@@ -129,6 +180,7 @@ namespace TapTap.Editor
             Check(menu.time < 3f, "Menu track did not loop.");
             Load(Selection);
             yield return Loaded(Selection);
+            yield return 2.3f;
             Expect(MusicTrack.Menu, testLibrary.BGM_0);
             Check(audio.MusicSource == menu, "Main menu to selection replaced the music source.");
             Pass("Menu/selection share one track and playhead; looping and pause behavior remain intact.");
@@ -138,22 +190,30 @@ namespace TapTap.Editor
             yield return 0.05f;
             AudioSource first = audio.MusicSource;
             Check(audio.CurrentMusic == MusicTrack.Region1 && first != menu, "Level entry did not select region 1.");
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.Region1, testLibrary.BGM_1);
             Check(!menu.isPlaying && first.ignoreListenerPause && first.loop, "Outgoing source was not paused after fade.");
             // Sample a controlled transition after loading: heavy asset loading may finish the entry fade before observation.
             Time.timeScale = 0f;
+            testLibrary.FadeInDuration = testLibrary.FadeOutDuration = 0.5f;
+            testLibrary.SilenceDuration = 0.5f;
             audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[5].Level, 6);
-            yield return 0.25f;
-            AudioSource incoming = audio.MusicSource;
+            yield return 0.15f;
             Check(first.volume > 0f && first.volume < audio.MusicVolume
-                && incoming.volume > 0f && incoming.volume < audio.MusicVolume, "Music did not crossfade with simulation paused.");
+                && audio.MusicSource == first, "Outgoing music did not fade before the new track.");
             audio.SetMusicVolume(0.3f);
-            Check(first.volume <= 0.3f && incoming.volume <= 0.3f, "Volume setting ignored fade gains.");
-            audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[0].Level, 1);
+            Check(first.volume <= 0.3f, "Volume setting ignored fade gains.");
+            yield return 0.45f;
+            Check(first.volume == 0f && !first.isPlaying && audio.IsMusicPaused, "Music did not leave a silent gap between tracks.");
             yield return 1.2f;
+            Expect(MusicTrack.Region2, testLibrary.BGM_2);
+            audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[0].Level, 1);
+            yield return 1.8f;
             Expect(MusicTrack.Region1, testLibrary.BGM_1);
+            testLibrary.FadeInDuration = testLibrary.FadeOutDuration = 2f;
+            testLibrary.SilenceDuration = 0.35f;
             Time.timeScale = 1f;
+            Pass("Sequential fade-out, silent gap and fade-in work during pause; volume settings preserve fade gains.");
             WorldMapProgression progression = WorldMapProgression.Current;
             progression.UseKeyboard = false;
             progression.FadeDuration = 0.01f; progression.AssemblyDuration = 0.01f; progression.AssemblyHold = 0f;
@@ -177,7 +237,7 @@ namespace TapTap.Editor
             endpoint.EntryWalkSpeed = 1000f;
             Check(progression.CompleteCurrent(endpoint), "Cannot complete level 5.");
             yield return TransitionFinished();
-            yield return 1.2f;
+            yield return 4.7f;
             Check(progression.CurrentNumber == 6, "Completion did not advance to level 6.");
             Expect(MusicTrack.Region2, testLibrary.BGM_2);
             Pass("Actual level completion crosses red/blue boundary; same-region jumps and pause-menu setup preserve playback.");
@@ -192,7 +252,7 @@ namespace TapTap.Editor
             Check(audio.MusicSource == second && second.time > 4.8f, "Same blue-region transition restarted music.");
             Check(progression.GoToSequence(progression.GetComponent<WorldMapRoot>().Source.SequenceNumber(progression.Modules[progression.CurrentIndex + 1])), "Cannot cross into yellow region.");
             yield return TransitionFinished();
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.Region3, testLibrary.BGM_3);
             Check(progression.GoToSequence(19), "Cannot go to level 19.");
             yield return TransitionFinished();
@@ -200,7 +260,7 @@ namespace TapTap.Editor
             third.time = 5f;
             Check(progression.GoToSequence(progression.GetComponent<WorldMapRoot>().Source.SequenceNumber(progression.Modules[progression.CurrentIndex + 1])), "Cannot enter level 20.");
             yield return TransitionFinished();
-            yield return 1.2f;
+            yield return 4.7f;
             Check(progression.CurrentNumber == 20 && audio.IsMusicPaused && !third.isPlaying, "Level 20 did not fade to silence.");
             Check(third.time > 4.8f, "Pause lost the music playhead.");
             Pass("Blue/yellow boundary switches tracks, restart preserves playhead, and level 20 fades out and pauses.");
@@ -212,7 +272,7 @@ namespace TapTap.Editor
             Check(audio.CurrentMusic == MusicTrack.KeyEscape, "Key music waited for the pickup cinematic to finish.");
             yield return (Func<bool>)(() => !GameStageProgression.InputBlocked);
             if (PauseMenu.IsOpen) PauseMenu.Current.Resume();
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.KeyEscape, testLibrary.BGM_4);
             AudioSource escape = audio.MusicSource;
             WorldMapProgression.Snapshot snapshot = new WorldMapProgression.Snapshot { CurrentIndex = 0 };
@@ -222,15 +282,15 @@ namespace TapTap.Editor
             Check(audio.CurrentMusic == MusicTrack.KeyEscape, "Door opening replaced escape music.");
             Load(Gameplay);
             yield return Loaded(Gameplay);
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.KeyEscape, testLibrary.BGM_4);
             Check(WorldMapProgression.Current.ReturnToSelection(), "Cannot return to selection.");
             yield return Loaded(Selection);
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.Menu, testLibrary.BGM_0);
             Check(WorldMapSceneRouter.Instance.Enter(world, world.OrderedModules()[5]), "Cannot launch a fresh run in blue region.");
             yield return Loaded(Gameplay);
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.Region2, testLibrary.BGM_2);
             Check(GameStageProgression.StageIn(SceneManager.GetActiveScene()) == GameStage.Outbound, "New run retained key stage.");
             Pass("Immediate pickup cue survives region restoration, door opening and reload; return to selection resets menu music and a fresh run resets priority.");
@@ -239,7 +299,7 @@ namespace TapTap.Editor
             AudioClip saved = testLibrary.BGM_3;
             testLibrary.BGM_3 = null;
             audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[12].Level, 13);
-            yield return 1.2f;
+            yield return 4.7f;
             Check(audio.CurrentMusic == MusicTrack.Region3 && audio.IsMusicPaused && !audio.MusicSource.isPlaying, "Missing BGM retained old music.");
             testLibrary.BGM_3 = saved;
             // Rapidly reverse a fade and then request a third clip; there must still be only two music voices.
@@ -248,13 +308,16 @@ namespace TapTap.Editor
             audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[5].Level, 6);
             yield return 0.1f;
             audio.ApplyLevelMusic(SceneManager.GetActiveScene(), world.OrderedModules()[12].Level, 13);
-            yield return 1.2f;
+            yield return 4.7f;
             Expect(MusicTrack.Region3, testLibrary.BGM_3);
             Check(audio.transform.Find("Music 1") != null && audio.transform.Find("Music 2") != null
-                && audio.transform.Find("Music 3") == null, "Crossfade leaked music sources.");
+                && audio.transform.Find("Music 3") == null, "Music switching leaked sources.");
             Pass("Missing clips produce silence; interrupted fades settle on the latest request using two sources.");
 
-            Load(Ending);
+            var escapeTransition = new GameObject("BGM escape handoff").AddComponent<FinalEscapeEndingTransition>();
+            escapeTransition.HoldDuration = 0.01f;
+            escapeTransition.FadeDuration = 0.01f;
+            escapeTransition.Play();
             yield return Loaded(Ending);
             EndingSequenceController ending = Object.FindObjectOfType<EndingSequenceController>();
             ending.Radio.enabled = false;
@@ -262,7 +325,7 @@ namespace TapTap.Editor
             ending.ReturnToMainMenuAfterBroadcast = false;
             ending.ReturnControl();
             yield return (Func<bool>)(() => ending.State == EndingState.Exploration);
-            yield return 1.2f;
+            yield return 4.7f;
             Check(audio.IsMusicPaused && !audio.MusicSource.isPlaying, "Ending scene did not fade out music.");
             ending.Radio.enabled = true;
             Check(ending.Radio.TryActivate(ending.Player), "Ending radio interaction failed.");
@@ -270,12 +333,12 @@ namespace TapTap.Editor
             yield return 0.25f;
             Check(audio.CurrentMusic == null, "Ending BGM ignored the default 1-second delay.");
             ending.ReturnControl();
-            yield return 1.2f;
+            yield return 4.7f;
             Check(!audio.HasPendingEndingMusic && audio.CurrentMusic == null, "Interrupted interaction leaked its delayed cue.");
             Check(ending.Radio.TryActivate(ending.Player), "Cannot retry ending radio.");
             yield return 0.25f;
             Check(audio.CurrentMusic == null, "Retry started BGM too early.");
-            yield return 2f;
+            yield return 3.5f;
             Expect(MusicTrack.Ending, testLibrary.BGM_5);
             Pass("Ending is silent on entry; successful radio interaction waits 1 second, supports interruption/retry, then fades in BGM_5.");
             ending.ReturnControl();
@@ -290,13 +353,17 @@ namespace TapTap.Editor
             yield return (Func<bool>)(() => ending.State == EndingState.Exploration);
             ending.Radio.enabled = true;
             Check(ending.Radio.TryActivate(ending.Player), "Cannot begin final delayed cue.");
-            Load(MainMenuAssets.ScenePath);
+            ending.AfterVoiceHold = 0f;
+            ending.FadeToWhiteDuration = 0.01f;
+            ending.WhiteHoldDuration = 0.01f;
+            ending.RevealMainMenuDuration = 0.01f;
+            ending.ReturnToMainMenu();
             yield return Loaded(MainMenuAssets.ScenePath);
-            yield return 2f;
+            yield return 3.5f;
             Expect(MusicTrack.Menu, testLibrary.BGM_0);
             Check(!audio.HasPendingEndingMusic && Object.FindObjectsOfType<AudioManager>().Length == 1,
                 "Scene change leaked delayed playback or duplicated the singleton.");
-            Pass("Leaving Ending cancels delayed playback; all real scene changes preserve the one persistent audio service.");
+            Pass("Escape/router handoff and ending white fade preserve the silent gap, cancel delayed playback and release music for the new scene.");
         }
 
         private static AudioClip Clip(int index) => AudioClip.Create("BGM_Test_" + index, 44100 * 16, 1, 44100, false);

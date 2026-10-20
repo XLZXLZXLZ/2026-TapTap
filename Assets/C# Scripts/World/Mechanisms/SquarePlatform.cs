@@ -18,15 +18,107 @@ namespace TapTap
         [SerializeField] private Vector2 transparencyTriggerSize = new Vector2(1f, 0.5f);
         [SerializeField] private Vector2 transparencyTriggerOffset = Vector2.zero;
         [SerializeField, Range(0f, 1f)] private float touchedOpacity = 0.5f;
+        [Tooltip("相邻方形平台的中心距离（世界单位）。1.05 可连接单位网格的上下左右，不连接斜角。")]
+        [SerializeField, Min(0.01f)] private float neighborDistance = 1.05f;
+        private const float BucketSize = 1f;
+        private static readonly Dictionary<Vector2Int, List<SquarePlatform>> buckets =
+            new Dictionary<Vector2Int, List<SquarePlatform>>();
+        private static int adjacencyVersion;
+        private readonly List<SquarePlatform> neighbors = new List<SquarePlatform>();
+        private readonly List<SquarePlatform> pendingTransparency = new List<SquarePlatform>();
+        private Vector2Int registeredCell;
+        private int cachedAdjacencyVersion = -1;
         private readonly List<Material> transparencyMaterials = new List<Material>();
         private bool touched;
         public bool IsTransparent => touched;
         public event Action<MovableEntity> HeadPassedUpward;
         public event Action<MovableEntity> HeadLanded;
 
+        private static Vector2Int Cell(Vector2 position) => Vector2Int.FloorToInt(position / BucketSize);
+
+        private void OnEnable()
+        {
+            registeredCell = Cell(transform.position);
+            if (!buckets.TryGetValue(registeredCell, out List<SquarePlatform> bucket))
+                buckets.Add(registeredCell, bucket = new List<SquarePlatform>());
+            bucket.Add(this);
+            adjacencyVersion++;
+        }
+
+        private void OnDisable()
+        {
+            if (buckets.TryGetValue(registeredCell, out List<SquarePlatform> bucket))
+            {
+                bucket.Remove(this);
+                if (bucket.Count == 0) buckets.Remove(registeredCell);
+            }
+            neighbors.Clear();
+            adjacencyVersion++;
+        }
+
+        // All initially enabled tiles are registered before Start. Build adjacency
+        // here, so contact only traverses cached links in the normal static level.
+        private void Start() => CacheNeighbors();
+
+        private void CacheNeighbors()
+        {
+            if (cachedAdjacencyVersion == adjacencyVersion) return;
+            neighbors.Clear();
+            cachedAdjacencyVersion = adjacencyVersion;
+            Vector2 position = transform.position;
+            float radius = Mathf.Max(0.01f, neighborDistance);
+            Vector2Int min = Cell(position - Vector2.one * radius);
+            Vector2Int max = Cell(position + Vector2.one * radius);
+            for (int y = min.y; y <= max.y; y++)
+                for (int x = min.x; x <= max.x; x++)
+                {
+                    if (!buckets.TryGetValue(new Vector2Int(x, y), out List<SquarePlatform> bucket)) continue;
+                    foreach (SquarePlatform other in bucket)
+                        if (other != this && other != null && other.gameObject.scene == gameObject.scene
+                            && ((Vector2)other.transform.position - position).sqrMagnitude <= radius * radius)
+                            neighbors.Add(other);
+                }
+        }
+
+        /// <summary>Call after moving a static tile or changing its neighbor distance at runtime.</summary>
+        public void RefreshAdjacency()
+        {
+            if (!isActiveAndEnabled) return;
+            OnDisable();
+            OnEnable();
+            CacheNeighbors();
+        }
+
+        public void TriggerTransparency()
+        {
+            if (touched || !isActiveAndEnabled) return;
+            pendingTransparency.Clear();
+            touched = true;
+            pendingTransparency.Add(this);
+            // Mark when queued: cycles and multiple paths cannot enqueue a tile
+            // twice. An iterative traversal also avoids recursive stack overflow.
+            try
+            {
+                for (int i = 0; i < pendingTransparency.Count; i++)
+                {
+                    SquarePlatform tile = pendingTransparency[i];
+                    tile.CacheNeighbors();
+                    tile.ApplyTransparency(tile.transform);
+                    foreach (SquarePlatform neighbor in tile.neighbors)
+                    {
+                        if (neighbor == null || !neighbor.isActiveAndEnabled || neighbor.touched) continue;
+                        neighbor.touched = true;
+                        pendingTransparency.Add(neighbor);
+                    }
+                }
+            }
+            finally { pendingTransparency.Clear(); }
+        }
+
         private void LateUpdate()
         {
             if (touched || RewindManager.Rewinding) return;
+            CacheNeighbors();
 
             // Use the motor's authoritative position: Unity's kinematic rigidbody may
             // still be waiting for MovePosition to be applied by the physics step.
@@ -43,8 +135,7 @@ namespace TapTap
                 if (!motor.CollisionsEnabled) continue;
                 Bounds bounds = motor.PartBounds;
                 if (!region.Overlaps(new Rect((Vector2)bounds.min, (Vector2)bounds.size))) continue;
-                touched = true;
-                ApplyTransparency(transform);
+                TriggerTransparency();
                 break;
             }
         }

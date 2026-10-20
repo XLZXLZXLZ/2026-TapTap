@@ -7,6 +7,7 @@ using TapTap;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 // Rendering checks use a real graphics device. Never run this against an open editing project.
@@ -242,6 +243,7 @@ public static class WorldExplorationMaskValidation
                 .rendererFeatures.Any(feature => feature is WorldExplorationMaskFeature && feature.isActive), "Feature not installed");
             RenderChecks();
             ParticleBackgroundChecks();
+            VignetteBackgroundChecks();
             foreach (string check in new[] { "DiscoveryReset", "Rewind", "Visibility" })
                 typeof(TapTap.Editor.CrossRegionRegressionTests).GetMethod(check, BindingFlags.Static | BindingFlags.NonPublic)
                     .Invoke(null, null);
@@ -432,6 +434,113 @@ public static class WorldExplorationMaskValidation
             foreach (WorldMapModule module in definition.Modules) UnityEngine.Object.DestroyImmediate(module.Level);
             UnityEngine.Object.DestroyImmediate(definition);
             UnityEngine.Object.DestroyImmediate(green); UnityEngine.Object.DestroyImmediate(red); UnityEngine.Object.DestroyImmediate(particleMaterial);
+        }
+    }
+
+    private static void VignetteBackgroundChecks()
+    {
+        EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var world = new GameObject("Vignette world").AddComponent<WorldMapRoot>();
+        world.Source = ScriptableObject.CreateInstance<WorldMapDefinition>();
+        var generated = new GameObject("Generated"); generated.transform.SetParent(world.transform, false);
+        LevelRegion region = Region(world, generated.transform, "Room", 0);
+        world.PrepareExploration(new HashSet<string> { world.Source.Modules[0].Id });
+        var mask = world.GetComponent<WorldExplorationMask>();
+        mask.MaskColor = Color.white;
+        var rig = new GameObject("Vignette rig").AddComponent<DemoCamera>();
+        var camera = new GameObject("Camera").AddComponent<Camera>();
+        camera.transform.SetParent(rig.transform, false);
+        camera.enabled = false; camera.clearFlags = CameraClearFlags.SolidColor; camera.backgroundColor = Color.white;
+        rig.Configure(null, camera, null); rig.SetRegion(region);
+        camera.transform.SetPositionAndRotation(new Vector3(2, 2, -12), Quaternion.identity);
+        camera.fieldOfView = 40; camera.allowMSAA = false;
+        var data = camera.GetUniversalAdditionalCameraData();
+        data.renderPostProcessing = true; data.volumeLayerMask = 1 << 31;
+        var profile = ScriptableObject.CreateInstance<VolumeProfile>();
+        var vignette = profile.Add<Vignette>(true);
+        vignette.intensity.value = 0.4f; vignette.smoothness.value = 0.65f;
+        var volume = new GameObject("Test vignette").AddComponent<Volume>();
+        volume.gameObject.layer = 31; volume.isGlobal = true; volume.sharedProfile = profile;
+        GameObject particleObject = null;
+        Material particleMaterial = null;
+        try
+        {
+            void Compare(string name, int width, int height)
+            {
+                mask.enabled = false;
+                Texture2D reference = Render(camera, width, height);
+                mask.enabled = true;
+                Texture2D actual = Render(camera, width, height);
+                try
+                {
+                    Color32[] expected = reference.GetPixels32(), observed = actual.GetPixels32();
+                    int largestError = 0;
+                    for (int i = 0; i < expected.Length; i++)
+                    {
+                        largestError = Mathf.Max(largestError, Mathf.Abs(expected[i].r - observed[i].r),
+                            Mathf.Abs(expected[i].g - observed[i].g), Mathf.Abs(expected[i].b - observed[i].b));
+                    }
+                    File.WriteAllBytes(Output + "/vignette-" + name + ".png", actual.EncodeToPNG());
+                    Check(largestError <= 3, name + " differs from URP's own vignette by " + largestError + "/255");
+                    results.Add("PASS: " + name + " matches URP across explored and masked pixels (max error " + largestError + "/255).");
+                }
+                finally { UnityEngine.Object.DestroyImmediate(reference); UnityEngine.Object.DestroyImmediate(actual); }
+            }
+
+            Compare("fallback", 600, 400);
+            vignette.center.value = new Vector2(0.35f, 0.65f);
+            vignette.color.value = new Color(0.1f, 0.3f, 0.5f);
+            vignette.rounded.value = true;
+            Compare("offset-rounded-wide", 640, 360);
+            Compare("offset-rounded-tall", 360, 640);
+            volume.weight = 0.4f;
+            Compare("blended-volume", 600, 400);
+            volume.weight = 1f;
+            var reveal = region.GetComponent<RegionRevealView>();
+            reveal.SetDiscovered(false, true); reveal.SetDiscovered(true);
+            typeof(RegionRevealView).GetMethod("AdvanceReveal", BindingFlags.Instance | BindingFlags.NonPublic)
+                .Invoke(reveal, new object[] { reveal.RevealDuration * 0.5f });
+            Compare("half-revealed", 600, 400);
+            reveal.SetDiscovered(true, true);
+
+            var particles = new GameObject("Vignette particles").AddComponent<ParticleSystem>();
+            particleObject = particles.gameObject;
+            particles.Stop(false, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = particles.main;
+            main.playOnAwake = false; main.prewarm = false; main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var emission = particles.emission; emission.enabled = false;
+            particleMaterial = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
+            particleMaterial.SetColor("_BaseColor", Color.white);
+            particles.GetComponent<ParticleSystemRenderer>().sharedMaterial = particleMaterial;
+            particleObject.AddComponent<WorldEnvironmentParticles>();
+            mask.RefreshRegions(world);
+            particles.SetParticles(new[] { new ParticleSystem.Particle
+            {
+                position = new Vector3(-2.5f, 3, 3), startSize = 0.8f,
+                startLifetime = 100, remainingLifetime = 100, startColor = Color.cyan
+            } }, 1);
+            particles.Pause(false);
+            Compare("particle-background", 600, 400);
+            vignette.intensity.value = 0f;
+            Compare("zero-intensity", 600, 400);
+            vignette.intensity.value = 0.4f;
+            data.renderPostProcessing = false;
+            Compare("post-processing-disabled", 600, 400);
+            data.renderPostProcessing = true;
+            volume.enabled = false;
+            Compare("volume-disabled", 600, 400);
+        }
+        finally
+        {
+            if (particleObject != null) UnityEngine.Object.DestroyImmediate(particleObject);
+            if (particleMaterial != null) UnityEngine.Object.DestroyImmediate(particleMaterial);
+            UnityEngine.Object.DestroyImmediate(volume.gameObject);
+            UnityEngine.Object.DestroyImmediate(profile);
+            UnityEngine.Object.DestroyImmediate(rig.gameObject);
+            var definition = world.Source;
+            UnityEngine.Object.DestroyImmediate(world.gameObject);
+            foreach (WorldMapModule module in definition.Modules) UnityEngine.Object.DestroyImmediate(module.Level);
+            UnityEngine.Object.DestroyImmediate(definition);
         }
     }
 

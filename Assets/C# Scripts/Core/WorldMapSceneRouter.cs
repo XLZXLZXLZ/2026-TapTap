@@ -46,6 +46,7 @@ namespace TapTap
             if (!Application.CanStreamedLevelBeLoaded(path)) { LastError = "场景未加入构建列表：" + path; return false; }
 #endif
             loading = true;
+            AudioManager.Instance?.BeginMusicTransition(this);
             AudioManager.Existing?.StopGameplay();
             StartCoroutine(ChangeScene(path, newRun));
             return true;
@@ -61,6 +62,7 @@ namespace TapTap
                 resumeScale = Time.timeScale;
                 Time.timeScale = 0f;
                 yield return fade.FadeTo(1f, 0.25f);
+                if (AudioManager.Existing != null) yield return AudioManager.Existing.WaitForMusicSilence();
                 yield return null;
                 AsyncOperation operation = null;
                 try
@@ -79,9 +81,10 @@ namespace TapTap
                 else { launchWorld = null; launchModuleId = null; }
                 yield return null;
                 yield return null;
+                AudioManager.Existing?.EndMusicTransition(this);
                 yield return fade.FadeTo(0f, 0.35f);
             }
-            finally { Time.timeScale = resumeScale; fade.SetOpacity(0f); loading = false; }
+            finally { AudioManager.Existing?.EndMusicTransition(this); Time.timeScale = resumeScale; fade.SetOpacity(0f); loading = false; }
         }
     }
 }

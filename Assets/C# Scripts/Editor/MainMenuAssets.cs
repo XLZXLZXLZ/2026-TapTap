@@ -79,11 +79,13 @@ namespace TapTap.Editor
             InstallBlurFeature(camera);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            // The executable opens on the main menu; existing relative scene order is retained.
-            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) }
-                .Concat(EditorBuildSettings.scenes.Where(s => s.path != ScenePath)).ToArray();
+            // Rebuilding the menu must preserve the studio splash as the executable entry point.
+            EditorBuildSettings.scenes = new[] {
+                new EditorBuildSettingsScene(StartupSplash.ScenePath, true),
+                new EditorBuildSettingsScene(ScenePath, true) }
+                .Concat(EditorBuildSettings.scenes.Where(s => s.path != ScenePath && s.path != StartupSplash.ScenePath)).ToArray();
             AssetDatabase.SaveAssets();
-            File.WriteAllText("Logs/MainMenu/build.txt", "PASS: atlas sliced, editable UI prefab and camera effects saved; MainMenu is the startup scene.\n");
+            File.WriteAllText("Logs/MainMenu/build.txt", "PASS: atlas sliced, editable UI prefab and camera effects saved; Startup remains the startup scene.\n");
             Debug.Log("Main menu built. Camera pose preserved. TapTap/UI/Main Menu/Validate checks rendering and scene navigation.");
         }
 

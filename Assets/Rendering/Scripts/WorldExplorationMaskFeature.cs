@@ -82,6 +82,8 @@ public sealed class WorldExplorationMaskFeature : ScriptableRendererFeature
         private static readonly int MaskColor = Shader.PropertyToID("_WorldExplorationMaskColor");
         private static readonly int ViewProjection = Shader.PropertyToID("_WorldExplorationViewProjection");
         private static readonly int UseBackground = Shader.PropertyToID("_WorldExplorationUseBackground");
+        private static readonly int VignetteColor = Shader.PropertyToID("_WorldExplorationVignetteColor");
+        private static readonly int VignetteParams = Shader.PropertyToID("_WorldExplorationVignetteParams");
         private Material material;
         private WorldExplorationMask mask;
 
@@ -132,6 +134,18 @@ public sealed class WorldExplorationMaskFeature : ScriptableRendererFeature
                 commands.SetGlobalFloat(UseBackground, hasBackground ? 1f : 0f);
                 commands.SetGlobalTexture(BackgroundTexture, hasBackground
                     ? new RenderTargetIdentifier(BackgroundTexture) : new RenderTargetIdentifier(Texture2D.blackTexture));
+                // Only the replacement background missed URP's vignette. Use this camera's
+                // blended stack and the same parameter scaling as PostProcessPass.SetupVignette.
+                Vignette vignette = VolumeManager.instance.stack.GetComponent<Vignette>();
+                bool applyVignette = renderingData.cameraData.postProcessEnabled
+                    && vignette != null && vignette.active && vignette.IsActive();
+                Color vignetteColor = applyVignette ? vignette.color.value : Color.black;
+                commands.SetGlobalVector(VignetteColor, new Vector4(vignetteColor.r, vignetteColor.g, vignetteColor.b,
+                    applyVignette && vignette.rounded.value ? descriptor.width / (float)descriptor.height : 1f));
+                Vector2 center = applyVignette ? vignette.center.value : Vector2.one * 0.5f;
+                commands.SetGlobalVector(VignetteParams, new Vector4(center.x, center.y,
+                    applyVignette ? vignette.intensity.value * 3f : 0f,
+                    applyVignette ? vignette.smoothness.value * 5f : 1f));
                 commands.SetRenderTarget(renderingData.cameraData.renderer.cameraColorTarget);
                 commands.DrawProcedural(Matrix4x4.identity, material, 1, MeshTopology.Triangles, 3);
                 context.ExecuteCommandBuffer(commands);

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -24,6 +25,52 @@ namespace TapTap
         private int keyMusicScene = -1;
         private EndingSequenceController endingMusicOwner;
         private double endingMusicAt;
+        private readonly HashSet<Object> musicTransitions = new HashSet<Object>();
+        private bool musicPending, musicGapRequired;
+        private MusicTrack? pendingMusic;
+        private double musicSilentAt = -1d;
+
+        private bool MusicSilent
+        {
+            get
+            {
+                foreach (MusicVoice voice in musicVoices)
+                    if (voice.Gain > 0f) return false;
+                return true;
+            }
+        }
+        private float MusicSilenceDuration => MusicLibrary != null ? Mathf.Max(0f, MusicLibrary.SilenceDuration) : 0.35f;
+
+        // Multiple covers may hand off the same scene change (escape -> router).
+        public void BeginMusicTransition(Object owner)
+        {
+            if (owner == null || !musicTransitions.Add(owner)) return;
+            if (musicTransitions.Count == 1)
+            {
+                if (!musicPending) pendingMusic = CurrentMusic;
+                musicPending = musicGapRequired = true;
+                CurrentMusic = null;
+                IsMusicPaused = true;
+                endingMusicOwner = null;
+                foreach (MusicVoice voice in musicVoices) FadeMusic(voice, 0f);
+            }
+        }
+
+        public void EndMusicTransition(Object owner) => musicTransitions.Remove(owner);
+        public bool HasMusicTransition(Object owner) => musicTransitions.Contains(owner);
+
+        public IEnumerator WaitForMusicSilence()
+        {
+            while (!MusicSilent || musicSilentAt < 0d
+                || Time.realtimeSinceStartupAsDouble - musicSilentAt < MusicSilenceDuration) yield return null;
+        }
+
+        public bool LevelMusicChanges(Scene scene, LevelDefinition level, int number)
+            => ResolveLevelMusic(scene, level, number) != CurrentMusic;
+
+        private MusicTrack? ResolveLevelMusic(Scene scene, LevelDefinition level, int number)
+            => keyMusicScene == scene.handle || GameStageProgression.StageIn(scene) >= GameStage.CarryingKey
+                ? MusicTrack.KeyEscape : MusicLibrary != null ? MusicLibrary.TrackFor(level != null ? level.Style : null, number) : null;
 
         private void InitializeMusic()
         {
@@ -49,6 +96,19 @@ namespace TapTap
         // Repeated requests for the same target preserve both the playhead and an in-progress fade.
         private void PlayMusic(MusicTrack? track)
         {
+            if (musicPending && pendingMusic == track) return;
+            if (!musicPending && musicTransitions.Count == 0 && CurrentMusic == track
+                && MusicSource.clip == (track.HasValue ? MusicClip(track.Value) : null)) return;
+            pendingMusic = track;
+            musicPending = true;
+            musicGapRequired |= !MusicSilent;
+            CurrentMusic = track;
+            IsMusicPaused = true;
+            foreach (MusicVoice voice in musicVoices) FadeMusic(voice, 0f);
+        }
+
+        private void StartMusic(MusicTrack? track)
+        {
             AudioClip clip = track.HasValue ? MusicClip(track.Value) : null;
             if (track.HasValue && clip == null && warnedMusic.Add(track.Value))
                 Debug.LogWarning("BGM_" + (int)track.Value + " 尚未配置音频，将淡出并保持静音。请配置 Resources/Audio/BackgroundMusicLibrary。", this);
@@ -61,7 +121,8 @@ namespace TapTap
                     if (voice.Source.clip == clip) { selected = voice; break; }
                 if (selected == null)
                 {
-                    selected = musicVoices[0].Gain <= musicVoices[1].Gain ? musicVoices[0] : musicVoices[1];
+                    // Both voices are silent here; retain the previous track's paused playhead for a quick return.
+                    selected = musicVoices[0].Source == MusicSource ? musicVoices[1] : musicVoices[0];
                     selected.Source.Stop();
                     selected.Source.clip = clip;
                     selected.Gain = 0f;
@@ -84,7 +145,7 @@ namespace TapTap
             voice.Target = target;
             voice.Elapsed = 0f;
             voice.Duration = MusicLibrary != null
-                ? Mathf.Max(0f, target > voice.Gain ? MusicLibrary.FadeInDuration : MusicLibrary.FadeOutDuration) : 1f;
+                ? Mathf.Max(0f, target > voice.Gain ? MusicLibrary.FadeInDuration : MusicLibrary.FadeOutDuration) : 2f;
             if (voice.Duration <= 0f) voice.Gain = target;
         }
 
@@ -112,6 +173,17 @@ namespace TapTap
                 }
             }
             ApplyMusicVolumes();
+            if (MusicSilent)
+            {
+                if (musicSilentAt < 0d) musicSilentAt = Time.realtimeSinceStartupAsDouble;
+                if (musicPending && musicTransitions.Count == 0
+                    && (!musicGapRequired || Time.realtimeSinceStartupAsDouble - musicSilentAt >= MusicSilenceDuration))
+                {
+                    musicPending = musicGapRequired = false;
+                    StartMusic(pendingMusic);
+                }
+            }
+            else musicSilentAt = -1d;
         }
 
         private void ApplyMusicVolumes()
@@ -129,7 +201,7 @@ namespace TapTap
                 PlayKeyMusic(scene);
                 return;
             }
-            PlayMusic(MusicLibrary != null ? MusicLibrary.TrackFor(level != null ? level.Style : null, sequenceNumber) : null);
+            PlayMusic(ResolveLevelMusic(scene, level, sequenceNumber));
         }
 
         public void PlayKeyMusic(Scene scene)
